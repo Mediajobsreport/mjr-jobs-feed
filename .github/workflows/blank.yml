@@ -52,8 +52,7 @@ jobs:
           print(f"Validated {len(jobs)} jobs")
           PY
 
-            - name: Commit updated feed
-             - name: Commit updated feed
+      - name: Commit updated feed
         run: |
           git config user.name "MJR Jobs Bot"
           git config user.email "actions@users.noreply.github.com"
