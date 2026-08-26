@@ -1,0 +1,67 @@
+name: Update MJR Jobs XML
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Crawl ATS sources
+        env:
+          MJR_WINDOW_DAYS: "21"
+          MJR_SOURCES: "mjr-ats-sources.csv"
+          MJR_OUTPUT: "mjr-jboard-master.xml"
+          MJR_AUDIT: "mjr-ats-audit.csv"
+          MJR_STATE: "mjr-job-state.json"
+        run: python mjr-ats-crawler.py
+
+      - name: Validate XML
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse("mjr-jboard-master.xml").getroot()
+          jobs = root.findall("./job")
+
+          assert jobs, "No jobs generated"
+
+          for job in jobs:
+              expiration = job.findtext("expiration") or ""
+              assert expiration.isdigit(), (
+                  f"Invalid expiration for {job.findtext('title')}: {expiration}"
+              )
+
+          print(f"Validated {len(jobs)} jobs")
+          PY
+
+      - name: Commit updated feed
+        run: |
+          git config user.name "MJR Jobs Bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add mjr-jboard-master.xml mjr-ats-audit.csv mjr-job-state.json
+
+          if git diff --cached --quiet; then
+            echo "No feed changes to commit."
+          else
+            git commit -m "Update MJR jobs feed"
+            git push
+          fi
