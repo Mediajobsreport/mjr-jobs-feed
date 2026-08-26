@@ -65,24 +65,157 @@ def jobtype(title,text=""):
     return "Full Time"
 
 def category(title,desc,industry,company):
-    s=(title+" "+desc).lower();c=company.lower();t=title.lower()
-    if "intern" in t:return "Internships"
-    if any(x in c for x in ["npr","pbs","american public media","whyy","public broadcasting"]):return "Public Media / Higher Ed"
-    if any(x in c for x in ["sony music","warner music","universal music","ascap","sesac","onerpm"]):return "Music Industry"
-    if re.search(r"\b(vp|vice president|general manager|news director|director|manager|chief|head of)\b",t):
-        if re.search(r"\b(sales|marketing|revenue|account)\b",s):return "Sales & Marketing"
-        if re.search(r"\b(engineer|engineering|technical|technology|transmission)\b",s):return "Engineering"
+    """
+    MJR category classifier.
+    Priority is JOB FUNCTION, especially the title.
+    Employer/media type is only a final fallback.
+    """
+    t=clean(title).lower()
+    d=clean(desc).lower()
+    c=clean(company).lower()
+    ind=clean(industry)
+
+    # 1) Internships always win.
+    if re.search(r"\b(intern|internship|trainee program)\b", t):
+        return "Internships"
+
+    # 2) Business/office functions should never become Sales simply because
+    # the description says they "support sales" or work with revenue teams.
+    if re.search(
+        r"\b(accountant|accounting|accounts payable|accounts receivable|finance|financial|"
+        r"controller|payroll|human resources|hr\b|people operations|talent acquisition|"
+        r"recruiter|recruiting|administrative|administrator|executive assistant|"
+        r"office assistant|office manager|legal|attorney|counsel|paralegal|"
+        r"business affairs|contracts|compliance|procurement|purchasing|facilities|"
+        r"receptionist|operations coordinator|sales operations coordinator|"
+        r"traffic coordinator|traffic assistant|billing|credit|collections)\b", t
+    ):
+        return "Business Office"
+
+    # 3) Engineering/technical.
+    if re.search(
+        r"\b(engineer|engineering|broadcast engineer|chief engineer|maintenance engineer|"
+        r"systems engineer|network engineer|it\b|information technology|technical director|"
+        r"broadcast technician|master control|transmission|transmitter|rf engineer|"
+        r"studio technician|audio engineer|video engineer)\b", t
+    ):
+        return "Engineering"
+
+    # 4) Public relations / communications.
+    if re.search(
+        r"\b(public relations|publicist|media relations|press relations|corporate communications|"
+        r"communications manager|communications director|communications specialist|"
+        r"communications coordinator|public affairs)\b", t
+    ):
+        return "Public Relations"
+
+    # 5) Genuine sales/marketing/revenue roles.
+    if re.search(
+        r"\b(account executive|sales executive|sales manager|sales director|sales assistant|"
+        r"media sales|advertising sales|digital sales|local sales|national sales|"
+        r"business development|revenue manager|revenue director|revenue operations|"
+        r"marketing manager|marketing director|marketing coordinator|marketing specialist|"
+        r"brand marketing|affiliate sales|partnership sales|sponsorship sales)\b", t
+    ):
+        return "Sales & Marketing"
+
+    # 6) Radio-specific programming/on-air/operations.
+    if re.search(
+        r"\b(board operator|on[- ]air|air personality|air talent|radio host|radio personality|"
+        r"morning show|afternoon host|night host|music director|program director|"
+        r"assistant program director|radio producer|radio news|traffic reporter|"
+        r"play[- ]by[- ]play|sports talk host|announcer|disc jockey|dj\b)\b", t
+    ):
+        return "Radio"
+
+    # 7) Television-specific production/studio roles.
+    if re.search(
+        r"\b(tv producer|television producer|newscast producer|executive producer|"
+        r"associate producer|show producer|line producer|segment producer|"
+        r"technical producer|studio manager|studio crew|camera operator|videographer|"
+        r"photographer|photojournalist|director of photography|video editor|"
+        r"news photographer|production assistant|production coordinator|"
+        r"broadcast director|newscast director|floor director|graphics operator|"
+        r"character generator|cg operator|master control operator)\b", t
+    ):
+        return "Television"
+
+    # 8) Journalism/editorial roles independent of platform.
+    if re.search(
+        r"\b(reporter|journalist|news anchor|anchor/reporter|multimedia journalist|mmj\b|"
+        r"assignment editor|assignment manager|news editor|managing editor|copy editor|"
+        r"editorial|news writer|investigative reporter|correspondent|bureau chief|"
+        r"news director|digital journalist|breaking news)\b", t
+    ):
+        return "Journalism"
+
+    # 9) Digital product/content/social/podcast roles.
+    if re.search(
+        r"\b(digital producer|digital editor|digital content|web producer|web editor|"
+        r"social media|social producer|audience development|seo\b|newsletter|"
+        r"podcast producer|podcast editor|streaming producer|streaming editor|"
+        r"product manager|product owner|mobile product|app product|ux\b|ui\b|"
+        r"content strategist|digital strategist|ecommerce)\b", t
+    ):
+        return "Digital"
+
+    # 10) Management only when the title is principally an executive/general-management role.
+    if re.search(
+        r"\b(general manager|market manager|president|chief executive officer|ceo\b|"
+        r"chief operating officer|coo\b|chief content officer|station manager|"
+        r"regional manager|vice president|vp\b|senior vice president|svp\b|"
+        r"executive vice president|evp\b|head of)\b", t
+    ):
         return "Management"
-    if re.search(r"\b(account executive|sales|advertising|marketing|business development|partnership)\b",s):return "Sales & Marketing"
-    if re.search(r"\b(public relations|media relations|publicist|communications)\b",s):return "Public Relations"
-    if re.search(r"\b(engineer|engineering|technical director|transmission|master control|broadcast technician)\b",s):return "Engineering"
-    if re.search(r"\b(reporter|anchor|journalist|assignment editor|news writer|news producer|newscast|editorial)\b",s):
-        return "Radio" if re.search(r"\b(radio|on[- ]air|board operator)\b",s) else "Journalism"
-    if re.search(r"\b(radio|on[- ]air|board operator|air talent|morning show)\b",s):return "Radio"
-    if re.search(r"\b(digital|social media|web producer|content creator|podcast|streaming)\b",s):return "Digital"
-    if re.search(r"\b(tv|television|studio|camera|producer|production)\b",s):return "Television"
-    if re.search(r"\b(accounting|finance|human resources|administrative|legal)\b",s):return "Business Office"
-    return industry if industry in APPROVED else "Television"
+
+    # 11) Music-industry functions. Use employer context only after specific
+    # office/sales/technical/etc. functions above have had the first chance.
+    music_company = any(x in c for x in [
+        "sony music","warner music","universal music","ascap","sesac","onerpm",
+        "recording academy","music group","records","music entertainment"
+    ])
+    if music_company or re.search(
+        r"\b(a&r|artist relations|artist development|record label|music publishing|"
+        r"music licensing|royalties|royalty|sync licensing|repertoire|label manager)\b", t
+    ):
+        return "Music Industry"
+
+    # 12) Public media / higher ed is a fallback for public-media employers
+    # after the functional rules above.
+    public_media = any(x in c for x in [
+        "npr","pbs","american public media","public broadcasting","public radio",
+        "university","college","state university"
+    ])
+    if public_media:
+        return "Public Media / Higher Ed"
+
+    # Description fallback is intentionally narrow and only used when title is vague.
+    td = f" {t} {d[:1800]} "
+    if re.search(r"\btelevision station\b|\btv station\b|\bnewscast\b|\bcamera\b|\bvideo production\b", td):
+        return "Television"
+    if re.search(r"\bradio station\b|\bon-air\b|\bcontrol board\b|\bbroadcast automation\b|\bplaylist\b", td):
+        return "Radio"
+    if re.search(r"\breporter\b|\bjournalism\b|\bnewsroom\b|\beditorial\b", td):
+        return "Journalism"
+    if re.search(r"\bdigital content\b|\bsocial media\b|\bwebsite\b|\bstreaming\b|\bpodcast\b", td):
+        return "Digital"
+    if re.search(r"\bengineering\b|\btransmitter\b|\btechnical systems\b|\bmaster control\b", td):
+        return "Engineering"
+
+    # Final source-family fallback. Avoid forcing all television-company jobs
+    # into Television or all radio-company jobs into Radio when title is unclear.
+    if ind == "Music Industry":
+        return "Music Industry"
+    if ind == "Journalism":
+        return "Journalism"
+    if ind == "Digital":
+        return "Digital"
+    if ind == "Radio":
+        return "Radio"
+    if ind == "Television":
+        return "Television"
+
+    return "Business Office"
 
 def workday(src):
     u=urlparse(src["URL"]);host=u.netloc;tenant=host.split(".")[0]
