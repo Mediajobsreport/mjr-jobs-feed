@@ -65,7 +65,12 @@ def pdate(v):
         return TODAY - timedelta(days=1)
 
     try:
-        return dtparser.parse(s, fuzzy=True).date()
+        parsed = dtparser.parse(s, fuzzy=True).date()
+        # ATS feeds occasionally expose future dates due to timezone/parser quirks.
+        # A job cannot have been posted after the crawl date, so clamp to TODAY.
+        if parsed > TODAY:
+            return TODAY
+        return parsed
     except Exception:
         return None
 
@@ -258,7 +263,28 @@ def category(title, desc, industry, company):
         return "Sales & Marketing"
 
     # ------------------------------------------------------------------
-    # 6) JOURNALISM / NEWS / EDITORIAL
+    # 6) DIGITAL / SOFTWARE / DATA / AI / PRODUCT / ARCHITECTURE
+    # Technology titles should be resolved before description-based journalism
+    # fallbacks, especially at media companies where boilerplate mentions news.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"ai architect|ai lead architect|artificial intelligence|machine learning|"
+        r"software architect|platform architect|solutions architect|solution architect|"
+        r"enterprise architect|cloud architect|data architect|technical architect|"
+        r"software engineer|software developer|data engineer|data scientist|"
+        r"machine learning engineer|frontend engineer|front-end engineer|"
+        r"backend engineer|back-end engineer|full stack engineer|full-stack engineer|"
+        r"mobile engineer|web engineer|devops|site reliability|sre|"
+        r"product manager|product owner|digital product|technology product|"
+        r"ux|ui|user experience|user interface|web developer|application developer"
+        r")\b",
+        t,
+    ):
+        return "Digital"
+
+    # ------------------------------------------------------------------
+    # 7) JOURNALISM / NEWS / EDITORIAL
     # Place Journalism before platform production so photojournalists,
     # assignment editors, managing editors, etc. do not become Television.
     # ------------------------------------------------------------------
@@ -556,6 +582,66 @@ def category(title, desc, industry, company):
     return "Business Office"
 
 
+def infer_country(location, company="", description=""):
+    """
+    Infer country conservatively from explicit location text.
+    Default remains US, but Canadian province/territory abbreviations and
+    well-known Canadian place names are mapped to CA.
+    """
+    loc = clean(location)
+    s = f" {loc.lower()} {clean(description)[:1200].lower()} "
+
+    canadian_abbr = re.search(
+        r"(?:^|[, /-])(?:ab|bc|mb|nb|nl|ns|nt|nu|on|pe|qc|sk|yt)(?:$|[, /-])",
+        loc.lower(),
+    )
+
+    canadian_names = any(
+        name in s
+        for name in [
+            "alberta",
+            "british columbia",
+            "manitoba",
+            "new brunswick",
+            "newfoundland",
+            "labrador",
+            "nova scotia",
+            "northwest territories",
+            "nunavut",
+            "ontario",
+            "prince edward island",
+            "quebec",
+            "saskatchewan",
+            "yukon",
+            "montreal",
+            "montréal",
+            "toronto",
+            "ottawa",
+            "vancouver",
+            "calgary",
+            "edmonton",
+            "winnipeg",
+            "halifax",
+            "regina",
+            "saskatoon",
+            "sherbrooke",
+            "moncton",
+            "rankin inlet",
+        ]
+    )
+
+    if canadian_abbr or canadian_names:
+        return "CA"
+
+    return "US"
+
+
+def normalize_work_arrangement(description, location):
+    s = f" {clean(description).lower()} {clean(location).lower()} "
+    if re.search(r"\b(telework/hybrid|hybrid|remote)\b", s):
+        return "Remote"
+    return "On-Site"
+
 def workday(src):
     u = urlparse(src["URL"])
     host = u.netloc
@@ -629,12 +715,10 @@ def workday(src):
                     src["URL"],
                     src["URL"],
                     "",
-                    (
-                        "Remote"
-                        if "remote" in (desc + " " + loc).lower()
-                        else "On-Site"
-                    ),
+                    normalize_work_arrangement(desc, loc),
                     loc,
+                    "",
+                    infer_country(loc, src["Company"], desc),
                 )
             )
 
@@ -687,12 +771,10 @@ def greenhouse(src):
                 src["URL"],
                 src["URL"],
                 "",
-                (
-                    "Remote"
-                    if "remote" in (desc + " " + loc).lower()
-                    else "On-Site"
-                ),
+                normalize_work_arrangement(desc, loc),
                 loc,
+                "",
+                infer_country(loc, src["Company"], desc),
             )
         )
 
@@ -765,6 +847,11 @@ def generic(src):
                     url,
                     src["URL"],
                     src["URL"],
+                    "",
+                    normalize_work_arrangement(desc, txt),
+                    "",
+                    "",
+                    infer_country(txt, src["Company"], desc),
                 )
             )
 
@@ -842,6 +929,11 @@ def stateful(jobs):
                 x.get("description", ""),
                 "",
                 x.get("company", ""),
+            )
+            x["country"] = infer_country(
+                x.get("city", ""),
+                x.get("company", ""),
+                x.get("description", ""),
             )
             ret.append(Job(**x))
         except Exception:
