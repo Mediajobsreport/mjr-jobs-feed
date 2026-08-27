@@ -1,7 +1,6 @@
-name: Update MJR Jobs XML
-
 on:
   workflow_dispatch:
+
   schedule:
     - cron: "17 9 * * *"
 
