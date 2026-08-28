@@ -637,9 +637,52 @@ def infer_country(location, company="", description=""):
 
 
 def normalize_work_arrangement(description, location):
-    s = f" {clean(description).lower()} {clean(location).lower()} "
-    if re.search(r"\b(telework/hybrid|hybrid|remote)\b", s):
+    """
+    Determine work arrangement with explicit job-status language taking
+    precedence over incidental mentions such as "remote location."
+    """
+    desc = clean(description).lower()
+    loc = clean(location).lower()
+    s = f" {desc} {loc} "
+
+    # Strong explicit on-site signals win over incidental uses of "remote."
+    onsite_patterns = [
+        r"requires full[- ]time on[- ]site presence",
+        r"requires full time on site presence",
+        r"this role requires full[- ]time on[- ]site",
+        r"this role requires full time on site",
+        r"this position is an on[- ]site role",
+        r"this position is onsite",
+        r"on[- ]site role",
+        r"on site role",
+        r"\(on[- ]site\)",
+        r"\(on site\)",
+    ]
+    if any(re.search(p, s) for p in onsite_patterns):
+        return "On-Site"
+
+    # Explicit hybrid/telework/remote work signals.
+    remote_patterns = [
+        r"telework/hybrid",
+        r"telework",
+        r"hybrid role",
+        r"hybrid position",
+        r"hybrid work",
+        r"mix of in-office and remote work",
+        r"work from home",
+        r"fully remote",
+        r"100% remote",
+        r"remote role",
+        r"remote position",
+        r"remote work",
+    ]
+    if any(re.search(p, s) for p in remote_patterns):
         return "Remote"
+
+    # Title/location can still explicitly indicate hybrid or remote.
+    if re.search(r"\b(hybrid|telework)\b", loc):
+        return "Remote"
+
     return "On-Site"
 
 def workday(src):
