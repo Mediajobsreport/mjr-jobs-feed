@@ -1482,6 +1482,250 @@ def paylocity(src):
         return out
     return _paylocity_board_jobs(src)
 
+
+def _dayforce_candidates(src_url):
+    """Infer Dayforce tenant/company identifiers and career-site board code."""
+    u = urlparse(src_url)
+    host = (u.netloc or "").lower()
+    parts = [p for p in u.path.split("/") if p]
+
+    tenants = []
+    board = ""
+
+    # Legacy tenant hosts such as can241.dayforcehcm.com are often the API
+    # CompanyName even when the public career-site path contains another slug.
+    if host.endswith(".dayforcehcm.com"):
+        sub = host.split(".")[0]
+        if sub not in {"www", "jobs", "careers"}:
+            tenants.append(sub)
+
+    # New career URLs normally look like:
+    # /en-US/<tenant>/<board> or /<tenant>/<board>
+    locale_re = re.compile(r"^[a-z]{2}-[A-Z]{2}$")
+    for i, part in enumerate(parts):
+        if locale_re.match(part) and i + 1 < len(parts):
+            tenants.append(parts[i + 1])
+            if i + 2 < len(parts) and parts[i + 2].lower() != "site":
+                board = parts[i + 2]
+            break
+
+    # Older CandidatePortal form:
+    # /CandidatePortal/en-US/<tenant>/Site/<board>
+    for i, part in enumerate(parts):
+        if part.lower() == "candidateportal" and i + 2 < len(parts):
+            maybe_locale = parts[i + 1]
+            if locale_re.match(maybe_locale) and i + 2 < len(parts):
+                tenants.append(parts[i + 2])
+        if part.lower() == "site" and i + 1 < len(parts):
+            board = parts[i + 1]
+
+    # Common current form without a locale prefix.
+    if not tenants and len(parts) >= 2:
+        if parts[0].lower() not in {"candidateportal", "en-us", "fr-ca"}:
+            tenants.append(parts[0])
+            board = board or parts[1]
+
+    # Board code can usually be read from the last path segment.
+    if not board and parts:
+        tail = parts[-1]
+        if tail.lower() not in {"candidateportal", "jobs", "site"}:
+            board = tail
+
+    ded = []
+    for t in tenants:
+        t = clean(t)
+        if t and t.lower() not in {x.lower() for x in ded}:
+            ded.append(t)
+    return ded, clean(board)
+
+
+def _dayforce_payload_rows(r):
+    """Parse Dayforce JobFeeds JSON or XML response into dictionaries."""
+    ctype = (r.headers.get("Content-Type") or "").lower()
+    text = r.text or ""
+
+    if "json" in ctype or text.lstrip().startswith(("[", "{")):
+        data = r.json()
+        if isinstance(data, list):
+            return [x for x in data if isinstance(x, dict)]
+        if isinstance(data, dict):
+            for key in ("JobPostings", "jobPostings", "Jobs", "jobs", "Items", "items"):
+                v = data.get(key)
+                if isinstance(v, list):
+                    return [x for x in v if isinstance(x, dict)]
+            return [data] if data else []
+
+    rows = []
+    try:
+        root = ET.fromstring(text)
+    except Exception:
+        return rows
+
+    # Dayforce XML feeds have historically used JobPosting elements, with or
+    # without namespaces. Convert each element's direct children to a dict.
+    for elem in root.iter():
+        tag = elem.tag.split("}")[-1].lower()
+        if tag not in {"jobposting", "job", "item"}:
+            continue
+        row = {}
+        for child in list(elem):
+            k = child.tag.split("}")[-1]
+            row[k] = "".join(child.itertext()).strip()
+        if row:
+            rows.append(row)
+    return rows
+
+
+def _dayforce_get(d, *names):
+    if not isinstance(d, dict):
+        return ""
+    lower = {str(k).lower(): v for k, v in d.items()}
+    for n in names:
+        v = lower.get(n.lower())
+        if v not in (None, ""):
+            return v
+    return ""
+
+
+def _dayforce_jobtype(title, item):
+    raw = clean(str(_dayforce_get(
+        item, "EmploymentIndicator", "EmploymentType", "JobType", "PayClass", "PayType"
+    )))
+    s = f" {title} {raw} ".lower()
+    if "intern" in s:
+        return "Internship"
+    if re.search(r"\bpart[- ]?time\b", s):
+        return "Part Time"
+    if re.search(r"\b(temp|temporary|seasonal)\b", s):
+        return "Temporary"
+    if re.search(r"\b(contract|contractor)\b", s):
+        return "Contract"
+    return "Full Time"
+
+
+def dayforce(src):
+    """Dedicated Dayforce collector using its anonymous external JobFeeds API."""
+    tenants, board = _dayforce_candidates(src["URL"])
+    if not tenants:
+        raise RuntimeError("Dayforce tenant not inferable")
+
+    rows = []
+    last_error = None
+    used_tenant = ""
+
+    # Official Dayforce external job-board feed. Try inferred tenant candidates
+    # because legacy branded URLs can expose both a host tenant and site slug.
+    for tenant in tenants:
+        endpoint = f"https://www.dayforcehcm.com/api/{tenant}/V1/JobFeeds"
+        param_sets = []
+        if board:
+            param_sets.append({
+                "includeActivePostingOnly": "true",
+                "internalJobBoardCode": board,
+            })
+        param_sets.append({"includeActivePostingOnly": "true"})
+
+        for params in param_sets:
+            try:
+                r = req(
+                    "GET",
+                    endpoint,
+                    params=params,
+                    headers={"Accept": "application/json, application/xml, text/xml;q=0.9"},
+                )
+                candidate_rows = _dayforce_payload_rows(r)
+                if candidate_rows:
+                    rows = candidate_rows
+                    used_tenant = tenant
+                    break
+            except Exception as e:
+                last_error = e
+                continue
+        if rows:
+            break
+
+    # If the external feed is disabled for a customer, preserve the existing
+    # structured HTML/JSON-LD fallback rather than aborting the source.
+    if not rows:
+        try:
+            fallback = ats_html(src)
+            if fallback:
+                return fallback
+        except Exception:
+            pass
+        if last_error:
+            return []
+        return []
+
+    out = []
+    seen = set()
+    for item in rows:
+        pd = pdate(_dayforce_get(item, "DatePosted", "PostedDate", "DateCreated", "LastUpdated"))
+        if not pd or pd < CUTOFF:
+            continue
+
+        title = clean(str(_dayforce_get(item, "Title", "JobTitle")))
+        if not title:
+            continue
+
+        desc_raw = str(_dayforce_get(item, "Description", "JobDescription", "PostingDescription"))
+        desc = strip_html(desc_raw)
+        if len(desc) < 80:
+            continue
+
+        city = clean(str(_dayforce_get(item, "City")))
+        state = clean(str(_dayforce_get(item, "State", "StateProvince")))
+        country = clean(str(_dayforce_get(item, "Country")))
+        postal = clean(str(_dayforce_get(item, "PostalCode", "ZipCode")))
+        loc = ", ".join(x for x in [city, state] if x)
+        if not loc:
+            loc = clean(str(_dayforce_get(item, "Location", "LocationName")))
+
+        details_url = clean(str(_dayforce_get(item, "JobDetailsUrl", "JobDetailUrl", "DisplayUrl")))
+        apply_url = clean(str(_dayforce_get(item, "ApplyUrl", "ApplicationUrl")))
+
+        # Never emit the localhost placeholder shown in Dayforce's sample data.
+        url = details_url if details_url and "localhost" not in details_url.lower() else apply_url
+        if not url:
+            continue
+        if url.startswith("/"):
+            url = urljoin(src["URL"], url)
+
+        jid = clean(str(_dayforce_get(
+            item, "ReferenceNumber", "JobPostingId", "JobId", "RequisitionId", "ParentRequisitionCode"
+        )))
+        if not jid:
+            m = re.search(r"(?i)(?:jobId=|/Posting/View/|/jobs?/)([A-Za-z0-9_-]+)", url)
+            jid = m.group(1) if m else hashlib.sha1(url.encode()).hexdigest()[:16]
+
+        ded_key = (jid, url)
+        if ded_key in seen:
+            continue
+        seen.add(ded_key)
+
+        jt = _dayforce_jobtype(title, item)
+        country_out = country or infer_country(loc, src["Company"], desc)
+
+        out.append(Job(
+            jid,
+            title,
+            src["Company"],
+            desc,
+            pd,
+            jt,
+            category(title, desc, src["Industry"], src["Company"]),
+            url,
+            src["URL"],
+            src["URL"],
+            "",
+            normalize_work_arrangement(desc, loc),
+            city or loc,
+            state,
+            country_out,
+        ))
+
+    return out
+
 def _jsonld_jobs(soup):
     """Return JobPosting JSON-LD objects found on a detail page."""
     found = []
@@ -2152,6 +2396,8 @@ def main():
                 if "paylocity" in a
                 else adp(s)
                 if "adp" in a
+                else dayforce(s)
+                if "dayforce" in a
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
