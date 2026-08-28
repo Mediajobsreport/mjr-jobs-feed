@@ -965,6 +965,369 @@ def greenhouse(src):
     return out
 
 
+
+def _jsonld_jobs(soup):
+    """Return JobPosting JSON-LD objects found on a detail page."""
+    found = []
+    for tag in soup.find_all("script", attrs={"type": re.compile(r"ld\+json", re.I)}):
+        raw = tag.string or tag.get_text() or ""
+        if not raw.strip():
+            continue
+        try:
+            data = json.loads(raw)
+        except Exception:
+            continue
+
+        stack = data if isinstance(data, list) else [data]
+        while stack:
+            obj = stack.pop()
+            if isinstance(obj, list):
+                stack.extend(obj)
+                continue
+            if not isinstance(obj, dict):
+                continue
+            graph = obj.get("@graph")
+            if isinstance(graph, list):
+                stack.extend(graph)
+            typ = obj.get("@type")
+            types = typ if isinstance(typ, list) else [typ]
+            if any(str(x).lower() == "jobposting" for x in types if x):
+                found.append(obj)
+    return found
+
+
+def _location_from_jsonld(jp):
+    locs = jp.get("jobLocation") or []
+    if isinstance(locs, dict):
+        locs = [locs]
+    parts = []
+    for loc in locs:
+        if not isinstance(loc, dict):
+            continue
+        addr = loc.get("address") or {}
+        if not isinstance(addr, dict):
+            continue
+        bits = [
+            clean(addr.get("addressLocality")),
+            clean(addr.get("addressRegion")),
+            clean(addr.get("addressCountry")),
+        ]
+        val = ", ".join(x for x in bits if x)
+        if val:
+            parts.append(val)
+    if parts:
+        return " / ".join(dict.fromkeys(parts))
+
+    applicant = jp.get("applicantLocationRequirements")
+    if isinstance(applicant, dict):
+        applicant = [applicant]
+    if isinstance(applicant, list):
+        vals = []
+        for x in applicant:
+            if isinstance(x, dict):
+                vals.append(clean(x.get("name")))
+        vals = [x for x in vals if x]
+        if vals:
+            return " / ".join(vals)
+    return ""
+
+
+def _employment_text(jp):
+    et = jp.get("employmentType") or ""
+    if isinstance(et, list):
+        et = " ".join(str(x) for x in et)
+    return clean(str(et))
+
+
+def _job_from_detail(src, url, html_text):
+    """Parse a detail page, preferring schema.org JobPosting."""
+    soup = BeautifulSoup(html_text, "html.parser")
+    json_jobs = _jsonld_jobs(soup)
+
+    if json_jobs:
+        jp = json_jobs[0]
+        title = clean(jp.get("title") or "")
+        desc_html = jp.get("description") or ""
+        desc = strip_html(desc_html)
+        pd = pdate(jp.get("datePosted"))
+        valid_through = pdate(jp.get("validThrough"))
+        loc = _location_from_jsonld(jp)
+        canonical = clean(jp.get("url") or "")
+        apply_url = canonical if canonical.startswith("http") else url
+        ident = jp.get("identifier") or {}
+        jid = ""
+        if isinstance(ident, dict):
+            jid = clean(str(ident.get("value") or ident.get("name") or ""))
+        elif ident:
+            jid = clean(str(ident))
+
+        if not title:
+            h1 = soup.find("h1")
+            title = clean(h1.get_text(" ") if h1 else "")
+        if not desc:
+            main = soup.find("main") or soup.find("article") or soup
+            desc = clean(main.get_text(" "))
+
+        if pd and pd >= CUTOFF and title and len(desc) >= 200:
+            return Job(
+                jid or hashlib.sha1(apply_url.encode()).hexdigest()[:16],
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, _employment_text(jp)),
+                category(title, desc, src["Industry"], src["Company"]),
+                apply_url,
+                src["URL"],
+                src["URL"],
+                "",
+                normalize_work_arrangement(desc, loc),
+                loc,
+                "",
+                infer_country(loc, src["Company"], desc),
+                valid_through,
+            )
+
+    # HTML fallback for ATS pages that do not expose JSON-LD.
+    txt = clean(soup.get_text(" "))
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else (soup.title.get_text(" ") if soup.title else ""))
+
+    date_patterns = [
+        r"(?:date posted|posted date|posted|posting date|published)\s*:?\s*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|"
+        r"\d{4}-\d{2}-\d{2}|\d+\s+days?\s+ago)",
+    ]
+    pd = None
+    for pat in date_patterns:
+        m = re.search(pat, txt, re.I)
+        if m:
+            pd = pdate(m.group(1))
+            if pd:
+                break
+    if not pd or pd < CUTOFF:
+        return None
+
+    main = (
+        soup.find("main")
+        or soup.find("article")
+        or soup.find(attrs={"class": re.compile(r"(job.?description|job.?detail|posting)", re.I)})
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if not title or len(desc) < 200:
+        return None
+
+    return Job(
+        hashlib.sha1(url.encode()).hexdigest()[:16],
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]),
+        url,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, txt),
+        "",
+        "",
+        infer_country(txt, src["Company"], desc),
+    )
+
+
+ATS_JOB_HINTS = {
+    "paylocity": [
+        r"/recruiting/jobs/details/\d+",
+        r"/recruiting/jobs/Details/\d+",
+    ],
+    "icims": [
+        r"/jobs/\d+/",
+        r"/jobs/\d+$",
+    ],
+    "jazzhr": [
+        r"/apply/[A-Za-z0-9_-]+/",
+        r"/apply/[A-Za-z0-9_-]+$",
+    ],
+    "applytojob": [
+        r"/apply/[A-Za-z0-9_-]+/",
+        r"/apply/[A-Za-z0-9_-]+$",
+    ],
+    "dayforce": [
+        r"/job/",
+        r"/jobs/",
+    ],
+    "ukg": [
+        r"/JobBoard/.+?/OpportunityDetail\?opportunityId=",
+        r"/JobBoard/.+?/JobDetail/",
+        r"/job/",
+    ],
+    "ultipro": [
+        r"/JobBoard/.+?/OpportunityDetail\?opportunityId=",
+        r"/JobBoard/.+?/JobDetail/",
+        r"/job/",
+    ],
+    "adp": [
+        r"/cx/job-details",
+        r"/job-details",
+        r"[?&]r=\d+",
+    ],
+    "oracle": [
+        r"/job/",
+        r"/jobs/",
+        r"/requisitions/",
+    ],
+    "taleo": [
+        r"jobdetail",
+        r"job=",
+        r"/job/",
+    ],
+    "breezy": [
+        r"/p/[A-Za-z0-9_-]+/",
+        r"/p/[A-Za-z0-9_-]+$",
+    ],
+    "paycom": [
+        r"/jobs/\d+",
+        r"jobid=\d+",
+        r"job=\d+",
+    ],
+    "rippling": [
+        r"/jobs/",
+        r"/job/",
+    ],
+    "jobscore": [
+        r"/jobs/",
+        r"/job/",
+    ],
+    "paycor": [
+        r"career/JobIntroduction\.action",
+        r"jobId=",
+        r"/job/",
+    ],
+    "isolved": [
+        r"/jobs/\d+",
+        r"/job/",
+    ],
+    "betterteam": [
+        r"/jobs/",
+        r"/job/",
+    ],
+}
+
+
+def _ats_family(src):
+    a = clean(src.get("ATS", "")).lower()
+    u = clean(src.get("URL", "")).lower()
+    joined = a + " " + u
+    if "paylocity" in joined:
+        return "paylocity"
+    if "icims" in joined:
+        return "icims"
+    if "applytojob" in joined or "jazzhr" in joined:
+        return "jazzhr"
+    if "dayforce" in joined:
+        return "dayforce"
+    if "ultipro" in joined or "ukg" in joined:
+        return "ukg"
+    if "adp" in joined:
+        return "adp"
+    if "oracle" in joined:
+        return "oracle"
+    if "taleo" in joined:
+        return "taleo"
+    if "breezy" in joined:
+        return "breezy"
+    if "paycom" in joined:
+        return "paycom"
+    if "rippling" in joined:
+        return "rippling"
+    if "jobscore" in joined:
+        return "jobscore"
+    if "paycor" in joined:
+        return "paycor"
+    if "isolved" in joined:
+        return "isolved"
+    if "betterteam" in joined:
+        return "betterteam"
+    return ""
+
+
+def ats_html(src):
+    """
+    Multi-ATS HTML/schema.org adapter.
+
+    This intentionally targets public career pages and canonical job-detail
+    pages only. It does not invent apply URLs. ATS-specific link patterns
+    enumerate detail pages, then schema.org JobPosting is used when available.
+    """
+    family = _ats_family(src)
+    patterns = ATS_JOB_HINTS.get(family, [])
+    if not patterns:
+        return generic(src)
+
+    start = src["URL"]
+    queue = [start]
+    seen_pages = set()
+    job_links = set()
+
+    # Follow a small number of listing/pagination pages. This captures ATS pages
+    # that paginate server-side without turning the crawler into a site spider.
+    while queue and len(seen_pages) < 25 and len(job_links) < 1500:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        r = req("GET", page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            if urlparse(h).netloc != urlparse(start).netloc:
+                continue
+
+            low = h.lower()
+            if any(re.search(pat, h, re.I) for pat in patterns):
+                job_links.add(h)
+                continue
+
+            label = clean(a.get_text(" ")).lower()
+            if (
+                re.search(r"\b(next|more jobs|load more)\b", label)
+                or re.search(r"[?&](page|p|start|offset)=\d+", low)
+                or re.search(r"/page/\d+", low)
+            ):
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        # Some ATS platforms expose canonical job URLs inside scripts rather
+        # than anchors. Pull only same-host URLs matching the family patterns.
+        raw = r.text.replace("\\/", "/")
+        for m in re.finditer(r'https?://[^"\'<>\s]+', raw):
+            h = html.unescape(m.group(0)).rstrip("\\")
+            if urlparse(h).netloc == urlparse(start).netloc and any(
+                re.search(pat, h, re.I) for pat in patterns
+            ):
+                job_links.add(h)
+
+    # A supplied source may itself be an individual job detail URL.
+    if any(re.search(pat, start, re.I) for pat in patterns):
+        job_links.add(start)
+
+    out = []
+    for url in list(job_links)[:1500]:
+        try:
+            rr = req("GET", url)
+            j = _job_from_detail(src, url, rr.text)
+            if j:
+                out.append(j)
+        except Exception:
+            continue
+
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -1199,6 +1562,8 @@ def main():
                 if "workday" in a
                 else greenhouse(s)
                 if "greenhouse" in a
+                else ats_html(s)
+                if _ats_family(s)
                 else generic(s)
             )
 
