@@ -3839,6 +3839,247 @@ def isolved(src):
 
     return out
 
+
+BATCH_DIRECT_COMPANIES = {
+    "rogers sports & media",
+    "cumulus media",
+    "bmi",
+    "associated press (ap)",
+    "christian music broadcasters (cmb)",
+}
+
+
+def _direct_board_date(raw):
+    """Find only explicit job posting dates from public job pages."""
+    s = html.unescape(raw or "").replace("\\/", "/")
+    patterns = [
+        r"(?:Date Posted|Posted Date|Posted|Posting Date)\s*:?\s*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+        r"(?:Date Posted|Posted Date|Posted|Posting Date)\s*:?\s*"
+        r"(\d{1,2}/\d{1,2}/20\d{2})",
+        r"(?:Date Posted|Posted Date|Posted|Posting Date)\s*:?\s*"
+        r"(20\d{2}-\d{2}-\d{2})",
+        r'["\']datePosted["\']\s*:\s*["\']([^"\']+)["\']',
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, s, re.I):
+            d = pdate(strip_html(m.group(1)))
+            if d:
+                return d
+    return None
+
+
+def _direct_board_candidate_links(base_url, raw):
+    """Extract likely individual job URLs from anchors and embedded state."""
+    soup = BeautifulSoup(raw or "", "html.parser")
+    base_host = urlparse(base_url).netloc.lower().replace("www.", "")
+    out = set()
+
+    job_patterns = (
+        r"/job/", r"/jobs/", r"/job-detail", r"/jobdetails",
+        r"/career-opportunity/", r"/positions?/", r"/opportunity/",
+        r"/job-openings?/", r"/careers/jobs/",
+    )
+
+    for a in soup.find_all("a", href=True):
+        h = urljoin(base_url, a["href"])
+        p = urlparse(h)
+        host = p.netloc.lower().replace("www.", "")
+        if not host:
+            continue
+
+        # Allow same employer host and known recruiting hosts linked from it.
+        same = host == base_host
+        known = any(x in host for x in (
+            "successfactors.com",
+            "phenompeople.com",
+            "eightfold.ai",
+            "icims.com",
+            "workdayjobs.com",
+            "careerwebsite.com",
+            "jobtarget.com",
+        ))
+        if not (same or known):
+            continue
+
+        if any(re.search(pat, h, re.I) for pat in job_patterns):
+            out.add(h.split("#", 1)[0])
+
+    # Embedded/hydrated URLs.
+    raw2 = html.unescape(raw or "").replace("\\/", "/")
+    for m in re.finditer(r'https?://[^"\'<>\s]+', raw2):
+        h = m.group(0).rstrip(".,);")
+        hp = urlparse(h)
+        host = hp.netloc.lower().replace("www.", "")
+        if not host:
+            continue
+        if (
+            host == base_host
+            or any(x in host for x in (
+                "successfactors.com", "phenompeople.com", "eightfold.ai",
+                "icims.com", "workdayjobs.com", "careerwebsite.com",
+                "jobtarget.com",
+            ))
+        ):
+            if any(re.search(pat, h, re.I) for pat in job_patterns):
+                out.add(h.split("#", 1)[0])
+
+    return out
+
+
+def _direct_board_job(src, url, raw):
+    # Structured JobPosting is the cleanest source.
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+
+    soup = BeautifulSoup(raw, "html.parser")
+    txt = clean(soup.get_text(" "))
+
+    pd = _direct_board_date(raw)
+    if not pd or pd < CUTOFF:
+        return None
+
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        for node in soup.find_all(["h2", "h3"]):
+            cand = clean(node.get_text(" "))
+            if 3 <= len(cand) <= 180:
+                title = cand
+                break
+    if not title:
+        return None
+
+    main = (
+        soup.find("main")
+        or soup.find("article")
+        or soup.find(attrs={"class": re.compile(
+            r"(job.?description|job.?detail|posting.?description|entry-content)",
+            re.I,
+        )})
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 250:
+        return None
+
+    loc = ""
+    for pat in (
+        r"(?:Job Location|Location)\s*:?\s*"
+        r"([A-Za-z0-9 .,'/\-&]+?)(?=\s+(?:Job Type|Employment Type|Category|Department|Posted|Apply|$))",
+        r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
+    ):
+        m = re.search(pat, txt)
+        if m:
+            loc = clean(m.group(1))
+            break
+
+    canonical = url.split("#", 1)[0]
+    jid = hashlib.sha1(canonical.encode()).hexdigest()[:16]
+
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or txt),
+        loc,
+        "",
+        infer_country(loc or txt, src["Company"], desc),
+    )
+
+
+def batch_direct_board(src):
+    """Safe multi-employer direct-board collector for v15.
+
+    It crawls only a bounded set of public listing/detail pages. Any bad page
+    is skipped, so one employer cannot reintroduce feed-wide errors.
+    """
+    starts = [src["URL"]]
+
+    # Known alternate public listing URLs for the five v15 targets.
+    company = clean(src.get("Company", "")).lower()
+    extras = {
+        "rogers sports & media": [
+            "https://jobs.rogers.com/go/Rogers-Sports-and-Media/8824500/",
+        ],
+        "cumulus media": [
+            "https://jobs.cumulusmedia.com/jobs",
+        ],
+        "bmi": [
+            "https://careers.bmi.com/jobs/",
+        ],
+        "associated press (ap)": [
+            "https://careers.ap.org/go/View-All-Jobs/4304700/",
+        ],
+        "christian music broadcasters (cmb)": [
+            "https://cmbonline.org/jobs/",
+        ],
+    }
+    starts.extend(extras.get(company, []))
+    starts = list(dict.fromkeys(starts))
+
+    queue = list(starts)
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < 60 and len(details) < 1500:
+        page = queue.pop(0)
+        if page.rstrip("/") in seen_pages:
+            continue
+        seen_pages.add(page.rstrip("/"))
+
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+
+        final_url = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        candidates = _direct_board_candidate_links(final_url, r.text)
+
+        for h in candidates:
+            # Avoid looping on the listing root itself.
+            if h.rstrip("/") == final_url.rstrip("/"):
+                continue
+            details.add(h)
+
+        # Follow only obvious pagination/list navigation on the same host.
+        for a in soup.find_all("a", href=True):
+            label = clean(a.get_text(" ")).lower()
+            href = urljoin(final_url, a["href"])
+            if label in {"next", "next page", "older", "more jobs", "view more"} or re.search(
+                r"(?:page|start|offset)=\d+", href, re.I
+            ):
+                if urlparse(href).netloc.lower() == urlparse(final_url).netloc.lower():
+                    if href.rstrip("/") not in seen_pages:
+                        queue.append(href)
+
+    out = []
+    seen_ids = set()
+
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            final_url = str(getattr(rr, "url", "") or url)
+            j = _direct_board_job(src, final_url, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -4106,6 +4347,8 @@ def main():
                 if clean(s.get("Company", "")).lower() == "connoisseur media"
                 else isolved(s)
                 if "isolved" in a or "ourcareerpages" in s.get("URL", "").lower()
+                else batch_direct_board(s)
+                if clean(s.get("Company", "")).lower() in BATCH_DIRECT_COMPANIES
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
