@@ -73,7 +73,7 @@ Dotdash Meredith / People Inc,Workday,https://meredith.wd5.myworkdayjobs.com/EXT
 Gannett / USA TODAY Co.,Dayforce,https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=,ok,26,
 Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,ok,17,
 Lee Enterprises,Dayforce,https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL,zero_or_not_enumerable,0,
-McClatchy,Company Career Site,https://mcclatchy.com/careers,zero_or_not_enumerable,0,
+McClatchy,Company Career Site,https://mcclatchy.com/careers,error,0,"ConnectTimeout(MaxRetryError(""HTTPSConnectionPool(host='mcclatchy.com', port=443): Max retries exceeded with url: /careers (Caused by ConnectTimeoutError(<HTTPSConnection(host='mcclatchy.com', port=443) at 0x7f10d0431450>, 'Connection to mcclatchy.com timed out. (connect timeout=30)'))""))"
 New York Post,Workday,https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers,ok,44,
 NPR,Greenhouse,https://job-boards.greenhouse.io/nationalpublicradioinc,ok,9,
 Tampa Bay Times Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=8c64d493-1027-445e-9378-39c4e859f2b6&ccId=19000101_000001&lang=en_US,ok,1,
