@@ -167,7 +167,47 @@ def category(title, desc, industry, company):
         return "Internships"
 
     # ------------------------------------------------------------------
-    # 2) BUSINESS OFFICE / ADMIN / FINANCE / HR / LEGAL / SCHEDULING
+    # 2) SALES / MARKETING / PROMOTIONS / REVENUE
+    # Sales-function titles must resolve before generic coordinator/admin rules.
+    # Handles both "Sales Coordinator" and ATS-style "Coordinator, Sales" titles.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"account executive|account manager|account coordinator|"
+        r"sales executive|sales manager|sales director|sales assistant|"
+        r"sales representative|sales consultant|sales coordinator|"
+        r"physical sales coordinator|media consultant|marketing consultant|"
+        r"advertising consultant|advertising coordinator|ad sales coordinator|"
+        r"media sales|advertising sales|digital sales|local sales|national sales|"
+        r"business development|business development coordinator|"
+        r"revenue manager|revenue director|revenue operations|revenue coordinator|"
+        r"marketing manager|marketing director|marketing coordinator|"
+        r"marketing specialist|marketing assistant|brand marketing|brand manager|"
+        r"brand ambassador|promotions assistant|promotions coordinator|"
+        r"promotions manager|promotion coordinator|promotion manager|"
+        r"event marketing|event marketing coordinator|field marketing|"
+        r"affiliate sales|partnership sales|partnerships coordinator|"
+        r"sponsorship sales|sponsorship manager|sponsorship coordinator|"
+        r"client services|client services coordinator|client success|"
+        r"customer success|customer success coordinator"
+        r")\b",
+        t,
+    ):
+        return "Sales & Marketing"
+
+    # ATS titles frequently put "Coordinator" first, followed by the function.
+    if re.search(
+        r"\bcoordinator\s*,?\s*("
+        r"sales|physical sales|marketing|digital marketing|advertising|"
+        r"business development|revenue|promotions?|sponsorships?|"
+        r"partnerships?|client services|customer success|account"
+        r")\b",
+        t,
+    ):
+        return "Sales & Marketing"
+
+    # ------------------------------------------------------------------
+    # 3) BUSINESS OFFICE / ADMIN / FINANCE / HR / LEGAL / SCHEDULING
     # ------------------------------------------------------------------
     if re.search(
         r"\b("
@@ -190,7 +230,7 @@ def category(title, desc, industry, company):
         return "Business Office"
 
     # ------------------------------------------------------------------
-    # 3) ENGINEERING / TECHNICAL / BROADCAST SYSTEMS
+    # 4) ENGINEERING / TECHNICAL / BROADCAST SYSTEMS
     # ------------------------------------------------------------------
     if re.search(
         r"\b("
@@ -226,7 +266,7 @@ def category(title, desc, industry, company):
         return "Engineering"
 
     # ------------------------------------------------------------------
-    # 4) PUBLIC RELATIONS / CORPORATE COMMUNICATIONS
+    # 5) PUBLIC RELATIONS / CORPORATE COMMUNICATIONS
     # ------------------------------------------------------------------
     if re.search(
         r"\b("
@@ -239,28 +279,6 @@ def category(title, desc, industry, company):
         t,
     ):
         return "Public Relations"
-
-    # ------------------------------------------------------------------
-    # 5) SALES / MARKETING / PROMOTIONS / REVENUE
-    # ------------------------------------------------------------------
-    if re.search(
-        r"\b("
-        r"account executive|account manager|sales executive|sales manager|"
-        r"sales director|sales assistant|sales representative|sales consultant|"
-        r"media consultant|marketing consultant|advertising consultant|"
-        r"media sales|advertising sales|digital sales|local sales|national sales|"
-        r"business development|revenue manager|revenue director|revenue operations|"
-        r"marketing manager|marketing director|marketing coordinator|"
-        r"marketing specialist|marketing assistant|brand marketing|brand manager|"
-        r"brand ambassador|promotions assistant|promotions coordinator|"
-        r"promotions manager|promotion coordinator|promotion manager|"
-        r"event marketing|field marketing|affiliate sales|partnership sales|"
-        r"sponsorship sales|sponsorship manager|sponsorship coordinator|"
-        r"client services|client success|customer success"
-        r")\b",
-        t,
-    ):
-        return "Sales & Marketing"
 
     # ------------------------------------------------------------------
     # 6) DIGITAL / SOFTWARE / DATA / AI / PRODUCT / ARCHITECTURE
