@@ -2280,7 +2280,26 @@ def icims(src):
             continue
         seen_pages.add(page)
 
-        r = req("GET", page)
+        try:
+            r = req("GET", page)
+        except Exception:
+            # A broken iSolved board must not create a crawler-wide error.
+            continue
+
+        final_url = str(getattr(r, "url", "") or page)
+        final_host = urlparse(final_url).netloc.lower()
+        final_path = urlparse(final_url).path.lower()
+
+        # Some retired/public iSolved boards redirect crawlers to the admin
+        # portal or /Help. Those destinations are not job boards and should be
+        # treated as non-enumerable rather than followed or surfaced as errors.
+        if (
+            "admin.isolvedhire.com" in final_host
+            or final_path.startswith("/help")
+            or "/help/" in final_path
+        ):
+            continue
+
         soup = BeautifulSoup(r.text, "html.parser")
 
         for a in soup.find_all("a", href=True):
@@ -3774,6 +3793,13 @@ def isolved(src):
                 continue
 
             # Follow listing/pagination links on same platform.
+            hp2 = urlparse(h)
+            if (
+                "admin.isolvedhire.com" in hp2.netloc.lower()
+                or hp2.path.lower().startswith("/help")
+                or "/help/" in hp2.path.lower()
+            ):
+                continue
             if h.rstrip("/") not in seen_pages:
                 queue.append(h)
 
@@ -3782,7 +3808,13 @@ def isolved(src):
         for h in _listing_next_links(page, soup):
             hp = urlparse(h)
             host = hp.netloc.lower()
-            if ("ourcareerpages.com" in host or "isolvedhire.com" in host) and h.rstrip("/") not in seen_pages:
+            if (
+                ("ourcareerpages.com" in host or "isolvedhire.com" in host)
+                and "admin.isolvedhire.com" not in host
+                and not hp.path.lower().startswith("/help")
+                and "/help/" not in hp.path.lower()
+                and h.rstrip("/") not in seen_pages
+            ):
                 queue.append(h)
 
     out = []
@@ -3790,7 +3822,15 @@ def isolved(src):
     for url in sorted(details):
         try:
             rr = req("GET", url)
-            j = _isolved_detail(src, url, rr.text)
+            final_url = str(getattr(rr, "url", "") or url)
+            fu = urlparse(final_url)
+            if (
+                "admin.isolvedhire.com" in fu.netloc.lower()
+                or fu.path.lower().startswith("/help")
+                or "/help/" in fu.path.lower()
+            ):
+                continue
+            j = _isolved_detail(src, final_url, rr.text)
             if j and j.id not in seen_ids:
                 seen_ids.add(j.id)
                 out.append(j)
