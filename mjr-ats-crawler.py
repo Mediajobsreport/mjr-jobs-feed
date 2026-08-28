@@ -163,7 +163,7 @@ def category(title, desc, industry, company):
     # ------------------------------------------------------------------
     # 1) INTERNSHIPS
     # ------------------------------------------------------------------
-    if re.search(r"\b(intern|internship|trainee program|summer trainee)\b", t):
+    if re.search(r"\b(intern|internship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
         return "Internships"
 
     # ------------------------------------------------------------------
@@ -175,12 +175,14 @@ def category(title, desc, industry, company):
         r"\b("
         r"account executive|account manager|account coordinator|"
         r"sales executive|sales manager|sales director|sales assistant|"
-        r"sales representative|sales consultant|sales coordinator|"
+        r"sales representative|sales consultant|sales coordinator|sales development representative|"
+        r"sales operations analyst|head of ad sales|podcast ad sales|paid media partnerships|advertising operations|ad product commercialization|"
         r"physical sales coordinator|media consultant|marketing consultant|"
         r"advertising consultant|advertising coordinator|ad sales coordinator|"
         r"media sales|advertising sales|digital sales|local sales|national sales|"
         r"business development|business development coordinator|"
         r"revenue manager|revenue director|revenue operations|revenue coordinator|"
+        r"marketing|growth marketing|performance marketing|product marketing|"
         r"marketing manager|marketing director|marketing coordinator|"
         r"marketing specialist|marketing assistant|brand marketing|brand manager|"
         r"brand ambassador|promotions assistant|promotions coordinator|"
@@ -189,7 +191,8 @@ def category(title, desc, industry, company):
         r"affiliate sales|partnership sales|partnerships coordinator|"
         r"sponsorship sales|sponsorship manager|sponsorship coordinator|"
         r"client services|client services coordinator|client success|"
-        r"customer success|customer success coordinator"
+        r"customer success|customer success coordinator|digital client partner|"
+        r"visual sales lead|gerente comercial ventas|accounts executive"
         r")\b",
         t,
     ):
@@ -218,7 +221,7 @@ def category(title, desc, industry, company):
         r"administrative assistant|administrative coordinator|administrator|"
         r"executive assistant|office assistant|office coordinator|office manager|"
         r"legal|attorney|counsel|paralegal|business affairs|contracts|compliance|"
-        r"procurement|purchasing|facilities|receptionist|billing|credit|collections|"
+        r"procurement|purchasing|facilities|receptionist|billing|credit|collections|audit,? risk|risk and advisory|"
         r"traffic coordinator|traffic assistant|traffic specialist|"
         r"operations coordinator|business operations|"
         r"assignment coordinator|assignment co-ordinator|"
@@ -237,7 +240,7 @@ def category(title, desc, industry, company):
         r"broadcast engineer|chief engineer|maintenance engineer|"
         r"systems engineer|network engineer|rf engineer|audio engineer|video engineer|"
         r"studio engineer|field engineer|transmission engineer|"
-        r"broadcast technician|studio technician|maintenance technician|"
+        r"broadcast technician|studio technician|maintenance technician|maintenance tech|audio technician|broadcast audio|"
         r"technical maintenance|technical director|technical operations|"
         r"master control|master control operator|transmission|transmitter|"
         r"information technology|it engineer|it technician|it support|"
@@ -270,7 +273,7 @@ def category(title, desc, industry, company):
     # ------------------------------------------------------------------
     if re.search(
         r"\b("
-        r"public relations|publicist|media relations|press relations|"
+        r"public relations|publicist|publicity|media relations|press relations|"
         r"corporate communications|communications manager|communications director|"
         r"communications specialist|communications coordinator|"
         r"communications officer|public affairs|press secretary|"
@@ -295,11 +298,17 @@ def category(title, desc, industry, company):
         r"backend engineer|back-end engineer|full stack engineer|full-stack engineer|"
         r"mobile engineer|web engineer|devops|site reliability|sre|"
         r"product manager|product owner|digital product|technology product|"
-        r"ux|ui|user experience|user interface|web developer|application developer"
+        r"ux|ui|user experience|user interface|web developer|application developer|"
+        r"cybersecurity|app security|mobile software engineering|digital programming|youtube programming|"
+        r"digital insights|digital business|label analytics|crm manager|digital analyst|video partnerships|youtube"
         r")\b",
         t,
     ):
         return "Digital"
+
+    # Exact newsroom photography title; avoids treating product photography as news.
+    if t == "photographer":
+        return "Journalism"
 
     # ------------------------------------------------------------------
     # 7) JOURNALISM / NEWS / EDITORIAL
@@ -315,7 +324,7 @@ def category(title, desc, industry, company):
         r"news writer|newsroom editor|news director|digital journalist|"
         r"breaking news|photojournalist|news photographer|sports reporter|"
         r"sports anchor|weather anchor|meteorologist|weather reporter|"
-        r"fact checker|fact-checker"
+        r"fact checker|fact-checker|contributing editor|photo editor|editorial page assistant editor|senior editor"
         r")\b",
         t,
     ):
@@ -332,7 +341,7 @@ def category(title, desc, industry, company):
         r"morning host|morning show host|afternoon host|midday host|night host|"
         r"music director|radio program director|assistant program director|"
         r"radio producer|radio news host|radio news anchor|"
-        r"traffic reporter|play[- ]by[- ]play|sports talk host|"
+        r"traffic reporter|traffic anchor|traffic producer|update anchor|part[- ]time talent|play[- ]by[- ]play|sports talk host|"
         r"disc jockey|radio dj|radio presenter"
         r")\b",
         t,
