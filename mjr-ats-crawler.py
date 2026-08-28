@@ -3444,6 +3444,162 @@ def federated_media(src):
 
     return out
 
+
+def connoisseur_media(src):
+    """Direct collector for Connoisseur Media's current WordPress careers site.
+
+    The employer now publishes openings at /career-opportunity/ with individual
+    /career-opportunity/{slug}/ detail/application pages. These pages are the
+    canonical application destinations, so do not route applicants through an
+    obsolete third-party ATS URL.
+    """
+    listing_urls = [
+        "https://connoisseurmedia.com/career-opportunity/",
+        "https://connoisseurmedia.com/careers/",
+    ]
+
+    detail_urls = set()
+
+    for listing_url in listing_urls:
+        try:
+            r = req("GET", listing_url)
+            soup = BeautifulSoup(r.text, "html.parser")
+
+            for a in soup.find_all("a", href=True):
+                h = urljoin(listing_url, a["href"])
+                hp = urlparse(h)
+                if hp.netloc.lower().replace("www.", "") != "connoisseurmedia.com":
+                    continue
+                path = hp.path.rstrip("/") + "/"
+                if path.startswith("/career-opportunity/") and path != "/career-opportunity/":
+                    detail_urls.add(h.split("#", 1)[0])
+
+            # WordPress/script state can contain cards not rendered as anchors.
+            raw = html.unescape(r.text or "").replace("\\/", "/")
+            for m in re.finditer(
+                r'https?://(?:www\.)?connoisseurmedia\.com/career-opportunity/[^"\'<>\s?#]+/?',
+                raw,
+                re.I,
+            ):
+                h = m.group(0)
+                if h.rstrip("/") != "https://connoisseurmedia.com/career-opportunity":
+                    detail_urls.add(h)
+        except Exception:
+            continue
+
+    out = []
+    seen = set()
+
+    for url in sorted(detail_urls):
+        try:
+            rr = req("GET", url)
+            soup = BeautifulSoup(rr.text, "html.parser")
+            txt = clean(soup.get_text(" "))
+
+            h1 = soup.find("h1")
+            title = clean(h1.get_text(" ") if h1 else "")
+            if not title:
+                continue
+
+            # Do not infer a posting date from unrelated page/news timestamps.
+            # First prefer JobPosting JSON-LD if the employer publishes one.
+            schema_job = _job_from_detail(src, url, rr.text)
+            if schema_job:
+                if schema_job.date >= CUTOFF and schema_job.url not in seen:
+                    seen.add(schema_job.url)
+                    out.append(schema_job)
+                continue
+
+            pd = None
+
+            # Look only for explicit job-posting date labels in visible text.
+            patterns = [
+                r"(?:Date Posted|Posted Date|Posted)\s*:?\s*"
+                r"([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+                r"(?:Date Posted|Posted Date|Posted)\s*:?\s*"
+                r"(\d{1,2}/\d{1,2}/20\d{2})",
+                r"(?:Date Posted|Posted Date|Posted)\s*:?\s*"
+                r"(20\d{2}-\d{2}-\d{2})",
+            ]
+            for pat in patterns:
+                m = re.search(pat, txt, re.I)
+                if m:
+                    pd = pdate(m.group(1))
+                    if pd:
+                        break
+
+            # WordPress may expose the actual publish date in article metadata.
+            # Accept it only when this is clearly a career-opportunity post.
+            if not pd:
+                for meta in soup.find_all("meta"):
+                    prop = (meta.get("property") or meta.get("name") or "").lower()
+                    if prop in {
+                        "article:published_time",
+                        "date",
+                        "datepublished",
+                    }:
+                        d = pdate(meta.get("content") or "")
+                        if d:
+                            pd = d
+                            break
+
+            if not pd or pd < CUTOFF:
+                continue
+
+            # Prefer the central content area and strip application boilerplate
+            # only by choosing the article/main container, not by truncating text.
+            main = (
+                soup.find("main")
+                or soup.find("article")
+                or soup.find(attrs={"class": re.compile(r"(entry-content|post-content|job-content)", re.I)})
+                or soup
+            )
+            desc = clean(main.get_text(" "))
+            if len(desc) < 250:
+                continue
+
+            # Infer location only from explicit location labels when available.
+            loc = ""
+            for pat in (
+                r"(?:Job Location|Location)\s*:?\s*([A-Za-z0-9 .,'/\-&]+?)(?=\s+(?:Job Type|Employment Type|Category|Apply|Description)\b|$)",
+                r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
+            ):
+                m = re.search(pat, txt)
+                if m:
+                    loc = clean(m.group(1))
+                    break
+
+            # The page itself contains "Apply for this position", so the detail
+            # URL is also the live application URL.
+            canonical = url.split("#", 1)[0]
+            jid = hashlib.sha1(canonical.encode()).hexdigest()[:16]
+
+            out.append(
+                Job(
+                    jid,
+                    title,
+                    src["Company"],
+                    desc,
+                    pd,
+                    jobtype(title, txt),
+                    category(title, desc, src["Industry"], src["Company"]),
+                    canonical,
+                    canonical,
+                    "https://connoisseurmedia.com/",
+                    "",
+                    normalize_work_arrangement(desc, loc or txt),
+                    loc,
+                    "",
+                    infer_country(loc or txt, src["Company"], desc),
+                )
+            )
+            seen.add(canonical)
+
+        except Exception:
+            continue
+
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -3707,6 +3863,8 @@ def main():
                 if "paycom" in a
                 else federated_media(s)
                 if clean(s.get("Company", "")).lower() == "federated media"
+                else connoisseur_media(s)
+                if clean(s.get("Company", "")).lower() == "connoisseur media"
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
