@@ -167,6 +167,64 @@ def category(title, desc, industry, company):
         return "Internships"
 
     # ------------------------------------------------------------------
+    # 2) ENGINEERING / IT / SOFTWARE / PROGRAMMING / TECHNICAL SYSTEMS
+    #
+    # MJR rule: software engineering, computer programming/development, IT,
+    # infrastructure, systems, networking, cybersecurity, technical support,
+    # data engineering and broadcast engineering all belong in Engineering.
+    # This block intentionally runs before Sales, Business Office and Digital.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"software engineer|software engineering|software developer|software development|"
+        r"application developer|applications developer|web developer|frontend developer|"
+        r"front-end developer|backend developer|back-end developer|full stack developer|"
+        r"full-stack developer|mobile developer|computer programmer|software programmer|programmer|"
+        r"developer advocate|development engineer|qa engineer|quality assurance engineer|"
+        r"data engineer|data scientist|machine learning engineer|ml engineer|ai engineer|"
+        r"devops|site reliability|site reliability engineer|sre|"
+        r"cybersecurity|cyber security|information security|application security|app security|"
+        r"security engineer|security analyst|security architect|security operations|soc analyst|"
+        r"cloud engineer|cloud architect|cloud infrastructure|"
+        r"solutions architect|solution architect|software architect|platform architect|"
+        r"enterprise architect|data architect|technical architect|systems architect|"
+        r"information technology|information systems|\bit manager\b|\bit director\b|"
+        r"it engineer|it technician|it support|desktop support|help desk|service desk|"
+        r"systems engineer|system engineer|systems administrator|system administrator|"
+        r"network engineer|network administrator|network operations|networking engineer|"
+        r"infrastructure engineer|infrastructure manager|infrastructure architect|"
+        r"database administrator|database engineer|dba|"
+        r"salesforce developer|salesforce administrator|salesforce admin|salesforce engineer|"
+        r"salesforce business analyst|business systems analyst|systems analyst|technical analyst|"
+        r"broadcast engineer|chief engineer|maintenance engineer|rf engineer|audio engineer|"
+        r"video engineer|studio engineer|field engineer|transmission engineer|"
+        r"broadcast technician|studio technician|maintenance technician|maintenance tech|"
+        r"audio technician|broadcast audio|technical maintenance|technical director|"
+        r"technical operations|master control|master control operator|transmission|transmitter|"
+        r"systems technician|av technician|audiovisual technician|electronics technician"
+        r")\b",
+        t,
+    ):
+        return "Engineering"
+
+    # Any engineer/engineering title is Engineering under MJR's category rules.
+    if re.search(r"\bengineer(?:ing)?\b", t):
+        return "Engineering"
+
+    # Vague IT/technical titles can use a small amount of description context.
+    if re.search(r"\b(technician|analyst|administrator|architect|specialist|manager|director)\b", t) and re.search(
+        r"\b("
+        r"information technology|information systems|software development|software engineering|"
+        r"computer programming|network infrastructure|networking|cybersecurity|cyber security|"
+        r"cloud infrastructure|systems administration|technical support|help desk|service desk|"
+        r"broadcast systems|broadcasting systems|production systems|transmitter|transmission|"
+        r"database administration|application development|systems engineering"
+        r")\b",
+        d_short,
+    ):
+        return "Engineering"
+
+    # ------------------------------------------------------------------
     # 2) SALES / MARKETING / PROMOTIONS / REVENUE
     # Sales-function titles must resolve before generic coordinator/admin rules.
     # Handles both "Sales Coordinator" and ATS-style "Coordinator, Sales" titles.
@@ -233,40 +291,8 @@ def category(title, desc, industry, company):
         return "Business Office"
 
     # ------------------------------------------------------------------
-    # 4) ENGINEERING / TECHNICAL / BROADCAST SYSTEMS
+    # Engineering/IT classification is handled above before Sales/Business Office.
     # ------------------------------------------------------------------
-    if re.search(
-        r"\b("
-        r"broadcast engineer|chief engineer|maintenance engineer|"
-        r"systems engineer|network engineer|rf engineer|audio engineer|video engineer|"
-        r"studio engineer|field engineer|transmission engineer|"
-        r"broadcast technician|studio technician|maintenance technician|maintenance tech|audio technician|broadcast audio|"
-        r"technical maintenance|technical director|technical operations|"
-        r"master control|master control operator|transmission|transmitter|"
-        r"information technology|it engineer|it technician|it support|"
-        r"network administrator|systems administrator|systems technician|"
-        r"av technician|audiovisual technician|electronics technician"
-        r")\b",
-        t,
-    ):
-        return "Engineering"
-
-    # Generic "engineer" titles are engineering unless clearly software/product.
-    if re.search(r"\bengineer\b", t) and not re.search(
-        r"\b(software|data|machine learning|ai|web|mobile|product)\b", t
-    ):
-        return "Engineering"
-
-    # Vague maintenance/technician title + explicit broadcast/production-system work.
-    if re.search(r"\b(maintenance|technician)\b", t) and re.search(
-        r"\b("
-        r"broadcasting systems?|broadcast systems?|production systems?|"
-        r"studio equipment|transmitter|transmission|networking|electronics|"
-        r"audiovisual|telecommunications|technical infrastructure"
-        r")\b",
-        d_short,
-    ):
-        return "Engineering"
 
     # ------------------------------------------------------------------
     # 5) PUBLIC RELATIONS / CORPORATE COMMUNICATIONS
@@ -284,23 +310,17 @@ def category(title, desc, industry, company):
         return "Public Relations"
 
     # ------------------------------------------------------------------
-    # 6) DIGITAL / SOFTWARE / DATA / AI / PRODUCT / ARCHITECTURE
-    # Technology titles should be resolved before description-based journalism
-    # fallbacks, especially at media companies where boilerplate mentions news.
+    # 6) DIGITAL / PRODUCT / UX / DIGITAL CONTENT
+    #
+    # Technical IT, software, computer programming, cybersecurity, systems
+    # and engineering roles are handled above as Engineering.
     # ------------------------------------------------------------------
     if re.search(
         r"\b("
-        r"ai architect|ai lead architect|artificial intelligence|machine learning|"
-        r"software architect|platform architect|solutions architect|solution architect|"
-        r"enterprise architect|cloud architect|data architect|technical architect|"
-        r"software engineer|software developer|data engineer|data scientist|"
-        r"machine learning engineer|frontend engineer|front-end engineer|"
-        r"backend engineer|back-end engineer|full stack engineer|full-stack engineer|"
-        r"mobile engineer|web engineer|devops|site reliability|sre|"
         r"product manager|product owner|digital product|technology product|"
-        r"ux|ui|user experience|user interface|web developer|application developer|"
-        r"cybersecurity|app security|mobile software engineering|digital programming|youtube programming|"
-        r"digital insights|digital business|label analytics|crm manager|digital analyst|video partnerships|youtube"
+        r"ux|ui|user experience|user interface|"
+        r"digital programming|youtube programming|digital insights|digital business|"
+        r"label analytics|crm manager|digital analyst|video partnerships|youtube"
         r")\b",
         t,
     ):
@@ -310,7 +330,6 @@ def category(title, desc, industry, company):
     if t == "photographer":
         return "Journalism"
 
-    # ------------------------------------------------------------------
     # 7) JOURNALISM / NEWS / EDITORIAL
     # Place Journalism before platform production so photojournalists,
     # assignment editors, managing editors, etc. do not become Television.
