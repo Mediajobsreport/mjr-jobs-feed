@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
-from urllib.parse import urljoin, urlparse
+from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -966,6 +966,237 @@ def greenhouse(src):
 
 
 
+
+def _deep_values(obj, keys):
+    """Yield values for matching dict keys anywhere in a JSON-like object."""
+    wanted = {k.lower() for k in keys}
+    stack = [obj]
+    while stack:
+        cur = stack.pop()
+        if isinstance(cur, dict):
+            for k, v in cur.items():
+                if str(k).lower() in wanted:
+                    yield v
+                if isinstance(v, (dict, list)):
+                    stack.append(v)
+        elif isinstance(cur, list):
+            stack.extend(cur)
+
+
+def _first_deep(obj, keys, default=""):
+    for v in _deep_values(obj, keys):
+        if v not in (None, "", [], {}):
+            if isinstance(v, dict):
+                # ADP frequently wraps text in codeValue/shortName/longName.
+                for k in ("longName", "shortName", "codeValue", "name", "value"):
+                    if v.get(k) not in (None, ""):
+                        return v.get(k)
+            if not isinstance(v, (dict, list)):
+                return v
+    return default
+
+
+def _adp_location(obj):
+    """Best-effort public ADP location extraction."""
+    locs = []
+    for v in _deep_values(obj, {"requisitionLocations", "locations", "jobLocations"}):
+        if not isinstance(v, list):
+            continue
+        for loc in v:
+            if not isinstance(loc, dict):
+                continue
+            parts = []
+            # Common ADP public API structures include nameCode and address.
+            nc = loc.get("nameCode")
+            if isinstance(nc, dict):
+                parts.append(clean(nc.get("longName") or nc.get("shortName") or nc.get("codeValue") or ""))
+            elif nc:
+                parts.append(clean(str(nc)))
+            for k in ("name", "locationName", "shortName"):
+                if loc.get(k):
+                    parts.append(clean(str(loc[k])))
+            addr = loc.get("address") or loc.get("physicalAddress")
+            if isinstance(addr, dict):
+                for k in ("cityName", "city", "stateProvinceName", "stateProvinceCode", "countryName", "countryCode"):
+                    if addr.get(k):
+                        val = addr[k]
+                        if isinstance(val, dict):
+                            val = val.get("codeValue") or val.get("shortName") or val.get("longName") or ""
+                        parts.append(clean(str(val)))
+            text = ", ".join(dict.fromkeys(x for x in parts if x))
+            if text:
+                locs.append(text)
+    if locs:
+        return " / ".join(dict.fromkeys(locs))
+
+    # Fallbacks used by some public career-center payload variants.
+    return clean(str(_first_deep(obj, {
+        "location", "locationName", "workLocation", "requisitionLocation",
+        "formattedAddress", "addressLineOne"
+    }, "")))
+
+
+def _adp_description(obj):
+    candidates = []
+    for v in _deep_values(obj, {
+        "requisitionDescription", "jobDescription", "description",
+        "requisitionDescriptionText", "jobDescriptionText",
+        "postingDescription", "externalDescription"
+    }):
+        if isinstance(v, str):
+            t = strip_html(v)
+            if len(t) > len(candidates[0]) if candidates else True:
+                candidates.insert(0, t)
+        elif isinstance(v, dict):
+            for k in ("longName", "shortName", "codeValue", "text", "value"):
+                if isinstance(v.get(k), str):
+                    t = strip_html(v[k])
+                    if t:
+                        candidates.append(t)
+    return max(candidates, key=len, default="")
+
+
+def _adp_apply_url(src_url, job_id, detail=None):
+    """Create a public ADP job-specific career-center URL without inventing a host."""
+    u = urlparse(src_url)
+    q = parse_qs(u.query, keep_blank_values=True)
+    q["jobId"] = [str(job_id)]
+    # Keep the external career-center identity already supplied by the employer.
+    q.setdefault("ccId", ["19000101_000001"])
+    q.setdefault("lang", ["en_US"])
+    q.setdefault("type", ["JS"])
+
+    # Some ADP payloads expose a job-worker/career-center posting id. Preserve it
+    # when available because ADP often emits it as jwId on canonical detail URLs.
+    if detail:
+        jw = _first_deep(detail, {"jwId", "jobWorkerID", "jobWorkerId", "jobPostingID", "jobPostingId"}, "")
+        if jw:
+            q["jwId"] = [str(jw)]
+
+    query = urlencode([(k, x) for k, vals in q.items() for x in vals])
+    # Always point at ADP's public recruitment shell for the same tenant path.
+    path = u.path
+    if "/mdf/recruitment/" not in path:
+        path = "/mascsr/default/mdf/recruitment/recruitment.html"
+    return urlunparse((u.scheme or "https", u.netloc or "workforcenow.adp.com", path, "", query, ""))
+
+
+def adp(src):
+    """Dedicated ADP Workforce Now public career-center collector.
+
+    ADP's public recruitment UI is JavaScript-rendered, but the career center
+    exposes public staffing/v1/job-requisitions endpoints keyed by the `cid`
+    already present in employer career URLs. This collector enumerates those
+    requisitions, fetches details, and emits job-specific public apply URLs.
+    """
+    u = urlparse(src["URL"])
+    qs = parse_qs(u.query)
+    cid = clean((qs.get("cid") or [""])[0])
+    if not cid:
+        # myjobs.adp.com and branded ADP pages occasionally carry the career
+        # center id in initial application state rather than the URL.
+        landing = req("GET", src["URL"])
+        text = html.unescape(landing.text or "").replace("\\/", "/")
+        m = re.search(r'(?i)["\']?cid["\']?\s*[:=]\s*["\']([0-9a-f-]{20,})', text)
+        if not m:
+            m = re.search(r'(?i)[?&]cid=([0-9a-f-]{20,})', text)
+        if m:
+            cid = m.group(1)
+    if not cid:
+        raise RuntimeError("ADP career-center cid not inferable")
+
+    # Workforce Now public endpoint. The endpoint is public and distinct from
+    # ADP's authenticated developer APIs used for internal HR integrations.
+    api_host = "https://workforcenow.adp.com"
+    base = api_host + "/mascsr/default/careercenter/public/events/staffing/v1/job-requisitions"
+    out = []
+    skip = 1
+    top = 20
+    seen_ids = set()
+
+    while skip <= 5000:
+        payload = req("GET", base, params={"cid": cid, "$skip": skip, "$top": top}).json()
+        posts = payload.get("jobRequisitions") or payload.get("requisitions") or []
+        if not posts:
+            break
+
+        new_count = 0
+        for p in posts:
+            if not isinstance(p, dict):
+                continue
+            jid = clean(str(p.get("itemID") or p.get("jobId") or p.get("clientRequisitionID") or ""))
+            if not jid or jid in seen_ids:
+                continue
+            seen_ids.add(jid)
+            new_count += 1
+
+            pd = pdate(p.get("postDate") or p.get("postingDate") or p.get("datePosted") or _first_deep(p, {"postDate", "postingDate", "datePosted"}, ""))
+            # Fetching old details is unnecessary and materially slows the feed.
+            if pd and pd < CUTOFF:
+                continue
+
+            try:
+                detail = req("GET", f"{base}/{jid}", params={"cid": cid}).json()
+            except Exception:
+                detail = p
+
+            pd = pd or pdate(_first_deep(detail, {"postDate", "postingDate", "datePosted", "postedDate"}, ""))
+            if not pd or pd < CUTOFF:
+                continue
+
+            title = clean(str(
+                p.get("requisitionTitle")
+                or p.get("title")
+                or _first_deep(detail, {"requisitionTitle", "jobTitle", "title"}, "")
+            ))
+            if not title:
+                continue
+
+            desc = _adp_description(detail)
+            if len(desc) < 200:
+                # Some detail variants keep the richer text in the list payload.
+                desc = max(desc, _adp_description(p), key=len)
+            if len(desc) < 200:
+                continue
+
+            loc = _adp_location(detail) or _adp_location(p)
+            work_level = clean(str(
+                _first_deep(detail, {"workLevelCode", "employmentType", "workerType", "timeType"}, "")
+                or _first_deep(p, {"workLevelCode", "employmentType", "workerType", "timeType"}, "")
+            ))
+            url = _adp_apply_url(src["URL"], jid, detail)
+
+            out.append(Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, work_level),
+                category(title, desc, src["Industry"], src["Company"]),
+                url,
+                src["URL"],
+                src["URL"],
+                "",
+                normalize_work_arrangement(desc, loc),
+                loc,
+                "",
+                infer_country(loc, src["Company"], desc),
+            ))
+
+        total = payload.get("meta", {}).get("totalNumber") if isinstance(payload.get("meta"), dict) else None
+        if total is not None:
+            try:
+                if skip - 1 + len(posts) >= int(total):
+                    break
+            except Exception:
+                pass
+        if len(posts) < top or new_count == 0:
+            break
+        skip += len(posts)
+
+    return out
+
 def _jsonld_jobs(soup):
     """Return JobPosting JSON-LD objects found on a detail page."""
     found = []
@@ -1632,6 +1863,8 @@ def main():
                 if "workday" in a
                 else greenhouse(s)
                 if "greenhouse" in a
+                else adp(s)
+                if "adp" in a
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
