@@ -2229,6 +2229,252 @@ def icims(src):
             continue
     return out
 
+
+def _ukg_parts(url):
+    """Return (base, tenant, board) for a public UKG/UltiPro Recruiting board."""
+    p = urlparse(url)
+    m = re.search(
+        r"^/([^/]+)/JobBoard/([0-9a-f-]{36})(?:/|$)",
+        p.path,
+        re.I,
+    )
+    if not m:
+        return None
+    base = f"{p.scheme or 'https'}://{p.netloc}"
+    return base, m.group(1), m.group(2)
+
+
+def _ukg_posted_date(raw, soup=None):
+    """Extract UKG's explicit Posted date; never substitute Updated."""
+    s = html.unescape(raw or "").replace("\\/", "/")
+    patterns = [
+        r"Opportunity\.OpportunityDetail\.PostedLabel\s*:?\s*"
+        r"(?:</?[^>]+>\s*)*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+        r"(?:Posted|Date Posted|Posted Date)\s*:?\s*"
+        r"(?:</?[^>]+>\s*)*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})",
+        r'["\'](?:postedDate|datePosted|postingDate)["\']\s*:\s*["\']([^"\']+)["\']',
+    ]
+    for pat in patterns:
+        m = re.search(pat, s, re.I)
+        if m:
+            d = pdate(strip_html(m.group(1)))
+            if d:
+                return d
+
+    if soup:
+        # Some tenants render the resource key as a label followed by a sibling.
+        for node in soup.find_all(string=re.compile(r"PostedLabel|Date Posted|Posted Date", re.I)):
+            parent = node.parent
+            if not parent:
+                continue
+            candidates = []
+            if parent.next_sibling:
+                candidates.append(str(parent.next_sibling))
+            if parent.parent:
+                candidates.append(parent.parent.get_text(" "))
+            for val in candidates:
+                m = re.search(
+                    r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})",
+                    clean(val),
+                    re.I,
+                )
+                if m:
+                    d = pdate(m.group(1))
+                    if d:
+                        return d
+    return None
+
+
+def _ukg_location(text):
+    """Best-effort location from UKG's Locations block."""
+    t = clean(text)
+    # Prefer a conventional city/state pair from the location block.
+    m = re.search(r"\b([A-Za-z .'\-]+),\s*([A-Z]{2})\s+\d{5}(?:-\d{4})?\b", t)
+    if m:
+        return clean(f"{m.group(1)}, {m.group(2)}")
+    m = re.search(r"\b([A-Za-z .'\-]+),\s*([A-Z]{2})\b", t)
+    if m:
+        return clean(f"{m.group(1)}, {m.group(2)}")
+    if re.search(r"\bRemote\b", t, re.I):
+        return "Remote"
+    if re.search(r"\bNationwide\b", t, re.I):
+        return "Nationwide"
+    return ""
+
+
+def _ukg_detail(src, url, raw):
+    """Parse one public UKG Pro Recruiting OpportunityDetail page."""
+    soup = BeautifulSoup(raw, "html.parser")
+    pd = _ukg_posted_date(raw, soup)
+    if not pd or pd < CUTOFF:
+        return None
+
+    # UKG detail pages put the actual title in H1.
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        title_node = soup.find(attrs={"class": re.compile(r"(job.?title|opportunity.?title|title)", re.I)})
+        title = clean(title_node.get_text(" ") if title_node else "")
+    if not title or "pagetitle" in title.lower():
+        # Resource-key templates sometimes leave the H1 untranslated in raw HTML.
+        m = re.search(r'<h1[^>]*>\s*([^<]{3,200})\s*</h1>', raw, re.I | re.S)
+        title = clean(strip_html(m.group(1))) if m else title
+    if not title or "pagetitle" in title.lower():
+        return None
+
+    full_text = clean(soup.get_text(" "))
+
+    # Requisition number is stable and preferable to the opportunity GUID.
+    jid = ""
+    m = re.search(
+        r"Opportunity\.Opportunities\.RequisitionNumber\s*:?\s*"
+        r"([A-Z0-9_-]{4,})",
+        full_text,
+        re.I,
+    )
+    if m:
+        jid = clean(m.group(1))
+    if not jid:
+        q = parse_qs(urlparse(url).query)
+        jid = clean((q.get("opportunityId") or [""])[0])
+    if not jid:
+        jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+
+    # Description is usually under JobDetails/Description; use the relevant
+    # content container when identifiable and otherwise the main page.
+    main = (
+        soup.find(attrs={"class": re.compile(r"(opportunity.?detail|job.?details|job.?description)", re.I)})
+        or soup.find(id=re.compile(r"(opportunity.?detail|job.?details|job.?description)", re.I))
+        or soup.find("main")
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 200:
+        return None
+
+    # Pull location from the Locations block when possible, then fall back.
+    loc_text = ""
+    loc_key = soup.find(string=re.compile(r"CompanyInformation\.Locations|Job Locations?", re.I))
+    if loc_key and loc_key.parent and loc_key.parent.parent:
+        loc_text = clean(loc_key.parent.parent.get_text(" "))
+    loc = _ukg_location(loc_text or full_text)
+
+    jt_context = full_text
+    canonical = url.split("#", 1)[0]
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, jt_context),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or jt_context),
+        loc,
+        "",
+        infer_country(loc or jt_context, src["Company"], desc),
+    )
+
+
+def ukg(src):
+    """Dedicated UKG Pro Recruiting / UltiPro public-board collector.
+
+    Public UKG boards use:
+      /{tenant}/JobBoard/{board-guid}/OpportunityDetail?opportunityId={guid}
+
+    The listing is JavaScript-heavy, but the opportunity URLs are exposed in
+    anchors/application state on public board pages. Enumerate those URLs,
+    follow listing pagination/search links, then parse each real detail page.
+    """
+    parts = _ukg_parts(src["URL"])
+    if not parts:
+        return ats_html(src)
+
+    base, tenant, board = parts
+    board_root = f"{base}/{tenant}/JobBoard/{board}"
+    start = board_root + "/?q=&o=postedDateDesc&w=&wc=&we=&wpst="
+
+    queue = [start]
+    seen_pages = set()
+    detail_urls = set()
+
+    detail_pat = (
+        rf"/{re.escape(tenant)}/JobBoard/{re.escape(board)}/"
+        r"OpportunityDetail\?[^\"'<>\s]*opportunityId=[0-9a-f-]{36}"
+    )
+
+    while queue and len(seen_pages) < 80 and len(detail_urls) < 4000:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        r = req("GET", page)
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # Visible anchors.
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            hp = urlparse(h)
+            if hp.netloc.lower() != urlparse(base).netloc.lower():
+                continue
+            if "opportunitydetail" in hp.path.lower():
+                q = parse_qs(hp.query)
+                oid = clean((q.get("opportunityId") or [""])[0])
+                if re.fullmatch(r"[0-9a-f-]{36}", oid, re.I):
+                    detail_urls.add(h.split("#", 1)[0])
+                    continue
+
+            # Follow UKG board-page controls/pagination while staying on this board.
+            if hp.path.rstrip("/").lower() == urlparse(board_root).path.rstrip("/").lower():
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        # Hydrated state/scripts can contain escaped OpportunityDetail URLs.
+        for m in re.finditer(detail_pat, raw, re.I):
+            detail_urls.add(urljoin(base, m.group(0)))
+
+        # Also recover bare opportunity IDs paired with this board in embedded JSON.
+        for m in re.finditer(
+            r'["\'](?:opportunityId|OpportunityId)["\']\s*:\s*["\']([0-9a-f-]{36})["\']',
+            raw,
+            re.I,
+        ):
+            oid = m.group(1)
+            detail_urls.add(f"{board_root}/OpportunityDetail?opportunityId={oid}")
+
+        # Generic next/pagination controls, limited to the same board.
+        for h in _listing_next_links(page, soup):
+            hp = urlparse(h)
+            if (
+                hp.netloc.lower() == urlparse(base).netloc.lower()
+                and hp.path.rstrip("/").lower() == urlparse(board_root).path.rstrip("/").lower()
+                and h.rstrip("/") not in seen_pages
+            ):
+                queue.append(h)
+
+    out = []
+    seen_ids = set()
+    for url in sorted(detail_urls):
+        try:
+            rr = req("GET", url)
+            j = _ukg_detail(src, url, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            # One stale/closed opportunity should never abort the employer.
+            continue
+    return out
+
 def ats_html(src):
     """Enhanced multi-ATS public-page adapter.
 
@@ -2565,6 +2811,8 @@ def main():
                 if "dayforce" in a
                 else icims(s)
                 if "icims" in a
+                else ukg(s)
+                if "ukg" in a or "ultipro" in a
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
