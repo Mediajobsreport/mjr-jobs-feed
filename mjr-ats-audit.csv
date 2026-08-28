@@ -1,6 +1,6 @@
 company,ats,url,status,jobs_collected,error
 Audacy,iCIMS,https://careers-audacy.icims.com/jobs/search?ss=1,zero_or_not_enumerable,0,
-Beasley Media Group,ApplyToJob,https://beasleymediagroup.applytojob.com/apply/,zero_or_not_enumerable,0,
+Beasley Media Group,ApplyToJob,https://beasleymediagroup.applytojob.com/apply/,ok,1,
 Bonneville,Workday,https://deseretmanagement.wd1.myworkdayjobs.com/BonSaltLake,ok,3,
 CBC/Radio-Canada,Workday,https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/,ok,40,
 Dick Broadcasting,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/da27c45a-0c7a-4cbe-a575-3444d884e49b/Dick-Broadcasting-Company-Inc,zero_or_not_enumerable,0,
@@ -12,7 +12,7 @@ Salem Media Group,iCIMS,https://careers-salemmedia.icims.com/jobs/search?ss=1&se
 Urban One,ADP,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=ec7ee775-68fd-42a7-89a5-d8e1ff330cbf&ccId=19000101_000002&type=MP&locale=en_US,zero_or_not_enumerable,0,
 Gray Media,UKG Pro,https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/?q=&o=postedDateDesc,zero_or_not_enumerable,0,
 Hearst,Oracle,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_6/jobs,zero_or_not_enumerable,0,
-Morgan Murphy Media,Breezy,https://morgan-murphy-media.breezy.hr/,zero_or_not_enumerable,0,
+Morgan Murphy Media,Breezy,https://morgan-murphy-media.breezy.hr/,ok,2,
 Nexstar,Workday,https://nexstar.wd5.myworkdayjobs.com/nexstar,ok,40,
 NFL,Greenhouse,https://job-boards.greenhouse.io/nflcareers,ok,58,
 QVC,Workday,https://qvc.wd5.myworkdayjobs.com/QRG,ok,40,
@@ -28,8 +28,8 @@ Lee Enterprises,Dayforce,https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDI
 New York Post,Workday,https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers,ok,43,
 NPR,Greenhouse,https://job-boards.greenhouse.io/nationalpublicradioinc,ok,9,
 ASCAP,JobScore,https://careers.jobscore.com/careers/ascap,zero_or_not_enumerable,0,
-ONErpm,Rippling,https://onerpm.rippling-ats.com/,zero_or_not_enumerable,0,
+ONErpm,Rippling,https://onerpm.rippling-ats.com/,ok,2,
 Sony Music Entertainment,Greenhouse,https://job-boards.greenhouse.io/sonymusicentertainment,ok,149,
 Universal Music Group,Workday,https://umusic.wd5.myworkdayjobs.com/UMGUS/,ok,87,
-Warner Music Group,Workday,https://wmg.wd1.myworkdayjobs.com/WMGUS/jobs,ok,28,
+Warner Music Group,Workday,https://wmg.wd1.myworkdayjobs.com/WMGUS/jobs,ok,29,
 PBS,Workday,https://vhr-pbs.wd115.myworkdayjobs.com/PBSCareers,error,0,HTTPError('422 Client Error: Unprocessable Entity for url: https://vhr-pbs.wd115.myworkdayjobs.com/wday/cxs/vhr-pbs/PBSCareers/jobs')
