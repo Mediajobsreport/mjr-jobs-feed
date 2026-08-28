@@ -198,6 +198,7 @@ def category(title, desc, industry, company):
         r"database administrator|database engineer|dba|"
         r"salesforce developer|salesforce administrator|salesforce admin|salesforce engineer|"
         r"salesforce business analyst|business systems analyst|systems analyst|technical analyst|"
+        r"technology innovation|agile technical coach|agile delivery lead|"
         r"broadcast engineer|chief engineer|maintenance engineer|rf engineer|audio engineer|"
         r"video engineer|studio engineer|field engineer|transmission engineer|"
         r"broadcast technician|studio technician|maintenance technician|maintenance tech|"
@@ -214,13 +215,15 @@ def category(title, desc, industry, company):
         return "Engineering"
 
     # Vague IT/technical titles can use a small amount of description context.
-    if re.search(r"\b(technician|analyst|administrator|architect|specialist|manager|director)\b", t) and re.search(
+    if re.search(r"\b(technician|analyst|administrator|architect|specialist|manager|director|scrum master|agile coach)\b", t) and re.search(
         r"\b("
         r"information technology|information systems|software development|software engineering|"
         r"computer programming|network infrastructure|networking|cybersecurity|cyber security|"
         r"cloud infrastructure|systems administration|technical support|help desk|service desk|"
         r"broadcast systems|broadcasting systems|production systems|transmitter|transmission|"
-        r"database administration|application development|systems engineering"
+        r"database administration|application development|systems engineering|"
+        r"technology innovation|enterprise applications|technical architecture|"
+        r"cloud-native|cloud native|devops|kubernetes|terraform|software platforms?"
         r")\b",
         d_short,
     ):
@@ -294,6 +297,40 @@ def category(title, desc, industry, company):
     # ------------------------------------------------------------------
     # 3) BUSINESS OFFICE / ADMIN / FINANCE / HR / LEGAL / SCHEDULING
     # ------------------------------------------------------------------
+    # People/HR functions should never fall through to Journalism just because
+    # their descriptions discuss communications, engagement, or internal content.
+    if re.search(
+        r"\b("
+        r"organizational development|organisation development|employee engagement|"
+        r"people & culture|people and culture|total rewards|compensation and benefits|"
+        r"benefits manager|benefits specialist|hr specialist|human resources specialist|"
+        r"talent management|workforce planning|learning and development|learning & development"
+        r")\b",
+        t,
+    ):
+        return "Business Office"
+
+    # Physical/corporate security belongs in Business Office. Cyber/information
+    # security is already captured by the Engineering block above.
+    if re.search(
+        r"\b(security officer|security guard|corporate security|physical security|security supervisor)\b",
+        t,
+    ):
+        return "Business Office"
+
+    # Broadcast commercial traffic/continuity is a business-office function.
+    # Do not use the word 'traffic' alone: Traffic Anchor/Reporter is handled
+    # later as an on-air Radio role.
+    if re.search(
+        r"\b("
+        r"traffic assistant|traffic coordinator|traffic co-ordinator|traffic director|"
+        r"traffic specialist|continuity assistant|continuity coordinator|"
+        r"continuity co-ordinator|continuity director|continuity specialist"
+        r")\b",
+        t,
+    ):
+        return "Business Office"
+
     if re.search(
         r"\b("
         r"accountant|accounting|accounts payable|accounts receivable|"
@@ -304,7 +341,6 @@ def category(title, desc, industry, company):
         r"executive assistant|office assistant|office coordinator|office manager|"
         r"legal|attorney|counsel|paralegal|business affairs|contracts|compliance|"
         r"procurement|purchasing|facilities|receptionist|billing|credit|collections|audit,? risk|risk and advisory|"
-        r"traffic coordinator|traffic assistant|traffic specialist|"
         r"operations coordinator|business operations|"
         r"assignment coordinator|assignment co-ordinator|"
         r"scheduling coordinator|schedule coordinator|scheduler|"
@@ -349,6 +385,17 @@ def category(title, desc, industry, company):
         t,
     ):
         return "Digital"
+
+    # Traffic Anchor/Reporter is an on-air role and must resolve before the
+    # generic Journalism reporter rule. Use posting context to distinguish TV
+    # from radio; default to Radio when no television evidence is present.
+    if re.search(r"\b(traffic anchor|traffic reporter)\b", t):
+        if re.search(
+            r"\b(television|tv station|tv newscast|newscast|on camera|on-camera|video broadcast)\b",
+            d_short,
+        ):
+            return "Television"
+        return "Radio"
 
     # Exact newsroom photography title; avoids treating product photography as news.
     if t == "photographer":
@@ -436,7 +483,7 @@ def category(title, desc, industry, company):
     ):
         return "Digital"
 
-    # Software/data/product engineering is treated as Digital for MJR.
+    # Legacy safety net; software/data engineering should already resolve to Engineering above.
     if re.search(
         r"\b("
         r"software engineer|software developer|data engineer|data scientist|"
@@ -494,6 +541,7 @@ def category(title, desc, industry, company):
         r"accounts payable|accounts receivable|financial reporting|payroll|"
         r"human resources|talent acquisition|recruiting|administrative support|"
         r"weekly schedules?|staff scheduling|scheduling conflicts|"
+        r"commercial inventory|spot placement|commercial logs?|continuity|affidavits?|"
         r"contracts administration|legal services|procurement"
         r")\b",
         d_short,
