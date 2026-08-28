@@ -186,6 +186,8 @@ def category(title, desc, industry, company):
         r"cybersecurity|cyber security|information security|application security|app security|"
         r"security engineer|security analyst|security architect|security operations|soc analyst|"
         r"cloud engineer|cloud architect|cloud infrastructure|"
+        r"ai architect|ai lead architect|artificial intelligence architect|machine learning architect|"
+        r"technology architect|platform architect|software and platforms architecture|"
         r"solutions architect|solution architect|software architect|platform architect|"
         r"enterprise architect|data architect|technical architect|systems architect|"
         r"information technology|information systems|\bit manager\b|\bit director\b|"
@@ -226,6 +228,28 @@ def category(title, desc, industry, company):
 
     # ------------------------------------------------------------------
     # 2) SALES / MARKETING / PROMOTIONS / REVENUE
+
+    # Strong title-first Sales & Marketing rules.
+    # "Digital" does not override the core function when the job is sales,
+    # advertising, marketing, account management, partnerships or revenue.
+    if re.search(
+        r"\b("
+        r"digital sales|digital media sales|digital advertising sales|digital ad sales|"
+        r"digital sales consultant|digital sales manager|digital sales executive|"
+        r"digital marketing consultant|digital marketing manager|digital marketing coordinator|"
+        r"digital marketing specialist|digital marketing strategist|"
+        r"digital account executive|digital account manager|digital client partner|"
+        r"integrated marketing|integrated sales|media sales|advertising sales|ad sales|"
+        r"account executive|account manager|sales executive|sales manager|sales consultant|"
+        r"sales coordinator|account coordinator|business development|revenue|"
+        r"sponsorship sales|sponsorships|partnership sales|client partner|client services|"
+        r"customer success|brand marketing|performance marketing|paid media|"
+        r"advertising operations|ad operations|commercial sales|commercial partnerships"
+        r")\b",
+        t,
+    ):
+        return "Sales & Marketing"
+
     # Sales-function titles must resolve before generic coordinator/admin rules.
     # Handles both "Sales Coordinator" and ATS-style "Coordinator, Sales" titles.
     # ------------------------------------------------------------------
