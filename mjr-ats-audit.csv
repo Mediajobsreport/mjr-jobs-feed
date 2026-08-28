@@ -10,7 +10,7 @@ Educational Media Foundation,iCIMS,https://careers-kloveair1.icims.com/jobs/sear
 Good Karma Brands,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US,ok,4,
 Hope Media Group,Paylocity,https://recruiting.paylocity.com/Recruiting/Jobs/Details/3364897,zero_or_not_enumerable,0,
 Hubbard Broadcasting,ADP,https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing,error,0,RuntimeError('ADP career-center cid not inferable')
-iHeartMedia,Workday,https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/jobs,error,0,HTTPError('404 Client Error: Not Found for url: https://iheartmedia.wd5.myworkdayjobs.com/wday/cxs/iheartmedia/External_iHM/job/Outside-Account-Executive_Req37877-1')
+iHeartMedia,Workday,https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/jobs,ok,40,
 Meruelo Media,Oracle Taleo,https://phe.tbe.taleo.net/phe02/ats/careers/v2/searchResults?org=GRANDSIERRARESORT&cws=66,zero_or_not_enumerable,0,
 Norsan Media,Betterteam,https://norsanmedia.betterteam.com/,zero_or_not_enumerable,0,
 NRG Media,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/76da5c58-0cdb-4886-86b6-41d72879e541/NRG-MEDIA-LLC,zero_or_not_enumerable,0,
@@ -48,7 +48,7 @@ Hearst,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/Candida
 Morgan Murphy Media,Breezy HR,https://morgan-murphy-media.breezy.hr/,ok,2,
 Newsmax,UKG Pro,https://recruiting.ultipro.com/NEW1027/JobBoard/3d5ae180-49c4-20f7-d7b4-adfe940978a7/?q=&o=postedDateDesc,zero_or_not_enumerable,0,
 Nexstar,Workday,https://nexstar.wd5.myworkdayjobs.com/nexstar,ok,40,
-NFL,Greenhouse,https://job-boards.greenhouse.io/nflcareers?keyword=broadcast&offices%5B%5D=4003941008,ok,58,
+NFL,Greenhouse,https://job-boards.greenhouse.io/nflcareers?keyword=broadcast&offices%5B%5D=4003941008,ok,59,
 NPG,Company Career Site,https://www.npgco.com/careers/,zero_or_not_enumerable,0,
 PGA,Workday,https://pgahq.wd1.myworkdayjobs.com/PGAHQ,ok,3,
 QVC,Workday,https://qvc.wd5.myworkdayjobs.com/QRG,ok,40,
