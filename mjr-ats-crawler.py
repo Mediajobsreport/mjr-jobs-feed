@@ -1197,6 +1197,154 @@ def adp(src):
 
     return out
 
+
+def _paylocity_board_guid(src_url):
+    """Infer the Paylocity public job-feed GUID from a board/detail URL."""
+    m = re.search(
+        r"(?i)/recruiting/jobs/(?:all|list)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:/|$)",
+        src_url,
+    )
+    if m:
+        return m.group(1)
+
+    # Some master rows point at a single Details page. Paylocity commonly
+    # exposes the parent All/List board URL in the rendered HTML or script state.
+    landing = req("GET", src_url)
+    raw = html.unescape(landing.text or "").replace("\\/", "/")
+    patterns = [
+        r"(?i)/recruiting/jobs/(?:all|list)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:/|[?\"'])",
+        r"(?i)[\"'](?:guid|jobFeedGuid|jobBoardGuid|careerSiteGuid)[\"']\s*[:=]\s*[\"']([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+    ]
+    for pat in patterns:
+        m = re.search(pat, raw)
+        if m:
+            return m.group(1)
+    return ""
+
+
+def _paylocity_jobtype(title, item):
+    vals = item.get("jobTypesArray") or item.get("JobTypesArray") or []
+    if isinstance(vals, str):
+        vals = [vals]
+    joined = " ".join(str(x) for x in vals if x)
+    joined += " " + clean(str(item.get("jobTypes") or item.get("JobTypes") or ""))
+    return jobtype(title, joined)
+
+
+def paylocity(src):
+    """Dedicated Paylocity Recruiting public Job Feed V2 collector.
+
+    Paylocity documents a public published-jobs feed at:
+      /recruiting/v2/api/feed/jobs/{guid}
+
+    The GUID is normally the same GUID embedded in the employer's public
+    /Recruiting/Jobs/All/{guid}/... board URL. For source rows that currently
+    point at a single Details page, we first inspect that page for its parent
+    board GUID. V1 is retained as a compatibility fallback.
+    """
+    guid = _paylocity_board_guid(src["URL"])
+    if not guid:
+        raise RuntimeError("Paylocity job-feed GUID not inferable")
+
+    endpoints = [
+        f"https://recruiting.paylocity.com/recruiting/v2/api/feed/jobs/{guid}",
+        f"https://recruiting.paylocity.com/recruiting/api/feed/jobs/{guid}",
+    ]
+
+    payload = None
+    last_error = None
+    for endpoint in endpoints:
+        try:
+            r = req("GET", endpoint, headers={"Accept": "application/json"})
+            payload = r.json()
+            break
+        except Exception as e:
+            last_error = e
+
+    if payload is None:
+        raise RuntimeError(f"Paylocity feed request failed: {last_error!r}")
+
+    # V2 returns {displayName, jobs:[...]}; V1 returns a top-level list.
+    if isinstance(payload, dict):
+        posts = payload.get("jobs") or payload.get("Jobs") or []
+    elif isinstance(payload, list):
+        posts = payload
+    else:
+        posts = []
+
+    out = []
+    for p in posts:
+        if not isinstance(p, dict):
+            continue
+
+        pd = pdate(
+            p.get("publishedDate")
+            or p.get("PublishedDate")
+            or p.get("createdUtc")
+            or p.get("CreatedUtc")
+        )
+        if not pd or pd < CUTOFF:
+            continue
+
+        jid = clean(str(p.get("jobId") or p.get("JobId") or ""))
+        title = clean(str(p.get("title") or p.get("Title") or ""))
+        if not jid or not title:
+            continue
+
+        desc_html = p.get("description") or p.get("Description") or ""
+        req_html = p.get("requirements") or p.get("Requirements") or ""
+        desc = strip_html(str(desc_html))
+        requirements = strip_html(str(req_html))
+        if requirements and requirements.lower() not in desc.lower():
+            desc = clean(desc + " Requirements: " + requirements)
+        if len(desc) < 200:
+            continue
+
+        jl = p.get("jobLocation") or p.get("JobLocation") or {}
+        if not isinstance(jl, dict):
+            jl = {}
+        city = clean(str(jl.get("city") or jl.get("City") or ""))
+        state = clean(str(jl.get("state") or jl.get("State") or ""))
+        loc_name = clean(str(
+            jl.get("locationDisplayName")
+            or jl.get("LocationDisplayName")
+            or jl.get("name")
+            or jl.get("Name")
+            or ""
+        ))
+        loc = ", ".join(x for x in [city, state] if x) or loc_name
+        if loc_name and loc_name.lower() not in loc.lower():
+            loc = clean(loc + (" / " if loc else "") + loc_name)
+
+        detail_url = clean(str(p.get("displayUrl") or p.get("DisplayUrl") or ""))
+        apply_url = clean(str(p.get("applyUrl") or p.get("ApplyUrl") or ""))
+        # MJR favors the real job-detail page over a generic career page or a
+        # bare application wizard. The detail page contains the job and Apply.
+        url = detail_url or apply_url
+        if not url:
+            continue
+
+        jt = _paylocity_jobtype(title, p)
+        out.append(Job(
+            jid,
+            title,
+            src["Company"],
+            desc,
+            pd,
+            jt,
+            category(title, desc, src["Industry"], src["Company"]),
+            url,
+            src["URL"],
+            src["URL"],
+            "",
+            normalize_work_arrangement(desc, loc),
+            city or loc,
+            state,
+            infer_country(loc, src["Company"], desc),
+        ))
+
+    return out
+
 def _jsonld_jobs(soup):
     """Return JobPosting JSON-LD objects found on a detail page."""
     found = []
@@ -1863,6 +2011,8 @@ def main():
                 if "workday" in a
                 else greenhouse(s)
                 if "greenhouse" in a
+                else paylocity(s)
+                if "paylocity" in a
                 else adp(s)
                 if "adp" in a
                 else ats_html(s)
