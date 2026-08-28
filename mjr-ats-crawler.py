@@ -4080,6 +4080,279 @@ def batch_direct_board(src):
 
     return out
 
+
+V16_TARGETS = {
+    "cnn",
+    "paramount",
+    "disney / abc",
+    "espn",
+    "gray media",
+}
+
+
+def _recent_detail_job(src, url):
+    """Fetch one detail page and use the shared strict JobPosting parser."""
+    try:
+        r = req("GET", url)
+        return _job_from_detail(src, str(getattr(r, "url", "") or url), r.text)
+    except Exception:
+        return None
+
+
+def _crawl_rendered_job_board(src, starts, allow_hosts=None, max_pages=40, max_jobs=1500):
+    """Bounded server-rendered board crawler used by several v16 targets."""
+    allow_hosts = {h.lower().replace("www.", "") for h in (allow_hosts or [])}
+    queue = list(dict.fromkeys(starts))
+    seen_pages = set()
+    detail_urls = set()
+
+    while queue and len(seen_pages) < max_pages and len(detail_urls) < max_jobs:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+
+        final_url = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+        final_host = urlparse(final_url).netloc.lower().replace("www.", "")
+
+        for a in soup.find_all("a", href=True):
+            h = urljoin(final_url, a["href"])
+            hp = urlparse(h)
+            host = hp.netloc.lower().replace("www.", "")
+            if allow_hosts and host not in allow_hosts:
+                continue
+            if not allow_hosts and host != final_host:
+                continue
+
+            low = hp.path.lower()
+            q = hp.query.lower()
+
+            # Likely individual job detail URLs.
+            if (
+                re.search(r"/job/[^/]+", low)
+                or re.search(r"/jobs/\d+", low)
+                or "/jobdetails/" in low
+                or "/job-detail/" in low
+                or ("jobid=" in q and "search" not in low)
+            ):
+                if h.rstrip("/") != final_url.rstrip("/"):
+                    detail_urls.add(h.split("#", 1)[0])
+                continue
+
+            # Follow only obvious listing pagination/navigation.
+            label = clean(a.get_text(" ")).lower()
+            if (
+                re.search(r"\b(next|more jobs|view more|older)\b", label)
+                or re.search(r"[?&](page|p|start|offset|from)=\d+", h, re.I)
+                or re.search(r"/page/\d+", low)
+            ):
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        # Recover embedded job URLs from application state.
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        for m in re.finditer(r'https?://[^"\'<>\s]+', raw):
+            h = m.group(0).rstrip(".,);")
+            hp = urlparse(h)
+            host = hp.netloc.lower().replace("www.", "")
+            if allow_hosts and host not in allow_hosts:
+                continue
+            low = hp.path.lower()
+            if (
+                re.search(r"/job/[^/]+", low)
+                or re.search(r"/jobs/\d+", low)
+                or "/jobdetails/" in low
+                or "/job-detail/" in low
+            ):
+                detail_urls.add(h.split("#", 1)[0])
+
+    out = []
+    seen_ids = set()
+    for url in sorted(detail_urls):
+        j = _recent_detail_job(src, url)
+        if j and j.id not in seen_ids:
+            seen_ids.add(j.id)
+            out.append(j)
+    return out
+
+
+def paramount_successfactors(src):
+    """Paramount: SAP SuccessFactors public career site.
+
+    The public listing is server-rendered and exposes current requisitions with
+    real detail URLs. We crawl the view-all and jobs pages rather than inventing
+    undocumented API calls.
+    """
+    starts = [
+        "https://careers.paramount.com/viewalljobs/?locale=en_US",
+        "https://careers.paramount.com/jobs/?locale=en_US&vs=0",
+        src["URL"],
+    ]
+    return _crawl_rendered_job_board(
+        src,
+        starts,
+        allow_hosts={"careers.paramount.com"},
+        max_pages=80,
+        max_jobs=2500,
+    )
+
+
+def disney_public(src):
+    """Disney/ABC/ESPN public search collector.
+
+    Disney's public search results expose titles, posting dates and canonical
+    detail links server-side. Use the employer-specific search URL already
+    configured and follow its job links/pagination.
+    """
+    company = clean(src.get("Company", "")).lower()
+    starts = [src["URL"]]
+    if company == "disney / abc":
+        starts += [
+            "https://www.disneycareers.com/en/search-jobs/abc/391/1/1",
+            "https://jobs.disneycareers.com/search-jobs?k=ABC",
+        ]
+    elif company == "espn":
+        starts += [
+            "https://jobs.disneycareers.com/espn",
+            "https://jobs.disneycareers.com/search-jobs?ascf=%5B%7B%22key%22%3A%22custom_fields.IndustryCustomField%22%2C%22value%22%3A%22ESPN%22%7D%5D&orgIds=391-28648",
+        ]
+
+    return _crawl_rendered_job_board(
+        src,
+        starts,
+        allow_hosts={"disneycareers.com", "jobs.disneycareers.com", "www.disneycareers.com"},
+        max_pages=80,
+        max_jobs=3000,
+    )
+
+
+def wbd_phenom(src):
+    """Warner Bros. Discovery / CNN Phenom People collector.
+
+    Try Phenom's public widgets search endpoint first, then fall back to the
+    server-rendered CNN search pages. All failures remain source-local.
+    """
+    host = "https://careers.wbd.com"
+    out = []
+    seen = set()
+
+    # Public Phenom Career Connect widgets endpoint. Different tenants/releases
+    # accept slightly different bodies, so try a small set of safe variants.
+    bodies = [
+        {
+            "lang": "en_us",
+            "deviceType": "desktop",
+            "country": "us",
+            "pageName": "search-results",
+            "ddoKey": "refineSearch",
+            "sortBy": "Most relevant",
+            "subsearch": "",
+            "from": 0,
+            "jobs": True,
+            "all_fields": ["category", "location", "brand"],
+            "size": 100,
+        },
+        {
+            "lang": "en_us",
+            "deviceType": "desktop",
+            "country": "us",
+            "pageName": "search-results",
+            "ddoKey": "search",
+            "from": 0,
+            "size": 100,
+        },
+    ]
+
+    for body in bodies:
+        try:
+            r = req(
+                "POST",
+                host + "/widgets",
+                json=body,
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            )
+            payload = r.json()
+        except Exception:
+            continue
+
+        # Recover any job URLs from the returned JSON regardless of wrapper.
+        raw = json.dumps(payload, ensure_ascii=False)
+        urls = set()
+        for m in re.finditer(
+            r'https?://careers\.wbd\.com/[^"\\\s]+|/global/en/job/[^"\\\s]+|/job/[^"\\\s]+',
+            raw,
+            re.I,
+        ):
+            u = html.unescape(m.group(0)).replace("\\/", "/")
+            urls.add(urljoin(host, u))
+
+        for url in urls:
+            j = _recent_detail_job(src, url)
+            if j and j.id not in seen:
+                seen.add(j.id)
+                out.append(j)
+
+        if out:
+            return out
+
+    # Safe fallback: Phenom also publishes searchable HTML pages.
+    return _crawl_rendered_job_board(
+        src,
+        [
+            "https://careers.wbd.com/cnnjobs",
+            "https://careers.wbd.com/global/en/search-results",
+            src["URL"],
+        ],
+        allow_hosts={"careers.wbd.com"},
+        max_pages=60,
+        max_jobs=2000,
+    )
+
+
+def gray_direct(src):
+    """Gray Media direct career-center fallback.
+
+    Gray's corporate careers page currently exposes hundreds of openings and
+    filters publicly. Prefer those canonical employer pages over relying solely
+    on the legacy UKG board.
+    """
+    starts = [
+        "https://graymedia.com/careers/",
+        src["URL"],
+    ]
+
+    # First crawl Gray's own careers surface.
+    jobs = _crawl_rendered_job_board(
+        src,
+        starts,
+        allow_hosts={
+            "graymedia.com",
+            "www.graymedia.com",
+            "recruiting.ultipro.com",
+        },
+        max_pages=100,
+        max_jobs=3500,
+    )
+    if jobs:
+        return jobs
+
+    # If the corporate page links only to UKG opportunity details, use the
+    # existing UKG collector as a final fallback; it already fails safely.
+    try:
+        return ukg(src)
+    except Exception:
+        return []
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -4322,8 +4595,18 @@ def main():
         try:
             a = s["ATS"].lower()
 
+            company_key = clean(s.get("Company", "")).lower()
+
             got = (
-                workday(s)
+                paramount_successfactors(s)
+                if company_key == "paramount"
+                else disney_public(s)
+                if company_key in {"disney / abc", "espn"}
+                else wbd_phenom(s)
+                if company_key == "cnn"
+                else gray_direct(s)
+                if company_key == "gray media"
+                else workday(s)
                 if "workday" in a
                 else greenhouse(s)
                 if "greenhouse" in a
