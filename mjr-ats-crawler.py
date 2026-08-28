@@ -826,26 +826,117 @@ def normalize_work_arrangement(description, location):
 
     return "On-Site"
 
-def workday(src):
-    u = urlparse(src["URL"])
+def _discover_workday_endpoint(src_url):
+    """Return (host, tenant, site) from a Workday public career URL.
+
+    Handles ordinary tenant hosts plus `myworkdaycenter` aliases by inspecting
+    the public landing page for the actual /wday/cxs/{tenant}/{site}/ endpoint.
+    """
+    u = urlparse(src_url)
     host = u.netloc
-    tenant = host.split(".")[0]
     parts = [
-        p
-        for p in u.path.split("/")
-        if p and p not in ("en-US", "en-CA", "jobs")
+        p for p in u.path.split("/")
+        if p and p not in ("en-US", "en-CA", "en-GB", "jobs", "details")
     ]
     site = parts[0] if parts else ""
+    tenant = host.split(".")[0] if host else ""
 
-    if not tenant or not site or tenant == "myworkdaycenter":
+    # Normal Workday tenant host.
+    if tenant and tenant != "myworkdaycenter" and site:
+        return host, tenant, site
+
+    # Alias hosts such as Tribune's myworkdaycenter do not expose the tenant
+    # in the hostname. The real cxs tenant is commonly embedded in page state.
+    try:
+        r = req("GET", src_url)
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        pats = [
+            r"/wday/cxs/([^/\"'<>\s]+)/([^/\"'<>\s]+)/jobs",
+            r'["\']tenant["\']\s*:\s*["\']([^"\']+)["\']',
+        ]
+        m = re.search(pats[0], raw, re.I)
+        if m:
+            return host, clean(m.group(1)), clean(m.group(2))
+
+        tm = re.search(pats[1], raw, re.I)
+        if tm and site:
+            return host, clean(tm.group(1)), site
+    except Exception:
+        pass
+
+    return host, tenant, site
+
+
+def _workday_hosts(host):
+    """Candidate Workday public hosts for site migrations."""
+    out = [host]
+    # PBS has moved between wd5 and wd115 while keeping PBSCareers. Trying the
+    # sibling host is safe because the tenant/site is still validated by cxs.
+    if ".wd115.myworkdayjobs.com" in host:
+        out.append(host.replace(".wd115.myworkdayjobs.com", ".wd5.myworkdayjobs.com"))
+    elif ".wd5.myworkdayjobs.com" in host:
+        out.append(host.replace(".wd5.myworkdayjobs.com", ".wd115.myworkdayjobs.com"))
+    return list(dict.fromkeys(out))
+
+
+def workday(src):
+    host, tenant, site = _discover_workday_endpoint(src["URL"])
+
+    if not host or not site:
         raise RuntimeError("Workday tenant/site not inferable")
 
-    ep = f"https://{host}/wday/cxs/{tenant}/{site}/jobs"
+    # For alias hosts, if tenant could not be discovered, try a small set of
+    # source-specific known tenant aliases before declaring the source invalid.
+    tenant_candidates = [tenant] if tenant and tenant != "myworkdaycenter" else []
+    company = clean(src.get("Company", "")).lower()
+    if company == "tribune":
+        tenant_candidates += ["tribpub", "tpco", "tribunepublishing"]
+    if company == "pbs":
+        tenant_candidates += ["vhr-pbs", "pbs"]
+    tenant_candidates = list(dict.fromkeys(x for x in tenant_candidates if x))
+
+    last_error = None
+    chosen = None
+
+    for h in _workday_hosts(host):
+        for ten in tenant_candidates:
+            ep = f"https://{h}/wday/cxs/{ten}/{site}/jobs"
+            try:
+                probe = req(
+                    "POST",
+                    ep,
+                    json={
+                        "appliedFacets": {},
+                        "limit": 20,
+                        "offset": 0,
+                        "searchText": "",
+                    },
+                    headers={"Content-Type": "application/json"},
+                ).json()
+                if isinstance(probe, dict) and ("jobPostings" in probe or "total" in probe):
+                    chosen = (h, ten, ep, probe)
+                    break
+            except Exception as e:
+                last_error = e
+        if chosen:
+            break
+
+    if not chosen:
+        # A valid Workday landing page that no longer exposes a working cxs
+        # endpoint should not take down the entire feed.
+        if company in {"tribune", "pbs"}:
+            return generic(src)
+        if last_error:
+            raise last_error
+        raise RuntimeError("Workday tenant/site not inferable")
+
+    host, tenant, ep, first_payload = chosen
     out = []
     offset = 0
+    payload = first_payload
 
     while True:
-        d = req(
+        d = payload if offset == 0 else req(
             "POST",
             ep,
             json={
@@ -866,9 +957,6 @@ def workday(src):
             if not ext:
                 continue
 
-            # A requisition can disappear between the Workday list call and
-            # its detail call. Do not let one expired/withdrawn posting abort
-            # the entire employer crawl.
             try:
                 info = req(
                     "GET",
@@ -884,23 +972,17 @@ def workday(src):
             title = clean(info.get("title") or p.get("title"))
             desc = strip_html(info.get("jobDescription"))
             loc = clean(info.get("location") or p.get("locationsText"))
-            url = info.get("externalUrl") or urljoin(src["URL"], ext)
+            url = info.get("externalUrl") or f"https://{host}/{site}{ext}"
 
             out.append(
                 Job(
-                    info.get("jobReqId")
-                    or hashlib.sha1(url.encode()).hexdigest()[:16],
+                    info.get("jobReqId") or hashlib.sha1(url.encode()).hexdigest()[:16],
                     title,
                     src["Company"],
                     desc,
                     pd,
                     jobtype(title, info.get("timeType", "")),
-                    category(
-                        title,
-                        desc,
-                        src["Industry"],
-                        src["Company"],
-                    ),
+                    category(title, desc, src["Industry"], src["Company"]),
                     url,
                     src["URL"],
                     src["URL"],
@@ -917,7 +999,6 @@ def workday(src):
             break
 
     return out
-
 
 def greenhouse(src):
     parts = [p for p in urlparse(src["URL"]).path.split("/") if p]
@@ -1109,6 +1190,12 @@ def adp(src):
         if m:
             cid = m.group(1)
     if not cid:
+        # Newer branded ADP CX sites such as Hubbard use
+        # myjobs.adp.com/{tenant}/cx/job-listing and do not expose a Workforce
+        # Now `cid`. Use strict public-page discovery rather than treating the
+        # employer as a crawler error.
+        if "myjobs.adp.com" in u.netloc.lower():
+            return generic(src)
         raise RuntimeError("ADP career-center cid not inferable")
 
     # Workforce Now public endpoint. The endpoint is public and distinct from
@@ -3237,6 +3324,126 @@ def ats_html(src):
 
     return out
 
+
+def federated_media(src):
+    """Federated Media job fallback using its WordPress job-listing content.
+
+    Their public careers landing page can redirect inconsistently, while actual
+    job posts live under /job/{slug}/. Try WordPress REST and feeds first,
+    preserving only explicit recent postings.
+    """
+    bases = [
+        "https://federatedmedia.com",
+        "https://www.federatedmedia.com",
+    ]
+    detail_urls = set()
+
+    # WP Job Manager commonly exposes a job_listing post type.
+    api_paths = [
+        "/wp-json/wp/v2/job_listing?per_page=100&page=1",
+        "/wp-json/wp/v2/jobs?per_page=100&page=1",
+    ]
+
+    for base in bases:
+        for api_path in api_paths:
+            try:
+                r = req("GET", base + api_path)
+                data = r.json()
+                if not isinstance(data, list):
+                    continue
+                for item in data:
+                    if not isinstance(item, dict):
+                        continue
+                    link = clean(str(item.get("link") or ""))
+                    if link and "/job/" in link:
+                        detail_urls.add(link)
+            except Exception:
+                pass
+
+        # RSS/feed fallback.
+        for feed_url in (
+            base + "/feed/?post_type=job_listing",
+            base + "/careers/feed/",
+        ):
+            try:
+                r = req("GET", feed_url)
+                raw = html.unescape(r.text or "")
+                for m in re.finditer(r"https?://[^<\"'\s]+/job/[^<\"'\s]+", raw, re.I):
+                    detail_urls.add(m.group(0).rstrip(".,)"))
+            except Exception:
+                pass
+
+    out = []
+    seen = set()
+    for url in sorted(detail_urls):
+        try:
+            rr = req("GET", url)
+            soup = BeautifulSoup(rr.text, "html.parser")
+            txt = clean(soup.get_text(" "))
+
+            # Prefer schema.org JobPosting if provided.
+            j = _job_from_detail(src, url, rr.text)
+            if j:
+                if j.url not in seen:
+                    seen.add(j.url)
+                    out.append(j)
+                continue
+
+            pd = None
+            m = re.search(
+                r"(?:Posted|Date Posted|Posted Date)\s*:?\s*"
+                r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|"
+                r"\d{1,2}/\d{1,2}/20\d{2}|"
+                r"\d+\s+days?\s+ago|today|yesterday)",
+                txt,
+                re.I,
+            )
+            if m:
+                pd = pdate(m.group(1))
+            if not pd or pd < CUTOFF:
+                continue
+
+            h1 = soup.find("h1")
+            title = clean(h1.get_text(" ") if h1 else "")
+            main = soup.find("main") or soup.find("article") or soup
+            desc = clean(main.get_text(" "))
+            if not title or len(desc) < 250:
+                continue
+
+            loc = ""
+            mloc = re.search(
+                r"(?:Location|Job Location)\s*:?\s*"
+                r"([A-Za-z .,'/-]+?)(?:\s+Posted|\s+Full Time|\s+Part Time|$)",
+                txt,
+                re.I,
+            )
+            if mloc:
+                loc = clean(mloc.group(1))
+
+            jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+            out.append(Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, txt),
+                category(title, desc, src["Industry"], src["Company"]),
+                url,
+                src["URL"],
+                src["URL"],
+                "",
+                normalize_work_arrangement(desc, loc or txt),
+                loc,
+                "",
+                infer_country(loc or txt, src["Company"], desc),
+            ))
+            seen.add(url)
+        except Exception:
+            continue
+
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -3498,6 +3705,8 @@ def main():
                 if "oracle recruiting" in a or "oracle cloud" in a
                 else paycom(s)
                 if "paycom" in a
+                else federated_media(s)
+                if clean(s.get("Company", "")).lower() == "federated media"
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
