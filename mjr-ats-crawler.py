@@ -708,8 +708,11 @@ def infer_country(location, company="", description=""):
 
 def normalize_work_arrangement(description, location):
     """
-    Determine work arrangement with explicit job-status language taking
-    precedence over incidental mentions such as "remote location."
+    Determine work arrangement from explicit employer language.
+    On-Site, Hybrid, and Remote are kept as separate values.
+    Explicit on-site language takes precedence over incidental mentions
+    such as "remote location." Hybrid is used only when the employer
+    explicitly describes a mixed in-office/remote arrangement.
     """
     desc = clean(description).lower()
     loc = clean(location).lower()
@@ -731,26 +734,46 @@ def normalize_work_arrangement(description, location):
     if any(re.search(p, s) for p in onsite_patterns):
         return "On-Site"
 
-    # Explicit hybrid/telework/remote work signals.
-    remote_patterns = [
+    # Explicit hybrid signals. These must be checked before Remote.
+    hybrid_patterns = [
         r"telework/hybrid",
-        r"telework",
+        r"hybrid/telework",
         r"hybrid role",
         r"hybrid position",
         r"hybrid work",
+        r"hybrid schedule",
+        r"hybrid arrangement",
         r"mix of in-office and remote work",
-        r"work from home",
+        r"mix of in office and remote work",
+        r"combining remote work and office presence",
+        r"combination of remote work and office presence",
+        r"partly remote",
+        r"partially remote",
+        r"days? per week in the office",
+        r"days? a week in the office",
+    ]
+    if any(re.search(p, s) for p in hybrid_patterns):
+        return "Hybrid"
+
+    # Explicit remote/work-from-home signals that do not require routine office presence.
+    remote_patterns = [
         r"fully remote",
         r"100% remote",
         r"remote role",
         r"remote position",
         r"remote work",
+        r"work from home",
+        r"work-from-home",
+        r"telework",
+        r"telecommute",
     ]
     if any(re.search(p, s) for p in remote_patterns):
         return "Remote"
 
-    # Title/location can still explicitly indicate hybrid or remote.
-    if re.search(r"\b(hybrid|telework)\b", loc):
+    # Title/location can explicitly indicate the arrangement.
+    if re.search(r"\bhybrid\b", loc):
+        return "Hybrid"
+    if re.search(r"\b(remote|telework|telecommute)\b", loc):
         return "Remote"
 
     return "On-Site"
