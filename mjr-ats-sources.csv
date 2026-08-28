@@ -1,35 +1,104 @@
 Industry,Company,ATS,URL,Active
 Radio,Audacy,iCIMS,https://careers-audacy.icims.com/jobs/search?ss=1,True
-Radio,Beasley Media Group,ApplyToJob,https://beasleymediagroup.applytojob.com/apply/,True
+Radio,Beasley Media Group,ApplyToJob / JazzHR,https://beasleymediagroup.applytojob.com/apply/?selected_category=-1&selected_jobtype=-1&selected_location=-1,True
 Radio,Bonneville,Workday,https://deseretmanagement.wd1.myworkdayjobs.com/BonSaltLake,True
 Radio,CBC/Radio-Canada,Workday,https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/,True
-Radio,Dick Broadcasting,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/da27c45a-0c7a-4cbe-a575-3444d884e49b/Dick-Broadcasting-Company-Inc,True
+Radio,Connoisseur Media,Paycor,https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b&parentUrl=https%3A%2F%2Fconnoisseurmedia.com%2Fcareer-openings%2F&gns=,True
+Radio,Corus,Dayforce,https://can241.dayforcehcm.com/CandidatePortal/en-US/corusent/Site/CORUS,True
+Radio,Dick Broadcasting Company,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/da27c45a-0c7a-4cbe-a575-3444d884e49b/Dick-Broadcasting-Company-Inc,True
 Radio,Educational Media Foundation,iCIMS,https://careers-kloveair1.icims.com/jobs/search?hashed=-435656068,True
+Radio,Good Karma Brands,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US,True
+Radio,Hope Media Group,Paylocity,https://recruiting.paylocity.com/Recruiting/Jobs/Details/3364897,True
 Radio,Hubbard Broadcasting,ADP,https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing,True
 Radio,iHeartMedia,Workday,https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/jobs,True
+Radio,Meruelo Media,Oracle Taleo,https://phe.tbe.taleo.net/phe02/ats/careers/v2/searchResults?org=GRANDSIERRARESORT&cws=66,True
+Radio,Norsan Media,Betterteam,https://norsanmedia.betterteam.com/,True
 Radio,NRG Media,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/76da5c58-0cdb-4886-86b6-41d72879e541/NRG-MEDIA-LLC,True
 Radio,Salem Media Group,iCIMS,https://careers-salemmedia.icims.com/jobs/search?ss=1&searchRelation=keyword_all,True
-Radio,Urban One,ADP,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=ec7ee775-68fd-42a7-89a5-d8e1ff330cbf&ccId=19000101_000002&type=MP&locale=en_US,True
-Television,Gray Media,UKG Pro,https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/?q=&o=postedDateDesc,True
-Television,Hearst,Oracle,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_6/jobs,True
-Television,Morgan Murphy Media,Breezy,https://morgan-murphy-media.breezy.hr/,True
+Radio,Sun Broadcasting,ApplyToJob / JazzHR,https://sunbroadcasting.applytojob.com/apply,True
+Radio,Urban One,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=ec7ee775-68fd-42a7-89a5-d8e1ff330cbf&ccId=19000101_000002&type=MP&locale=en_US,True
+Radio,Vista Radio,Dayforce,https://jobs.dayforcehcm.com/en-US/westerkirk/VISTARADIOCORPORATECAREERS,True
+Radio,Zimmer,iSolved Hire,https://zimmercommunications.isolvedhire.com/jobs/,True
+Radio,Adams Radio Group,Company Career Site,https://www.adamsradiogroup.com/careers/,True
+Radio,Alpha Media,Company Career Site,https://www.alphamediausa.com/career-openings/,True
+Radio,Bell Media,Company Career Site,https://jobs.bell.ca/ca/en/c/media-jobs,True
+Radio,Blackburn Media,Company Career Site,https://blackburnmedia.ca/careers,True
+Radio,Cox Radio,Company Career Site,https://careers.cmg.com/search/?createNewAlert=false&q=radio&locationsearch=&optionsFacetsDD_department=&optionsFacetsDD_facility=&optionsFacetsDD_shifttype=,True
+Radio,Cumulus Media,Company Career Site,https://jobs.cumulusmedia.com/jobs,True
+Radio,Curtis Media,Company Career Site,https://www.curtismedia.net/career-opportunities/,True
+Radio,Evanov,Company Career Site,https://evanov.ca/careers,True
+Radio,Federated Media,Company Career Site,https://www.federatedmedia.com/careers/,True
+Radio,Leighton Media,Company Career Site,https://www.leighton.media/careers/open-positions/,True
+Radio,Lotus,Company Career Site,https://www.lotuscorp.com/category/careers/,True
+Radio,Maritime Broadcasting System,Company Career Site,https://www.mbsradio.com/careers/,True
+Radio,Midwest Communications,Company Career Site,https://midwestcareers.com/,True
+Radio,Pattison Media,Company Career Site,https://www.pattisonmedia.com/careers,True
+Radio,Renda Media,Company Career Site,https://rendamedia.com/careers,True
+Radio,Rogers Sports & Media,Company Career Site,https://jobs.rogers.com/go/Rogers-Sports-and-Media/8824500/,True
+Radio,Saga Communications,Company Career Site,https://sagacom.com/careers/,True
+Radio,Spanish Broadcasting System,Company Career Site,https://www.spanishbroadcasting.com/careers,True
+Radio,Stingray,Company Career Site,https://jobs.stingray.com/career-opportunities/,True
+Radio,Summit Media,Company Career Site,https://www.summitmediacorp.com/join-our-team,True
+Radio,Townsquare Media,Company Career Site,https://careers.townsquaremedia.com/job-openings,True
+Television,Capitol Broadcasting,Company Career Site,https://capitolbroadcasting.com/careers/,True
+Television,Fox Television,Workday,https://fox.wd1.myworkdayjobs.com/en-US/Domestic,True
+Television,Gray Media,UKG Pro,https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/?q=&o=postedDateDesc&w=&wc=&we=&wpst=,True
+Television,Hallmark,Company Career Site,https://careers.hallmark.co.uk/viewalljobs/,True
+Television,Hearst,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_6/jobs,True
+Television,Morgan Murphy Media,Breezy HR,https://morgan-murphy-media.breezy.hr/,True
+Television,Newsmax,UKG Pro,https://recruiting.ultipro.com/NEW1027/JobBoard/3d5ae180-49c4-20f7-d7b4-adfe940978a7/?q=&o=postedDateDesc,True
 Television,Nexstar,Workday,https://nexstar.wd5.myworkdayjobs.com/nexstar,True
-Television,NFL,Greenhouse,https://job-boards.greenhouse.io/nflcareers,True
+Television,NFL,Greenhouse,https://job-boards.greenhouse.io/nflcareers?keyword=broadcast&offices%5B%5D=4003941008,True
+Television,NPG,Company Career Site,https://www.npgco.com/careers/,True
+Television,PGA,Workday,https://pgahq.wd1.myworkdayjobs.com/PGAHQ,True
 Television,QVC,Workday,https://qvc.wd5.myworkdayjobs.com/QRG,True
 Television,Scripps,Workday,https://scripps.wd115.myworkdayjobs.com/Scripps_Careers,True
-Television,Sinclair,Oracle,https://edyy.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2002/requisitions?mode=location,True
+Television,Sinclair,Oracle Recruiting Cloud,https://edyy.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2002/requisitions?mode=location,True
 Television,TelevisaUnivision,Workday,https://univision.wd1.myworkdayjobs.com/External,True
+Television,Weather Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=20c3677e-ce5f-400f-9d8d-173f5a852a5d&ccId=19000101_000001&type=JS&lang=en_US,True
+Television,Weigel,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co,True
 Television,WWE,Workday,https://wwecorp.wd5.myworkdayjobs.com/wwecorp,True
-Journalism,American Public Media Group,UKG Pro,https://recruiting2.ultipro.com/AME1098APMG/JobBoard/4b7ae4eb-a67b-4318-80fc-6d9467f9c542/,True
+Television,CNN,Company Career Site,https://careers.wbd.com/global/en/cnn-jobs,True
+Television,Disney / ABC,Company Career Site,https://jobs.disneycareers.com/search-jobs?k=ABC,True
+Television,ESPN,Company Career Site,https://www.disneycareers.com/en/search-jobs/ESPN/391/1,True
+Television,FOX,Company Career Site,https://www.foxcareers.com/Search/SearchResults,True
+Television,Mission Broadcasting,Company Career Site,https://missionbroadcastinginc.com/careers/,True
+Television,NBA,Company Career Site,https://careers.nba.com/c/media-production-development-jobs,True
+Television,NBCUniversal,Company Career Site,https://www.nbcunicareers.com/find-a-job?aoi=2237#jobs_search-react-main-wrapper,True
+Television,Paramount,Company Career Site,https://careers.paramount.com/go/All-Current-Job-Opportunities/8710000/,True
+Television,TBN,Company Career Site,https://www.tbn.org/about/careers,True
+Television,TEGNA,Company Career Site,https://www.tegna.com/explore-careers,True
+Journalism,American Public Media Group,UKG Pro,https://recruiting2.ultipro.com/AME1098APMG/JobBoard/4b7ae4eb-a67b-4318-80fc-6d9467f9c542/?q=&o=postedDateDesc&w=&wc=&we=&wpst=,True
 Journalism,Dotdash Meredith / People Inc,Workday,https://meredith.wd5.myworkdayjobs.com/EXT,True
-Journalism,Gannett / USA TODAY Co.,Dayforce,https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL,True
-Journalism,Hearst Newspapers,Oracle,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,True
+Journalism,Gannett / USA TODAY Co.,Dayforce,https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=,True
+Journalism,Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,True
 Journalism,Lee Enterprises,Dayforce,https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL,True
+Journalism,McClatchy,Company Career Site,https://mcclatchy.com/careers,True
 Journalism,New York Post,Workday,https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers,True
 Journalism,NPR,Greenhouse,https://job-boards.greenhouse.io/nationalpublicradioinc,True
+Journalism,Tampa Bay Times Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=8c64d493-1027-445e-9378-39c4e859f2b6&ccId=19000101_000001&lang=en_US,True
+Journalism,Tribune,Workday,https://myworkdaycenter.wd5.myworkdayjobs.com/TPCO,True
+Journalism,Woodward Communications,Paycom,https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=41E82EC60AAD792EC7018E3AB22DE8D2,True
+Journalism,Associated Press (AP),Company Career Site,https://careers.ap.org/go/View-All-Jobs/4304700/,True
+Journalism,NETA,Company Career Site,https://www.netaonline.org/careers-public-media,True
+Journalism,Vox Media,Company Career Site,https://www.voxmedia.com/jobs/,True
+Journalism,Wall Street Journal / Dow Jones,Company Career Site,https://wsj.jobs/jobs/,True
+Journalism,Washington Post,Company Career Site,https://company.washingtonpost.com/careers#jobs,True
 Music Industry,ASCAP,JobScore,https://careers.jobscore.com/careers/ascap,True
-Music Industry,ONErpm,Rippling,https://onerpm.rippling-ats.com/,True
+Music Industry,Big Machine,BMG Career Portal,https://jobsearch.createyourowncareer.com/BMG/search/,True
+Music Industry,Cook Media Global,Paycom,https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=B59CEE098263BB5FD7A7C223F0B3B11A&jpt=,True
+Music Industry,ONErpm,Rippling ATS,https://onerpm.rippling-ats.com/,True
+Music Industry,SESAC,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=7fbf632a-2131-43fc-9a6b-03efa4b54e87&ccId=19000101_000001&type=JS&lang=en_US,True
 Music Industry,Sony Music Entertainment,Greenhouse,https://job-boards.greenhouse.io/sonymusicentertainment,True
 Music Industry,Universal Music Group,Workday,https://umusic.wd5.myworkdayjobs.com/UMGUS/,True
 Music Industry,Warner Music Group,Workday,https://wmg.wd1.myworkdayjobs.com/WMGUS/jobs,True
+Music Industry,Amazon Music,Company Career Site,https://www.amazon.jobs/content/en/teams/amazon-entertainment/music,True
+Music Industry,BMI,Company Career Site,https://careers.bmi.com/jobs/,True
 Digital,PBS,Workday,https://vhr-pbs.wd115.myworkdayjobs.com/PBSCareers,True
+Digital,AccuWeather,Company Career Site,https://corporate.accuweather.com/company/careers/,True
+Digital,Christian Music Broadcasters (CMB),Company Career Site,https://cmbonline.org/jobs/?search_keywords=&search_location=&filter_job_type%5B%5D=full-time&filter_job_type%5B%5D=internship&filter_job_type%5B%5D=part-time&filter_job_type%5B%5D=,True
+Digital,Graham Media,Company Career Site,https://www.grahammedia.com/careers-jobs,True
+Digital,RTDNA,Company Career Site,https://careers.rtdna.org/jobs?locale=en&sort=date&keywords=broadcast,True
+Digital,SiriusXM,Company Career Site,https://careers.siriusxm.com/careers/jobs,True
+Digital,Townsquare Ignite,Company Career Site,https://townsquareignite.com/careers/#job-openings,True
+Digital,TuneIn,Company Career Site,https://cms.tunein.com/careers/,True
