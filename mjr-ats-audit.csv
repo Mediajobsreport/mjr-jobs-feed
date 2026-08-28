@@ -18,7 +18,7 @@ Salem Media Group,iCIMS,https://careers-salemmedia.icims.com/jobs/search?ss=1&se
 Sun Broadcasting,ApplyToJob / JazzHR,https://sunbroadcasting.applytojob.com/apply,ok,1,
 Urban One,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=ec7ee775-68fd-42a7-89a5-d8e1ff330cbf&ccId=19000101_000002&type=MP&locale=en_US,ok,7,
 Vista Radio,Dayforce,https://jobs.dayforcehcm.com/en-US/westerkirk/VISTARADIOCORPORATECAREERS,zero_or_not_enumerable,0,
-Zimmer,iSolved Hire,https://zimmercommunications.isolvedhire.com/jobs/,error,0,HTTPError('404 Client Error: Not Found for url: https://admin.isolvedhire.com/Help')
+Zimmer,iSolved Hire,https://zimmercommunications.isolvedhire.com/jobs/,zero_or_not_enumerable,0,
 Adams Radio Group,Company Career Site,https://www.adamsradiogroup.com/careers/,zero_or_not_enumerable,0,
 Alpha Media,Company Career Site,https://www.alphamediausa.com/career-openings/,zero_or_not_enumerable,0,
 Bell Media,Company Career Site,https://jobs.bell.ca/ca/en/c/media-jobs,zero_or_not_enumerable,0,
@@ -73,7 +73,7 @@ Dotdash Meredith / People Inc,Workday,https://meredith.wd5.myworkdayjobs.com/EXT
 Gannett / USA TODAY Co.,Dayforce,https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=,ok,26,
 Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,ok,17,
 Lee Enterprises,Dayforce,https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL,zero_or_not_enumerable,0,
-McClatchy,Company Career Site,https://mcclatchy.com/careers,error,0,"ConnectTimeout(MaxRetryError(""HTTPSConnectionPool(host='mcclatchy.com', port=443): Max retries exceeded with url: /careers (Caused by ConnectTimeoutError(<HTTPSConnection(host='mcclatchy.com', port=443) at 0x7f10d0431450>, 'Connection to mcclatchy.com timed out. (connect timeout=30)'))""))"
+McClatchy,Company Career Site,https://mcclatchy.com/careers,zero_or_not_enumerable,0,
 New York Post,Workday,https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers,ok,44,
 NPR,Greenhouse,https://job-boards.greenhouse.io/nationalpublicradioinc,ok,9,
 Tampa Bay Times Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=8c64d493-1027-445e-9378-39c4e859f2b6&ccId=19000101_000001&lang=en_US,ok,1,
