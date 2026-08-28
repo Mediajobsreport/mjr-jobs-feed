@@ -2064,6 +2064,171 @@ def _listing_next_links(page, soup):
     return out
 
 
+
+def _icims_date_from_html(soup, raw):
+    """Find an explicit iCIMS posting date without guessing from requisition ID."""
+    # Structured/meta attributes used by different iCIMS career-center themes.
+    attrs_to_check = (
+        ("meta", {"itemprop": re.compile(r"datePosted", re.I)}, "content"),
+        ("meta", {"property": re.compile(r"datePosted|published_time", re.I)}, "content"),
+        ("meta", {"name": re.compile(r"datePosted|date_posted|posted", re.I)}, "content"),
+        ("time", {"datetime": True}, "datetime"),
+    )
+    for tag, attrs, attr in attrs_to_check:
+        for node in soup.find_all(tag, attrs=attrs):
+            val = clean(node.get(attr) or node.get_text(" "))
+            d = pdate(val)
+            if d:
+                return d
+
+    # Hydrated application state / inline scripts can expose the date even when
+    # the visible iCIMS template does not print it.
+    normalized = html.unescape(raw or "").replace("\\/", "/")
+    patterns = [
+        r'["\'](?:datePosted|date_posted|postedDate|postingDate|createdDate)["\']\s*:\s*["\']([^"\']+)["\']',
+        r'(?:Date Posted|Posted Date|Posting Date)\s*</?[^>]*>?\s*:?\s*'
+        r'([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})',
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, normalized, re.I):
+            d = pdate(m.group(1))
+            if d:
+                return d
+    return None
+
+
+def _icims_detail(src, url, raw):
+    """Parse an iCIMS detail page, requiring an explicit qualifying post date."""
+    # First use the shared schema.org parser. Many iCIMS tenants expose
+    # JobPosting JSON-LD even when the date is not visible in page text.
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+
+    soup = BeautifulSoup(raw, "html.parser")
+    pd = _icims_date_from_html(soup, raw)
+    if not pd or pd < CUTOFF:
+        return None
+
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        title_node = soup.find(attrs={"class": re.compile(r"(iCIMS_Header|job.?title|title)", re.I)})
+        title = clean(title_node.get_text(" ") if title_node else "")
+    if not title:
+        return None
+
+    # iCIMS commonly labels location/type/ID in the header/profile fields.
+    txt = clean(soup.get_text(" "))
+    loc = ""
+    loc_node = soup.find(string=re.compile(r"Job Locations?", re.I))
+    if loc_node:
+        parent = loc_node.parent
+        if parent:
+            block = clean(parent.parent.get_text(" ") if parent.parent else parent.get_text(" "))
+            m = re.search(r"Job Locations?\s+(.+?)(?:\s+ID\b|\s+Category\b|\s+Type\b|$)", block, re.I)
+            if m:
+                loc = clean(m.group(1))
+
+    jid = ""
+    m = re.search(r"\bID\s+((?:20\d{2}-)?\d{3,})\b", txt, re.I)
+    if m:
+        jid = clean(m.group(1))
+    if not jid:
+        m = re.search(r"/jobs/(\d+)", url, re.I)
+        if m:
+            jid = m.group(1)
+
+    main = (
+        soup.find(id=re.compile(r"(iCIMS_JobContent|job.?content|job.?description)", re.I))
+        or soup.find(attrs={"class": re.compile(r"(iCIMS_JobContent|job.?description|job.?detail)", re.I)})
+        or soup.find("main")
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 200:
+        return None
+
+    canonical = url.split("#", 1)[0]
+    return Job(
+        jid or hashlib.sha1(canonical.encode()).hexdigest()[:16],
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or txt),
+        loc,
+        "",
+        infer_country(loc or txt, src["Company"], desc),
+    )
+
+
+def icims(src):
+    """Dedicated public iCIMS Career Center collector.
+
+    iCIMS search pages are server-rendered and paginated with `pr=`. We
+    enumerate those pages directly, then parse each real /jobs/<id>/.../job
+    detail page. We never infer a posting date from the requisition number.
+    """
+    start = src["URL"]
+    parsed = urlparse(start)
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    # Force the public search view while preserving tenant-specific query args.
+    if "/jobs/search" not in parsed.path.lower():
+        start = base + "/jobs/search?ss=1"
+
+    queue = [start]
+    seen_pages = set()
+    links = set()
+
+    while queue and len(seen_pages) < 60 and len(links) < 2500:
+        page = queue.pop(0)
+        if page in seen_pages:
+            continue
+        seen_pages.add(page)
+
+        r = req("GET", page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            hp = urlparse(h)
+            if hp.netloc.lower() != parsed.netloc.lower():
+                continue
+            if re.search(r"/jobs/\d+/.+?/job(?:[/?#]|$)", h, re.I):
+                links.add(h.split("#", 1)[0])
+                continue
+            # iCIMS pagination uses pr=0, pr=1, ... rather than page=.
+            if "/jobs/search" in hp.path.lower() and re.search(r"[?&]pr=\d+", h, re.I):
+                if h not in seen_pages:
+                    queue.append(h)
+
+        # Some tenants hydrate links into scripts.
+        links.update(
+            u for u in _candidate_urls_from_text(
+                page, r.text, [r"/jobs/\d+/.+?/job(?:[/?#]|$)"]
+            )
+            if urlparse(u).netloc.lower() == parsed.netloc.lower()
+        )
+
+    out = []
+    for url in sorted(links):
+        try:
+            rr = req("GET", url)
+            j = _icims_detail(src, url, rr.text)
+            if j:
+                out.append(j)
+        except Exception:
+            # One closed iCIMS requisition must not abort the employer.
+            continue
+    return out
+
 def ats_html(src):
     """Enhanced multi-ATS public-page adapter.
 
@@ -2398,6 +2563,8 @@ def main():
                 if "adp" in a
                 else dayforce(s)
                 if "dayforce" in a
+                else icims(s)
+                if "icims" in a
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
