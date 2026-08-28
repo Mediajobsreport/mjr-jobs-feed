@@ -3600,6 +3600,205 @@ def connoisseur_media(src):
 
     return out
 
+
+def _isolved_parts(url):
+    """Return (origin, company slug) for common iSolved Hire URLs."""
+    p = urlparse(url)
+    host = p.netloc.lower()
+    parts = [x for x in p.path.split("/") if x]
+
+    # Common patterns:
+    # https://jobs.ourcareerpages.com/job/...  (iSolved legacy)
+    # https://recruiting2.ultipro... is not iSolved and should not match.
+    if "ourcareerpages.com" in host:
+        slug = ""
+        q = parse_qs(p.query)
+        for key in ("ccp", "company", "client", "cid"):
+            if q.get(key):
+                slug = clean(q[key][0])
+                break
+        return f"{p.scheme or 'https'}://{p.netloc}", slug
+
+    if "isolvedhire.com" in host or "isolved.com" in host:
+        slug = parts[0] if parts else ""
+        return f"{p.scheme or 'https'}://{p.netloc}", slug
+
+    return None
+
+
+def _isolved_date(raw):
+    s = html.unescape(raw or "").replace("\\/", "/")
+    for pat in (
+        r"(?:Posted|Date Posted|Posting Date)\s*:?\s*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+        r"(?:Posted|Date Posted|Posting Date)\s*:?\s*"
+        r"(\d{1,2}/\d{1,2}/20\d{2})",
+        r'["\'](?:datePosted|postedDate|postingDate)["\']\s*:\s*["\']([^"\']+)["\']',
+    ):
+        m = re.search(pat, s, re.I)
+        if m:
+            d = pdate(strip_html(m.group(1)))
+            if d:
+                return d
+    return None
+
+
+def _isolved_job_links(base_url, raw):
+    raw2 = html.unescape(raw or "").replace("\\/", "/")
+    out = set()
+    patterns = [
+        r'https?://[^"\'<>\s]+ourcareerpages\.com/job/[^"\'<>\s]+',
+        r'https?://[^"\'<>\s]+isolvedhire\.com/[^"\'<>\s]+',
+        r'/job/[^"\'<>\s]+',
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, raw2, re.I):
+            u = urljoin(base_url, m.group(0))
+            host = urlparse(u).netloc.lower()
+            if "ourcareerpages.com" in host or "isolvedhire.com" in host:
+                out.add(u.split("#",1)[0])
+    return out
+
+
+def _isolved_detail(src, url, raw):
+    # Prefer structured JobPosting when available.
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+
+    soup = BeautifulSoup(raw, "html.parser")
+    txt = clean(soup.get_text(" "))
+
+    pd = _isolved_date(raw)
+    if not pd or pd < CUTOFF:
+        return None
+
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        node = soup.find(attrs={"class": re.compile(r"(job.?title|position.?title)", re.I)})
+        title = clean(node.get_text(" ") if node else "")
+    if not title:
+        return None
+
+    main = (
+        soup.find(attrs={"class": re.compile(r"(job.?description|job.?details|position.?details)", re.I)})
+        or soup.find("main")
+        or soup.find("article")
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 200:
+        return None
+
+    loc = ""
+    for pat in (
+        r"(?:Location|Job Location)\s*:?\s*([A-Za-z0-9 .,'/\-&]+?)(?=\s+(?:Job Type|Employment Type|Category|Department|Posted|$))",
+        r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
+    ):
+        m = re.search(pat, txt)
+        if m:
+            loc = clean(m.group(1))
+            break
+
+    jid = ""
+    q = parse_qs(urlparse(url).query)
+    for k in ("jobid", "jobId", "id", "job"):
+        if q.get(k):
+            jid = clean(q[k][0])
+            break
+    if not jid:
+        m = re.search(r"/job/([^/?#]+)", url, re.I)
+        if m:
+            jid = clean(m.group(1))
+    if not jid:
+        jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+
+    canonical = url.split("#",1)[0]
+
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or txt),
+        loc,
+        "",
+        infer_country(loc or txt, src["Company"], desc),
+    )
+
+
+def isolved(src):
+    """Dedicated iSolved/OurCareerPages collector.
+
+    Enumerates public job-detail URLs from listing pages and embedded state,
+    follows same-host pagination, and only emits jobs with an explicit posting
+    date inside the MJR window.
+    """
+    parts = _isolved_parts(src["URL"])
+    if not parts:
+        return ats_html(src)
+
+    origin, slug = parts
+    queue = [src["URL"]]
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < 80 and len(details) < 2500:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        r = req("GET", page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # Visible detail links.
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            hp = urlparse(h)
+            host = hp.netloc.lower()
+            if not ("ourcareerpages.com" in host or "isolvedhire.com" in host):
+                continue
+
+            if "/job/" in hp.path.lower():
+                details.add(h.split("#",1)[0])
+                continue
+
+            # Follow listing/pagination links on same platform.
+            if h.rstrip("/") not in seen_pages:
+                queue.append(h)
+
+        details.update(_isolved_job_links(page, r.text))
+
+        for h in _listing_next_links(page, soup):
+            hp = urlparse(h)
+            host = hp.netloc.lower()
+            if ("ourcareerpages.com" in host or "isolvedhire.com" in host) and h.rstrip("/") not in seen_pages:
+                queue.append(h)
+
+    out = []
+    seen_ids = set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            j = _isolved_detail(src, url, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -3865,6 +4064,8 @@ def main():
                 if clean(s.get("Company", "")).lower() == "federated media"
                 else connoisseur_media(s)
                 if clean(s.get("Company", "")).lower() == "connoisseur media"
+                else isolved(s)
+                if "isolved" in a or "ourcareerpages" in s.get("URL", "").lower()
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
