@@ -1139,12 +1139,12 @@ def _job_from_detail(src, url, html_text):
 
 ATS_JOB_HINTS = {
     "paylocity": [
-        r"/recruiting/jobs/details/\d+",
-        r"/recruiting/jobs/Details/\d+",
+        r"/recruiting/jobs/details/\d+", r"/Recruiting/Jobs/Details/\d+",
+        r"/recruiting/jobs/\d+", r"jobId=\d+",
     ],
     "icims": [
-        r"/jobs/\d+/",
-        r"/jobs/\d+$",
+        r"/jobs/\d+/", r"/jobs/\d+$", r"/jobs/\d+/.+?/job",
+        r"jobid=\d+",
     ],
     "jazzhr": [
         r"/apply/[A-Za-z0-9_-]+/",
@@ -1155,12 +1155,12 @@ ATS_JOB_HINTS = {
         r"/apply/[A-Za-z0-9_-]+$",
     ],
     "dayforce": [
-        r"/job/",
-        r"/jobs/",
+        r"/job/", r"/jobs/", r"/CandidatePortal/.+?/jobs/",
+        r"/candidateportal/.+?/job/", r"jobPostingId=",
     ],
     "ukg": [
         r"/JobBoard/.+?/OpportunityDetail\?opportunityId=",
-        r"/JobBoard/.+?/JobDetail/",
+        r"/JobBoard/.+?/JobDetail/", r"opportunityId=[0-9a-f-]+",
         r"/job/",
     ],
     "ultipro": [
@@ -1169,14 +1169,14 @@ ATS_JOB_HINTS = {
         r"/job/",
     ],
     "adp": [
-        r"/cx/job-details",
-        r"/job-details",
+        r"/cx/job-details", r"/job-details", r"/cx/job-detail",
+        r"reqId=[A-Za-z0-9_-]+", r"requisitionId=[A-Za-z0-9_-]+",
         r"[?&]r=\d+",
     ],
     "oracle": [
-        r"/job/",
-        r"/jobs/",
-        r"/requisitions/",
+        r"/job/", r"/jobs/", r"/requisitions/",
+        r"/sites/.+?/job/", r"/sites/.+?/requisitions/",
+        r"requisitionId=",
     ],
     "taleo": [
         r"jobdetail",
@@ -1253,13 +1253,64 @@ def _ats_family(src):
     return ""
 
 
-def ats_html(src):
-    """
-    Multi-ATS HTML/schema.org adapter.
+KNOWN_ATS_HOST_TOKENS = (
+    "adp.com", "paylocity.com", "dayforcehcm.com", "dayforce.com",
+    "icims.com", "ultipro.com", "ukg.com", "oraclecloud.com",
+    "taleo.net", "breezy.hr", "applytojob.com", "jazz.co",
+    "paycomonline.net", "rippling-ats.com", "jobscore.com",
+    "recruitingbypaycor.com", "isolvedhire.com", "betterteam.com",
+    "myworkdayjobs.com", "greenhouse.io",
+)
 
-    This intentionally targets public career pages and canonical job-detail
-    pages only. It does not invent apply URLs. ATS-specific link patterns
-    enumerate detail pages, then schema.org JobPosting is used when available.
+
+def _known_ats_url(url):
+    host = (urlparse(url).netloc or "").lower()
+    return any(tok in host for tok in KNOWN_ATS_HOST_TOKENS)
+
+
+def _candidate_urls_from_text(base, raw, patterns):
+    """Extract absolute and escaped/relative ATS job URLs embedded in scripts."""
+    found = set()
+    text = html.unescape(raw or "").replace("\\/", "/")
+
+    # Absolute URLs, including JSON-escaped strings after slash normalization.
+    for m in re.finditer(r'https?://[^"\'<>\s]+', text):
+        u = m.group(0).rstrip("\\,;)")
+        if any(re.search(p, u, re.I) for p in patterns):
+            found.add(u)
+
+    # Relative URLs are common in React/Angular state blobs.
+    for m in re.finditer(r'(?P<q>["\'])(?P<u>/[^"\']{4,500})(?P=q)', text):
+        rel = m.group("u")
+        u = urljoin(base, rel)
+        if any(re.search(p, u, re.I) for p in patterns):
+            found.add(u)
+
+    return found
+
+
+def _listing_next_links(page, soup):
+    out = set()
+    for a in soup.find_all("a", href=True):
+        h = urljoin(page, a["href"])
+        label = clean(a.get_text(" ")).lower()
+        low = h.lower()
+        if (
+            re.search(r"\b(next|more jobs|load more|older)\b", label)
+            or re.search(r"[?&](page|p|start|offset|from)=\d+", low)
+            or re.search(r"/page/\d+", low)
+        ):
+            out.add(h)
+    return out
+
+
+def ats_html(src):
+    """Enhanced multi-ATS public-page adapter.
+
+    Enumerates job-detail URLs from anchors, script/application state, JSON-LD,
+    and server-side pagination. It deliberately keeps the final apply URL on
+    the actual discovered job-detail page and still requires a qualifying
+    recent posting date when the detail page is parsed.
     """
     family = _ats_family(src)
     patterns = ATS_JOB_HINTS.get(family, [])
@@ -1267,13 +1318,12 @@ def ats_html(src):
         return generic(src)
 
     start = src["URL"]
+    start_host = (urlparse(start).netloc or "").lower()
     queue = [start]
     seen_pages = set()
     job_links = set()
 
-    # Follow a small number of listing/pagination pages. This captures ATS pages
-    # that paginate server-side without turning the crawler into a site spider.
-    while queue and len(seen_pages) < 25 and len(job_links) < 1500:
+    while queue and len(seen_pages) < 40 and len(job_links) < 2000:
         page = queue.pop(0)
         key = page.rstrip("/")
         if key in seen_pages:
@@ -1283,44 +1333,51 @@ def ats_html(src):
         r = req("GET", page)
         soup = BeautifulSoup(r.text, "html.parser")
 
+        # Some source rows are already a job detail.
+        if any(re.search(p, page, re.I) for p in patterns):
+            job_links.add(page)
+
+        # Normal links. Permit a same-host URL or another recognized ATS host;
+        # company career sites frequently redirect/link to a separate ATS host.
         for a in soup.find_all("a", href=True):
             h = urljoin(page, a["href"])
-            if urlparse(h).netloc != urlparse(start).netloc:
-                continue
+            host = (urlparse(h).netloc or "").lower()
+            if any(re.search(p, h, re.I) for p in patterns):
+                if host == start_host or _known_ats_url(h):
+                    job_links.add(h)
+                    continue
 
-            low = h.lower()
-            if any(re.search(pat, h, re.I) for pat in patterns):
-                job_links.add(h)
-                continue
-
-            label = clean(a.get_text(" ")).lower()
-            if (
-                re.search(r"\b(next|more jobs|load more)\b", label)
-                or re.search(r"[?&](page|p|start|offset)=\d+", low)
-                or re.search(r"/page/\d+", low)
-            ):
-                if h.rstrip("/") not in seen_pages:
-                    queue.append(h)
-
-        # Some ATS platforms expose canonical job URLs inside scripts rather
-        # than anchors. Pull only same-host URLs matching the family patterns.
-        raw = r.text.replace("\\/", "/")
-        for m in re.finditer(r'https?://[^"\'<>\s]+', raw):
-            h = html.unescape(m.group(0)).rstrip("\\")
-            if urlparse(h).netloc == urlparse(start).netloc and any(
-                re.search(pat, h, re.I) for pat in patterns
-            ):
+        # URLs inside script state / hydrated JSON.
+        for h in _candidate_urls_from_text(page, r.text, patterns):
+            host = (urlparse(h).netloc or "").lower()
+            if host == start_host or _known_ats_url(h):
                 job_links.add(h)
 
-    # A supplied source may itself be an individual job detail URL.
-    if any(re.search(pat, start, re.I) for pat in patterns):
-        job_links.add(start)
+        # JSON-LD often exposes the canonical detail URL even when the visible
+        # listing is rendered client-side.
+        for jp in _jsonld_jobs(soup):
+            h = clean(jp.get("url") or jp.get("sameAs") or "")
+            if h:
+                h = urljoin(page, h)
+                if any(re.search(p, h, re.I) for p in patterns) or _known_ats_url(h):
+                    job_links.add(h)
+
+        # Follow bounded pagination/search result pages.
+        for h in _listing_next_links(page, soup):
+            host = (urlparse(h).netloc or "").lower()
+            if host == start_host and h.rstrip("/") not in seen_pages:
+                queue.append(h)
 
     out = []
-    for url in list(job_links)[:1500]:
+    seen_job_urls = set()
+    for url in list(job_links)[:2000]:
+        canon = url.split("#", 1)[0]
+        if canon in seen_job_urls:
+            continue
+        seen_job_urls.add(canon)
         try:
-            rr = req("GET", url)
-            j = _job_from_detail(src, url, rr.text)
+            rr = req("GET", canon)
+            j = _job_from_detail(src, canon, rr.text)
             if j:
                 out.append(j)
         except Exception:
@@ -1335,13 +1392,26 @@ def generic(src):
     soup = BeautifulSoup(r.text, "html.parser")
     links = set()
 
+    generic_patterns = [
+        r"/jobs/", r"/job/", r"jobdetail", r"/details/",
+        r"opportunitydetail", r"job-details", r"requisitions",
+        r"career/JobIntroduction\.action", r"/apply/", r"/p/",
+    ]
+
     for a in soup.find_all("a", href=True):
         h = urljoin(src["URL"], a["href"])
-        if any(
-            x in h.lower()
-            for x in ["/jobs/", "/job/", "jobdetail", "/details/"]
-        ):
+        if any(re.search(p, h, re.I) for p in generic_patterns) or _known_ats_url(h):
             links.add(h)
+
+    # Generic company career pages frequently embed the real ATS URLs only in
+    # JavaScript/application state. Pull those out too.
+    links.update(_candidate_urls_from_text(src["URL"], r.text, generic_patterns))
+
+    # JSON-LD canonical URLs are another reliable discovery path.
+    for jp in _jsonld_jobs(soup):
+        h = clean(jp.get("url") or jp.get("sameAs") or "")
+        if h:
+            links.add(urljoin(src["URL"], h))
 
     out = []
 
