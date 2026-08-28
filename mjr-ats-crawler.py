@@ -2475,6 +2475,487 @@ def ukg(src):
             continue
     return out
 
+
+def _oracle_parts(url):
+    """Return (origin, siteNumber) for an Oracle Fusion Candidate Experience URL."""
+    p = urlparse(url)
+    m = re.search(
+        r"/hcmUI/CandidateExperience/(?:[a-z]{2}(?:-[A-Z]{2})?/)?sites/([^/]+)/",
+        p.path,
+        re.I,
+    )
+    if not m:
+        m = re.search(
+            r"/hcmUI/CandidateExperience/(?:[a-z]{2}(?:-[A-Z]{2})?/)?sites/([^/?#]+)",
+            p.path,
+            re.I,
+        )
+    if not m:
+        return None
+    origin = f"{p.scheme or 'https'}://{p.netloc}"
+    return origin, m.group(1)
+
+
+def _oracle_items(payload):
+    """Yield requisition rows across the common Oracle CE response shapes."""
+    if not isinstance(payload, dict):
+        return []
+
+    rows = []
+
+    # Common response: items[0].requisitionList[]
+    for top in payload.get("items") or []:
+        if not isinstance(top, dict):
+            continue
+        rl = top.get("requisitionList")
+        if isinstance(rl, list):
+            rows.extend(x for x in rl if isinstance(x, dict))
+        elif isinstance(rl, dict):
+            rows.extend(x for x in (rl.get("items") or []) if isinstance(x, dict))
+
+        # Some releases expose the requisition object itself as an item.
+        if any(
+            k in top
+            for k in (
+                "Id",
+                "RequisitionId",
+                "RequisitionNumber",
+                "Title",
+                "ExternalTitle",
+                "PostedDate",
+                "PostedDateTime",
+            )
+        ):
+            rows.append(top)
+
+    # Defensive fallback for alternate wrappers.
+    for key in ("requisitionList", "RequisitionList", "results", "jobs"):
+        val = payload.get(key)
+        if isinstance(val, list):
+            rows.extend(x for x in val if isinstance(x, dict))
+        elif isinstance(val, dict):
+            rows.extend(x for x in (val.get("items") or []) if isinstance(x, dict))
+
+    # De-dupe by likely Oracle job ID while preserving first occurrence.
+    out = []
+    seen = set()
+    for row in rows:
+        rid = clean(
+            str(
+                row.get("Id")
+                or row.get("id")
+                or row.get("SearchId")
+                or row.get("RequisitionId")
+                or row.get("requisitionId")
+                or row.get("RequisitionNumber")
+                or row.get("requisitionNumber")
+                or ""
+            )
+        )
+        key = rid or hashlib.sha1(
+            json.dumps(row, sort_keys=True, default=str).encode()
+        ).hexdigest()
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(row)
+    return out
+
+
+def _oracle_value(row, *names):
+    """First non-empty Oracle field, case-insensitive."""
+    if not isinstance(row, dict):
+        return ""
+    lower = {str(k).lower(): v for k, v in row.items()}
+    for name in names:
+        v = row.get(name)
+        if v not in (None, "", [], {}):
+            return v
+        v = lower.get(name.lower())
+        if v not in (None, "", [], {}):
+            return v
+    return ""
+
+
+def _oracle_date(row):
+    """Oracle public CE posting date. Do not substitute unrelated update dates."""
+    for name in (
+        "PostedDate",
+        "postedDate",
+        "PostedDateTime",
+        "postedDateTime",
+        "PostingStartDate",
+        "postingStartDate",
+        "ExternalPostedStartDate",
+        "externalPostedStartDate",
+    ):
+        d = pdate(str(_oracle_value(row, name) or ""))
+        if d:
+            return d
+    return None
+
+
+def _oracle_location(row):
+    for name in (
+        "PrimaryLocation",
+        "primaryLocation",
+        "PrimaryLocationName",
+        "primaryLocationName",
+        "Location",
+        "location",
+        "LocationName",
+        "locationName",
+    ):
+        val = _oracle_value(row, name)
+        if isinstance(val, dict):
+            for k in ("Name", "name", "DisplayName", "displayName"):
+                if val.get(k):
+                    return clean(str(val[k]))
+        if val:
+            return clean(str(val))
+
+    # Some Oracle responses expose city/state/country as independent fields.
+    city = clean(str(_oracle_value(row, "City", "city") or ""))
+    state = clean(str(_oracle_value(row, "State", "state", "Region", "region") or ""))
+    country = clean(str(_oracle_value(row, "Country", "country", "CountryName", "countryName") or ""))
+    return clean(", ".join(x for x in (city, state, country) if x))
+
+
+def _oracle_description(row):
+    parts = []
+    for name in (
+        "ExternalDescriptionStr",
+        "externalDescriptionStr",
+        "ExternalDescription",
+        "externalDescription",
+        "Description",
+        "description",
+        "ShortDescription",
+        "shortDescription",
+        "Responsibilities",
+        "responsibilities",
+        "Qualifications",
+        "qualifications",
+    ):
+        val = _oracle_value(row, name)
+        if not val:
+            continue
+        if isinstance(val, (dict, list)):
+            val = json.dumps(val, ensure_ascii=False)
+        s = strip_html(str(val))
+        if s and s not in parts:
+            parts.append(s)
+    return clean(" ".join(parts))
+
+
+def _oracle_detail_api(origin, site, rid):
+    """Fetch a public Oracle CE detail object when available."""
+    rid = clean(str(rid))
+    if not rid:
+        return {}
+
+    endpoints = [
+        (
+            f"{origin}/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails",
+            {
+                "expand": "all",
+                "onlyData": "true",
+                "finder": f'ById;Id="{rid}",siteNumber={site}',
+            },
+        ),
+        (
+            f"{origin}/hcmRestApi/resources/latest/recruitingCEJobRequisitions/{rid}",
+            {"onlyData": "true"},
+        ),
+    ]
+
+    for url, params in endpoints:
+        try:
+            r = req(
+                "GET",
+                url,
+                params=params,
+                headers={
+                    "Accept": "application/json, application/vnd.oracle.adf.resourcecollection+json",
+                    "Ora-Irc-Language": "en",
+                },
+            )
+            data = r.json()
+            if isinstance(data, dict):
+                items = data.get("items")
+                if isinstance(items, list) and items and isinstance(items[0], dict):
+                    return items[0]
+                return data
+        except Exception:
+            continue
+    return {}
+
+
+def _oracle_job(src, origin, site, row):
+    rid = clean(
+        str(
+            _oracle_value(
+                row,
+                "Id",
+                "id",
+                "SearchId",
+                "searchId",
+                "RequisitionId",
+                "requisitionId",
+                "RequisitionNumber",
+                "requisitionNumber",
+            )
+            or ""
+        )
+    )
+    if not rid:
+        return None
+
+    pd = _oracle_date(row)
+    detail = {}
+
+    # Listing rows may be intentionally compact. Fetch detail only when needed.
+    title = clean(
+        str(
+            _oracle_value(
+                row,
+                "Title",
+                "title",
+                "ExternalTitle",
+                "externalTitle",
+                "RequisitionTitle",
+                "requisitionTitle",
+            )
+            or ""
+        )
+    )
+    desc = _oracle_description(row)
+    loc = _oracle_location(row)
+
+    if not pd or not title or len(desc) < 200:
+        detail = _oracle_detail_api(origin, site, rid)
+        if detail:
+            if not pd:
+                pd = _oracle_date(detail)
+            if not title:
+                title = clean(
+                    str(
+                        _oracle_value(
+                            detail,
+                            "Title",
+                            "title",
+                            "ExternalTitle",
+                            "externalTitle",
+                            "RequisitionTitle",
+                            "requisitionTitle",
+                        )
+                        or ""
+                    )
+                )
+            if len(desc) < 200:
+                desc = _oracle_description(detail)
+            if not loc:
+                loc = _oracle_location(detail)
+
+    if not pd or pd < CUTOFF or not title:
+        return None
+
+    combined = dict(row)
+    if isinstance(detail, dict):
+        combined.update({k: v for k, v in detail.items() if v not in (None, "", [], {})})
+
+    # If API detail still lacks prose, use the real public job page as a final
+    # structured fallback. This remains the canonical apply/detail URL.
+    job_url = f"{origin}/hcmUI/CandidateExperience/en/sites/{site}/job/{rid}"
+    if len(desc) < 200:
+        try:
+            rr = req("GET", job_url)
+            soup = BeautifulSoup(rr.text, "html.parser")
+            jld = _job_from_detail(src, job_url, rr.text)
+            if jld:
+                # Preserve Oracle's explicit listing/API posting date when present.
+                jld.date = pd
+                return jld
+            main = soup.find("main") or soup
+            page_desc = clean(main.get_text(" "))
+            if len(page_desc) >= 200:
+                desc = page_desc
+        except Exception:
+            pass
+
+    if len(desc) < 200:
+        return None
+
+    reqnum = clean(
+        str(
+            _oracle_value(
+                combined,
+                "RequisitionNumber",
+                "requisitionNumber",
+                "JobNumber",
+                "jobNumber",
+            )
+            or ""
+        )
+    )
+    jid = reqnum or rid
+
+    jt_text = " ".join(
+        clean(str(_oracle_value(combined, x) or ""))
+        for x in (
+            "JobType",
+            "jobType",
+            "WorkerType",
+            "workerType",
+            "RegularOrTemporary",
+            "regularOrTemporary",
+            "FullPartTime",
+            "fullPartTime",
+            "WorkplaceType",
+            "workplaceType",
+        )
+    )
+
+    workplace = clean(
+        str(_oracle_value(combined, "WorkplaceType", "workplaceType") or "")
+    )
+    arrangement_context = clean(f"{workplace} {loc} {desc}")
+
+    country_hint = clean(
+        str(
+            _oracle_value(
+                combined,
+                "Country",
+                "country",
+                "CountryName",
+                "countryName",
+                "CountryCode",
+                "countryCode",
+            )
+            or ""
+        )
+    )
+
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, jt_text),
+        category(title, desc, src["Industry"], src["Company"]),
+        job_url,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, arrangement_context),
+        loc,
+        "",
+        infer_country(country_hint or loc, src["Company"], desc),
+    )
+
+
+def oracle_recruiting(src):
+    """Dedicated Oracle Fusion Recruiting Candidate Experience collector.
+
+    Oracle's public CE job site calls recruitingCEJobRequisitions with the
+    findReqs finder. `expand=requisitionList` is required to receive the actual
+    posting rows. We page by limit/offset and construct the real Candidate
+    Experience job URL from the returned requisition ID.
+    """
+    parts = _oracle_parts(src["URL"])
+    if not parts:
+        return ats_html(src)
+
+    origin, site = parts
+    endpoint = f"{origin}/hcmRestApi/resources/latest/recruitingCEJobRequisitions"
+
+    limit = 200
+    offset = 0
+    max_pages = 25
+    rows = []
+
+    headers = {
+        "Accept": "application/json, application/vnd.oracle.adf.resourcecollection+json",
+        "Ora-Irc-Language": "en",
+    }
+
+    for _ in range(max_pages):
+        params = {
+            "onlyData": "true",
+            "expand": "requisitionList",
+            "finder": f"findReqs;siteNumber={site},limit={limit},offset={offset}",
+        }
+
+        try:
+            r = req("GET", endpoint, params=params, headers=headers)
+            payload = r.json()
+        except Exception:
+            # Some Oracle releases accept limit/offset only as regular query args.
+            params = {
+                "onlyData": "true",
+                "expand": "requisitionList",
+                "finder": f"findReqs;siteNumber={site}",
+                "limit": limit,
+                "offset": offset,
+            }
+            r = req("GET", endpoint, params=params, headers=headers)
+            payload = r.json()
+
+        page_rows = _oracle_items(payload)
+        if not page_rows:
+            break
+
+        rows.extend(page_rows)
+
+        # Oracle can return total count in several locations.
+        total = None
+        candidates = [payload]
+        if isinstance(payload, dict):
+            candidates += [
+                x for x in (payload.get("items") or []) if isinstance(x, dict)
+            ]
+        for obj in candidates:
+            for key in (
+                "TotalJobsCount",
+                "totalJobsCount",
+                "TotalResults",
+                "totalResults",
+                "count",
+            ):
+                try:
+                    val = int(obj.get(key))
+                    if val >= 0:
+                        total = val
+                        break
+                except Exception:
+                    pass
+            if total is not None:
+                break
+
+        offset += limit
+        if total is not None and offset >= total:
+            break
+        if len(page_rows) < limit:
+            # Some Oracle responses wrap all rows inside one requisitionList
+            # item, so only stop here when there is no indication of more data.
+            has_more = bool(payload.get("hasMore")) if isinstance(payload, dict) else False
+            if not has_more:
+                break
+
+    out = []
+    seen = set()
+    for row in rows:
+        try:
+            j = _oracle_job(src, origin, site, row)
+            if j and j.id not in seen:
+                seen.add(j.id)
+                out.append(j)
+        except Exception:
+            # One stale or malformed Oracle requisition must not abort employer.
+            continue
+    return out
+
 def ats_html(src):
     """Enhanced multi-ATS public-page adapter.
 
@@ -2813,6 +3294,8 @@ def main():
                 if "icims" in a
                 else ukg(s)
                 if "ukg" in a or "ultipro" in a
+                else oracle_recruiting(s)
+                if "oracle recruiting" in a or "oracle cloud" in a
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
