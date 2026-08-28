@@ -10,7 +10,7 @@ Educational Media Foundation,iCIMS,https://careers-kloveair1.icims.com/jobs/sear
 Good Karma Brands,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US,ok,4,
 Hope Media Group,Paylocity,https://recruiting.paylocity.com/Recruiting/Jobs/Details/3364897,zero_or_not_enumerable,0,
 Hubbard Broadcasting,ADP,https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing,error,0,RuntimeError('ADP career-center cid not inferable')
-iHeartMedia,Workday,https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/jobs,ok,40,
+iHeartMedia,Workday,https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/jobs,error,0,HTTPError('404 Client Error: Not Found for url: https://iheartmedia.wd5.myworkdayjobs.com/wday/cxs/iheartmedia/External_iHM/job/Outside-Account-Executive_Req37877-1')
 Meruelo Media,Oracle Taleo,https://phe.tbe.taleo.net/phe02/ats/careers/v2/searchResults?org=GRANDSIERRARESORT&cws=66,zero_or_not_enumerable,0,
 Norsan Media,Betterteam,https://norsanmedia.betterteam.com/,zero_or_not_enumerable,0,
 NRG Media,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/76da5c58-0cdb-4886-86b6-41d72879e541/NRG-MEDIA-LLC,zero_or_not_enumerable,0,
@@ -57,7 +57,7 @@ Sinclair,Oracle Recruiting Cloud,https://edyy.fa.us2.oraclecloud.com/hcmUI/Candi
 TelevisaUnivision,Workday,https://univision.wd1.myworkdayjobs.com/External,ok,40,
 Weather Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=20c3677e-ce5f-400f-9d8d-173f5a852a5d&ccId=19000101_000001&type=JS&lang=en_US,ok,5,
 Weigel,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co,zero_or_not_enumerable,0,
-WWE,Workday,https://wwecorp.wd5.myworkdayjobs.com/wwecorp,ok,19,
+WWE,Workday,https://wwecorp.wd5.myworkdayjobs.com/wwecorp,ok,18,
 CNN,Company Career Site,https://careers.wbd.com/global/en/cnn-jobs,zero_or_not_enumerable,0,
 Disney / ABC,Company Career Site,https://jobs.disneycareers.com/search-jobs?k=ABC,zero_or_not_enumerable,0,
 ESPN,Company Career Site,https://www.disneycareers.com/en/search-jobs/ESPN/391/1,zero_or_not_enumerable,0,
