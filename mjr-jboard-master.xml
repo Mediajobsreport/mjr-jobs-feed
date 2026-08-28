@@ -1786,6 +1786,27 @@
     </location>
   </job>
   <job>
+    <id>JR15470</id>
+    <title>Senior Software Engineer, 1</title>
+    <company>Dotdash Meredith / People Inc</company>
+    <description>Job Title Senior Software Engineer, 1 Job Description About The Team: People Inc. is looking for a Senior Software Engineer 1 to join our AI/ML Engineering Platform team. As part of the AI/ML Engineering Platform team, you'll be working on widely used components that help users find ways to consume content on our sites. This includes using technologies such as Vertex AI pipeline, KServe, Kafka, Elasticsearch and Vector Database to leverage the power of AI and ML use cases and build capabilities to recommend related articles, and much more! As a Senior Software Engineer 1, you will collaborate with product owners, Data Science, Platform teams, project managers, and software engineers to create service applications and contribute to the technical roadmap About The Positions Contributions: Accountabilities, Actions and Expected Measurable Results ( 70%) You understand how to design and build scalable distributed systems, backend platforms, compatible with AI/ML infrastructure for search, retrieval, ranking, recommendation, and personalization use cases You will: Design and build systems, manage scalable ML pipelines using Vertex AI Pipelines for training, evaluation and deployment to support ranking, retrieval, and recommendation personalization use cases Develop and maintain data pipelines that support feature generation, model training, and analytics workflows. Own vector generation via Milvus, storage, and retrieval workflows Implement model serving solutions using KServe and build APIs using FastAPI for low latency inference Build observability and monitoring for models and pipelines. Track performance, drift, failures, and data quality issues Collaborate with data scientists, product managers, and platform teams to define and deliver ML driven features Investigate production issues across data pipelines, models, and services. Identify bottlenecks and improve reliability and performance Create and maintain clear documentation for pipelines, models, APIs, and operational processes Develop internal tools and dashboards to provide visibility into data processing and model behavior for stakeholders Contribute to engineering standards, code quality, and best practices across Python-based services and ML systems Stay current with ML infrastructure, MLOps practices, and relevant tools. Bring in improvements where they add clear value Collaborate with product, data science, and frontend teams to deliver high quality search and feed experiences (30%) Own production systems. Debug issues across indexing, retrieval, ranking, and serving layers Create clear documentation for pipelines, models, APIs, and system design Contribute to best practices for Python based ML systems, API design, and scalable infrastructure Stay current with advancements in search, ranking, and recommendation systems. Apply them where they make practical impact The Role’s Minimum Qualifications and Job Requirements Education: Bachelor’s degree in Computer Science, Engineering, or a related field Experience: You have a strong foundation in modern backend and ML engineering practices and continue to learn and evolve. You bring: 6+ years of experience building scalable backend systems and services 5+ years of experience developing software using object oriented languages, with strong proficiency in Python, Node.js, and TypeScript Hands on experience with ES for search, indexing, and relevance tuning Experience with event driven systems using Apache Kafka for real time data pipelines and processing Strong understanding of version control systems including Git and platforms like Bitbucket Experience with observability and monitoring tools such as Grafana, Kibana, and APM Familiarity with cloud platforms including AWS and GCP, along with containerization using Docker and orchestration with Kubernetes Comfortable deploying, versioning, and monitoring models in production Curiosity to learn new technologies, especially in AI, LLMs, and modern search and recommendation systems, with a focus on applying them in real production use cases. Experience designing and building data pipelines using Apache Beam and Apache Airflow for ingestion, transformation, and feature pipelines Familiarity with experimentation and analytics tools such as Jupyter Notebook and Apache Spark to track and reproduce experiments Strong experience designing and consuming RESTful and GraphQL APIs, including versioning, documentation, and security practices like OAuth and JWT Good understanding of machine learning concepts including supervised learning, unsupervised learning, deep learning, and natural language processing, with practical application in ranking, retrieval, and personalization Beginner level experience managing ML pipelines using Vertex AI Pipelines for training, evaluation, and deployment workflows Ability to review code, provide clear feedback, and improve overall engineering quality Strong communication skills. Able to explain technical concepts clearly to both technical and non technical stakeholders Solid problem solving skills with a data driven approach Specific Knowledge, Skills, Certifications and Abilities: Core Tech Stack Backend and API development using Python, FastAPI, Node.js, and TypeScript Search and indexing using Elasticsearch for relevance, retrieval, and query optimization Event driven architecture and streaming using Apache Kafka Vector search and embeddings infrastructure using vector databases such as Milvus or Pinecone Cloud and infrastructure using Google Cloud Platform or Amazon Web Services with containerization via Docker and orchestration through Kubernetes % Travel Required (Approximate) : 0 % It is the policy of People Inc. to provide equal employment opportunity (EEO) to all persons regardless of age, color, national origin, citizenship status, physical or mental disability, race, religion, creed, gender, sex, sexual orientation, gender identity and/or expression, genetic information, marital status, status with regard to public assistance, veteran status, or any other characteristic protected by federal, state or local law. In addition, the Company will provide reasonable accommodations for qualified individuals with disabilities. Accommodation requests can be made by emailing hr@people.inc . The Company participates in the federal E-Verify program to confirm the identity and employment authorization of all newly hired employees. For further information about the E-Verify program, please click here: https://www.e-verify.gov/employees Pay Range Salary: Remote: $125,000.00 - $150,000.00 The pay range above represents the anticipated low and high end of the pay range for this position and may change in the future. Actual pay may vary and may be above or below the range based on various factors including but not limited to work location, experience, and performance. The range listed is just one component of People Inc's total compensation package for employees. Other compensation may include annual bonuses, and short- and long-term incentives. In addition, People Inc. provides to employees (and their eligible family members) a variety of benefits, including medical, dental, vision, prescription drug coverage, unlimited paid time off (PTO), adoption or surrogate assistance, donation matching, tuition reimbursement, basic life insurance, basic accidental death &amp; dismemberment, supplemental life insurance, supplemental accident insurance, commuter benefits, short term and long term disability, health savings and flexible spending accounts, family care benefits, a generous 401K savings plan with a company match program, 10-12 paid holidays annually, and generous paid parental leave (birthing and non-birthing parents), all of which may vary depending on the specific nature of your employment with People Inc. and your work location. We also offer voluntary benefits such as pet insurance, accident, critical and hospital indemnity health insurance coverage, life and disability insurance. #NMG#</description>
+    <date>2026-08-28</date>
+    <expiration>21</expiration>
+    <jobtype>Full Time</jobtype>
+    <category>Engineering</category>
+    <url>https://meredith.wd5.myworkdayjobs.com/EXT/job/New-York-NY---225-Liberty-Street/Senior-Software-Engineer--1_JR15470</url>
+    <source>https://meredith.wd5.myworkdayjobs.com/EXT</source>
+    <url_verified>2026-08-28</url_verified>
+    <company_website>https://meredith.wd5.myworkdayjobs.com/EXT</company_website>
+    <logo />
+    <work_arrangement>On-Site</work_arrangement>
+    <location>
+      <city>New York, NY - 225 Liberty Street</city>
+      <state />
+      <country>US</country>
+    </location>
+  </job>
+  <job>
     <id>JR15613</id>
     <title>Social Operations Manager</title>
     <company>Dotdash Meredith / People Inc</company>
@@ -2101,27 +2122,6 @@
     </location>
   </job>
   <job>
-    <id>R50033689</id>
-    <title>Freelance Editorial Advisor, Commerce</title>
-    <company>Fox Television</company>
-    <description>OVERVIEW OF THE COMPANY Fox Corporation Under the FOX banner, we produce and distribute content through some of the world’s leading and most valued brands, including: FOX News Media, FOX Sports, FOX Entertainment, FOX Television Stations and Tubi Media Group. We empower a diverse range of creators to imagine and develop culturally significant content, while building an organization that thrives on creative ideas, operational expertise and strategic thinking. JOB DESCRIPTION We are seeking a Freelance Editorial Advisor to partner with Commerce leadership and our editorial team to help lead the next phase of our Commerce editorial strategy and organization. This person will bring editorial leadership, strategic thinking, and hands-on guidance to help shape our content strategy, strengthen our editorial approach, and identify new opportunities for audience and business growth. Working closely with Commerce leadership and the existing editorial team, this role will help set editorial priorities, evolve our content portfolio, strengthen workflows and ways of working, and help define the capabilities and organizational structure needed to support our strategy. This is a highly collaborative leadership role. We are looking for someone who can quickly become a trusted partner to the team—bringing experience, perspective, and clear editorial direction while helping the organization execute against a forward-looking strategy. The ideal candidate will have experience leading editorial teams and developing content strategies within commerce, service journalism, digital publishing, lifestyle, consumer media, or a related field. A SNAPSHOT OF YOUR RESPONSIBILITES Partner closely with Commerce leadership and the editorial team to help set editorial direction and priorities. Provide editorial leadership, and guidance to the team. Help translate broader Commerce goals into clear editorial priorities and initiatives. Work across editorial, audience, business, and other cross-functional teams to strengthen alignment and collaboration. Establish clear principles and ways of working that enable the team to execute effectively. Help shape the next phase of the Commerce content strategy, including deals and sales coverage, evergreen service content, and other commerce formats. Identify opportunities to broaden and diversify the content portfolio and reduce reliance on a limited number of formats. Develop new content concepts, franchises, and approaches that can deepen audience engagement and support growth. Help strengthen and evolve the editorial voice, positioning, and value proposition of Commerce content. Develop approaches that reinforce authority, usefulness, differentiation, and audience trust. Help define what should distinguish our Commerce editorial experience in a competitive marketplace. Work with leadership and the editorial team to strengthen workflows, planning processes, and publishing cadence. Provide recommendations for how the team and organizational structure should evolve to support growth. Develop a clear, prioritized editorial roadmap for the next phase of Commerce. We are looking for an experienced editorial leader who can combine strong editorial instincts with strategic thinking, organizational leadership, and a deep understanding of digital audiences. The ideal candidate will have experience leading editorial teams and developing content strategies within commerce, service journalism, digital publishing, lifestyle, consumer media, or a related field. WHAT YOU WILL NEED Significant experience in editorial leadership roles. A track record of leading and developing high-performing editorial teams. Exceptional communication and interpersonal skills, with the ability to communicate clearly and effectively with team members, senior leaders, and cross-functional partners. Strong relationship-building skills and the ability to quickly establish trust and credibility within an existing team and organization. Highly collaborative leadership style, with the ability to bring people together, build alignment, and move teams toward shared goals. Deep expertise in digital publishing and audience-focused content strategy. Experience with commerce, affiliate, service journalism, or consumer-focused editorial content. Strong editorial judgment and a clear point of view on what makes content distinctive, useful, authoritative, and trusted. Experience developing new content formats, franchises, or editorial products. Experience evolving editorial workflows, team structures, and ways of working. Strong leadership, communication, and stakeholder-management skills. The ability to quickly build trust and provide direction within an established team. A collaborative, hands-on approach and comfort operating in a fast-moving environment. #LI-AA1 We are an equal opportunity employer and all qualified applicants will receive consideration for employment without regard to race, color, religion, sex, national origin, gender identity, disability, protected veteran status, or any other characteristic protected by law. We will consider for employment qualified applicants with criminal histories consistent with applicable law. Pursuant to state and local pay disclosure requirements, the pay rate/range for this role, with final offer amount dependent on education, skills, experience, and location is $67.30-81.73 per hour.</description>
-    <date>2026-08-21</date>
-    <expiration>14</expiration>
-    <jobtype>Full Time</jobtype>
-    <category>Journalism</category>
-    <url>https://fox.wd1.myworkdayjobs.com/Domestic/job/New-York-New-York-USA/Freelance-Editorial-Advisor--Commerce_R50033689</url>
-    <source>https://fox.wd1.myworkdayjobs.com/en-US/Domestic</source>
-    <url_verified>2026-08-28</url_verified>
-    <company_website>https://fox.wd1.myworkdayjobs.com/en-US/Domestic</company_website>
-    <logo />
-    <work_arrangement>On-Site</work_arrangement>
-    <location>
-      <city>New York, New York, USA</city>
-      <state />
-      <country>US</country>
-    </location>
-  </job>
-  <job>
     <id>R50033685</id>
     <title>Freelance Producer, FOX Nation</title>
     <company>Fox Television</company>
@@ -2152,27 +2152,6 @@
     <jobtype>Part Time</jobtype>
     <category>Journalism</category>
     <url>https://fox.wd1.myworkdayjobs.com/Domestic/job/New-York-New-York-USA/Freelance-Senior-Video-Operator_R50033722</url>
-    <source>https://fox.wd1.myworkdayjobs.com/en-US/Domestic</source>
-    <url_verified>2026-08-28</url_verified>
-    <company_website>https://fox.wd1.myworkdayjobs.com/en-US/Domestic</company_website>
-    <logo />
-    <work_arrangement>On-Site</work_arrangement>
-    <location>
-      <city>New York, New York, USA</city>
-      <state />
-      <country>US</country>
-    </location>
-  </job>
-  <job>
-    <id>R50033676</id>
-    <title>Freelance Transmission Operator</title>
-    <company>Fox Television</company>
-    <description>OVERVIEW OF THE COMPANY Fox News Media FOX News Media operates the FOX News Channel (FNC), FOX Business Network (FBN), FOX News Digital, FOX News Audio, FOX News Books, the direct-to-consumer digital streaming services FOX Nation and FOX News International and the newly announced platform FOX Weather. Currently the number one network in all of cable, FNC has also been the most watched television news channel for 20 consecutive years, while FBN currently ranks among the top business channels on cable. Owned by FOX Corporation, FOX News Media reaches 200 million people each month. JOB DESCRIPTION Fox News is seeking a highly motivated Freelance Transmission Operator to join our Washington, D.C., Bureau. This role is essential to supporting on-air programming, collaborating with various teams across the organization, and ensuring the seamless delivery of high-quality live news coverage. The ideal candidate is a team player with a flexible schedule and the ability to work early mornings, evenings, overnights, weekends, and holidays in a fast-paced breaking-news environment. A SNAPSHOT OF YOUR RESPONSIBILITIES Quickly and effectively troubleshoot live video and audio feeds to ensure they are recorded or on air during an evolving breaking-news environment Work directly with control rooms to prepare in-studio live guests for air Coordinate with internal departments to record live news video feeds from around the world Partner with the satellite desk, media desk, field crews, and control room staff to support seamless transmission operations WHAT YOU WILL NEED Bachelor’s degree preferred, or equivalent experience Solid working knowledge of HD quality-control equipment Ability to read scopes Experience identifying and troubleshooting audio and video issues involving satellite and fiber transmission systems Ability to work both independently and collaboratively in a team environment Strong organizational skills and the ability to manage multiple responsibilities under pressure Availability to work weekends and overnight shifts Familiarity with Media Pulse or ScheduALL, Verizon AVOC, LiveU and TVU-Media Hub is a plus #LI-KC1 We are an equal opportunity employer and all qualified applicants will receive consideration for employment without regard to race, color, religion, sex, national origin, gender identity, disability, protected veteran status, or any other characteristic protected by law. We will consider for employment qualified applicants with criminal histories consistent with applicable law. Pursuant to state and local pay disclosure requirements, the pay rate/range for this role, with final offer amount dependent on education, skills, experience, and location is $30.00-37.50 per hour.</description>
-    <date>2026-08-24</date>
-    <expiration>17</expiration>
-    <jobtype>Part Time</jobtype>
-    <category>Engineering</category>
-    <url>https://fox.wd1.myworkdayjobs.com/Domestic/job/New-York-New-York-USA/Freelance-Transmission-Operator_R50033676</url>
     <source>https://fox.wd1.myworkdayjobs.com/en-US/Domestic</source>
     <url_verified>2026-08-28</url_verified>
     <company_website>https://fox.wd1.myworkdayjobs.com/en-US/Domestic</company_website>
@@ -2327,27 +2306,6 @@
     <work_arrangement>On-Site</work_arrangement>
     <location>
       <city>USA NY - New York - 37 W 28th St</city>
-      <state />
-      <country>US</country>
-    </location>
-  </job>
-  <job>
-    <id>R50032808</id>
-    <title>Member Experience Manager</title>
-    <company>Fox Television</company>
-    <description>OVERVIEW OF THE COMPANY Fox Corporation Under the FOX banner, we produce and distribute content through some of the world’s leading and most valued brands, including: FOX News Media, FOX Sports, FOX Entertainment, FOX Television Stations and Tubi Media Group. We empower a diverse range of creators to imagine and develop culturally significant content, while building an organization that thrives on creative ideas, operational expertise and strategic thinking. JOB DESCRIPTION Red Seat Ventures, in partnership with Fox Corporation, is launching a new membership-based business centered around premium live entertainment experiences. We are seeking Member Experience Managers in three markets to create memorable and unforgettable moments supporting members, ensuring high member satisfaction and retention. Reporting to the Director of Member Experience, the Manager will play a critical role in ensuring a seamless and unforgettable experience for the membership in and out of our arenas and stadiums. This is a highly collaborative role ideal for an experienced hospitality professional with a private club background who thrives in a startup-style growth environment. Passion for delivering high touch, personalized service to discerning high net worth individuals in a professional manner is key to success in this role. A SNAPSHOT OF YOUR RESPONSIBILITIES Utilize CRM, internal tools, and online systems to assist members in our club suites with operational run of show, issue solving, and delivering a high-touch membership experience. Engage with members via multiple touchpoints – email, phone, text, in person – as their primary point of contact to the Club; assisting them with making reservations, accessing tickets, and creating unforgettable experiences throughout the portfolio of club offerings. Assist and contribute to weekly meetings to discuss member feedback, operational insights, and any additional details relating to members or our events. Assist the Director in designing and implementing strategies that deepen member relationships, increase member satisfaction, and increase retention. Identify and monitor membership metrics (retention, satisfaction, membership usage, personal details) and continuously assist to refine engagement efforts based on insights, feedback, and data collected. Event-day hosting, including placing catering orders, welcoming members to the suite, assisting with navigating the space, recording any notable member key insights, and facilitating additional experiences as the Club adds them. As the membership scales, assist with building the framework for hiring, training and developing a team of Member Suite Specialists. WHAT YOU WILL NEED 5+ years of experience in a member service role or hospitality space preferably at a private club or hotel space (e.g., country club or social club) Experience working in CRM systems, entering, managing and organizing confidential data Strong communication and interpersonal skills, with a high degree of empathy and poise Comfortable working cross-functionally in a fast-paced, growth-stage environment with little direction Organized, detail-oriented, and able to manage multiple engagement efforts simultaneously NICE TO HAVE, BUT NOT A DEALBREAKER Experience in hospitality, luxury services, live entertainment, or event operations Experience working in startup environments or within new business incubation teams Familiarity with ticketing systems across a variety of venues and experiences Familiarity with operations procedures at a variety of venues, stadiums, and experiences #Ll-LS1 #Ll-Hybrid We are an equal opportunity employer and all qualified applicants will receive consideration for employment without regard to race, color, religion, sex, national origin, gender identity, disability, protected veteran status, or any other characteristic protected by law. We will consider for employment qualified applicants with criminal histories consistent with applicable law. Pursuant to state and local pay disclosure requirements, the pay rate/range for this role, with final offer amount dependent on education, skills, experience, and location is $102,000.00-120,000.00 annually. This role is also eligible for various benefits, including medical/dental/vision, insurance, a 401(k) plan, paid time off, and other benefits in accordance with applicable plan documents. Benefits for Union represented employees will be in accordance with the applicable collective bargaining agreement. View more detail about FOX Benefits.</description>
-    <date>2026-08-21</date>
-    <expiration>14</expiration>
-    <jobtype>Full Time</jobtype>
-    <category>Journalism</category>
-    <url>https://fox.wd1.myworkdayjobs.com/Domestic/job/Los-Angeles-California-USA/Member-Experience-Manager_R50032808</url>
-    <source>https://fox.wd1.myworkdayjobs.com/en-US/Domestic</source>
-    <url_verified>2026-08-28</url_verified>
-    <company_website>https://fox.wd1.myworkdayjobs.com/en-US/Domestic</company_website>
-    <logo />
-    <work_arrangement>On-Site</work_arrangement>
-    <location>
-      <city>Los Angeles, California, USA</city>
       <state />
       <country>US</country>
     </location>
@@ -2857,6 +2815,27 @@
     </location>
   </job>
   <job>
+    <id>91546</id>
+    <title>Google Cloud, Project Manager</title>
+    <company>Gannett / USA TODAY Co.</company>
+    <description>|Current USA TODAY Co. Employees- Please ensure you are using our abbreviated process on the internal Careers site by logging into Dayforce through MyApps| USA TODAY Co., Inc. is a diversified media company with expansive reach at the national and local level dedicated to empowering and enriching communities. We seek to inspire, inform, and connect audiences as a sustainable, growth focused media and digital marketing solutions company. Through our trusted brands, including the USA TODAY NETWORK, comprised of the national publication, USA TODAY, and local media organizations, including our network of local properties, in the United States, and Newsquest, a wholly-owned subsidiary operating in the United Kingdom, we provide essential journalism, local content, and digital experiences to audiences and businesses. We deliver high-quality, trusted content with a commitment to balanced, unbiased journalism, where and when consumers want to engage. Our digital marketing solutions brand, LocaliQ, supports small and medium-sized businesses with innovative digital marketing products and solutions. USA TODAY Co. open roles are featured on various external job boards. When applying to a position at USA TODAY Co., you should be completing an application on USA TODAY Co. Careers via Dayforce. Job postings directing you to complete an application on other external sites may not be valid. If you are a California resident, you acknowledge that by applying for a job with us, this California Job Applicant Privacy Notice will apply to our collection, use, and disclosure of your personal information. To connect with us, visit www.usatodayco.com As a Project Manager at UpCurve Cloud, you will own the end-to-end execution of client onboarding and Google solution deployments. You will manage concurrent technical projects—spanning Google Workspace migrations, data transfers, third-party integrations, and change management initiatives. The ideal candidate bridges the gap between technical execution and client relationship management, leading deployment engineers and trainers while ensuring projects are delivered on time, within scope, and aligned with Google Cloud best practices. Key Responsibilities • End-to-End Project Delivery: Own project initiation, planning, execution, and closure across 3–6+ concurrent Google Workspace migrations and technical projects. • Client Engagement &amp; Relationship Management: Serve as the primary operational point of contact for client stakeholders, IT directors, and executive sponsors. Translate technical concepts into clear business updates. • Technical &amp; Cross-Functional Coordination: Collaborate closely with Google Certified Deployment Engineers, Change Management Trainers, and Solution Architects to schedule resources, assign tasks, and track deliverables. • Risk &amp; Scope Management: Proactively identify project risks, technical dependencies, and potential bottlenecks. Lead formal change control processes to manage scope creep and project timelines. • Change Management &amp; Adoption: Coordinate user training and change management strategies to ensure smooth end-user adoption during legacy email/data migrations (e.g., Microsoft 365 / Exchange to Google Workspace). • Quality Assurance &amp; Governance: Ensure project deliverables meet Google Cloud deployment standards, security baselines, and agreed-upon client SLAs. Key Qualifications • Experience: 3–5+ years of technical project management experience delivering cloud migrations, SaaS onboarding, or IT deployment projects in a consulting or Managed Services Provider (MSP) environment. • Google Ecosystem Knowledge: Deep familiarity with Google Workspace administration, domain migration paths, and Google Cloud Platform (GCP) fundamentals. • Client-Facing Communication: Exceptional verbal and written communication skills with a track record of driving high client satisfaction (CSAT) scores. • Tools: Proficiency in project management software (e.g., Asana) and native Google Workspace tools (Docs, Sheets, Slides, Meet). Preferred Qualifications &amp; Certifications • Certifications: ◦ Google Associate Cloud Engineer or Google Workspace Administrator / Deployment Specialist certification. ◦ PMP (Project Management Professional) or CAPM certification. ◦ Certified ScrumMaster (CSM) or Agile certification. #LI-NR2 #LI-REMOTE The annualized base salary for this role will range between $60,000 and $70,000. Base compensation is reflective of many factors, including, but not limited to, the market in which one lives/works, individual education level, skills, certifications and experience. Note: variable compensation is not reflected in these figures and based on the role, may be applicable. USA TODAY Co., Inc. is a proud equal opportunity employer committed to building and maintaining a diverse workforce. As such, we will consider all qualified applicants for employment and do not discriminate in connection with employment decisions on the basis of an applicant or employee’s race, color, national origin, ethnicity, ancestry, citizenship status, sex, gender, gender identity, gender expression, religion, age, marital status, personal appearance (including height and weight), sexual orientation, family responsibilities, physical or mental disability, medical condition, pregnancy status (including childbirth, breastfeeding or related medical conditions), education, genetic characteristics or information, political affiliation, military or veteran status or other classifications protected by applicable federal, state and local laws in the jurisdictions where USA TODAY Co. employs employees. In addition, USA TODAY Co., Inc. will provide applicants who require a reasonable accommodation, as a result of an applicant’s disability or religion, to complete this employment application and/or any other process in connection with an individuals’ application for employment with USA TODAY Co., Inc. Applicants who require such accommodation should contact USA TODAY Co., Inc.’s Recruitment Department at Recruit@usatodayco.com. Applicants must be authorized to work in the applicable location. Applications from outside these regions will be removed from our system after submission.</description>
+    <date>2026-08-28</date>
+    <expiration>21</expiration>
+    <jobtype>Full Time</jobtype>
+    <category>Sales &amp; Marketing</category>
+    <url>https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL/jobs/91546</url>
+    <source>https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=</source>
+    <url_verified>2026-08-28</url_verified>
+    <company_website>https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=</company_website>
+    <logo />
+    <work_arrangement>On-Site</work_arrangement>
+    <location>
+      <city />
+      <state />
+      <country>US</country>
+    </location>
+  </job>
+  <job>
     <id>91453</id>
     <title>Government &amp; Public Policy Reporter</title>
     <company>Gannett / USA TODAY Co.</company>
@@ -3252,6 +3231,27 @@
     <location>
       <city>Peoria</city>
       <state>IL</state>
+      <country>US</country>
+    </location>
+  </job>
+  <job>
+    <id>9202898455836_1</id>
+    <title>ESPN Chicago Part-Time Marketing Events Supervisor</title>
+    <company>Good Karma Brands</company>
+    <description>ESPN Chicago Part-Time Marketing Event Supervisor (Chicago, IL) Good Karma Sports and ESPN Chicago are looking for part-time Marketing Events Supervisors to join our marketing team and assist with promotional street team events, remote broadcasts and partnership activations across the region. We are looking for energetic, outgoing and dependable teammates who are excited to represent ESPN Chicago, engage with fans and partners, and help create a positive experience at events throughout the Chicagoland market area. Career responsibilities include but are not limited to: Execute promotional street team events, remote broadcasts and partnership activations throughout the market Load, unload and transport promotional equipment and materials Set up and tear down promotional displays, tents, tables, signage, audio equipment and other event materials Maintain promotional equipment, event supplies and station vehicles in safe working order Represent ESPN Chicago, Good Karma Sports and our partners in a professional, friendly and enthusiastic manner Engage and interact with fans, partners and teammates during events Distribute promotional materials, prizes and partner products Execute on-site contests, games and other promotional activities Capture photos and videos for use in event recaps produced by the Marketing Department Additional responsibilities and tasks to be added on as needed Be a Good Karma ambassador by adhering to our core values: Be Honest, Work Hard, Over Deliver, Listen, Teamwork and Follow Through Preferred knowledge, skills and qualifications Strong sense of responsibility, accountability and reliability Availability to work weekdays, evenings, weekends and varying schedules. Our remote broadcasts usually occur on weekdays during the day and shift lengths vary. Marketing, promotions, partnership activations or broadcast event experience or interest Ability to work effectively as part of a team and independently Friendly and outgoing personality Excellent communication skills Strong organizational and time management skills Ability to follow directions and adapt in fast-paced event environments Ability to lift and carry event equipment and materials weighing up to 50 pounds and perform the physical tasks associated with event setup and tear-down. Valid driver's license and ability to drive station vehicles to and from events as needed. This is a part-time, hourly position. Pay Transparency: The anticipated starting hourly range for Chicago-based individuals expressing interest in this position is $17.05 - $20.00 per hour. The hourly rate is to be determined by the education, experience, knowledge, skills, abilities, and location of the applicant, as well as internal and external equity. Opportunity for Growth Teammates have the opportunity to continuously learn and grow within Good Karma and are responsible for representing Good Karma Sports, our story, and our core values inside and outside the workplace. Teammates are encouraged to take a proactive role in building relationships and seeking opportunities throughout the company. How to Apply Apply by submitting resume to www.goodkarmasports.com/careers . All are encouraged to apply. About Good Karma Sports Good Karma Sports is a sports media and marketing company that helps brands build meaningful connections with fans in and around the game. Combining national reach, regional expertise and deep local relationships, the company develops and executes multi-platform strategies across audio, podcasts, video, digital, social, talent, live experiences and premium sports partnerships. For nearly 30 years, Good Karma has paired sports-first expertise and trusted relationships with best-in-class execution to deliver results for brands, publishers, leagues, teams, communities and fans. Today, Good Karma Sports has more than 500 teammates across 12 offices nationwide and has been recognized as a Best Place to Work by Front Office Sports, Sports Business Journal and USA TODAY. ## Good Karma Sports is an Equal Opportunity Employer. We consistently renew our commitment to creating and maintaining an inclusive workplace for all. We foster integrity, respect within the workplace, and believe that the foundation of our success is our collective differences and diversity of thought. We welcome all to help us continue to build a community that embodies and promotes diversity, inclusion, and belonging for all.</description>
+    <date>2026-08-28</date>
+    <expiration>21</expiration>
+    <jobtype>Part Time</jobtype>
+    <category>Sales &amp; Marketing</category>
+    <url>https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&amp;ccId=19000101_000001&amp;lang=en_US&amp;jobId=9202898455836_1&amp;type=JS</url>
+    <source>https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&amp;ccId=19000101_000001&amp;lang=en_US</source>
+    <url_verified>2026-08-28</url_verified>
+    <company_website>https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&amp;ccId=19000101_000001&amp;lang=en_US</company_website>
+    <logo />
+    <work_arrangement>On-Site</work_arrangement>
+    <location>
+      <city>Chicago, IL, US, Chicago</city>
+      <state />
       <country>US</country>
     </location>
   </job>
@@ -3902,6 +3902,27 @@
     <work_arrangement>On-Site</work_arrangement>
     <location>
       <city>Riverside, CA</city>
+      <state />
+      <country>US</country>
+    </location>
+  </job>
+  <job>
+    <id>Req37877</id>
+    <title>Outside Account Executive</title>
+    <company>iHeartMedia</company>
+    <description>iHeartMedia Markets Current employees and contingent workers click here to apply and search by the Job Posting Title. The audio revolution is here – and iHeart is leading it! iHeartMedia, the number one audio company in America , reaches 90% of Americans every month -- a monthly audience that’s twice the size of any other audio company – almost three times the size of the largest TV network – and almost 4 times the size of the largest ad-supported music streaming service. And we were just recognized as one of the Top Media Sales Organizations by The Myers Report! In fact, iHeart has: More #1 rated markets than the next two largest radio companies combined; We’re the largest podcast publisher , with more monthly downloads than the second- and third-largest podcast publishers combined. Podcasting, the fastest-growing new media, today has more monthly users than streaming music services or Netflix; iHeart is the home of many of the country’s most popular and trusted on-air personalities and podcast influencers , who build important connections with hundreds of communities across America; We create and produce some of the most popular and well-known branded live music events in America, including the iHeartRadio Music Festival, the iHeartRadio Music Awards, the iHeartCountry Festival, iHeartRadio Fiesta Latina and the iHeartRadio Jingle Ball Tour; iHeartRadio is the #1 streaming radio digital service in America; Our social media footprint is 7 times larger than the next largest audio service; and We have the only complete audio ad technology stack in the industry for all forms of audio , from on demand to broadcast radio, digital streaming radio and podcasting, which bring data, targeting and attribution to all forms of audio at an unparalleled scale. As a result, we’re able to combine our strong leadership position in audience reach, usage and ad tech with powerful tools and insights for our sales organizations to help them build success for their clients at a more efficient cost than any other option. Because we reach almost every community in America, we’re committed to providing a range of programming that reflects the diversity of the many communities we serve – and our company reflects that same kind of diversity. Our company values stress collaboration, curiosity, welcoming dissent, accepting mistakes in the pursuit of new ideas, and respect for everyone. Only one company in America has the #1 position in everything audio: iHeartMedia! If you’re excited about this role but don’t feel your experience aligns perfectly with the job description, we encourage you to apply anyway. At iHeartMedia we are dedicated to building a diverse, inclusive, and authentic workplace and are looking for teammates passionate about what we do! What We Need: Looking for a new challenge? Join us as an Account Executive and leverage your proven goal-driven mindset, fast-paced work ethic, and exceptional client service skills. The ideal candidate is ready to hit the ground running and will successfully take advantage of all iHeart’s platforms to exceed their clients’ expectations. What You'll Do: As an Account Executive at iHeart, you'll learn the ins and outs of our Broadcast + Digital Marketing Products, identify and develop new business opportunities through in-person meetings with clients and research, consistent daily cold-calling, and cultivate existing business using our full suite of products. You will collaborate with internal partners to drive revenue, create effective marketing campaigns, and use your storytelling skills to deliver compelling sales presentations fueled by data to best meet your clients’ expectations. What You'll Need: Who You Are: You should be self-motivated (a very “go-getter” attitude!), have excellent relationship-building and problem-solving skills, and communicate persuasively. When people describe you, goal-oriented, expert negotiator and proactive should be at the top of the list. You should be able to plan and multi-task in a fast-paced environment . Comfortable with cold-calling and initiating outreach to prospective clients as part of lead generation efforts. A valid driver's license, auto insurance, and a High School Diploma (College Degree preferred) are required. You should also be skilled in Salesforce, Microsoft Office and social networking platforms. Strong problem-solving skills; by exercising these skills, you help business grow to the fullest potential. Digital/Media Sales experience are a plus but not required. The natural ability to organize and prioritize day-to-day depending on where the biggest priorities may be Additional nice-to-haves include experience managing complex, multi-platform campaigns , analytics experience, iHeart and/or audio advertising background, and are well-connected in the market. What You'll Get: You'll have the opportunity for uncapped commission and the ability to grow business across all categories on a local, regional, and national level, no matter where you live A 7-week onboarding program to immerse you in the suite of tools and products available to you The potential to be recognized in our annual iHeartMedia CEO’s Club a nd iHeartMedia President’s Club programs Access to competitive benefits, including paid vacation and sick time , paid company holidays , a Spirit day to encourage more easily volunteering in their communities, company-paid mental health and financial education resources, 401(k) matching , learning and development resources, and career navigation support. Additional perks include pet insurance (they’re part of the family!), disaster and legal insurance, student loan refinancing , and discounts on merchandise, tickets to events, and more. The support of fellow team members invested in your success. Envision your first 30 days Week 1: Complete our onboarding journey for a deep understanding of our company, job-specific trainings and spend time with your team. Week 2: Spend more time with your manager to ensure you are aligned on work and communication styles, priorities, and any other expectations. Week 3: Start “owning” your role and leaning into the real day-to-day, of course with your manager’s support and advocacy! Week 4: Prioritize a 30-day check-in to see what else you might need to be most successful in your new role. Interested in learning more about iHeart and our platforms? Visit us at www.iHeartMedia.com to learn more about our company, www.iHeartRadio.com to access all your favorite music, radio, and podcasts, and download the free iHeartRadio app! What You'll Bring: Core Competencies &amp; Experience Demonstrates respect for others and fosters a culture of mutual respect Strong knowledge of the media industry and related sales processes Ability to apply expertise in a complex sales environment, including servicing large accounts and/or multifaceted business segments Proven business development experience with both new and existing customers Sales &amp; Relationship Management Confident prospecting skills with the ability to quickly build rapport and adapt messaging based on customer needs Comfortable working with senior-level executives and using influence to support negotiations and drive sales Ability to expand relationships by staying informed on emerging market trends and evolving customer needs Problem Solving &amp; Accountability Demonstrates sound judgment and analytical skills to solve complex problems using multiple sources of information Takes ownership and accountability for individual performance Compensation: Salary to be determined by multiple factors including but not limited to relevant experience, knowledge, skills, other job-related qualifications, and alignment with market data. In addition to salary, this position is also eligible for commissions. Commission rates range from 1.5%-5.0%. $56,000 - $70,000 Location: San Francisco, CA: 340 Townsend St, 5th Floor, 94107 Position Type: Regular Time Type: Full time Pay Type: Salaried Benefits: iHeartMedia’s benefits offering is flexible and offers a variety of choices to meet the diverse needs of our changing workforce, including the following: Employer sponsored medical, dental and vision with a variety of coverage options Company provided and supplemental life insurance Paid vacation and sick time Paid company holidays A Spirit day to encourage and allow our employees to more easily volunteer in their community A 401K plan Employee Assistance Program (EAP) at no cost – services include telephonic counseling sessions, consultation on legal and financial matters, emotional well-being, family and caregiving ​A range of additional voluntary programs, such as spending accounts, student loan refinancing, accident insurance and more! We are accepting applications for this role on an ongoing basis. The Company is an equal opportunity employer and will not tolerate discrimination in employment on the basis of race, color, age, sex, sexual orientation, gender identity or expression, religion, disability, ethnicity, national origin, marital status, protected veteran status, genetic information, or any other legally protected classification or status. Pursuant to the San Francisco Fair Chance Ordinance, we will consider for employment qualified applicants with arrest and conviction records. Click Here to learn about the San Francisco Fair Chance Ordinance . Non-Compete will be required for certain positions and as allowed by law. Our organization participates in E-Verify. Click here to learn about E-Verify.</description>
+    <date>2026-08-28</date>
+    <expiration>21</expiration>
+    <jobtype>Full Time</jobtype>
+    <category>Sales &amp; Marketing</category>
+    <url>https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/job/San-Francisco-CA-Townsend/Outside-Account-Executive_Req37877-1</url>
+    <source>https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/jobs</source>
+    <url_verified>2026-08-28</url_verified>
+    <company_website>https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/jobs</company_website>
+    <logo />
+    <work_arrangement>On-Site</work_arrangement>
+    <location>
+      <city>San Francisco, CA (Townsend)</city>
       <state />
       <country>US</country>
     </location>
@@ -5440,27 +5461,6 @@
     </location>
   </job>
   <job>
-    <id>REQ-42812</id>
-    <title>Maintenance Engineer</title>
-    <company>Nexstar</company>
-    <description>The Maintenance Engineer participates in managing and maintaining all broadcast and technology related equipment within the facility. Help implement new technologies and technical infrastructure for the facility. Participate in engineering and other technical projects Evaluate, select, install, service, and maintain facility broadcast equipment and information technology systems Work closely with management and co-workers to ensure company objectives are being met Basic understanding of FCC rules and regulations. Other duties as needed Salary - $20.00 to $29.00 hourly Requirements &amp; Skills : 2 years previous broadcast engineering experience. Broadcast equipment repair and maintenance skills required including experience with the repair and maintenance of video cameras, video routers, ingest and playout servers, newscast automation equipment. Possess superior troubleshooting skills. Strong interpersonal and organizational skills Excellent communication skills, both oral and written Ability to meet deadlines, prioritize assignments, and handle multiple tasks simultaneously Ability to work extended hours as needed may include overnight and weekends ‘Be initiative-taking, desire to learn new skills consistent with good engineering/IT practices</description>
-    <date>2026-08-25</date>
-    <expiration>18</expiration>
-    <jobtype>Full Time</jobtype>
-    <category>Engineering</category>
-    <url>https://nexstar.wd5.myworkdayjobs.com/nexstar/job/NY-Buffalo/Maintenance-Engineer_REQ-42812</url>
-    <source>https://nexstar.wd5.myworkdayjobs.com/nexstar</source>
-    <url_verified>2026-08-28</url_verified>
-    <company_website>https://nexstar.wd5.myworkdayjobs.com/nexstar</company_website>
-    <logo />
-    <work_arrangement>On-Site</work_arrangement>
-    <location>
-      <city>NY, Buffalo</city>
-      <state />
-      <country>US</country>
-    </location>
-  </job>
-  <job>
     <id>REQ-42836</id>
     <title>Meteorologist/MMJ</title>
     <company>Nexstar</company>
@@ -5708,6 +5708,27 @@
     <work_arrangement>On-Site</work_arrangement>
     <location>
       <city>MO-St. Louis;2250 Ball Drive (Tribune-KTVI/KPLR)</city>
+      <state />
+      <country>US</country>
+    </location>
+  </job>
+  <job>
+    <id>REQ-42866</id>
+    <title>Production Assistant</title>
+    <company>Nexstar</company>
+    <description>The Production Assistant is responsible for various television production duties required to record scenes for live and recorded broadcasts. Composes and frames camera shots, applying the technical aspects of light, lenses and camera settings to achieve the effects sought by directors Adjusts positions and controls of cameras to change focus, exposure and lighting as requested by the director Operates studio cameras during live broadcasts Operates remote cameras during live broadcasts Confers with directors and other crew members to discuss sequences, desired effects, camera movements and lighting requirements Sets up cameras and related equipment Tests, cleans, maintains and repairs camera equipment Produces graphics for newscast Creates graphics for the newscast Performs other duties as assigned Requirements &amp; Skills: Excellent communication skills, both oral and written. Proficiency with computers, telephones, copiers, scanners, fax machines and other office equipment. Ability to meet deadlines, prioritize assignments and handle multiple tasks simultaneously.</description>
+    <date>2026-08-28</date>
+    <expiration>21</expiration>
+    <jobtype>Full Time</jobtype>
+    <category>Television</category>
+    <url>https://nexstar.wd5.myworkdayjobs.com/nexstar/job/Terre-Haute-IN/Production-Assistant_REQ-42866</url>
+    <source>https://nexstar.wd5.myworkdayjobs.com/nexstar</source>
+    <url_verified>2026-08-28</url_verified>
+    <company_website>https://nexstar.wd5.myworkdayjobs.com/nexstar</company_website>
+    <logo />
+    <work_arrangement>On-Site</work_arrangement>
+    <location>
+      <city>Terre Haute, IN</city>
       <state />
       <country>US</country>
     </location>
@@ -7645,6 +7666,27 @@
     </location>
   </job>
   <job>
+    <id>R83329</id>
+    <title>CSS Supervisor Cornerstone Brands</title>
+    <company>QVC</company>
+    <description>Working at QVC Group means joining a live social shopping company with incredible teams, ambitious projects and amazing careers. QVC Group, Inc. is a Fortune 500 company with six leading retail brands - QVC®, HSN®, and our four Cornerstone brands. The Cornerstone brands deliver inspirations that help customers enjoy, enhance and celebrate life. Cornerstone comprises four interactive, aspirational home and apparel lifestyle brands: Ballard Designs®, Frontgate®, Grandin Road® and Garnet Hill®. Your Opportunity, Your Team The CSS Sales &amp; Service Supervisor leads a team of customer service professionals to deliver exceptional customer experiences while achieving service levels, and productivity goals. You will oversee developing team members, managing daily operations, and encouraging a culture of accountability, engagement, and continuous improvement. Where You'll Work This role is remote ; job seekers must reside in one of the following states to be considered: Ohio, Kentucky, Indiana. Flexibility to adjust schedule based on our needs such as supervisor or holiday coverage. You'll work a Tuesday - Saturday schedule (9:00 a.m. - 6:00 p.m.). What You'll Do Manage the daily performance of a 30+ employee team, ensuring service, quality, productivity, and customer satisfaction goals are achieved. Coach and provide performance feedback using the our Fuel Coaching Model. Monitor our service levels, workforce adherence, and team schedules. Conduct call quality reviews and use customer insights to identify coaching opportunities and process improvements. Lead team meetings and monthly measurement reviews to communicate expectations, performance results, and business updates. Identify development needs to support employee growth and engagement. Participate in monthly Side-by-Side meetings to review team performance, recognize achievements, and address opportunities. Maintain accurate coaching, performance, and disciplinary documentation. Partner with leadership and teams to support operational and customer experience projects. You'll report to the Sales &amp; Service Manager. What You'll Bring Previous supervisory, team lead, or management experience in a call center, customer service, or related environment amounting to 3 years. Demonstrated coaching and performance management skills. Proficiency in Microsoft Teams, Suite, and D365. #LI-Remote Our Total Rewards package includes benefits you’ll love such as competitive compensation, paid time off, an employee assistance program, parental leave, paid volunteer hours, and amazing company discounts! In our US market, you can also expect health care benefits starting on day 1, 401(k), and tuition reimbursement benefits. QVC Group is committed to inclusion and belonging for all and ensuring that our workplace provides equal employment opportunities for all team members and candidates and complies with all applicable federal, state, and local laws and regulations. As an equal opportunity employer, QVC Group is committed to a barrier-free employment process. If you need reasonable accommodations/support throughout, please contact us at workwithus@qvcgrp.com for assistance. If provided, salary ranges are a general guideline only, and actual salaries will vary and are based on factors such as a candidate's qualifications, skills, experience, and geographic location as well as business and market conditions.</description>
+    <date>2026-08-28</date>
+    <expiration>21</expiration>
+    <jobtype>Full Time</jobtype>
+    <category>Business Office</category>
+    <url>https://qvc.wd5.myworkdayjobs.com/QRG/job/Ohio-Remote/CSS-Supervisor-Cornerstone-Brands_R83329</url>
+    <source>https://qvc.wd5.myworkdayjobs.com/QRG</source>
+    <url_verified>2026-08-28</url_verified>
+    <company_website>https://qvc.wd5.myworkdayjobs.com/QRG</company_website>
+    <logo />
+    <work_arrangement>Remote</work_arrangement>
+    <location>
+      <city>Ohio Remote</city>
+      <state />
+      <country>US</country>
+    </location>
+  </job>
+  <job>
     <id>R83179</id>
     <title>Digital Librarian</title>
     <company>QVC</company>
@@ -7682,6 +7724,27 @@
     <work_arrangement>On-Site</work_arrangement>
     <location>
       <city>USA, PA, West Chester</city>
+      <state />
+      <country>US</country>
+    </location>
+  </job>
+  <job>
+    <id>R82056</id>
+    <title>Environmental Health and Safety Manager</title>
+    <company>QVC</company>
+    <description>Working at QVC Group means joining a live social shopping company with incredible teams, ambitious projects and amazing careers. QVC Group, Inc. is a Fortune 500 company with six leading retail brands - QVC®, HSN®, and our four Cornerstone brands. The Cornerstone brands deliver inspirations that help customers enjoy, enhance and celebrate life. Cornerstone comprises four interactive, aspirational home and apparel lifestyle brands: Ballard Designs®, Frontgate®, Grandin Road® and Garnet Hill®. Your Opportunity, Your Team The Environmental Health and Safety Manager supports Cornerstone Brands (Ballard Designs, Frontgate, Grandin Road, Garnet Hill), and will develop and oversee programs to protect team members from hazards, safeguard the environment from company impacts and ensure compliance with all relevant environmental and safety regulations. You will report to the Director of Operations Services. Where You'll Work This role is onsite and will require you to work from our West Chester, OH distribution center daily. Relocation assistance is not available for this role. What You'll Do Interpret all regulatory standard requirements, and develop and implement EHS programs aligned with OSHA, EPA, DOT, and/or state and local regulatory and company requirements. You will lead and audit the execution of these programs and record keep to ensure compliance. Lead efficient and effective EHS programs to ensure the design, construction and operation of safe facilities to lower risk and reduce hazard potential across all locations, driving a culture and commitment to EHS consistently across Cornerstone locations. Oversee a team of safety specialists, and your team will partner with site and company leadership, legal counsel, HR, and insurance providers. Implement the company's EHS metrics, KPI's and means of measurement. Analyze data for trends and identify areas of opportunity. Measure performance against published requirements and report results on a regular basis. Partner with the site leadership for all regulatory agency inquiries (OSHA, EPA, DOT or state equivalent). Work with site leadership and legal counsel to develop responses to investigations, agency requests and proposed citations. You will also be the primary spokesperson responsible for reporting serious injuries (fatalities, amputations, hospitalizations, etc.) to Federal or State OSHA in accordance with regulatory expectations. You will partner with internal legal counsel for appropriate response. Hold site Safety Specialists and site leadership accountable to eliminate risk and hazard potential, properly manage each individual work-related incident and drive forward a ZERO incident safety culture at all levels. You will review accident trends, educate leadership on safety expectations and requirements, and address areas of opportunity. What You'll Bring Bachelor's Degree in Occupational Safety, Environmental Health, or related field, or an equivalent combination of education and experience. 4+ years of experience in EHS program management with emphasis on program development, reducing injuries, and driving safety culture. Basic experience/knowledge with LEAN principles, process improvement, and change management. Experience leading and influencing people. Availability to travel 10% #LI-JM1 Our Total Rewards package includes benefits you’ll love such as competitive compensation, paid time off, an employee assistance program, parental leave, paid volunteer hours, and amazing company discounts! In our US market, you can also expect health care benefits starting on day 1, 401(k), and tuition reimbursement benefits. QVC Group is committed to inclusion and belonging for all and ensuring that our workplace provides equal employment opportunities for all team members and candidates and complies with all applicable federal, state, and local laws and regulations. As an equal opportunity employer, QVC Group is committed to a barrier-free employment process. If you need reasonable accommodations/support throughout, please contact us at workwithus@qvcgrp.com for assistance. If provided, salary ranges are a general guideline only, and actual salaries will vary and are based on factors such as a candidate's qualifications, skills, experience, and geographic location as well as business and market conditions.</description>
+    <date>2026-08-28</date>
+    <expiration>21</expiration>
+    <jobtype>Full Time</jobtype>
+    <category>Journalism</category>
+    <url>https://qvc.wd5.myworkdayjobs.com/QRG/job/USA-OH-West-Chester/Environmental-Health-and-Safety-Manager_R82056</url>
+    <source>https://qvc.wd5.myworkdayjobs.com/QRG</source>
+    <url_verified>2026-08-28</url_verified>
+    <company_website>https://qvc.wd5.myworkdayjobs.com/QRG</company_website>
+    <logo />
+    <work_arrangement>On-Site</work_arrangement>
+    <location>
+      <city>USA, OH, West Chester</city>
       <state />
       <country>US</country>
     </location>
@@ -12538,27 +12601,6 @@
     </location>
   </job>
   <job>
-    <id>R020991</id>
-    <title>Editor &amp; Photographer</title>
-    <company>TelevisaUnivision</company>
-    <description>Univision Television Group, Inc. in Miami, FL seeks a full-time Television Camera Operator to shoot video and audio of news and other events for TV productions, both live and recorded. Edit material to match scripts using non-linear, computer-based editing on our facilities, or via mobile equipment from remote locations. Shoot and edit assigned and breaking news stories using ENG camera and non-linear editing equipment, with or without reporter. Shoot and edit special assignments and series as needed. Provide pictures and short/snap videos from the field for our Social Media platforms. Set up and operate microwave ENG trucks, as well as Live U equipment. Assist video editor/acquisitions in editing and preparing video for newscasts as assigned, using server-based editing and playback system. Operate and maintain news vehicles and equipment in a safe and professional manner. Perform routine maintenance and light troubleshooting on assigned equipment. Might be required to upload video, digital pictures, and copy to the station’s website. Monitor scanners in vehicles from news stories. Must have at least 1 year of experience in the occupation or as a television cameraman. Must be fluent in written and spoken Spanish. Must know how to use P2 and XD cameras. Must be knowledgeable in AVID, Premier and Final Cut. Must know LiveU technology. Must have experience covering live developing news in the field. Must have experience with television news networks. Apply on-line at TelevisaUnivision’s career page: https://corporate.televisaunivision.com/careers/ TelevisaUnivision is an equal opportunity employer. All qualified applicants will receive consideration for employment without regard to characteristics protected by law.</description>
-    <date>2026-08-21</date>
-    <expiration>14</expiration>
-    <jobtype>Full Time</jobtype>
-    <category>Journalism</category>
-    <url>https://univision.wd1.myworkdayjobs.com/External/job/Miami-FL/Editor---Photographer_R020991</url>
-    <source>https://univision.wd1.myworkdayjobs.com/External</source>
-    <url_verified>2026-08-28</url_verified>
-    <company_website>https://univision.wd1.myworkdayjobs.com/External</company_website>
-    <logo />
-    <work_arrangement>On-Site</work_arrangement>
-    <location>
-      <city>Miami, FL</city>
-      <state />
-      <country>US</country>
-    </location>
-  </job>
-  <job>
     <id>R021063</id>
     <title>Especialista de Gobierno, Riesgo y Cumplimiento de Seguridad de la Información</title>
     <company>TelevisaUnivision</company>
@@ -12883,6 +12925,27 @@
     <jobtype>Full Time</jobtype>
     <category>Journalism</category>
     <url>https://univision.wd1.myworkdayjobs.com/External/job/Miami-FL/Photographer-I_R020936</url>
+    <source>https://univision.wd1.myworkdayjobs.com/External</source>
+    <url_verified>2026-08-28</url_verified>
+    <company_website>https://univision.wd1.myworkdayjobs.com/External</company_website>
+    <logo />
+    <work_arrangement>On-Site</work_arrangement>
+    <location>
+      <city>Miami, FL</city>
+      <state />
+      <country>US</country>
+    </location>
+  </job>
+  <job>
+    <id>R020935</id>
+    <title>Photographer I</title>
+    <company>TelevisaUnivision</company>
+    <description>TelevisaUnivision is seeking a dedicated, creative, and passionate full-time Photographer to join our news team. The Photographer will play an essential role in bringing stories to life by capturing compelling visuals for our news programming across live and taped events. As part of a fast-paced and collaborative team, you will work closely with reporters, producers, and other newsroom partners to deliver high-quality visual storytelling. The ideal candidate has a strong eye for compelling images, can think quickly in a dynamic environment, and is passionate about covering the stories that matter most to our community. If you can capture images that speak volumes, see beyond the lens, and bring creativity and strong storytelling instincts to every assignment, we’d love to have you on our team. YOUR DAY-TO-DAY: Shoot and edit daily news stories, breaking news, special reports and stories as assigned with or without reporter using non-linear, computer-based editing equipment. Set up, test, and operate equipment for live and recorded broadcasts, including LiveU and other mobile transmission technology. Troubleshoot technical issues in the field and communicate equipment or transmission concerns to the appropriate team. Edit materials to match script prepared by reporter, producer or associate producer using on-location facilities or any other location required. Work with reporters to get complete stories and makes suggestions on how a story should be produced. Be able to drive, operate and handle all necessary equipment and/or other equipment used in live transmissions. Keep assigned equipment and/or vehicle in good working condition and files all required paperwork, as deadlines require. Be able to work various shifts and times as well as during inclement weather. Might be required to upload video, digital pictures, and copy to the station’s website and social media. Perform routine maintenance and light troubleshooting on equipment. Assist with news production and assignment desk as assigned. Follow all station and company safety policies and procedures, particularly when operating vehicles, working around live events, or covering hazardous weather and breaking news Use sound judgment and editorial awareness when covering sensitive, fast-moving, or high-profile news events. Manage, organize, and archive video and other digital media according to newsroom and company standards. Perform other duties as assigned. YOU HAVE: College Degree or equivalent work experience in Broadcast Communications. At least 2 years’ experience in camera/editing Bilingual English/Spanish communication skills both written and oral Knowledge of editing software’s such as Avid Media Composer Knowledge I-news rundown Valid Driver’s license with clean driving record, as driving a news vehicle daily to and from stories is an essential part of the daily routine. Be able to lift heavy equipment up to 45 pounds, bend and set-up equipment for remotes to allow transmission of pictures or live from-the-scene reports back to the station. Must be able to work outdoor and inclement weather conditions. Must have unrestricted authorization to work in the United States Strong visual storytelling, composition, lighting, and audio skills. Ability to work independently and make sound decisions in a fast-paced, deadline-driven environment. Strong organizational, communication, and teamwork skills. Familiarity with newsroom systems, digital platforms, and emerging technology. Ability to adapt quickly to changing assignments, priorities, and breaking news situations. YOUR BENEFITS: TelevisaUnivision believes that a happy, well-balanced employee is what makes our culture thrive. We offer a wide selection of perks and benefits including PTO; tuition reimbursement; wellness and employee support programs; 401K; and life and other insurance plans. This is all in addition to our comprehensive and competitive health benefits package featuring medical, dental and vision coverage options. #LI-ONSITE TelevisaUnivision is an equal opportunity employer. All qualified applicants will receive consideration for employment without regard to characteristics protected by law.</description>
+    <date>2026-08-14</date>
+    <expiration>7</expiration>
+    <jobtype>Full Time</jobtype>
+    <category>Journalism</category>
+    <url>https://univision.wd1.myworkdayjobs.com/External/job/Miami-FL/Photographer-I_R020935</url>
     <source>https://univision.wd1.myworkdayjobs.com/External</source>
     <url_verified>2026-08-28</url_verified>
     <company_website>https://univision.wd1.myworkdayjobs.com/External</company_website>
