@@ -2956,6 +2956,206 @@ def oracle_recruiting(src):
             continue
     return out
 
+
+def _paycom_parts(url):
+    """Return (origin, clientkey) for public Paycom ATS URLs."""
+    p = urlparse(url)
+    q = parse_qs(p.query)
+    ck = clean((q.get("clientkey") or q.get("clientKey") or [""])[0])
+    if not ck:
+        m = re.search(r"[?&]clientkey=([A-F0-9]+)", url, re.I)
+        if m:
+            ck = m.group(1)
+    if not ck:
+        return None
+    return f"{p.scheme or 'https'}://{p.netloc}", ck
+
+
+def _paycom_date_from_text(raw):
+    s = html.unescape(raw or "").replace("\\/", "/")
+    patterns = [
+        r"(?:Posted|Date Posted|Posting Date)\s*:?\s*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})",
+        r'["\'](?:datePosted|postedDate|postingDate|createdDate)["\']\s*:\s*["\']([^"\']+)["\']',
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, s, re.I):
+            d = pdate(strip_html(m.group(1)))
+            if d:
+                return d
+    return None
+
+
+def _paycom_job_links(base_url, raw):
+    """Recover real Paycom job-detail links from HTML/scripts."""
+    raw2 = html.unescape(raw or "").replace("\\/", "/")
+    out = set()
+
+    # Common Paycom detail/link shapes.
+    pats = [
+        r'https?://[^"\'<>\s]+paycomonline\.net[^"\'<>\s]+',
+        r'/(?:v4/)?ats/web\.php/jobs/ViewJobDetails\?[^"\'<>\s]+',
+        r'/(?:v4/)?ats/web\.php/jobs\?[^"\'<>\s]*(?:job|jpt|id)=[^"\'<>\s&]+[^"\'<>\s]*',
+    ]
+
+    for pat in pats:
+        for m in re.finditer(pat, raw2, re.I):
+            u = urljoin(base_url, m.group(0))
+            if "paycomonline.net" in urlparse(u).netloc.lower():
+                out.add(u.split("#",1)[0])
+
+    return out
+
+
+def _paycom_detail(src, url, raw):
+    # Prefer schema.org when present.
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+
+    soup = BeautifulSoup(raw, "html.parser")
+    pd = _paycom_date_from_text(raw)
+    if not pd or pd < CUTOFF:
+        return None
+
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        title_node = soup.find(attrs={"class": re.compile(r"(job.?title|position.?title|title)", re.I)})
+        title = clean(title_node.get_text(" ") if title_node else "")
+    if not title:
+        return None
+
+    full_text = clean(soup.get_text(" "))
+    loc = ""
+    m = re.search(
+        r"(?:Location|Job Location)\s*:?\s*([A-Za-z0-9 .,'\-/]+?)(?:\s{2,}|Department|Job Type|Category|$)",
+        full_text,
+        re.I,
+    )
+    if m:
+        loc = clean(m.group(1))
+
+    jid = ""
+    q = parse_qs(urlparse(url).query)
+    for k in ("job", "jobid", "jobId", "id", "jpt"):
+        if q.get(k):
+            jid = clean(q[k][0])
+            break
+    if not jid:
+        m = re.search(r"\b(?:Job ID|Requisition)\s*:?\s*([A-Z0-9_-]{3,})", full_text, re.I)
+        if m:
+            jid = m.group(1)
+    if not jid:
+        jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+
+    main = (
+        soup.find(attrs={"class": re.compile(r"(job.?description|job.?details|position.?details)", re.I)})
+        or soup.find(id=re.compile(r"(job.?description|job.?details|position.?details)", re.I))
+        or soup.find("main")
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 200:
+        return None
+
+    canonical = url.split("#",1)[0]
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, full_text),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or full_text),
+        loc,
+        "",
+        infer_country(loc or full_text, src["Company"], desc),
+    )
+
+
+def paycom(src):
+    """Dedicated Paycom public ATS collector.
+
+    Paycom boards are server-rendered enough to expose job links either as
+    anchors or hydrated script URLs. Enumerate the board, follow bounded
+    pagination, and parse each actual job-detail page. Posting dates must be
+    explicit and within the MJR window.
+    """
+    parts = _paycom_parts(src["URL"])
+    if not parts:
+        return ats_html(src)
+
+    origin, clientkey = parts
+    start = src["URL"]
+
+    queue = [start]
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < 80 and len(details) < 3000:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        r = req("GET", page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # Visible job links.
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            hp = urlparse(h)
+            if "paycomonline.net" not in hp.netloc.lower():
+                continue
+
+            q = parse_qs(hp.query)
+            if (
+                "viewjobdetails" in hp.path.lower()
+                or any(k.lower() in ("job", "jobid", "id", "jpt") for k in q)
+            ):
+                details.add(h.split("#",1)[0])
+                continue
+
+            # Follow same-client listing/pagination links.
+            hq = parse_qs(hp.query)
+            hck = clean((hq.get("clientkey") or [""])[0])
+            if hck and hck.lower() == clientkey.lower():
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        # Hydrated/scripted links.
+        details.update(_paycom_job_links(page, r.text))
+
+        # Generic pagination controls constrained to Paycom/clientkey.
+        for h in _listing_next_links(page, soup):
+            hp = urlparse(h)
+            if "paycomonline.net" not in hp.netloc.lower():
+                continue
+            hq = parse_qs(hp.query)
+            hck = clean((hq.get("clientkey") or [""])[0])
+            if hck and hck.lower() == clientkey.lower() and h.rstrip("/") not in seen_pages:
+                queue.append(h)
+
+    out = []
+    seen_ids = set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            j = _paycom_detail(src, url, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+    return out
+
 def ats_html(src):
     """Enhanced multi-ATS public-page adapter.
 
@@ -3296,6 +3496,8 @@ def main():
                 if "ukg" in a or "ultipro" in a
                 else oracle_recruiting(s)
                 if "oracle recruiting" in a or "oracle cloud" in a
+                else paycom(s)
+                if "paycom" in a
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
