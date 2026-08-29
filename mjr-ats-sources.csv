@@ -67,7 +67,7 @@ Television,NBA,Company Career Site,https://careers.nba.com/c/media-production-de
 Television,NBCUniversal,Company Career Site,https://www.nbcunicareers.com/find-a-job?aoi=2237#jobs_search-react-main-wrapper,True
 Television,Paramount,Company Career Site,https://careers.paramount.com/go/All-Current-Job-Opportunities/8710000/,True
 Television,TBN,Company Career Site,https://www.tbn.org/about/careers,True
-Television,TEGNA,Company Career Site,https://www.tegna.com/explore-careers,True
+Television,TEGNA,Greenhouse,https://job-boards.greenhouse.io/tegnainc,Yes
 Journalism,American Public Media Group,UKG Pro,https://recruiting2.ultipro.com/AME1098APMG/JobBoard/4b7ae4eb-a67b-4318-80fc-6d9467f9c542/?q=&o=postedDateDesc&w=&wc=&we=&wpst=,True
 Journalism,Dotdash Meredith / People Inc,Workday,https://meredith.wd5.myworkdayjobs.com/EXT,True
 Journalism,Gannett / USA TODAY Co.,Dayforce,https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=,True
@@ -102,3 +102,8 @@ Digital,RTDNA,Company Career Site,https://careers.rtdna.org/jobs?locale=en&sort=
 Digital,SiriusXM,Company Career Site,https://careers.siriusxm.com/careers/jobs,True
 Digital,Townsquare Ignite,Company Career Site,https://townsquareignite.com/careers/#job-openings,True
 Digital,TuneIn,Company Career Site,https://cms.tunein.com/careers/,True
+Journalism,The New York Times,Greenhouse,https://job-boards.greenhouse.io/thenewyorktimes,Yes
+Journalism,Axios,Greenhouse,https://job-boards.greenhouse.io/axios,Yes
+Journalism,Semafor,Greenhouse,https://job-boards.greenhouse.io/semafor,Yes
+Digital,WaitWhat,Lever,https://jobs.lever.co/waitwhat,Yes
+Music,Suno,Ashby,https://jobs.ashbyhq.com/suno,Yes
