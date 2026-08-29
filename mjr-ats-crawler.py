@@ -4719,6 +4719,125 @@ def paylocity_v18(src):
 
     return out
 
+
+def _ashby_board_name(url):
+    p = urlparse(url)
+    if "ashbyhq.com" not in p.netloc.lower():
+        return ""
+    parts = [unquote(x) for x in p.path.split("/") if x]
+    return parts[0] if parts else ""
+
+
+def ashby(src):
+    """Native Ashby public job-board collector.
+
+    Ashby exposes published jobs through a public posting API keyed by the
+    board name. The collector uses canonical job URLs and still enforces the
+    MJR posting window before emitting jobs.
+    """
+    board = _ashby_board_name(src["URL"])
+    if not board:
+        return []
+
+    api = f"https://api.ashbyhq.com/posting-api/job-board/{quote(board)}"
+    try:
+        r = req("GET", api)
+        payload = r.json()
+    except Exception:
+        return []
+
+    rows = payload.get("jobs") if isinstance(payload, dict) else None
+    if not isinstance(rows, list):
+        return []
+
+    out, seen_ids = [], set()
+
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+
+        # Ashby can expose publishedAt / publishedDate depending on API version.
+        pd = None
+        for key in ("publishedAt", "publishedDate", "createdAt", "updatedAt"):
+            if row.get(key):
+                pd = pdate(str(row.get(key)))
+                if pd:
+                    break
+        if not pd or pd < CUTOFF:
+            continue
+
+        title = clean(row.get("title") or "")
+        if not title:
+            continue
+
+        location = clean(
+            row.get("location")
+            or row.get("locationName")
+            or row.get("workplaceLocation")
+            or ""
+        )
+
+        desc_html = (
+            row.get("descriptionHtml")
+            or row.get("description")
+            or row.get("descriptionPlain")
+            or ""
+        )
+        desc = clean(BeautifulSoup(str(desc_html), "html.parser").get_text(" "))
+        if len(desc) < 100:
+            continue
+
+        job_url = clean(
+            row.get("jobUrl")
+            or row.get("applyUrl")
+            or row.get("url")
+            or ""
+        )
+        if not job_url:
+            jid0 = clean(row.get("id") or "")
+            if jid0:
+                job_url = f"https://jobs.ashbyhq.com/{quote(board)}/{quote(jid0)}"
+        if not job_url:
+            continue
+
+        jid = clean(row.get("id") or "")
+        if not jid:
+            jid = hashlib.sha1(job_url.encode()).hexdigest()[:16]
+
+        if jid in seen_ids:
+            continue
+        seen_ids.add(jid)
+
+        combined = " ".join(
+            clean(str(row.get(k) or ""))
+            for k in ("title", "department", "team", "employmentType", "workplaceType")
+        )
+
+        out.append(
+            Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, combined),
+                category(title, desc, src["Industry"], src["Company"]),
+                job_url,
+                src["URL"],
+                src["URL"],
+                "",
+                normalize_work_arrangement(
+                    " ".join([desc, clean(str(row.get("workplaceType") or ""))]),
+                    location,
+                ),
+                location,
+                "",
+                infer_country(location, src["Company"], desc),
+            )
+        )
+
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -4964,7 +5083,9 @@ def main():
             company_key = clean(s.get("Company", "")).lower()
 
             got = (
-                icims_v18(s)
+                ashby(s)
+                if "ashby" in a or "ashbyhq.com" in s.get("URL", "").lower()
+                else icims_v18(s)
                 if company_key == "audacy"
                 else paylocity_v18(s)
                 if company_key in {
