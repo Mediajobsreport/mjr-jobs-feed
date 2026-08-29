@@ -4947,6 +4947,248 @@ def radio_recovery(src):
         except Exception: continue
     return out
 
+
+V23_RADIO_TARGETS = {
+    "audacy",
+    "townsquare media",
+    "hubbard broadcasting",
+    "midwest communications",
+    "educational media foundation",
+}
+
+def _v23_detail_candidates(base_url, raw):
+    soup = BeautifulSoup(raw, "html.parser")
+    out = set()
+    base_host = urlparse(base_url).netloc.lower()
+
+    for a in soup.find_all("a", href=True):
+        href = urljoin(base_url, a["href"]).split("#", 1)[0]
+        label = clean(a.get_text(" ")).lower()
+        p = urlparse(href)
+        host = p.netloc.lower()
+        path = p.path.lower()
+        query = p.query.lower()
+
+        known_job_host = any(x in host for x in (
+            "icims.com", "greenhouse.io", "lever.co", "paylocity.com",
+            "adp.com", "myworkdayjobs.com",
+        ))
+        job_path = (
+            re.search(r"/jobs?/\d+", path)
+            or "/job/" in path
+            or "/jobs/" in path
+            or "jobid=" in query
+            or "jobid=" in href.lower()
+            or "gh_jid=" in href.lower()
+        )
+        job_label = any(k in label for k in (
+            "apply", "view job", "view details", "learn more",
+            "producer", "reporter", "anchor", "host", "engineer",
+            "account executive", "sales", "program director",
+            "on-air", "personality", "technician", "coordinator",
+        ))
+
+        if (host == base_host or known_job_host) and (job_path or job_label):
+            out.add(href)
+    return out
+
+
+def audacy_v23(src):
+    """Enumerate Audacy iCIMS public search pages and detail pages."""
+    starts = [
+        src["URL"],
+        "https://careers-audacy.icims.com/jobs/search?ss=1",
+    ]
+    details = set()
+    seen = set()
+
+    # iCIMS search pages can paginate by pr= page number.
+    for page_num in range(1, 26):
+        for root in starts[:1]:
+            sep = "&" if "?" in root else "?"
+            page = root if page_num == 1 else f"{root}{sep}pr={page_num}"
+            if page in seen:
+                continue
+            seen.add(page)
+            try:
+                r = req("GET", page)
+            except Exception:
+                continue
+            final = str(getattr(r, "url", "") or page)
+            found = _v23_detail_candidates(final, r.text)
+            # Also pull canonical iCIMS job paths from raw HTML/JSON.
+            for m in re.finditer(
+                r'https?://careers-audacy\.icims\.com/jobs/\d+/[^"\'<>\s]+',
+                r.text, re.I
+            ):
+                found.add(m.group(0).replace("\\/", "/"))
+            for m in re.finditer(r'["\'](/jobs/\d+/[^"\']+)["\']', r.text, re.I):
+                found.add(urljoin(final, m.group(1)))
+            if not found and page_num > 2:
+                break
+            details.update(found)
+
+    out, ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            final = str(getattr(rr, "url", "") or url)
+            j = _radio_recovery_job(src, final, rr.text)
+            if j and j.id not in ids:
+                ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def townsquare_v23(src):
+    """Use Townsquare's public career pages and Greenhouse job IDs."""
+    roots = [
+        src["URL"],
+        "https://careers.townsquaremedia.com/job-openings/",
+    ]
+    details = set()
+    for root in roots:
+        try:
+            r = req("GET", root)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or root)
+        details.update(_v23_detail_candidates(final, r.text))
+        # Their branded careers site exposes Greenhouse IDs as gh_jid.
+        for m in re.finditer(r'gh_jid(?:=|%3D)(\d+)', r.text, re.I):
+            jid = m.group(1)
+            details.add(f"https://careers.townsquaremedia.com/job-openings/?gh_jid={jid}")
+    out, ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            j = _radio_recovery_job(src, str(getattr(rr, "url", "") or url), rr.text)
+            if j and j.id not in ids:
+                ids.add(j.id); out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def hubbard_v23(src):
+    """Recover Hubbard's newer ADP CX job-detail links from the public board."""
+    roots = [
+        src["URL"],
+        "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing",
+    ]
+    details = set()
+    for root in roots:
+        try:
+            r = req("GET", root)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or root)
+        details.update(_v23_detail_candidates(final, r.text))
+        # Capture ADP CX detail URLs and requisition IDs embedded in JS.
+        for m in re.finditer(
+            r'https?://myjobs\.adp\.com/hubbardbroadcasting/cx/job-details\?[^"\'<>\s]+',
+            r.text, re.I
+        ):
+            details.add(m.group(0).replace("\\/", "/").replace("&amp;", "&"))
+        for m in re.finditer(r'jobId["\']?\s*[:=]\s*["\']([^"\']+)["\']', r.text, re.I):
+            jid = m.group(1)
+            details.add(
+                "https://myjobs.adp.com/hubbardbroadcasting/cx/job-details"
+                f"?reqId={jid}"
+            )
+    out, ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            j = _radio_recovery_job(src, str(getattr(rr, "url", "") or url), rr.text)
+            if j and j.id not in ids:
+                ids.add(j.id); out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def midwest_v23(src):
+    """Target Midwest's Paylocity board plus Midwest Careers detail pages."""
+    roots = [
+        "https://midwestcareers.com/",
+        "https://recruiting.paylocity.com/recruiting/jobs/All/0cb3a074-2113-4e9e-a32d-27e40c132e62/Midwest-Communications",
+    ]
+    details = set()
+    for root in roots:
+        try:
+            r = req("GET", root)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or root)
+        details.update(_v23_detail_candidates(final, r.text))
+        for m in re.finditer(
+            r'https?://recruiting\.paylocity\.com/recruiting/jobs/Details/\d+/[^"\'<>\s]+',
+            r.text, re.I
+        ):
+            details.add(m.group(0).replace("\\/", "/"))
+    out, ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            j = _radio_recovery_job(src, str(getattr(rr, "url", "") or url), rr.text)
+            if j and j.id not in ids:
+                ids.add(j.id); out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def emf_v23(src):
+    """Enumerate K-LOVE/EMF branded careers pages and any linked ATS detail URLs."""
+    roots = [
+        src["URL"],
+        "https://www.klove.com/about/careers",
+    ]
+    details = set()
+    for root in roots:
+        try:
+            r = req("GET", root)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or root)
+        details.update(_v23_detail_candidates(final, r.text))
+        # Catch job URLs embedded in Next.js JSON.
+        for m in re.finditer(
+            r'https?://[^"\'<>\s]+(?:job|career)[^"\'<>\s]+',
+            r.text, re.I
+        ):
+            u = m.group(0).replace("\\/", "/").replace("\\u0026", "&")
+            if any(x in u.lower() for x in ("klove", "icims", "job", "career")):
+                details.add(u)
+    out, ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            j = _radio_recovery_job(src, str(getattr(rr, "url", "") or url), rr.text)
+            if j and j.id not in ids:
+                ids.add(j.id); out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def radio_targeted_v23(src):
+    company = clean(src.get("Company", "")).lower()
+    if company == "audacy":
+        return audacy_v23(src)
+    if company == "townsquare media":
+        return townsquare_v23(src)
+    if company == "hubbard broadcasting":
+        return hubbard_v23(src)
+    if company == "midwest communications":
+        return midwest_v23(src)
+    if company == "educational media foundation":
+        return emf_v23(src)
+    return []
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -5251,6 +5493,9 @@ def main():
                 if _ats_family(s)
                 else generic(s)
             )
+
+            if not got and company_key in V23_RADIO_TARGETS:
+                got = radio_targeted_v23(s)
 
             if not got and company_key in RADIO_RECOVERY_COMPANIES:
                 got = radio_recovery(s)
