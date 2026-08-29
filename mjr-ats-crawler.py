@@ -5307,6 +5307,51 @@ def radio_direct_v25(src):
         return emf_v25(src)
     return []
 
+
+V26_EMF_NARROW_SCAN = True
+
+def emf_v26_narrow(src):
+    """
+    Narrow fallback scan for EMF/K-LOVE only.
+    Keeps v25 fast discovery first, then probes a small recent iCIMS ID window
+    to recover jobs that are live but not enumerable from search pages.
+    """
+    out = emf_v25(src)
+    if out:
+        return out
+
+    seen = set()
+    recovered = []
+
+    # Narrow range centered around the IDs that produced the 7 v24 jobs.
+    # This is intentionally much smaller than v24's 2280-2480 scan.
+    for jid in range(2310, 2361):
+        url = f"https://careers-kloveair1.icims.com/jobs/{jid}/job?in_iframe=1"
+        try:
+            r = req("GET", url)
+        except Exception:
+            continue
+
+        final = str(getattr(r, "url", "") or url)
+        raw = r.text
+        soup = BeautifulSoup(raw, "html.parser")
+        txt = clean(soup.get_text(" "))
+        low = txt.lower()
+
+        if (
+            len(txt) < 250
+            or "job locations" not in low
+            or not any(k in low for k in ("posted date", "job id", "overview"))
+        ):
+            continue
+
+        j = _radio_recovery_job(src, final, raw)
+        if j and j.id not in seen:
+            seen.add(j.id)
+            recovered.append(j)
+
+    return recovered
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -5613,7 +5658,10 @@ def main():
             )
 
             if not got and company_key in V25_FAST_RADIO_TARGETS:
-                got = radio_direct_v25(s)
+                if company_key == "educational media foundation":
+                    got = emf_v26_narrow(s)
+                else:
+                    got = radio_direct_v25(s)
 
             if not got and company_key in V23_RADIO_TARGETS:
                 got = radio_targeted_v23(s)
