@@ -5189,6 +5189,74 @@ def radio_targeted_v23(src):
         return emf_v23(src)
     return []
 
+
+V24_DIRECT_ID_TARGETS = {
+    "audacy",
+    "educational media foundation",
+}
+
+def _icims_direct_id_scan(src, host, low_id, high_id):
+    """Scan a bounded recent iCIMS ID range and parse only live, recent jobs."""
+    out, seen = [], set()
+
+    for jid in range(low_id, high_id + 1):
+        url = f"https://{host}/jobs/{jid}/job?in_iframe=1"
+        try:
+            r = req("GET", url)
+        except Exception:
+            continue
+
+        final = str(getattr(r, "url", "") or url)
+        # iCIMS often returns an HTML error shell with HTTP 200. Require a job-like page.
+        raw = r.text
+        soup = BeautifulSoup(raw, "html.parser")
+        txt = clean(soup.get_text(" "))
+        low = txt.lower()
+
+        if (
+            len(txt) < 250
+            or "job locations" not in low
+            or not any(k in low for k in ("posted date", "job id", "overview"))
+        ):
+            continue
+
+        j = _radio_recovery_job(src, final, raw)
+        if j and j.id not in seen:
+            seen.add(j.id)
+            out.append(j)
+
+    return out
+
+
+def audacy_v24(src):
+    # Current Audacy IDs observed in 2026 are in the high 7000s/low 8000s.
+    # The window intentionally extends above known live IDs to catch new postings.
+    return _icims_direct_id_scan(
+        src,
+        "careers-audacy.icims.com",
+        7700,
+        8350,
+    )
+
+
+def emf_v24(src):
+    # K-LOVE/Air1 current IDs cluster around the 2300-2400 range.
+    return _icims_direct_id_scan(
+        src,
+        "careers-kloveair1.icims.com",
+        2280,
+        2480,
+    )
+
+
+def radio_direct_v24(src):
+    company = clean(src.get("Company", "")).lower()
+    if company == "audacy":
+        return audacy_v24(src)
+    if company == "educational media foundation":
+        return emf_v24(src)
+    return []
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -5493,6 +5561,9 @@ def main():
                 if _ats_family(s)
                 else generic(s)
             )
+
+            if not got and company_key in V24_DIRECT_ID_TARGETS:
+                got = radio_direct_v24(s)
 
             if not got and company_key in V23_RADIO_TARGETS:
                 got = radio_targeted_v23(s)
