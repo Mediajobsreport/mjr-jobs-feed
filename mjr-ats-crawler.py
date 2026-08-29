@@ -5352,6 +5352,240 @@ def emf_v26_narrow(src):
 
     return recovered
 
+
+V27_STRUCTURED_TEST_COMPANIES = {
+    "gray television",
+    "salem media group",
+    "educational media foundation",
+    "midwest communications",
+    "associated press",
+    "wall street journal",
+    "woodward communications",
+    "washington post",
+    "newsmax",
+}
+
+def _v27_jsonld_objects(raw):
+    """Yield JSON-LD objects from a page, flattening @graph and arrays."""
+    soup = BeautifulSoup(raw, "html.parser")
+    for tag in soup.find_all("script", attrs={"type": re.compile(r"application/ld\+json", re.I)}):
+        payload = tag.string or tag.get_text()
+        if not payload:
+            continue
+        payload = payload.strip()
+        try:
+            data = json.loads(payload)
+        except Exception:
+            # Some sites include multiple JSON values or stray control chars.
+            try:
+                payload2 = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", payload)
+                data = json.loads(payload2)
+            except Exception:
+                continue
+
+        stack = data if isinstance(data, list) else [data]
+        while stack:
+            obj = stack.pop()
+            if isinstance(obj, list):
+                stack.extend(obj)
+            elif isinstance(obj, dict):
+                graph = obj.get("@graph")
+                if isinstance(graph, list):
+                    stack.extend(graph)
+                yield obj
+
+
+def _v27_is_jobposting(obj):
+    typ = obj.get("@type")
+    if isinstance(typ, list):
+        vals = [str(x).lower() for x in typ]
+    else:
+        vals = [str(typ).lower()]
+    return "jobposting" in vals
+
+
+def _v27_location_from_ld(obj):
+    loc = obj.get("jobLocation")
+    if not loc:
+        return ""
+    if isinstance(loc, list):
+        loc = loc[0] if loc else {}
+    if not isinstance(loc, dict):
+        return clean(str(loc))
+    addr = loc.get("address", loc)
+    if not isinstance(addr, dict):
+        return clean(str(addr))
+    bits = [
+        addr.get("addressLocality"),
+        addr.get("addressRegion"),
+        addr.get("postalCode"),
+        addr.get("addressCountry"),
+    ]
+    return clean(", ".join(str(x) for x in bits if x))
+
+
+def _v27_job_from_jsonld(src, page_url, obj):
+    title = clean(str(obj.get("title") or obj.get("name") or ""))
+    desc_html = obj.get("description") or ""
+    if isinstance(desc_html, (dict, list)):
+        desc_html = json.dumps(desc_html, ensure_ascii=False)
+    desc = strip_html(str(desc_html))
+    if not title or len(desc) < 40:
+        return None
+
+    pd = pdate(obj.get("datePosted")) or TODAY
+    if pd < CUTOFF:
+        return None
+
+    valid_through = pdate(obj.get("validThrough"))
+    loc = _v27_location_from_ld(obj)
+
+    employment = obj.get("employmentType") or ""
+    if isinstance(employment, list):
+        employment = ", ".join(str(x) for x in employment)
+    employment = clean(str(employment))
+
+    apply_url = clean(str(obj.get("url") or page_url))
+    if apply_url.startswith("/"):
+        apply_url = urljoin(page_url, apply_url)
+
+    ident = obj.get("identifier") or {}
+    jid = ""
+    if isinstance(ident, dict):
+        jid = clean(str(ident.get("value") or ident.get("name") or ""))
+    elif ident:
+        jid = clean(str(ident))
+    if not jid:
+        jid = hashlib.sha1(apply_url.encode()).hexdigest()[:16]
+
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, employment),
+        category(title, desc, src.get("Industry", ""), src["Company"]),
+        apply_url,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc),
+        loc,
+        "",
+        infer_country(loc, src["Company"], desc),
+        valid_through,
+    )
+
+def _v27_discover_detail_links(base_url, raw, max_links=120):
+    """Find likely job-detail URLs from ordinary HTML plus embedded JSON."""
+    soup = BeautifulSoup(raw, "html.parser")
+    out, seen = [], set()
+    base_host = urlparse(base_url).netloc.lower()
+
+    def add(href, label=""):
+        if not href:
+            return
+        u = urljoin(base_url, href).replace("\\/", "/").replace("&amp;", "&").split("#", 1)[0]
+        if u in seen:
+            return
+        p = urlparse(u)
+        host = p.netloc.lower()
+        low = u.lower()
+        lab = clean(label).lower()
+
+        jobish = (
+            re.search(r"/jobs?/\d+", low)
+            or "/job/" in low
+            or "/careers/job" in low
+            or "/job-details" in low
+            or "gh_jid=" in low
+            or "jobid=" in low
+            or "reqid=" in low
+            or "career" in low and any(k in lab for k in ("apply", "view", "details", "job"))
+        )
+        trusted_host = (
+            host == base_host
+            or any(x in host for x in (
+                "icims.com", "greenhouse.io", "lever.co", "paylocity.com",
+                "adp.com", "myworkdayjobs.com", "dayforcehcm.com",
+                "successfactors.com", "oraclecloud.com"
+            ))
+        )
+        if jobish and trusted_host:
+            seen.add(u)
+            out.append(u)
+
+    for a in soup.find_all("a", href=True):
+        add(a.get("href"), a.get_text(" "))
+
+    for m in re.finditer(r'https?://[^"\'<>\s]+', raw, re.I):
+        add(m.group(0), "")
+
+    return out[:max_links]
+
+
+def structured_jobs_v27(src):
+    """
+    JBoard-style fallback:
+      listing/source URL -> discover likely job-detail URLs -> parse JSON-LD JobPosting.
+    No ATS-specific field mapping required.
+    """
+    start = clean(src.get("URL", ""))
+    if not start:
+        return []
+
+    pages = [start]
+    seen_pages = set()
+    detail_links = []
+    jobs, ids = [], set()
+
+    # Crawl only a few listing pages to stay bounded.
+    for page in pages[:8]:
+        if page in seen_pages:
+            continue
+        seen_pages.add(page)
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or page)
+
+        # If listing page itself contains JobPosting JSON-LD, ingest it.
+        for obj in _v27_jsonld_objects(r.text):
+            if _v27_is_jobposting(obj):
+                j = _v27_job_from_jsonld(src, final, obj)
+                if j and j.id not in ids:
+                    ids.add(j.id)
+                    jobs.append(j)
+
+        detail_links.extend(_v27_discover_detail_links(final, r.text, max_links=120))
+
+    # Follow only discovered likely detail pages.
+    for url in detail_links[:120]:
+        try:
+            r = req("GET", url)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or url)
+
+        page_had_job = False
+        for obj in _v27_jsonld_objects(r.text):
+            if not _v27_is_jobposting(obj):
+                continue
+            page_had_job = True
+            j = _v27_job_from_jsonld(src, final, obj)
+            if j and j.id not in ids:
+                ids.add(j.id)
+                jobs.append(j)
+
+        # If no JSON-LD is present, do not invent a job from generic page text here.
+        # Older radio recovery logic remains available after this fallback.
+        if not page_had_job:
+            continue
+
+    return jobs
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -5656,6 +5890,9 @@ def main():
                 if _ats_family(s)
                 else generic(s)
             )
+
+            if not got:
+                got = structured_jobs_v27(s)
 
             if not got and company_key in V25_FAST_RADIO_TARGETS:
                 if company_key == "educational media foundation":
