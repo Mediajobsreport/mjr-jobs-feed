@@ -4516,6 +4516,209 @@ def cumulus_v17(src):
         max_jobs=4000,
     )
 
+
+V18_TARGETS = {
+    "audacy",
+    "dick broadcasting company",
+    "hope media group",
+    "nrg media",
+    "weigel",
+}
+
+
+def _v18_icims_date(raw):
+    s = html.unescape(raw or "").replace("\\/", "/")
+    for pat in (
+        r"(?:Date Posted|Posted Date|Posted)\s*:?\s*([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+        r"(?:Date Posted|Posted Date|Posted)\s*:?\s*(\d{1,2}/\d{1,2}/20\d{2})",
+        r'["\']datePosted["\']\s*:\s*["\']([^"\']+)["\']',
+    ):
+        m = re.search(pat, s, re.I)
+        if m:
+            d = pdate(strip_html(m.group(1)))
+            if d:
+                return d
+    return None
+
+
+def icims_v18(src):
+    """Targeted iCIMS enumerator for Audacy.
+
+    iCIMS search pages are server-rendered enough to enumerate requisition
+    detail URLs. Detail pages are accepted only when an explicit recent
+    posting date can be verified.
+    """
+    start = src["URL"]
+    queue = [start]
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < 120 and len(details) < 4000:
+        page = queue.pop(0)
+        if page.rstrip("/") in seen_pages:
+            continue
+        seen_pages.add(page.rstrip("/"))
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+
+        final = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+        host = urlparse(final).netloc.lower()
+
+        for a in soup.find_all("a", href=True):
+            h = urljoin(final, a["href"])
+            hp = urlparse(h)
+            if hp.netloc.lower() != host:
+                continue
+            low = hp.path.lower()
+            if re.search(r"/jobs/\d+(?:/|$)", low):
+                details.add(h.split("?", 1)[0])
+                continue
+            label = clean(a.get_text(" ")).lower()
+            if (
+                label in {"next", "next page", ">", "»"}
+                or re.search(r"[?&](pr|page)=\d+", h, re.I)
+            ):
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        for m in re.finditer(r'https?://[^"\'<>\s]+/jobs/\d+[^"\'<>\s]*', raw, re.I):
+            h = m.group(0).rstrip(".,);")
+            if urlparse(h).netloc.lower() == host:
+                details.add(h.split("?", 1)[0])
+
+    out, seen_ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            final = str(getattr(rr, "url", "") or url)
+            pd = _v18_icims_date(rr.text)
+            if not pd or pd < CUTOFF:
+                continue
+            j = _job_from_detail(src, final, rr.text)
+            if not j:
+                j = _direct_board_job(src, final, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def _paylocity_board_root(url):
+    """Return normalized Paylocity All-jobs board URL when possible."""
+    p = urlparse(url)
+    parts = [x for x in p.path.split("/") if x]
+    try:
+        i = next(i for i, x in enumerate(parts) if x.lower() == "jobs")
+    except StopIteration:
+        return url
+    # Detail URL: /Recruiting/Jobs/Details/123 -> cannot infer board GUID.
+    if len(parts) > i + 1 and parts[i + 1].lower() == "details":
+        return url
+    return url
+
+
+def paylocity_v18(src):
+    """Targeted Paylocity public-board crawler.
+
+    Supports both All/{board-guid}/{company} boards and individual Details
+    URLs. It enumerates only actual Paylocity detail pages and requires a
+    recent explicit posting date before import.
+    """
+    starts = [src["URL"]]
+    company = clean(src.get("Company", "")).lower()
+
+    # Known current public board roots from the source inventory.
+    known = {
+        "dick broadcasting company": [
+            "https://recruiting.paylocity.com/recruiting/jobs/All/da27c45a-0c7a-4cbe-a575-3444d884e49b/Dick-Broadcasting-Company-Inc",
+        ],
+        "nrg media": [
+            "https://recruiting.paylocity.com/recruiting/jobs/All/76da5c58-0cdb-4886-86b6-41d72879e541/NRG-MEDIA-LLC",
+        ],
+        "weigel": [
+            "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
+        ],
+    }
+    starts.extend(known.get(company, []))
+    starts = list(dict.fromkeys(starts))
+
+    queue = starts[:]
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < 160 and len(details) < 5000:
+        page = queue.pop(0)
+        if page.rstrip("/") in seen_pages:
+            continue
+        seen_pages.add(page.rstrip("/"))
+
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+
+        final = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+
+        def add(h):
+            h = urljoin(final, h)
+            hp = urlparse(h)
+            if "recruiting.paylocity.com" not in hp.netloc.lower():
+                return
+            if re.search(r"/recruiting/jobs/details/\d+", hp.path, re.I):
+                details.add(h.split("#", 1)[0])
+
+        for a in soup.find_all("a", href=True):
+            add(a["href"])
+            h = urljoin(final, a["href"])
+            hp = urlparse(h)
+            if "recruiting.paylocity.com" not in hp.netloc.lower():
+                continue
+            label = clean(a.get_text(" ")).lower()
+            if (
+                re.search(r"\b(next|more|view more|load more)\b", label)
+                or re.search(r"[?&](page|pageindex|start|offset)=\d+", h, re.I)
+            ):
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        for m in re.finditer(
+            r'https?://recruiting\.paylocity\.com/[^"\'<>\s]*?/jobs/details/\d+[^"\'<>\s]*',
+            raw,
+            re.I,
+        ):
+            add(m.group(0).rstrip(".,);"))
+
+        for m in re.finditer(r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']', raw, re.I):
+            add(m.group(1))
+
+    # If the source itself is a single detail page (Hope), include it.
+    if re.search(r"/recruiting/jobs/details/\d+", src["URL"], re.I):
+        details.add(src["URL"])
+
+    out, seen_ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            final = str(getattr(rr, "url", "") or url)
+            j = _job_from_detail(src, final, rr.text)
+            if not j:
+                j = _direct_board_job(src, final, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -4761,7 +4964,16 @@ def main():
             company_key = clean(s.get("Company", "")).lower()
 
             got = (
-                siriusxm_v17(s)
+                icims_v18(s)
+                if company_key == "audacy"
+                else paylocity_v18(s)
+                if company_key in {
+                    "dick broadcasting company",
+                    "hope media group",
+                    "nrg media",
+                    "weigel",
+                }
+                else siriusxm_v17(s)
                 if company_key == "siriusxm"
                 else townsquare_v17(s)
                 if company_key == "townsquare media"
