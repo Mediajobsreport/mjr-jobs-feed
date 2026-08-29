@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
-from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
+from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse, unquote
 
 import requests
 from bs4 import BeautifulSoup
