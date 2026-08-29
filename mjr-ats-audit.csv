@@ -60,7 +60,7 @@ Weigel,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b
 WWE,Workday,https://wwecorp.wd5.myworkdayjobs.com/wwecorp,ok,16,
 CNN,Company Career Site,https://careers.wbd.com/global/en/cnn-jobs,zero_or_not_enumerable,0,
 Disney / ABC,Company Career Site,https://jobs.disneycareers.com/search-jobs?k=ABC,ok,5,
-ESPN,Company Career Site,https://www.disneycareers.com/en/search-jobs/ESPN/391/1,ok,26,
+ESPN,Company Career Site,https://www.disneycareers.com/en/search-jobs/ESPN/391/1,ok,15,
 FOX,Company Career Site,https://www.foxcareers.com/Search/SearchResults,zero_or_not_enumerable,0,
 Mission Broadcasting,Company Career Site,https://missionbroadcastinginc.com/careers/,zero_or_not_enumerable,0,
 NBA,Company Career Site,https://careers.nba.com/c/media-production-development-jobs,zero_or_not_enumerable,0,
@@ -106,4 +106,8 @@ The New York Times,Greenhouse,https://job-boards.greenhouse.io/thenewyorktimes,o
 Axios,Greenhouse,https://job-boards.greenhouse.io/axios,ok,29,
 Semafor,Greenhouse,https://job-boards.greenhouse.io/semafor,ok,9,
 WaitWhat,Lever,https://jobs.lever.co/waitwhat,zero_or_not_enumerable,0,
-Suno,Ashby,https://jobs.ashbyhq.com/suno,error,0,"NameError(""name 'unquote' is not defined"")"
+Suno,Ashby,https://jobs.ashbyhq.com/suno,error,0,"NameError(""name 'quote' is not defined"")"
+Spotify,Lever,https://jobs.lever.co/spotify,zero_or_not_enumerable,0,
+UnitedMasters,Greenhouse,https://job-boards.greenhouse.io/unitedmasterstranslation,ok,3,
+SoundCloud,Greenhouse,https://job-boards.greenhouse.io/soundcloud71,ok,10,
+Reservoir Media,Ashby,https://jobs.ashbyhq.com/reservoir-media,error,0,"NameError(""name 'quote' is not defined"")"
