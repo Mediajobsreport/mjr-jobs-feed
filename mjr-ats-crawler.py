@@ -4353,6 +4353,169 @@ def gray_direct(src):
     except Exception:
         return []
 
+
+V17_TARGETS = {
+    "siriusxm",
+    "townsquare media",
+    "nbcuniversal",
+    "tegna",
+    "cumulus media",
+}
+
+
+def _v17_samehost_details(src, starts, hosts, max_pages=120, max_jobs=4000):
+    """Aggressive but bounded public-board discovery for v17 targets."""
+    hosts = {h.lower().replace("www.", "") for h in hosts}
+    queue = list(dict.fromkeys(starts))
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < max_pages and len(details) < max_jobs:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+
+        final_url = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+
+        def consider(h):
+            h = urljoin(final_url, h)
+            hp = urlparse(h)
+            host = hp.netloc.lower().replace("www.", "")
+            if host not in hosts:
+                return
+            low = hp.path.lower()
+            q = hp.query.lower()
+
+            detailish = (
+                re.search(r"/jobs?/\d+(?:/|$)", low)
+                or re.search(r"/job/[^/?#]+", low)
+                or "/jobdetails/" in low
+                or "/job-detail/" in low
+                or "/jobdescription/" in low
+                or re.search(r"/careers/jobs/[^/?#]+", low)
+                or ("jobid=" in q and not re.search(r"(search|results)", low))
+            )
+            if detailish and h.rstrip("/") != final_url.rstrip("/"):
+                details.add(h.split("#", 1)[0])
+
+        for a in soup.find_all("a", href=True):
+            consider(a["href"])
+            h = urljoin(final_url, a["href"])
+            hp = urlparse(h)
+            host = hp.netloc.lower().replace("www.", "")
+            if host not in hosts:
+                continue
+            label = clean(a.get_text(" ")).lower()
+            if (
+                re.search(r"\b(next|more jobs|view more|older|load more)\b", label)
+                or re.search(r"[?&](page|p|start|offset|from|pageindex)=\d+", h, re.I)
+                or re.search(r"/page/\d+", hp.path.lower())
+            ):
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        for m in re.finditer(r'https?://[^"\'<>\s]+', raw):
+            consider(m.group(0).rstrip(".,);"))
+
+        # Relative URLs embedded in JSON/state.
+        for m in re.finditer(
+            r'["\']((?:/[^"\']*)?(?:/jobs?/\d+|/job/[^"\'?#]+|/careers/jobs/[^"\'?#]+)[^"\']*)["\']',
+            raw,
+            re.I,
+        ):
+            consider(m.group(1))
+
+    out, seen_ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            final_url = str(getattr(rr, "url", "") or url)
+            j = _job_from_detail(src, final_url, rr.text)
+            if not j:
+                j = _direct_board_job(src, final_url, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def siriusxm_v17(src):
+    return _v17_samehost_details(
+        src,
+        [
+            "https://careers.siriusxm.com/careers/jobs",
+            src["URL"],
+        ],
+        {"careers.siriusxm.com"},
+        max_pages=120,
+        max_jobs=3000,
+    )
+
+
+def townsquare_v17(src):
+    return _v17_samehost_details(
+        src,
+        [
+            "https://careers.townsquaremedia.com/job-openings",
+            src["URL"],
+        ],
+        {"careers.townsquaremedia.com", "townsquaremedia.com"},
+        max_pages=120,
+        max_jobs=3000,
+    )
+
+
+def nbcuniversal_v17(src):
+    return _v17_samehost_details(
+        src,
+        [
+            "https://www.nbcunicareers.com/find-a-job",
+            src["URL"],
+        ],
+        {"nbcunicareers.com"},
+        max_pages=140,
+        max_jobs=4000,
+    )
+
+
+def tegna_v17(src):
+    return _v17_samehost_details(
+        src,
+        [
+            "https://www.tegna.com/explore-careers",
+            src["URL"],
+        ],
+        {"tegna.com"},
+        max_pages=120,
+        max_jobs=3000,
+    )
+
+
+def cumulus_v17(src):
+    """Cumulus public career site collector with common listing variants."""
+    return _v17_samehost_details(
+        src,
+        [
+            "https://jobs.cumulusmedia.com/jobs",
+            "https://jobs.cumulusmedia.com/",
+            src["URL"],
+        ],
+        {"jobs.cumulusmedia.com"},
+        max_pages=160,
+        max_jobs=4000,
+    )
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -4598,7 +4761,17 @@ def main():
             company_key = clean(s.get("Company", "")).lower()
 
             got = (
-                paramount_successfactors(s)
+                siriusxm_v17(s)
+                if company_key == "siriusxm"
+                else townsquare_v17(s)
+                if company_key == "townsquare media"
+                else nbcuniversal_v17(s)
+                if company_key == "nbcuniversal"
+                else tegna_v17(s)
+                if company_key == "tegna"
+                else cumulus_v17(s)
+                if company_key == "cumulus media"
+                else paramount_successfactors(s)
                 if company_key == "paramount"
                 else disney_public(s)
                 if company_key in {"disney / abc", "espn"}
