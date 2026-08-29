@@ -78,7 +78,7 @@ def pdate(v):
 def req(method, url, **kw):
     for n in range(4):
         try:
-            r = SESSION.request(method, url, timeout=30, **kw)
+            r = SESSION.request(method, url, timeout=15, **kw)
             if r.status_code in (429, 500, 502, 503, 504):
                 time.sleep(2**n)
                 continue
@@ -5190,71 +5190,121 @@ def radio_targeted_v23(src):
     return []
 
 
-V24_DIRECT_ID_TARGETS = {
+V25_FAST_RADIO_TARGETS = {
     "audacy",
     "educational media foundation",
 }
 
-def _icims_direct_id_scan(src, host, low_id, high_id):
-    """Scan a bounded recent iCIMS ID range and parse only live, recent jobs."""
-    out, seen = [], set()
+def _v25_collect_job_links(base_url, raw, host_hint=None, max_links=80):
+    """Extract likely job-detail links from HTML/JSON without brute-force probing."""
+    soup = BeautifulSoup(raw, "html.parser")
+    links = []
+    seen = set()
 
-    for jid in range(low_id, high_id + 1):
-        url = f"https://{host}/jobs/{jid}/job?in_iframe=1"
+    def add(u):
+        if not u:
+            return
+        u = urljoin(base_url, u).replace("\\/", "/").replace("&amp;", "&")
+        if u in seen:
+            return
+        if host_hint and host_hint not in urlparse(u).netloc.lower():
+            return
+        low = u.lower()
+        if not (
+            re.search(r"/jobs/\d+", low)
+            or "/job-details" in low
+            or "jobid=" in low
+            or "gh_jid=" in low
+        ):
+            return
+        seen.add(u)
+        links.append(u)
+
+    for a in soup.find_all("a", href=True):
+        add(a.get("href"))
+
+    for m in re.finditer(r'https?://[^"\'<>\s]+', raw, re.I):
+        add(m.group(0))
+
+    for m in re.finditer(r'["\'](/jobs/\d+/[^"\']+)["\']', raw, re.I):
+        add(m.group(1))
+
+    return links[:max_links]
+
+
+def _v25_fetch_details(src, links, max_jobs=80):
+    out, ids = [], set()
+    for url in links[:max_jobs]:
         try:
             r = req("GET", url)
         except Exception:
             continue
-
         final = str(getattr(r, "url", "") or url)
-        # iCIMS often returns an HTML error shell with HTTP 200. Require a job-like page.
-        raw = r.text
-        soup = BeautifulSoup(raw, "html.parser")
-        txt = clean(soup.get_text(" "))
-        low = txt.lower()
-
-        if (
-            len(txt) < 250
-            or "job locations" not in low
-            or not any(k in low for k in ("posted date", "job id", "overview"))
-        ):
-            continue
-
-        j = _radio_recovery_job(src, final, raw)
-        if j and j.id not in seen:
-            seen.add(j.id)
+        j = _radio_recovery_job(src, final, r.text)
+        if j and j.id not in ids:
+            ids.add(j.id)
             out.append(j)
-
     return out
 
 
-def audacy_v24(src):
-    # Current Audacy IDs observed in 2026 are in the high 7000s/low 8000s.
-    # The window intentionally extends above known live IDs to catch new postings.
-    return _icims_direct_id_scan(
-        src,
-        "careers-audacy.icims.com",
-        7700,
-        8350,
-    )
+def audacy_v25(src):
+    """Discover Audacy iCIMS jobs from search/list pages only; no numeric ID scan."""
+    root = "https://careers-audacy.icims.com/jobs/search?ss=1"
+    all_links = []
+    seen = set()
+
+    for page_num in range(1, 9):
+        page = root if page_num == 1 else f"{root}&pr={page_num}"
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or page)
+        links = _v25_collect_job_links(
+            final, r.text, host_hint="careers-audacy.icims.com", max_links=100
+        )
+        new_links = [u for u in links if u not in seen]
+        if not new_links and page_num > 2:
+            break
+        for u in new_links:
+            seen.add(u)
+            all_links.append(u)
+
+    return _v25_fetch_details(src, all_links, max_jobs=120)
 
 
-def emf_v24(src):
-    # K-LOVE/Air1 current IDs cluster around the 2300-2400 range.
-    return _icims_direct_id_scan(
-        src,
-        "careers-kloveair1.icims.com",
-        2280,
-        2480,
-    )
+def emf_v25(src):
+    """Preserve EMF success using listing discovery, not 200+ ID probes."""
+    root = "https://careers-kloveair1.icims.com/jobs/search?ss=1"
+    all_links = []
+    seen = set()
+
+    for page_num in range(1, 6):
+        page = root if page_num == 1 else f"{root}&pr={page_num}"
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or page)
+        links = _v25_collect_job_links(
+            final, r.text, host_hint="careers-kloveair1.icims.com", max_links=100
+        )
+        new_links = [u for u in links if u not in seen]
+        if not new_links and page_num > 2:
+            break
+        for u in new_links:
+            seen.add(u)
+            all_links.append(u)
+
+    return _v25_fetch_details(src, all_links, max_jobs=80)
 
 
-def radio_direct_v24(src):
+def radio_direct_v25(src):
     company = clean(src.get("Company", "")).lower()
     if company == "audacy":
-        return audacy_v24(src)
+        return audacy_v25(src)
     if company == "educational media foundation":
-        return emf_v24(src)
+        return emf_v25(src)
     return []
 
 def generic(src):
@@ -5562,8 +5612,8 @@ def main():
                 else generic(s)
             )
 
-            if not got and company_key in V24_DIRECT_ID_TARGETS:
-                got = radio_direct_v24(s)
+            if not got and company_key in V25_FAST_RADIO_TARGETS:
+                got = radio_direct_v25(s)
 
             if not got and company_key in V23_RADIO_TARGETS:
                 got = radio_targeted_v23(s)
