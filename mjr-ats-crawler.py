@@ -4838,6 +4838,115 @@ def ashby(src):
 
     return out
 
+
+RADIO_RECOVERY_COMPANIES = {
+    "cumulus media", "educational media foundation", "bell media", "evanov",
+    "lotus", "midwest communications", "pattison media", "rogers sports & media",
+    "stingray", "townsquare media", "stephens media group", "pamal broadcasting",
+}
+
+def _radio_recovery_job(src, url, raw):
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+    soup = BeautifulSoup(raw, "html.parser")
+    txt = clean(soup.get_text(" "))
+    if len(txt) < 220:
+        return None
+    low = txt.lower()
+    signals = ("apply","responsibilities","qualifications","requirements","employment",
+               "full-time","part-time","position","resume","deadline","department","location")
+    if sum(1 for x in signals if x in low) < 2:
+        return None
+    pd = _direct_board_date(raw)
+    if pd and pd < CUTOFF:
+        return None
+    if not pd:
+        pd = TODAY
+    h1=soup.find("h1")
+    title=clean(h1.get_text(" ") if h1 else "")
+    bad={"careers","jobs","career opportunities","job openings","midwest careers"}
+    if not title or title.lower() in bad:
+        title=""
+        for node in soup.find_all(["h2","h3"]):
+            cand=clean(node.get_text(" "))
+            cl=cand.lower()
+            if 4 <= len(cand) <= 180 and any(k in cl for k in (
+                "producer","reporter","anchor","host","announcer","sales","account executive",
+                "engineer","technician","director","manager","coordinator","assistant",
+                "specialist","editor","personality","program","digital","marketing","promotions")):
+                title=cand; break
+    if not title:
+        return None
+    main=(soup.find("main") or soup.find("article")
+          or soup.find(attrs={"class":re.compile(r"(job.?description|job.?detail|posting|entry-content|career)",re.I)})
+          or soup)
+    desc=clean(main.get_text(" "))
+    if len(desc)<250:
+        return None
+    loc=""
+    for pat in (
+        r"(?:Job Location|Location)\s*:?\s*([A-Za-z0-9 .,'/\-&]+?)(?=\s+(?:Job Type|Employment Type|Category|Department|Posted|Apply|Deadline|$))",
+        r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
+        r"\b([A-Z][A-Za-z .'-]+,\s*(?:ON|BC|AB|SK|MB|QC|NS|NB|NL|PE))\b",
+    ):
+        mm=re.search(pat,txt)
+        if mm: loc=clean(mm.group(1)); break
+    canonical=url.split("#",1)[0]
+    jid=hashlib.sha1(canonical.encode()).hexdigest()[:16]
+    return Job(jid,title,src["Company"],desc,pd,jobtype(title,txt),
+               category(title,desc,src["Industry"],src["Company"]),canonical,
+               src["URL"],src["URL"],"",normalize_work_arrangement(desc,loc or txt),
+               loc,"",infer_country(loc or txt,src["Company"],desc))
+
+def radio_recovery(src):
+    company=clean(src.get("Company","")).lower()
+    if company not in RADIO_RECOVERY_COMPANIES:
+        return []
+    extras={
+      "cumulus media":["https://jobs.cumulusmedia.com/careers"],
+      "educational media foundation":["https://www.klove.com/about/careers"],
+      "bell media":["https://jobs.bell.ca/ca/en/c/media-jobs"],
+      "evanov":["https://evanov.ca/careers"],
+      "lotus":["https://www.lotuscorp.com/category/careers/"],
+      "midwest communications":["https://midwestcareers.com/","https://recruiting.paylocity.com/recruiting/jobs/All/0cb3a074-2113-4e9e-a32d-27e40c132e62/Midwest-Communications"],
+      "pattison media":["https://www.pattisonmedia.com/careers"],
+      "rogers sports & media":["https://jobs.rogers.com/go/Rogers-Sports-and-Media/8824500/"],
+      "stingray":["https://jobs.stingray.com/career-opportunities/"],
+      "townsquare media":["https://careers.townsquaremedia.com/job-openings"],
+      "stephens media group":["https://cherryfm.com/smg-jobs/"],
+      "pamal broadcasting":["https://www.pamal.com/jobs1/jobs/","https://www.pamal.com/jobs1/catamount-radio-jobs/"],
+    }
+    starts=list(dict.fromkeys([src["URL"]]+extras.get(company,[])))
+    details=set()
+    for page in starts:
+        try: r=req("GET",page)
+        except Exception: continue
+        final=str(getattr(r,"url","") or page)
+        soup=BeautifulSoup(r.text,"html.parser")
+        host=urlparse(final).netloc.lower()
+        for a in soup.find_all("a",href=True):
+            href=urljoin(final,a["href"]).split("#",1)[0]
+            label=clean(a.get_text(" ")).lower()
+            hp=urlparse(href)
+            same=hp.netloc.lower()==host
+            ext=any(x in hp.netloc.lower() for x in ("paylocity.com","icims.com","myworkdayjobs.com","jobs.rogers.com","greenhouse.io","lever.co"))
+            if not (same or ext): continue
+            p=hp.path.lower()
+            if (re.search(r"/(?:job|jobs|career|careers|job-openings?)/",p)
+                or re.search(r"/job/\d+",p)
+                or label in {"view details","learn more","apply","apply now"}
+                or any(k in label for k in ("producer","reporter","anchor","host","announcer","account executive","sales","engineer","technician","director","manager","coordinator","assistant"))):
+                if href.rstrip("/") not in {s.rstrip("/") for s in starts}: details.add(href)
+    out=[]; seen=set()
+    for url in sorted(details):
+        try:
+            rr=req("GET",url); final=str(getattr(rr,"url","") or url)
+            j=_radio_recovery_job(src,final,rr.text)
+            if j and j.id not in seen: seen.add(j.id); out.append(j)
+        except Exception: continue
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -5142,6 +5251,9 @@ def main():
                 if _ats_family(s)
                 else generic(s)
             )
+
+            if not got and company_key in RADIO_RECOVERY_COMPANIES:
+                got = radio_recovery(s)
 
             jobs += got
 
