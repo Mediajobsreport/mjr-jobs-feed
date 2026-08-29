@@ -106,8 +106,12 @@ The New York Times,Greenhouse,https://job-boards.greenhouse.io/thenewyorktimes,o
 Axios,Greenhouse,https://job-boards.greenhouse.io/axios,ok,29,
 Semafor,Greenhouse,https://job-boards.greenhouse.io/semafor,ok,9,
 WaitWhat,Lever,https://jobs.lever.co/waitwhat,zero_or_not_enumerable,0,
-Suno,Ashby,https://jobs.ashbyhq.com/suno,error,0,"NameError(""name 'quote' is not defined"")"
+Suno,Ashby,https://jobs.ashbyhq.com/suno,ok,15,
 Spotify,Lever,https://jobs.lever.co/spotify,zero_or_not_enumerable,0,
 UnitedMasters,Greenhouse,https://job-boards.greenhouse.io/unitedmasterstranslation,ok,3,
 SoundCloud,Greenhouse,https://job-boards.greenhouse.io/soundcloud71,ok,10,
-Reservoir Media,Ashby,https://jobs.ashbyhq.com/reservoir-media,error,0,"NameError(""name 'quote' is not defined"")"
+Reservoir Media,Ashby,https://jobs.ashbyhq.com/reservoir-media,zero_or_not_enumerable,0,
+Downtown Music,Greenhouse,https://job-boards.greenhouse.io/downtownmusic,ok,1,
+Complex,Lever,https://jobs.lever.co/Complex,zero_or_not_enumerable,0,
+143 Studios,Greenhouse,https://job-boards.greenhouse.io/143studiosinc,zero_or_not_enumerable,0,
+Feld Entertainment,Lever,https://jobs.lever.co/feldinc,zero_or_not_enumerable,0,
