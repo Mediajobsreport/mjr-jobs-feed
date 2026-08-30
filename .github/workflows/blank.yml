@@ -28,7 +28,9 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
 
       - name: Set run mode
         shell: bash
@@ -78,10 +80,10 @@ jobs:
                   f"Invalid expiration for {job.findtext('title')}: {expiration}"
               )
 
-          if test_mode:
-              print(f"Targeted test validated: {len(jobs)} jobs")
-          else:
-              print(f"Production feed validated: {len(jobs)} jobs")
+          print(
+              f"{'Targeted test' if test_mode else 'Production feed'} "
+              f"validated: {len(jobs)} jobs"
+          )
           PY
 
       - name: Show targeted test audit
