@@ -99,7 +99,14 @@ jobs:
             head -c 12000 mjr-salem-iframe.html
             echo ""
           else
-            echo "No iframe HTML file generated."
+            echo "No Salem iframe HTML file generated."
+          fi
+          echo ""
+          echo "----- AUDACY DIAGNOSTIC -----"
+          if [[ -f "mjr-audacy-diagnostic.txt" ]]; then
+            cat mjr-audacy-diagnostic.txt
+          else
+            echo "No Audacy diagnostic file generated."
           fi
           echo ""
           echo "========================================"
@@ -142,6 +149,8 @@ jobs:
             mjr-job-state-test.json
             mjr-salem-diagnostic.txt
             mjr-salem-iframe.html
+            mjr-audacy-diagnostic.txt
+            mjr-audacy-frames/
           if-no-files-found: warn
           retention-days: 7
 
