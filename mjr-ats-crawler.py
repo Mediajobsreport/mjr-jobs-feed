@@ -5873,6 +5873,115 @@ def write_xml(jobs):
     )
 
 
+
+# ============================================================
+# v29 SALEM iCIMS TARGETED ENUMERATION
+# ============================================================
+
+def salem_icims_v29(src):
+    """Bounded Salem-specific iCIMS collector.
+
+    Salem's public detail pages are server-rendered, but the default search
+    URL does not consistently expose links to requests-based crawlers. Try
+    several supported public portal render variants, collect only real
+    /jobs/<id>/<slug>/job URLs, then parse those detail pages normally.
+    No requisition-ID brute force is used.
+    """
+    parsed = urlparse(src["URL"])
+    base = f"{parsed.scheme}://{parsed.netloc}"
+
+    variants = [
+        base + "/jobs/search?ss=1&searchRelation=keyword_all&in_iframe=1",
+        base + "/jobs/search?ss=1&searchRelation=keyword_all&mobile=true&needsRedirect=false",
+        base + "/jobs/search?ss=1&searchRelation=keyword_all",
+        base + "/jobs/search?ss=1&in_iframe=1",
+    ]
+
+    queue = list(dict.fromkeys(variants))
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < 20 and len(details) < 250:
+        page = queue.pop(0)
+        if page in seen_pages:
+            continue
+        seen_pages.add(page)
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+
+        final = str(getattr(r, "url", "") or page)
+        host = urlparse(final).netloc.lower()
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        soup = BeautifulSoup(raw, "html.parser")
+
+        def add_detail(href):
+            if not href:
+                return
+            u = urljoin(final, href)
+            up = urlparse(u)
+            if up.netloc.lower() != host:
+                return
+            if re.search(r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)", u, re.I):
+                # Use iframe-rendered detail page because Salem exposes the full
+                # job content there, while the wrapper can be mostly noscript.
+                q = parse_qs(up.query)
+                q["in_iframe"] = ["1"]
+                newq = urlencode({k: v[-1] for k, v in q.items()})
+                u = urlunparse((up.scheme, up.netloc, up.path, "", newq, ""))
+                details.add(u)
+
+        for a in soup.find_all("a", href=True):
+            h = a.get("href")
+            add_detail(h)
+            u = urljoin(final, h)
+            up = urlparse(u)
+            if up.netloc.lower() != host:
+                continue
+            label = clean(a.get_text(" ")).lower()
+            if "/jobs/search" in up.path.lower() and (
+                re.search(r"[?&](pr|page)=\d+", u, re.I)
+                or label in {"next", "next page", ">", "»"}
+            ):
+                if u not in seen_pages and u not in queue:
+                    queue.append(u)
+
+        # iCIMS often serializes portal URLs inside script/config objects.
+        patterns = [
+            r'https?://[^"\'<>\s]+/jobs/\d+/[^"\'<>\s]+/job[^"\'<>\s]*',
+            r'/jobs/\d+/[^"\'<>\s]+/job[^"\'<>\s]*',
+        ]
+        for pat in patterns:
+            for m in re.finditer(pat, raw, re.I):
+                add_detail(m.group(0).rstrip(".,);"))
+
+    out, seen_ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+        final = str(getattr(rr, "url", "") or url)
+        j = _job_from_detail(src, final, rr.text)
+        if not j:
+            j = _direct_board_job(src, final, rr.text)
+        if not j:
+            continue
+
+        # Salem detail pages must provide an explicit recent posting date.
+        # Do not fabricate TODAY for an undated posting.
+        pd = _v18_icims_date(rr.text)
+        if not pd or pd < CUTOFF:
+            continue
+        j.date = pd
+
+        if j.id not in seen_ids:
+            seen_ids.add(j.id)
+            out.append(j)
+
+    return out
+
 def main():
     with SOURCES_FILE.open(
         newline="",
@@ -5936,6 +6045,8 @@ def main():
                 if "adp" in a
                 else dayforce(s)
                 if "dayforce" in a
+                else salem_icims_v29(s)
+                if company_key == "salem media group"
                 else icims(s)
                 if "icims" in a
                 else ukg(s)
