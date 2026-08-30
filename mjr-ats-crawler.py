@@ -13,6 +13,12 @@ import requests
 from bs4 import BeautifulSoup
 from dateutil import parser as dtparser
 
+try:
+    from playwright.sync_api import sync_playwright
+except Exception:
+    sync_playwright = None
+
+
 
 TODAY = date.today()
 WINDOW_DAYS = int(os.getenv("MJR_WINDOW_DAYS", "21"))
@@ -5982,6 +5988,184 @@ def salem_icims_v29(src):
 
     return out
 
+
+# ============================================================
+# v30 SALEM RENDERED-BROWSER FALLBACK
+# ============================================================
+
+def salem_icims_rendered_v30(src):
+    """
+    Render Salem's iCIMS listing page with Chromium, then enumerate only
+    actual job-detail links present in the rendered DOM.
+
+    This is intentionally Salem-specific and runs only after the normal
+    Salem collector returns zero. It does not brute-force requisition IDs.
+    """
+    if sync_playwright is None:
+        raise RuntimeError(
+            "Playwright is not installed. Install it and Chromium before using v30."
+        )
+
+    parsed = urlparse(src["URL"])
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    start_url = base + "/jobs/search?ss=1&searchRelation=keyword_all"
+
+    detail_urls = set()
+    listing_pages_seen = set()
+    max_listing_pages = 12
+    max_details = 120
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-dev-shm-usage",
+                "--no-sandbox",
+            ],
+        )
+        context = browser.new_context(
+            user_agent=SESSION.headers.get(
+                "User-Agent",
+                "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)",
+            ),
+            viewport={"width": 1440, "height": 1000},
+        )
+        page = context.new_page()
+        page.set_default_timeout(20000)
+
+        current = start_url
+
+        for _ in range(max_listing_pages):
+            if current in listing_pages_seen:
+                break
+            listing_pages_seen.add(current)
+
+            _v28_before_request(current)
+            try:
+                page.goto(current, wait_until="domcontentloaded", timeout=25000)
+                try:
+                    page.wait_for_load_state("networkidle", timeout=8000)
+                except Exception:
+                    pass
+            except Exception:
+                break
+
+            # Give client-side rendering a short bounded window to populate jobs.
+            try:
+                page.wait_for_timeout(1200)
+            except Exception:
+                pass
+
+            # Collect hrefs from the fully rendered DOM.
+            try:
+                hrefs = page.eval_on_selector_all(
+                    "a[href]",
+                    "els => els.map(e => e.href)"
+                )
+            except Exception:
+                hrefs = []
+
+            host = urlparse(page.url).netloc.lower()
+
+            for href in hrefs:
+                if not href:
+                    continue
+                up = urlparse(href)
+                if up.netloc.lower() != host:
+                    continue
+                if re.search(
+                    r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)",
+                    href,
+                    re.I,
+                ):
+                    q = parse_qs(up.query)
+                    q["in_iframe"] = ["1"]
+                    newq = urlencode({k: v[-1] for k, v in q.items()})
+                    clean_url = urlunparse(
+                        (up.scheme, up.netloc, up.path, "", newq, "")
+                    )
+                    detail_urls.add(clean_url)
+
+            if len(detail_urls) >= max_details:
+                break
+
+            # Follow a rendered "next" page if one exists.
+            next_url = None
+            selectors = [
+                'a[aria-label*="Next" i]',
+                'a[title*="Next" i]',
+                'a:has-text("Next")',
+                'a:has-text("›")',
+                'a:has-text("»")',
+            ]
+            for selector in selectors:
+                try:
+                    loc = page.locator(selector)
+                    if loc.count() > 0:
+                        href = loc.first.get_attribute("href")
+                        if href:
+                            candidate = urljoin(page.url, href)
+                            cup = urlparse(candidate)
+                            if cup.netloc.lower() == host and candidate not in listing_pages_seen:
+                                next_url = candidate
+                                break
+                except Exception:
+                    continue
+
+            # If no explicit Next button, look for iCIMS pr= pagination links.
+            if not next_url:
+                for href in hrefs:
+                    if not href:
+                        continue
+                    up = urlparse(href)
+                    if up.netloc.lower() != host:
+                        continue
+                    if "/jobs/search" in up.path.lower() and re.search(
+                        r"[?&]pr=\d+",
+                        href,
+                        re.I,
+                    ):
+                        if href not in listing_pages_seen:
+                            next_url = href
+                            break
+
+            if not next_url:
+                break
+            current = next_url
+
+        browser.close()
+
+    out = []
+    seen_ids = set()
+
+    for url in sorted(detail_urls)[:max_details]:
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+
+        final = str(getattr(rr, "url", "") or url)
+        j = _job_from_detail(src, final, rr.text)
+        if not j:
+            j = _direct_board_job(src, final, rr.text)
+        if not j:
+            continue
+
+        pd = _v18_icims_date(rr.text)
+        if not pd or pd < CUTOFF:
+            continue
+        j.date = pd
+
+        if j.id not in seen_ids:
+            seen_ids.add(j.id)
+            out.append(j)
+
+    print(
+        f"Salem rendered fallback discovered {len(detail_urls)} detail URLs "
+        f"and {len(out)} qualifying jobs."
+    )
+    return out
+
 def main():
     with SOURCES_FILE.open(
         newline="",
@@ -6067,6 +6251,9 @@ def main():
                 if _ats_family(s)
                 else generic(s)
             )
+
+            if not got and company_key == "salem media group":
+                got = salem_icims_rendered_v30(s)
 
             if not got:
                 got = structured_jobs_v27(s)
