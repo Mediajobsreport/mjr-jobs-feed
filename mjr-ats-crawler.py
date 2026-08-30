@@ -6163,6 +6163,247 @@ def _icims_canonical_apply_url(detail_url, html):
     return detail_url
 
 
+
+def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
+    """
+    Audacy-specific direct iCIMS enumeration.
+
+    Avoids the branded/wrapper page entirely. Loads the actual iCIMS
+    results endpoint as the top-level document and follows only job URLs
+    explicitly present in rendered search results.
+    """
+    if sync_playwright is None:
+        return []
+
+    base = "https://careers-audacy.icims.com"
+    found = set()
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--disable-dev-shm-usage", "--no-sandbox"],
+            )
+            context = browser.new_context(
+                user_agent=SESSION.headers.get(
+                    "User-Agent",
+                    "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)",
+                ),
+                viewport={"width": 1440, "height": 1200},
+            )
+
+            previous_signature = None
+
+            for page_num in range(max_pages):
+                # iCIMS commonly uses pr=0,1,2... for result pagination.
+                url = (
+                    f"{base}/jobs/search?"
+                    f"ss=1&searchRelation=keyword_all&pr={page_num}&in_iframe=1"
+                )
+
+                _v28_before_request(url)
+                page = context.new_page()
+                page.set_default_timeout(15000)
+
+                try:
+                    page.goto(url, wait_until="commit", timeout=15000)
+                except Exception as e:
+                    print(f"Audacy v40 page {page_num} goto warning: {e}")
+
+                try:
+                    page.wait_for_timeout(4500)
+                except Exception:
+                    pass
+
+                try:
+                    html = page.content()
+                except Exception:
+                    html = ""
+
+                page_urls = set()
+
+                # DOM hrefs first.
+                try:
+                    hrefs = page.eval_on_selector_all(
+                        "a[href]", "els => els.map(e => e.href)"
+                    )
+                except Exception:
+                    hrefs = []
+
+                for href in hrefs:
+                    if not href:
+                        continue
+                    if not href.lower().startswith(base):
+                        continue
+                    if re.search(
+                        r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)",
+                        href,
+                        re.I,
+                    ):
+                        page_urls.add(href)
+
+                # Script/HTML fallbacks: only IDs/URLs actually present in
+                # rendered search content.
+                for m in re.finditer(
+                    r"(?:https?://careers-audacy\.icims\.com)?"
+                    r"(/jobs/(\d+)/(?:[^\"'<>/?# ]+/)?job(?:\?[^\"'<> ]*)?)",
+                    html,
+                    re.I,
+                ):
+                    page_urls.add(urljoin(base, m.group(1).replace("&amp;", "&")))
+
+                ids = set(re.findall(r"/jobs/(\d+)/", html, re.I))
+                ids.update(re.findall(r'"jobId"\s*:\s*"?(\d+)"?', html, re.I))
+
+                for job_id in ids:
+                    page_urls.add(f"{base}/jobs/{job_id}/job?in_iframe=1")
+
+                # Normalize to iframe detail URLs for parsing.
+                normalized = set()
+                for href in page_urls:
+                    up = urlparse(href)
+                    if up.netloc.lower() != "careers-audacy.icims.com":
+                        continue
+                    m = re.search(r"/jobs/(\d+)/", up.path, re.I)
+                    if not m:
+                        continue
+                    q = parse_qs(up.query)
+                    q["in_iframe"] = ["1"]
+                    nq = urlencode({k: v[-1] for k, v in q.items()})
+                    normalized.add(
+                        urlunparse((up.scheme, up.netloc, up.path, "", nq, ""))
+                    )
+
+                signature = tuple(sorted(normalized))
+                print(
+                    f"Audacy v40 search page {page_num}: "
+                    f"{len(normalized)} job detail URLs"
+                )
+
+                # Stop on an empty page or repeated page signature.
+                if not normalized:
+                    page.close()
+                    break
+                if signature == previous_signature:
+                    page.close()
+                    break
+
+                previous_signature = signature
+                found.update(normalized)
+                page.close()
+
+                if len(found) >= max_details:
+                    break
+
+            browser.close()
+
+    except Exception as e:
+        print(f"Audacy v40 direct enumeration failed: {e}")
+
+    return sorted(found)[:max_details]
+
+
+def collect_audacy_v40(src):
+    """
+    Enumerate Audacy directly from iCIMS and validate every detail page.
+
+    A recovered job is accepted only when:
+      1) its individual iCIMS detail page loads,
+      2) the job ID in the requested URL is still present on the final page,
+      3) the parsed title is non-empty,
+      4) the posting date is within the MJR cutoff,
+      5) the final apply URL is derived from that exact detail page.
+    """
+    urls = _audacy_direct_icims_urls_v40(src)
+    if not urls:
+        return [], 0
+
+    out = []
+    seen = set()
+
+    for detail_url in urls:
+        requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
+        requested_id = requested_id_match.group(1) if requested_id_match else None
+        if not requested_id:
+            continue
+
+        try:
+            rr = req("GET", detail_url)
+        except Exception as e:
+            print(f"Audacy detail fetch failed {requested_id}: {e}")
+            continue
+
+        final = str(getattr(rr, "url", "") or detail_url)
+        html = rr.text or ""
+
+        # Reject redirect-to-search/generic pages and mismatched job IDs.
+        final_id_match = re.search(r"/jobs/(\d+)/", final, re.I)
+        final_id = final_id_match.group(1) if final_id_match else None
+        if final_id and final_id != requested_id:
+            print(
+                f"Audacy rejected mismatched redirect: requested {requested_id}, "
+                f"final {final_id}"
+            )
+            continue
+
+        if (
+            f"/jobs/{requested_id}/" not in final
+            and f"/jobs/{requested_id}/" not in html
+        ):
+            print(f"Audacy rejected non-detail response for job {requested_id}")
+            continue
+
+        job = _job_from_detail(src, final, html)
+        if not job:
+            job = _direct_board_job(src, final, html)
+        if not job:
+            continue
+
+        title = clean(getattr(job, "title", "") or "")
+        if not title:
+            print(f"Audacy rejected blank title for job {requested_id}")
+            continue
+
+        pd = _v18_icims_date(html) or getattr(job, "date", None)
+        if not pd or pd < CUTOFF:
+            continue
+        job.date = pd
+
+        # Derive public link from the same validated detail page.
+        live_apply = _icims_canonical_apply_url(final, html)
+
+        # Make one final ID check against the public URL.
+        live_id_match = re.search(r"/jobs/(\d+)/", live_apply, re.I)
+        live_id = live_id_match.group(1) if live_id_match else None
+        if live_id != requested_id:
+            print(
+                f"Audacy rejected apply URL ID mismatch: requested {requested_id}, "
+                f"apply {live_id}"
+            )
+            continue
+
+        if hasattr(job, "url"):
+            job.url = live_apply
+        if hasattr(job, "apply_url"):
+            job.apply_url = live_apply
+
+        # ID + title pair protects against a stale URL being paired with
+        # a different role during later de-duplication/state handling.
+        dedupe_key = (requested_id, title.lower())
+        if dedupe_key in seen:
+            continue
+        seen.add(dedupe_key)
+        out.append(job)
+
+        print(f"Audacy verified: {requested_id} | {title} | {live_apply}")
+
+    print(
+        f"Audacy v40: {len(urls)} enumerated detail URLs, "
+        f"{len(out)} verified fresh jobs"
+    )
+    return out, len(urls)
+
+
 def collect_icims_rendered_generic(src):
     """
     Return (jobs, enumerated_count). The count lets the audit distinguish
@@ -6716,7 +6957,7 @@ def main():
             got = (
                 ashby(s)
                 if "ashby" in a or "ashbyhq.com" in s.get("URL", "").lower()
-                else icims_v18(s)
+                else []
                 if company_key == "audacy"
                 else paylocity_v18(s)
                 if company_key in {
@@ -6778,10 +7019,15 @@ def main():
 
             icims_enumerated = 0
 
+            # v40: Audacy uses direct iCIMS enumeration with strict
+            # ID/title/apply-link validation. Do not use the old wrapper path.
+            if not got and company_key == "audacy":
+                got, icims_enumerated = collect_audacy_v40(s)
+
             # v37: Generic modern-iCIMS recovery. Only runs when the normal
             # collector returned zero. This is now the preferred path for
             # Audacy, EMF/K-LOVE, Salem, and other zero-result iCIMS portals.
-            if not got and (
+            if not got and company_key != "audacy" and (
                 "icims" in a
                 or company_key == "educational media foundation"
                 or "careers-kloveair1.icims.com" in s.get("URL", "").lower()
