@@ -152,6 +152,8 @@ jobs:
             mjr-audacy-diagnostic.txt
             mjr-audacy-raw-response.txt
             mjr-audacy-search-page-v43.html
+            mjr-audacy-detail-diagnostic-v45.txt
+            mjr-audacy-detail-*-v45.html
             mjr-audacy-frames/
           if-no-files-found: warn
           retention-days: 7
