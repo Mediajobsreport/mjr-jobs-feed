@@ -6173,151 +6173,179 @@ def salem_icims_rendered_v30(src):
 
 def salem_render_diagnostics_v31(src):
     """
-    Render Salem's iCIMS listing page and write a compact diagnostic report:
-    - final URL/title
-    - rendered link count
-    - iframe URLs
-    - relevant network requests/responses
-    - iCIMS/job-related hrefs
-    - snippets of rendered HTML around job/iCIMS markers
+    v32 robust Salem diagnostics.
+    ALWAYS writes mjr-salem-diagnostic.txt, even if Chromium/rendering fails.
     """
-    if sync_playwright is None:
-        return "Playwright unavailable"
-
-    parsed = urlparse(src["URL"])
-    base = f"{parsed.scheme}://{parsed.netloc}"
-    start_url = base + "/jobs/search?ss=1&searchRelation=keyword_all"
-
-    diag_path = os.getenv("MJR_DIAGNOSTIC", "mjr-salem-diagnostic.txt")
+    diag_path = Path(os.getenv("MJR_DIAGNOSTIC", "mjr-salem-diagnostic.txt"))
+    lines = ["MJR SALEM DIAGNOSTIC v32"]
     network = []
     responses = []
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=["--disable-dev-shm-usage", "--no-sandbox"],
-        )
-        context = browser.new_context(
-            user_agent=SESSION.headers.get(
-                "User-Agent",
-                "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)",
-            ),
-            viewport={"width": 1440, "height": 1000},
-        )
-        page = context.new_page()
-        page.set_default_timeout(20000)
+    try:
+        if sync_playwright is None:
+            raise RuntimeError("Playwright unavailable")
 
-        def on_request(req):
-            u = req.url
-            lu = u.lower()
-            if any(k in lu for k in ("icims", "job", "search", "career", "recruit")):
-                network.append((req.method, u))
+        parsed = urlparse(src["URL"])
+        base = f"{parsed.scheme}://{parsed.netloc}"
+        start_url = base + "/jobs/search?ss=1&searchRelation=keyword_all"
+        lines.append(f"Start URL: {start_url}")
 
-        def on_response(resp):
-            u = resp.url
-            lu = u.lower()
-            if any(k in lu for k in ("icims", "job", "search", "career", "recruit")):
-                try:
-                    responses.append((resp.status, u, resp.headers.get("content-type", "")))
-                except Exception:
-                    responses.append((resp.status, u, ""))
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--disable-dev-shm-usage", "--no-sandbox"],
+            )
+            context = browser.new_context(
+                user_agent=SESSION.headers.get(
+                    "User-Agent",
+                    "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)",
+                ),
+                viewport={"width": 1440, "height": 1000},
+            )
+            page = context.new_page()
+            page.set_default_timeout(20000)
 
-        page.on("request", on_request)
-        page.on("response", on_response)
+            def on_request(req):
+                u = req.url
+                lu = u.lower()
+                if any(k in lu for k in ("icims", "job", "search", "career", "recruit")):
+                    network.append((req.method, u))
 
-        _v28_before_request(start_url)
-        page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
+            def on_response(resp):
+                u = resp.url
+                lu = u.lower()
+                if any(k in lu for k in ("icims", "job", "search", "career", "recruit")):
+                    try:
+                        ct = resp.headers.get("content-type", "")
+                    except Exception:
+                        ct = ""
+                    responses.append((resp.status, u, ct))
+
+            page.on("request", on_request)
+            page.on("response", on_response)
+
+            _v28_before_request(start_url)
+
+            try:
+                page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
+                lines.append("page.goto: SUCCESS")
+            except Exception as e:
+                lines.append(f"page.goto ERROR: {repr(e)}")
+
+            try:
+                page.wait_for_load_state("networkidle", timeout=12000)
+                lines.append("networkidle: SUCCESS")
+            except Exception as e:
+                lines.append(f"networkidle: {repr(e)}")
+
+            try:
+                page.wait_for_timeout(2500)
+            except Exception:
+                pass
+
+            try:
+                lines.append(f"Final URL: {page.url}")
+            except Exception as e:
+                lines.append(f"Final URL ERROR: {repr(e)}")
+
+            try:
+                lines.append(f"Title: {page.title()}")
+            except Exception as e:
+                lines.append(f"Title ERROR: {repr(e)}")
+
+            try:
+                hrefs = page.eval_on_selector_all(
+                    "a[href]",
+                    "els => els.map(e => e.href)"
+                )
+            except Exception as e:
+                hrefs = []
+                lines.append(f"href extraction ERROR: {repr(e)}")
+
+            lines.append(f"Rendered href count: {len(hrefs)}")
+
+            try:
+                frames = [f.url for f in page.frames]
+            except Exception as e:
+                frames = []
+                lines.append(f"frame extraction ERROR: {repr(e)}")
+
+            lines.append("")
+            lines.append("=== FRAMES ===")
+            lines.extend(frames or ["(none)"])
+
+            relevant_hrefs = []
+            for href in hrefs:
+                if not href:
+                    continue
+                lh = href.lower()
+                if any(k in lh for k in ("/jobs/", "icims", "job-search", "search?")):
+                    relevant_hrefs.append(href)
+
+            # Unique, bounded.
+            relevant_hrefs = list(dict.fromkeys(relevant_hrefs))[:200]
+            lines.append("")
+            lines.append("=== RELEVANT HREFS ===")
+            lines.extend(relevant_hrefs or ["(none)"])
+
+            lines.append("")
+            lines.append("=== NETWORK REQUESTS ===")
+            for method, url in list(dict.fromkeys(network))[:200]:
+                lines.append(f"{method} {url}")
+            if not network:
+                lines.append("(none)")
+
+            lines.append("")
+            lines.append("=== NETWORK RESPONSES ===")
+            for status, url, ct in list(dict.fromkeys(responses))[:200]:
+                lines.append(f"{status} {ct} {url}")
+            if not responses:
+                lines.append("(none)")
+
+            try:
+                html = page.content()
+                low = html.lower()
+                lines.append("")
+                lines.append(f"Rendered HTML length: {len(html)}")
+                lines.append("=== HTML MARKER SNIPPETS ===")
+                snippet_count = 0
+                for marker in ("icims", "/jobs/", "jobposting", "searchresults", "iframe"):
+                    pos = 0
+                    while snippet_count < 50:
+                        idx = low.find(marker, pos)
+                        if idx < 0:
+                            break
+                        a = max(0, idx - 200)
+                        b = min(len(html), idx + 400)
+                        snippet = re.sub(r"\s+", " ", html[a:b])
+                        lines.append(f"[{marker}] {snippet}")
+                        pos = idx + len(marker)
+                        snippet_count += 1
+                if snippet_count == 0:
+                    lines.append("(no markers found)")
+            except Exception as e:
+                lines.append("")
+                lines.append(f"HTML extraction ERROR: {repr(e)}")
+
+            try:
+                browser.close()
+            except Exception:
+                pass
+
+    except Exception as e:
+        lines.append("")
+        lines.append("=== DIAGNOSTIC FATAL ERROR ===")
+        lines.append(repr(e))
+
+    finally:
+        # Critical v32 behavior: always create the diagnostic file.
         try:
-            page.wait_for_load_state("networkidle", timeout=12000)
-        except Exception:
-            pass
-        page.wait_for_timeout(2500)
+            diag_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            print(f"Salem diagnostic written: {diag_path}")
+        except Exception as e:
+            print(f"Could not write Salem diagnostic: {e}")
 
-        final_url = page.url
-        title = page.title()
-
-        try:
-            hrefs = page.eval_on_selector_all("a[href]", "els => els.map(e => e.href)")
-        except Exception:
-            hrefs = []
-
-        try:
-            frames = [f.url for f in page.frames]
-        except Exception:
-            frames = []
-
-        try:
-            html = page.content()
-        except Exception:
-            html = ""
-
-        # Compact relevant href list.
-        relevant_hrefs = []
-        for href in hrefs:
-            if not href:
-                continue
-            lh = href.lower()
-            if any(k in lh for k in ("/jobs/", "icims", "job-search", "search?")):
-                relevant_hrefs.append(href)
-
-        # Extract compact snippets around useful markers.
-        snippets = []
-        low = html.lower()
-        for marker in ("icims", "/jobs/", "jobposting", "searchresults", "iframe"):
-            start = 0
-            found = 0
-            while found < 8:
-                idx = low.find(marker, start)
-                if idx < 0:
-                    break
-                a = max(0, idx - 220)
-                b = min(len(html), idx + 420)
-                snippet = re.sub(r"\s+", " ", html[a:b])
-                snippets.append(f"[{marker}] {snippet}")
-                start = idx + len(marker)
-                found += 1
-
-        browser.close()
-
-    def uniq(seq):
-        seen = set()
-        out = []
-        for x in seq:
-            if x in seen:
-                continue
-            seen.add(x)
-            out.append(x)
-        return out
-
-    network = uniq(network)[:150]
-    responses = uniq(responses)[:150]
-    relevant_hrefs = uniq(relevant_hrefs)[:150]
-    frames = uniq(frames)[:50]
-    snippets = uniq(snippets)[:40]
-
-    lines = [
-        "MJR SALEM DIAGNOSTIC v31",
-        f"Start URL: {start_url}",
-        f"Final URL: {final_url}",
-        f"Title: {title}",
-        f"Rendered href count: {len(hrefs)}",
-        f"Relevant href count: {len(relevant_hrefs)}",
-        "",
-        "=== FRAMES ===",
-    ]
-    lines += frames or ["(none)"]
-    lines += ["", "=== RELEVANT HREFS ==="]
-    lines += relevant_hrefs or ["(none)"]
-    lines += ["", "=== NETWORK REQUESTS ==="]
-    lines += [f"{m} {u}" for m, u in network] or ["(none)"]
-    lines += ["", "=== NETWORK RESPONSES ==="]
-    lines += [f"{s} {ct} {u}" for s, u, ct in responses] or ["(none)"]
-    lines += ["", "=== RENDERED HTML SNIPPETS ==="]
-    lines += snippets or ["(none)"]
-
-    Path(diag_path).write_text("\n".join(lines), encoding="utf-8")
-    print(f"Salem diagnostic written: {diag_path}")
-    return diag_path
+    return str(diag_path)
 
 def main():
     with SOURCES_FILE.open(
