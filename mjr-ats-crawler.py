@@ -5994,6 +5994,23 @@ def salem_icims_v29(src):
 # ============================================================
 
 
+
+def _icims_effective_source(src):
+    """
+    Normalize known branded career pages to their underlying iCIMS host.
+    """
+    company_key = clean(src.get("Company", "")).lower()
+    url = src.get("URL", "")
+
+    if company_key == "educational media foundation":
+        fixed = dict(src)
+        fixed["URL"] = "https://careers-kloveair1.icims.com/jobs/search?ss=1"
+        fixed["ATS"] = "iCIMS"
+        return fixed
+
+    return src
+
+
 def _icims_frame_detail_urls(src, max_details=160):
     """
     Generic rendered iCIMS listing discovery.
@@ -6003,6 +6020,7 @@ def _icims_frame_detail_urls(src, max_details=160):
     if sync_playwright is None:
         return []
 
+    src = _icims_effective_source(src)
     parsed = urlparse(src["URL"])
     base = f"{parsed.scheme}://{parsed.netloc}"
     start_url = src["URL"] if "/jobs/search" in parsed.path.lower() else base + "/jobs/search?ss=1"
@@ -6150,6 +6168,7 @@ def collect_icims_rendered_generic(src):
     Return (jobs, enumerated_count). The count lets the audit distinguish
     'enumerated_no_fresh_jobs' from 'zero_or_not_enumerable'.
     """
+    src = _icims_effective_source(src)
     urls = _icims_frame_detail_urls(src)
     if not urls:
         return [], 0
@@ -6316,27 +6335,40 @@ def salem_icims_rendered_v30(src):
 
 def audacy_render_diagnostics_v38(src):
     """
-    v38 Audacy diagnostic.
-    Captures rendered frames, relevant hrefs, job-like IDs, network activity,
-    and a bounded HTML dump from each Audacy frame. Always writes files.
+    v39 Audacy diagnostic.
+    Tries multiple direct iCIMS entry points and keeps inspecting the page
+    even when navigation times out. Captures partial DOM, frames, URLs and
+    relevant network activity instead of failing at page.goto().
     """
     diag_path = Path("mjr-audacy-diagnostic.txt")
     html_dir = Path("mjr-audacy-frames")
     html_dir.mkdir(exist_ok=True)
-    lines = ["MJR AUDACY DIAGNOSTIC v38"]
+    lines = ["MJR AUDACY DIAGNOSTIC v39"]
+
+    if sync_playwright is None:
+        diag_path.write_text(
+            "MJR AUDACY DIAGNOSTIC v39\nPlaywright unavailable\n",
+            encoding="utf-8",
+        )
+        return str(diag_path)
+
+    parsed = urlparse(src["URL"])
+    base = f"{parsed.scheme}://{parsed.netloc}"
+
+    entry_urls = [
+        src["URL"],
+        base + "/jobs/intro",
+        base + "/jobs/search?ss=1",
+        base + "/jobs/search?ss=1&in_iframe=1",
+    ]
+
+    # De-duplicate while preserving order.
+    entry_urls = list(dict.fromkeys(entry_urls))
+
+    requests_seen = []
+    responses_seen = []
 
     try:
-        if sync_playwright is None:
-            raise RuntimeError("Playwright unavailable")
-
-        parsed = urlparse(src["URL"])
-        base = f"{parsed.scheme}://{parsed.netloc}"
-        start_url = src["URL"]
-        lines.append(f"Start URL: {start_url}")
-
-        requests_seen = []
-        responses_seen = []
-
         with sync_playwright() as p:
             browser = p.chromium.launch(
                 headless=True,
@@ -6349,122 +6381,136 @@ def audacy_render_diagnostics_v38(src):
                 ),
                 viewport={"width": 1440, "height": 1100},
             )
-            page = context.new_page()
-            page.set_default_timeout(20000)
 
-            page.on(
-                "request",
-                lambda req_: requests_seen.append(req_.url)
-                if any(k in req_.url.lower() for k in ("job", "icims", "search", "api"))
-                else None,
-            )
-            page.on(
-                "response",
-                lambda resp: responses_seen.append(f"{resp.status} {resp.url}")
-                if any(k in resp.url.lower() for k in ("job", "icims", "search", "api"))
-                else None,
-            )
-
-            _v28_before_request(start_url)
-            page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
-            try:
-                page.wait_for_load_state("networkidle", timeout=12000)
-            except Exception:
-                pass
-            page.wait_for_timeout(2500)
-
-            lines.append(f"Final page URL: {page.url}")
-            try:
-                lines.append(f"Title: {page.title()}")
-            except Exception:
-                pass
-
-            frames = page.frames
-            lines.append(f"Frame count: {len(frames)}")
-
-            all_ids = set()
-            all_interesting = []
-
-            for i, frame in enumerate(frames):
-                fu = frame.url or ""
+            for entry_index, entry_url in enumerate(entry_urls):
                 lines.append("")
-                lines.append(f"=== FRAME {i} ===")
-                lines.append(f"URL: {fu}")
+                lines.append("=" * 72)
+                lines.append(f"ENTRY {entry_index}: {entry_url}")
+                lines.append("=" * 72)
 
+                page = context.new_page()
+                page.set_default_timeout(15000)
+
+                page.on(
+                    "request",
+                    lambda req_: requests_seen.append(req_.url)
+                    if any(k in req_.url.lower() for k in ("job", "icims", "search", "api"))
+                    else None,
+                )
+                page.on(
+                    "response",
+                    lambda resp: responses_seen.append(f"{resp.status} {resp.url}")
+                    if any(k in resp.url.lower() for k in ("job", "icims", "search", "api"))
+                    else None,
+                )
+
+                _v28_before_request(entry_url)
+
+                nav_error = None
                 try:
-                    html = frame.content()
+                    page.goto(entry_url, wait_until="commit", timeout=15000)
                 except Exception as e:
-                    html = ""
-                    lines.append(f"content_error={repr(e)}")
+                    nav_error = repr(e)
+                    lines.append(f"goto_error={nav_error}")
 
-                out = html_dir / f"frame-{i}.html"
-                out.write_text(html[:500000], encoding="utf-8")
-                lines.append(f"HTML chars captured: {min(len(html), 500000)}")
+                # Give scripts/frames a bounded opportunity to populate.
+                try:
+                    page.wait_for_timeout(5000)
+                except Exception:
+                    pass
 
-                # Explicit IDs/URLs in frame markup.
-                ids = set(re.findall(r"/jobs/(\d+)/", html, re.I))
-                ids.update(re.findall(r'"jobId"\s*:\s*"?(\d+)"?', html, re.I))
-                ids.update(re.findall(r'job(?:Id|ID|id)[=:\s"\']+(\d+)', html, re.I))
-                all_ids.update(ids)
+                lines.append(f"Current page URL: {page.url}")
+                try:
+                    lines.append(f"Title: {page.title()}")
+                except Exception as e:
+                    lines.append(f"title_error={repr(e)}")
 
-                hrefs = re.findall(r'href=["\']([^"\']+)["\']', html, re.I)
-                interesting = []
-                for href in hrefs:
-                    lh = href.lower()
-                    if any(k in lh for k in ("job", "search", "icims", "apply", "requisition")):
-                        interesting.append(urljoin(fu or start_url, href))
-                interesting = list(dict.fromkeys(interesting))
-                all_interesting.extend(interesting)
+                frames = page.frames
+                lines.append(f"Frame count: {len(frames)}")
 
-                lines.append(f"Job-like IDs: {len(ids)}")
-                for x in sorted(ids)[:150]:
-                    lines.append(f"ID {x}")
+                all_ids = set()
+                all_links = []
 
-                lines.append(f"Interesting hrefs: {len(interesting)}")
-                for h in interesting[:150]:
+                for i, frame in enumerate(frames):
+                    fu = frame.url or ""
+                    lines.append("")
+                    lines.append(f"--- ENTRY {entry_index} FRAME {i} ---")
+                    lines.append(f"URL: {fu}")
+
+                    try:
+                        html = frame.content()
+                    except Exception as e:
+                        html = ""
+                        lines.append(f"content_error={repr(e)}")
+
+                    frame_file = html_dir / f"entry-{entry_index}-frame-{i}.html"
+                    frame_file.write_text(html[:500000], encoding="utf-8")
+                    lines.append(f"HTML chars captured: {min(len(html), 500000)}")
+
+                    ids = set(re.findall(r"/jobs/(\d+)/", html, re.I))
+                    ids.update(re.findall(r'"jobId"\s*:\s*"?(\d+)"?', html, re.I))
+                    ids.update(re.findall(r'job(?:Id|ID|id)[=:\s"\']+(\d+)', html, re.I))
+                    all_ids.update(ids)
+
+                    hrefs = re.findall(r'href=["\']([^"\']+)["\']', html, re.I)
+                    interesting = []
+                    for href in hrefs:
+                        lh = href.lower()
+                        if any(k in lh for k in ("job", "search", "icims", "apply", "requisition")):
+                            interesting.append(urljoin(fu or entry_url, href))
+                    interesting = list(dict.fromkeys(interesting))
+                    all_links.extend(interesting)
+
+                    lines.append(f"Job-like IDs: {len(ids)}")
+                    for job_id in sorted(ids)[:200]:
+                        lines.append(f"ID {job_id}")
+
+                    lines.append(f"Interesting hrefs: {len(interesting)}")
+                    for h in interesting[:200]:
+                        lines.append(h)
+
+                    # Compact marker snippets.
+                    low = html.lower()
+                    snips = 0
+                    for marker in ("job", "requisition", "apply", "icims", "data-", "onclick", "iframe"):
+                        pos = 0
+                        while snips < 50:
+                            j = low.find(marker, pos)
+                            if j < 0:
+                                break
+                            a = max(0, j - 140)
+                            b = min(len(html), j + 340)
+                            lines.append(
+                                f"[{marker}] " + re.sub(r"\s+", " ", html[a:b])
+                            )
+                            pos = j + len(marker)
+                            snips += 1
+
+                lines.append("")
+                lines.append(f"ENTRY {entry_index} UNIQUE IDS: {len(all_ids)}")
+                for x in sorted(all_ids)[:300]:
+                    lines.append(x)
+
+                lines.append("")
+                lines.append(f"ENTRY {entry_index} UNIQUE LINKS: {len(set(all_links))}")
+                for h in list(dict.fromkeys(all_links))[:300]:
                     lines.append(h)
 
-                # Short marker snippets.
-                low = html.lower()
-                snips = 0
-                for marker in ("job", "requisition", "apply", "icims", "data-", "onclick", "iframe"):
-                    pos = 0
-                    while snips < 40:
-                        j = low.find(marker, pos)
-                        if j < 0:
-                            break
-                        a = max(0, j - 140)
-                        b = min(len(html), j + 340)
-                        lines.append(
-                            f"[{marker}] " + re.sub(r"\s+", " ", html[a:b])
-                        )
-                        pos = j + len(marker)
-                        snips += 1
+                try:
+                    page.close()
+                except Exception:
+                    pass
 
             lines.append("")
-            lines.append("=== ALL UNIQUE JOB-LIKE IDS ===")
-            for x in sorted(all_ids)[:300]:
-                lines.append(x)
-            if not all_ids:
-                lines.append("(none)")
-
-            lines.append("")
-            lines.append("=== UNIQUE INTERESTING HREFS ===")
-            for h in list(dict.fromkeys(all_interesting))[:300]:
-                lines.append(h)
-            if not all_interesting:
-                lines.append("(none)")
-
-            lines.append("")
-            lines.append("=== NETWORK REQUESTS ===")
-            for u in list(dict.fromkeys(requests_seen))[:300]:
+            lines.append("=== ALL NETWORK REQUESTS ===")
+            for u in list(dict.fromkeys(requests_seen))[:500]:
                 lines.append(u)
             if not requests_seen:
                 lines.append("(none)")
 
             lines.append("")
-            lines.append("=== NETWORK RESPONSES ===")
-            for u in list(dict.fromkeys(responses_seen))[:300]:
+            lines.append("=== ALL NETWORK RESPONSES ===")
+            for u in list(dict.fromkeys(responses_seen))[:500]:
                 lines.append(u)
             if not responses_seen:
                 lines.append("(none)")
@@ -6473,7 +6519,7 @@ def audacy_render_diagnostics_v38(src):
 
     except Exception as e:
         lines.append("")
-        lines.append("=== DIAGNOSTIC ERROR ===")
+        lines.append("=== DIAGNOSTIC FATAL ERROR ===")
         lines.append(repr(e))
 
     finally:
@@ -6481,7 +6527,6 @@ def audacy_render_diagnostics_v38(src):
         print(f"Audacy diagnostic written: {diag_path}")
 
     return str(diag_path)
-
 
 # ============================================================
 # v31 SALEM RENDERED DIAGNOSTICS
