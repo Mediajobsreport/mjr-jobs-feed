@@ -6186,7 +6186,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v44 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v45 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6232,7 +6232,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v44 listing page {page_num}: "
+            f"Audacy v45 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6251,17 +6251,16 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v44 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v45 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
 def collect_audacy_v40(src):
     """
-    v44 Audacy validator.
+    v45 Audacy validator + no-extra-request diagnostics.
 
-    Search listings have no posting date, so inspect detail pages in listing
-    order. Stop after a sustained run of stale jobs once fresh jobs have been
-    found. Every accepted job still requires matching ID/title/date/apply URL.
+    Save a small sample of already-fetched detail responses and log the parser
+    outputs so we can see exactly why detail pages are being rejected.
     """
     urls, enumerated_count = _audacy_direct_icims_urls_v40(src)
     if not urls:
@@ -6275,9 +6274,13 @@ def collect_audacy_v40(src):
     max_detail_fetches = 110
     stale_stop_after = 20
 
+    diagnostic_lines = []
+    saved_samples = 0
+    max_saved_samples = 5
+
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
-            print("Audacy v44 stopped at detail safety limit")
+            print("Audacy v45 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6289,14 +6292,118 @@ def collect_audacy_v40(src):
             rr = req("GET", detail_url)
             detail_fetches += 1
         except Exception as e:
-            print(f"Audacy detail fetch failed {requested_id}: {e}")
+            diagnostic_lines.append(
+                f"{requested_id}\tFETCH_ERROR\t{type(e).__name__}: {e}\t{detail_url}"
+            )
             continue
 
         final = str(getattr(rr, "url", "") or detail_url)
         html = rr.text or ""
+        status_code = getattr(rr, "status_code", "")
+
+        # Save a few already-fetched raw detail responses. No new requests.
+        if saved_samples < max_saved_samples:
+            try:
+                sample_path = Path(
+                    f"mjr-audacy-detail-{requested_id}-v45.html"
+                )
+                sample_path.write_text(
+                    html[:700000],
+                    encoding="utf-8",
+                )
+                saved_samples += 1
+            except Exception as e:
+                diagnostic_lines.append(
+                    f"{requested_id}\tSAVE_SAMPLE_ERROR\t{e}"
+                )
 
         final_id_match = re.search(r"/jobs/(\d+)/", final, re.I)
         final_id = final_id_match.group(1) if final_id_match else None
+
+        detail_marker_ok = (
+            f"/jobs/{requested_id}/" in final
+            or f"/jobs/{requested_id}/" in html
+        )
+
+        # Capture multiple parser attempts independently for diagnosis.
+        parsed_job = None
+        direct_job = None
+        parse_error = ""
+        direct_error = ""
+
+        try:
+            parsed_job = _job_from_detail(src, final, html)
+        except Exception as e:
+            parse_error = f"{type(e).__name__}: {e}"
+
+        try:
+            direct_job = _direct_board_job(src, final, html)
+        except Exception as e:
+            direct_error = f"{type(e).__name__}: {e}"
+
+        job = parsed_job or direct_job
+
+        parsed_title = clean(
+            getattr(parsed_job, "title", "") if parsed_job else ""
+        )
+        direct_title = clean(
+            getattr(direct_job, "title", "") if direct_job else ""
+        )
+        chosen_title = clean(
+            getattr(job, "title", "") if job else ""
+        )
+
+        icims_date = None
+        job_date = None
+        date_error = ""
+
+        try:
+            icims_date = _v18_icims_date(html)
+        except Exception as e:
+            date_error = f"_v18_icims_date {type(e).__name__}: {e}"
+
+        if job is not None:
+            try:
+                job_date = getattr(job, "date", None)
+            except Exception:
+                job_date = None
+
+        canonical_apply = ""
+        apply_error = ""
+        try:
+            canonical_apply = _icims_canonical_apply_url(final, html)
+        except Exception as e:
+            apply_error = f"{type(e).__name__}: {e}"
+
+        apply_id_match = re.search(
+            r"/jobs/(\d+)/",
+            canonical_apply or "",
+            re.I,
+        )
+        apply_id = apply_id_match.group(1) if apply_id_match else None
+
+        # Compact parser evidence line for every checked detail page.
+        diagnostic_lines.append(
+            "\t".join([
+                str(requested_id),
+                f"status={status_code}",
+                f"final_id={final_id or ''}",
+                f"detail_marker={detail_marker_ok}",
+                f"parsed_title={parsed_title}",
+                f"direct_title={direct_title}",
+                f"chosen_title={chosen_title}",
+                f"icims_date={icims_date or ''}",
+                f"job_date={job_date or ''}",
+                f"apply_id={apply_id or ''}",
+                f"final={final}",
+                f"apply={canonical_apply}",
+                f"parse_error={parse_error}",
+                f"direct_error={direct_error}",
+                f"date_error={date_error}",
+                f"apply_error={apply_error}",
+            ])
+        )
+
         if final_id and final_id != requested_id:
             print(
                 f"Audacy rejected mismatched redirect: requested {requested_id}, "
@@ -6304,33 +6411,32 @@ def collect_audacy_v40(src):
             )
             continue
 
-        if (
-            f"/jobs/{requested_id}/" not in final
-            and f"/jobs/{requested_id}/" not in html
-        ):
+        if not detail_marker_ok:
             print(f"Audacy rejected non-detail response for job {requested_id}")
             continue
 
-        job = _job_from_detail(src, final, html)
         if not job:
-            job = _direct_board_job(src, final, html)
-        if not job:
+            print(f"Audacy v45 parser returned no job for {requested_id}")
             continue
 
-        title = clean(getattr(job, "title", "") or "")
+        title = chosen_title
         if not title:
+            print(f"Audacy v45 parser returned blank title for {requested_id}")
             continue
 
-        pd = _v18_icims_date(html) or getattr(job, "date", None)
+        pd = icims_date or job_date
         if not pd:
-            print(f"Audacy could not determine detail date: {requested_id} | {title}")
+            print(
+                f"Audacy v45 could not determine detail date: "
+                f"{requested_id} | {title}"
+            )
             continue
 
         if pd < CUTOFF:
             consecutive_old += 1
             if fresh_seen and consecutive_old >= stale_stop_after:
                 print(
-                    f"Audacy v44 stopping after {consecutive_old} "
+                    f"Audacy v45 stopping after {consecutive_old} "
                     f"consecutive stale jobs"
                 )
                 break
@@ -6340,7 +6446,11 @@ def collect_audacy_v40(src):
         consecutive_old = 0
         job.date = pd
 
-        live_apply = _icims_canonical_apply_url(final, html)
+        live_apply = canonical_apply
+        if not live_apply:
+            print(f"Audacy v45 no canonical apply URL: {requested_id} | {title}")
+            continue
+
         live_id_match = re.search(r"/jobs/(\d+)/", live_apply, re.I)
         live_id = live_id_match.group(1) if live_id_match else None
         if live_id != requested_id:
@@ -6366,10 +6476,19 @@ def collect_audacy_v40(src):
             f"{title} | {live_apply}"
         )
 
+    try:
+        Path("mjr-audacy-detail-diagnostic-v45.txt").write_text(
+            "\n".join(diagnostic_lines),
+            encoding="utf-8",
+        )
+    except Exception as e:
+        print(f"Audacy v45 diagnostic write failed: {e}")
+
     print(
-        f"Audacy v44: {enumerated_count} enumerated, "
+        f"Audacy v45: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
-        f"{len(out)} verified fresh jobs"
+        f"{len(out)} verified fresh jobs, "
+        f"{saved_samples} detail samples saved"
     )
     return out, enumerated_count
 
