@@ -6056,7 +6056,7 @@ def salem_icims_rendered_v30(src):
                 up = urlparse(href)
                 if up.netloc.lower() != parsed.netloc.lower():
                     continue
-                if re.search(r"/jobs/\\d+/(?:[^/?#]+/)?job(?:[/?#]|$)", href, re.I):
+                if re.search(r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)", href, re.I):
                     q = parse_qs(up.query)
                     q["in_iframe"] = ["1"]
                     newq = urlencode({k: v[-1] for k, v in q.items()})
@@ -6069,7 +6069,7 @@ def salem_icims_rendered_v30(src):
             except Exception:
                 html = ""
 
-            pattern = r"(?i)(?:https?://[^\\\"'<> ]+)?/jobs/\\d+/(?:[^\\\"'<>/?# ]+/)?job(?:\\?[^\\\"'<> ]*)?"
+            pattern = r"(?i)(?:https?://[^\\\"'<> ]+)?/jobs/\d+/(?:[^\\\"'<>/?# ]+/)?job(?:\?[^\\\"'<> ]*)?"
             for match in re.findall(pattern, html):
                 href = urljoin(frame.url, match.replace("&amp;", "&"))
                 up = urlparse(href)
