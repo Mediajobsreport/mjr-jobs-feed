@@ -6313,6 +6313,176 @@ def salem_icims_rendered_v30(src):
     print(f"Salem frame-aware collector qualifying jobs: {len(out)}")
     return out
 
+
+def audacy_render_diagnostics_v38(src):
+    """
+    v38 Audacy diagnostic.
+    Captures rendered frames, relevant hrefs, job-like IDs, network activity,
+    and a bounded HTML dump from each Audacy frame. Always writes files.
+    """
+    diag_path = Path("mjr-audacy-diagnostic.txt")
+    html_dir = Path("mjr-audacy-frames")
+    html_dir.mkdir(exist_ok=True)
+    lines = ["MJR AUDACY DIAGNOSTIC v38"]
+
+    try:
+        if sync_playwright is None:
+            raise RuntimeError("Playwright unavailable")
+
+        parsed = urlparse(src["URL"])
+        base = f"{parsed.scheme}://{parsed.netloc}"
+        start_url = src["URL"]
+        lines.append(f"Start URL: {start_url}")
+
+        requests_seen = []
+        responses_seen = []
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--disable-dev-shm-usage", "--no-sandbox"],
+            )
+            context = browser.new_context(
+                user_agent=SESSION.headers.get(
+                    "User-Agent",
+                    "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)",
+                ),
+                viewport={"width": 1440, "height": 1100},
+            )
+            page = context.new_page()
+            page.set_default_timeout(20000)
+
+            page.on(
+                "request",
+                lambda req_: requests_seen.append(req_.url)
+                if any(k in req_.url.lower() for k in ("job", "icims", "search", "api"))
+                else None,
+            )
+            page.on(
+                "response",
+                lambda resp: responses_seen.append(f"{resp.status} {resp.url}")
+                if any(k in resp.url.lower() for k in ("job", "icims", "search", "api"))
+                else None,
+            )
+
+            _v28_before_request(start_url)
+            page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
+            try:
+                page.wait_for_load_state("networkidle", timeout=12000)
+            except Exception:
+                pass
+            page.wait_for_timeout(2500)
+
+            lines.append(f"Final page URL: {page.url}")
+            try:
+                lines.append(f"Title: {page.title()}")
+            except Exception:
+                pass
+
+            frames = page.frames
+            lines.append(f"Frame count: {len(frames)}")
+
+            all_ids = set()
+            all_interesting = []
+
+            for i, frame in enumerate(frames):
+                fu = frame.url or ""
+                lines.append("")
+                lines.append(f"=== FRAME {i} ===")
+                lines.append(f"URL: {fu}")
+
+                try:
+                    html = frame.content()
+                except Exception as e:
+                    html = ""
+                    lines.append(f"content_error={repr(e)}")
+
+                out = html_dir / f"frame-{i}.html"
+                out.write_text(html[:500000], encoding="utf-8")
+                lines.append(f"HTML chars captured: {min(len(html), 500000)}")
+
+                # Explicit IDs/URLs in frame markup.
+                ids = set(re.findall(r"/jobs/(\d+)/", html, re.I))
+                ids.update(re.findall(r'"jobId"\s*:\s*"?(\d+)"?', html, re.I))
+                ids.update(re.findall(r'job(?:Id|ID|id)[=:\s"\']+(\d+)', html, re.I))
+                all_ids.update(ids)
+
+                hrefs = re.findall(r'href=["\']([^"\']+)["\']', html, re.I)
+                interesting = []
+                for href in hrefs:
+                    lh = href.lower()
+                    if any(k in lh for k in ("job", "search", "icims", "apply", "requisition")):
+                        interesting.append(urljoin(fu or start_url, href))
+                interesting = list(dict.fromkeys(interesting))
+                all_interesting.extend(interesting)
+
+                lines.append(f"Job-like IDs: {len(ids)}")
+                for x in sorted(ids)[:150]:
+                    lines.append(f"ID {x}")
+
+                lines.append(f"Interesting hrefs: {len(interesting)}")
+                for h in interesting[:150]:
+                    lines.append(h)
+
+                # Short marker snippets.
+                low = html.lower()
+                snips = 0
+                for marker in ("job", "requisition", "apply", "icims", "data-", "onclick", "iframe"):
+                    pos = 0
+                    while snips < 40:
+                        j = low.find(marker, pos)
+                        if j < 0:
+                            break
+                        a = max(0, j - 140)
+                        b = min(len(html), j + 340)
+                        lines.append(
+                            f"[{marker}] " + re.sub(r"\s+", " ", html[a:b])
+                        )
+                        pos = j + len(marker)
+                        snips += 1
+
+            lines.append("")
+            lines.append("=== ALL UNIQUE JOB-LIKE IDS ===")
+            for x in sorted(all_ids)[:300]:
+                lines.append(x)
+            if not all_ids:
+                lines.append("(none)")
+
+            lines.append("")
+            lines.append("=== UNIQUE INTERESTING HREFS ===")
+            for h in list(dict.fromkeys(all_interesting))[:300]:
+                lines.append(h)
+            if not all_interesting:
+                lines.append("(none)")
+
+            lines.append("")
+            lines.append("=== NETWORK REQUESTS ===")
+            for u in list(dict.fromkeys(requests_seen))[:300]:
+                lines.append(u)
+            if not requests_seen:
+                lines.append("(none)")
+
+            lines.append("")
+            lines.append("=== NETWORK RESPONSES ===")
+            for u in list(dict.fromkeys(responses_seen))[:300]:
+                lines.append(u)
+            if not responses_seen:
+                lines.append("(none)")
+
+            browser.close()
+
+    except Exception as e:
+        lines.append("")
+        lines.append("=== DIAGNOSTIC ERROR ===")
+        lines.append(repr(e))
+
+    finally:
+        diag_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        print(f"Audacy diagnostic written: {diag_path}")
+
+    return str(diag_path)
+
+
 # ============================================================
 # v31 SALEM RENDERED DIAGNOSTICS
 # ============================================================
@@ -6566,10 +6736,21 @@ def main():
             # v37: Generic modern-iCIMS recovery. Only runs when the normal
             # collector returned zero. This is now the preferred path for
             # Audacy, EMF/K-LOVE, Salem, and other zero-result iCIMS portals.
-            if not got and "icims" in a:
+            if not got and (
+                "icims" in a
+                or company_key == "educational media foundation"
+                or "careers-kloveair1.icims.com" in s.get("URL", "").lower()
+            ):
                 generic_icims_jobs, icims_enumerated = collect_icims_rendered_generic(s)
                 if generic_icims_jobs:
                     got = generic_icims_jobs
+
+            # v38: targeted Audacy diagnostics when enumeration still fails.
+            if not got and company_key == "audacy" and MJR_TEST_COMPANIES:
+                try:
+                    audacy_render_diagnostics_v38(s)
+                except Exception as e:
+                    print(f"Audacy diagnostic failed: {e}")
 
             # Keep Salem diagnostics available only when specifically tested.
             if not got and company_key == "salem media group" and MJR_TEST_COMPANIES:
