@@ -88,6 +88,18 @@ jobs:
           )
           PY
 
+      - name: Ensure Salem diagnostic exists
+        if: env.MJR_TEST_MODE == 'true'
+        shell: bash
+        run: |
+          if [[ ! -f "$MJR_DIAGNOSTIC" ]]; then
+            {
+              echo "MJR SALEM DIAGNOSTIC v32"
+              echo "Diagnostic file was not created by crawler."
+              echo "This indicates the Salem diagnostic hook did not execute."
+            } > "$MJR_DIAGNOSTIC"
+          fi
+
       - name: Show targeted test audit
         if: env.MJR_TEST_MODE == 'true'
         shell: bash
