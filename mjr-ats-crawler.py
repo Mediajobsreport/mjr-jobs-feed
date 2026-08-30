@@ -5995,33 +5995,21 @@ def salem_icims_v29(src):
 
 def salem_icims_rendered_v30(src):
     """
-    Render Salem's iCIMS listing page with Chromium, then enumerate only
-    actual job-detail links present in the rendered DOM.
-
-    This is intentionally Salem-specific and runs only after the normal
-    Salem collector returns zero. It does not brute-force requisition IDs.
+    v34 Salem collector: inspect the actual iCIMS results iframe.
     """
     if sync_playwright is None:
-        raise RuntimeError(
-            "Playwright is not installed. Install it and Chromium before using v30."
-        )
+        raise RuntimeError("Playwright is not installed")
 
     parsed = urlparse(src["URL"])
     base = f"{parsed.scheme}://{parsed.netloc}"
     start_url = base + "/jobs/search?ss=1&searchRelation=keyword_all"
-
     detail_urls = set()
-    listing_pages_seen = set()
-    max_listing_pages = 12
     max_details = 120
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
-            args=[
-                "--disable-dev-shm-usage",
-                "--no-sandbox",
-            ],
+            args=["--disable-dev-shm-usage", "--no-sandbox"],
         )
         context = browser.new_context(
             user_agent=SESSION.headers.get(
@@ -6033,106 +6021,68 @@ def salem_icims_rendered_v30(src):
         page = context.new_page()
         page.set_default_timeout(20000)
 
-        current = start_url
+        _v28_before_request(start_url)
+        page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
+        try:
+            page.wait_for_load_state("networkidle", timeout=12000)
+        except Exception:
+            pass
+        page.wait_for_timeout(1800)
 
-        for _ in range(max_listing_pages):
-            if current in listing_pages_seen:
-                break
-            listing_pages_seen.add(current)
+        candidate_frames = []
+        for frame in page.frames:
+            fu = frame.url or ""
+            up = urlparse(fu)
+            if (
+                up.netloc.lower() == parsed.netloc.lower()
+                and "/jobs/search" in up.path.lower()
+            ):
+                candidate_frames.append(frame)
 
-            _v28_before_request(current)
+        print("Salem results frames:", [f.url for f in candidate_frames])
+
+        for frame in candidate_frames:
             try:
-                page.goto(current, wait_until="domcontentloaded", timeout=25000)
-                try:
-                    page.wait_for_load_state("networkidle", timeout=8000)
-                except Exception:
-                    pass
-            except Exception:
-                break
-
-            # Give client-side rendering a short bounded window to populate jobs.
-            try:
-                page.wait_for_timeout(1200)
-            except Exception:
-                pass
-
-            # Collect hrefs from the fully rendered DOM.
-            try:
-                hrefs = page.eval_on_selector_all(
+                hrefs = frame.eval_on_selector_all(
                     "a[href]",
                     "els => els.map(e => e.href)"
                 )
             except Exception:
                 hrefs = []
 
-            host = urlparse(page.url).netloc.lower()
-
             for href in hrefs:
                 if not href:
                     continue
                 up = urlparse(href)
-                if up.netloc.lower() != host:
+                if up.netloc.lower() != parsed.netloc.lower():
                     continue
-                if re.search(
-                    r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)",
-                    href,
-                    re.I,
-                ):
+                if re.search(r"/jobs/\\d+/(?:[^/?#]+/)?job(?:[/?#]|$)", href, re.I):
                     q = parse_qs(up.query)
                     q["in_iframe"] = ["1"]
                     newq = urlencode({k: v[-1] for k, v in q.items()})
-                    clean_url = urlunparse(
-                        (up.scheme, up.netloc, up.path, "", newq, "")
+                    detail_urls.add(
+                        urlunparse((up.scheme, up.netloc, up.path, "", newq, ""))
                     )
-                    detail_urls.add(clean_url)
 
-            if len(detail_urls) >= max_details:
-                break
+            try:
+                html = frame.content()
+            except Exception:
+                html = ""
 
-            # Follow a rendered "next" page if one exists.
-            next_url = None
-            selectors = [
-                'a[aria-label*="Next" i]',
-                'a[title*="Next" i]',
-                'a:has-text("Next")',
-                'a:has-text("›")',
-                'a:has-text("»")',
-            ]
-            for selector in selectors:
-                try:
-                    loc = page.locator(selector)
-                    if loc.count() > 0:
-                        href = loc.first.get_attribute("href")
-                        if href:
-                            candidate = urljoin(page.url, href)
-                            cup = urlparse(candidate)
-                            if cup.netloc.lower() == host and candidate not in listing_pages_seen:
-                                next_url = candidate
-                                break
-                except Exception:
+            pattern = r"(?i)(?:https?://[^\\\"'<> ]+)?/jobs/\\d+/(?:[^\\\"'<>/?# ]+/)?job(?:\\?[^\\\"'<> ]*)?"
+            for match in re.findall(pattern, html):
+                href = urljoin(frame.url, match.replace("&amp;", "&"))
+                up = urlparse(href)
+                if up.netloc.lower() != parsed.netloc.lower():
                     continue
+                q = parse_qs(up.query)
+                q["in_iframe"] = ["1"]
+                newq = urlencode({k: v[-1] for k, v in q.items()})
+                detail_urls.add(
+                    urlunparse((up.scheme, up.netloc, up.path, "", newq, ""))
+                )
 
-            # If no explicit Next button, look for iCIMS pr= pagination links.
-            if not next_url:
-                for href in hrefs:
-                    if not href:
-                        continue
-                    up = urlparse(href)
-                    if up.netloc.lower() != host:
-                        continue
-                    if "/jobs/search" in up.path.lower() and re.search(
-                        r"[?&]pr=\d+",
-                        href,
-                        re.I,
-                    ):
-                        if href not in listing_pages_seen:
-                            next_url = href
-                            break
-
-            if not next_url:
-                break
-            current = next_url
-
+        print(f"Salem frame-aware collector discovered {len(detail_urls)} detail URLs.")
         browser.close()
 
     out = []
@@ -6160,12 +6110,8 @@ def salem_icims_rendered_v30(src):
             seen_ids.add(j.id)
             out.append(j)
 
-    print(
-        f"Salem rendered fallback discovered {len(detail_urls)} detail URLs "
-        f"and {len(out)} qualifying jobs."
-    )
+    print(f"Salem frame-aware collector qualifying jobs: {len(out)}")
     return out
-
 
 # ============================================================
 # v31 SALEM RENDERED DIAGNOSTICS
