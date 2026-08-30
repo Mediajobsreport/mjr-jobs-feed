@@ -94,6 +94,14 @@ jobs:
           echo "----- SALEM DIAGNOSTIC -----"
           cat mjr-salem-diagnostic.txt
           echo ""
+          echo "----- SALEM IFRAME HTML PREVIEW -----"
+          if [[ -f "mjr-salem-iframe.html" ]]; then
+            head -c 12000 mjr-salem-iframe.html
+            echo ""
+          else
+            echo "No iframe HTML file generated."
+          fi
+          echo ""
           echo "========================================"
 
       - name: Validate XML
@@ -133,6 +141,7 @@ jobs:
             mjr-ats-audit-test.csv
             mjr-job-state-test.json
             mjr-salem-diagnostic.txt
+            mjr-salem-iframe.html
           if-no-files-found: warn
           retention-days: 7
 
