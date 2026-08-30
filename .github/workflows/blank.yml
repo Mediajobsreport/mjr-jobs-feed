@@ -30,13 +30,27 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Set run mode
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.test_companies }}" ]]; then
+            echo "MJR_TEST_MODE=true" >> "$GITHUB_ENV"
+            echo "MJR_OUTPUT=mjr-jboard-test.xml" >> "$GITHUB_ENV"
+            echo "MJR_AUDIT=mjr-ats-audit-test.csv" >> "$GITHUB_ENV"
+            echo "MJR_STATE=mjr-job-state-test.json" >> "$GITHUB_ENV"
+            echo "Targeted test mode enabled."
+          else
+            echo "MJR_TEST_MODE=false" >> "$GITHUB_ENV"
+            echo "MJR_OUTPUT=mjr-jboard-master.xml" >> "$GITHUB_ENV"
+            echo "MJR_AUDIT=mjr-ats-audit.csv" >> "$GITHUB_ENV"
+            echo "MJR_STATE=mjr-job-state.json" >> "$GITHUB_ENV"
+            echo "Full production mode enabled."
+          fi
+
       - name: Crawl ATS sources
         env:
           MJR_WINDOW_DAYS: "21"
           MJR_SOURCES: "mjr-ats-sources.csv"
-          MJR_OUTPUT: "mjr-jboard-master.xml"
-          MJR_AUDIT: "mjr-ats-audit.csv"
-          MJR_STATE: "mjr-job-state.json"
           MJR_TEST_COMPANIES: "${{ github.event.inputs.test_companies }}"
           MJR_REQUEST_DELAY_MIN: "0.20"
           MJR_REQUEST_DELAY_MAX: "0.65"
@@ -46,12 +60,17 @@ jobs:
       - name: Validate XML
         run: |
           python - <<'PY'
+          import os
           import xml.etree.ElementTree as ET
 
-          root = ET.parse("mjr-jboard-master.xml").getroot()
+          output = os.environ["MJR_OUTPUT"]
+          test_mode = os.environ.get("MJR_TEST_MODE", "false").lower() == "true"
+
+          root = ET.parse(output).getroot()
           jobs = root.findall("./job")
 
-          assert jobs, "No jobs generated"
+          if not jobs and not test_mode:
+              raise AssertionError("No jobs generated in production crawl")
 
           for job in jobs:
               expiration = job.findtext("expiration") or ""
@@ -59,10 +78,37 @@ jobs:
                   f"Invalid expiration for {job.findtext('title')}: {expiration}"
               )
 
-          print(f"Validated {len(jobs)} jobs")
+          if test_mode:
+              print(f"Targeted test validated: {len(jobs)} jobs")
+          else:
+              print(f"Production feed validated: {len(jobs)} jobs")
           PY
 
-      - name: Commit updated feed
+      - name: Show targeted test audit
+        if: env.MJR_TEST_MODE == 'true'
+        shell: bash
+        run: |
+          echo "===== TARGETED TEST AUDIT ====="
+          if [[ -f "$MJR_AUDIT" ]]; then
+            cat "$MJR_AUDIT"
+          else
+            echo "No audit file generated."
+          fi
+
+      - name: Upload targeted test results
+        if: env.MJR_TEST_MODE == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mjr-targeted-test-results
+          path: |
+            mjr-jboard-test.xml
+            mjr-ats-audit-test.csv
+            mjr-job-state-test.json
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Commit updated production feed
+        if: env.MJR_TEST_MODE != 'true'
         run: |
           git config user.name "MJR Jobs Bot"
           git config user.email "actions@users.noreply.github.com"
