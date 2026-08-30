@@ -1,3 +1,6 @@
+import time
+import random
+import os
 #!/usr/bin/env python3
 import csv, hashlib, html, json, os, re, time
 import xml.etree.ElementTree as ET
@@ -75,7 +78,7 @@ def pdate(v):
         return None
 
 
-def req(method, url, **kw):
+def _req_raw(method, url, **kw):
     for n in range(4):
         try:
             r = SESSION.request(method, url, timeout=15, **kw)
@@ -90,6 +93,33 @@ def req(method, url, **kw):
             time.sleep(2**n)
 
 
+
+
+def req(method, url, **kw):
+    _v28_before_request(url)
+    last = None
+    for attempt in range(3):
+        try:
+            r = _req_raw(method, url, **kw)
+            status = getattr(r, "status_code", 200)
+            if status in (429, 500, 502, 503, 504) and attempt < 2:
+                last = RuntimeError(f"HTTP {status} for {url}")
+                time.sleep(_v28_backoff_seconds(attempt))
+                continue
+            return r
+        except Exception as e:
+            last = e
+            msg = str(e).lower()
+            transient = any(x in msg for x in (
+                "429","timed out","timeout","temporarily unavailable",
+                "connection reset","502","503","504"
+            ))
+            if transient and attempt < 2:
+                time.sleep(_v28_backoff_seconds(attempt))
+                continue
+            raise
+    if last:
+        raise last
 @dataclass
 class Job:
     id: str
@@ -5586,6 +5616,38 @@ def structured_jobs_v27(src):
 
     return jobs
 
+
+# ============================================================
+# v28 SAFE TEST / PRODUCTION CONTROLS
+# ============================================================
+MJR_TEST_COMPANIES = {
+    clean(x).lower()
+    for x in os.getenv("MJR_TEST_COMPANIES", "").split(",")
+    if clean(x)
+}
+MJR_REQUEST_DELAY_MIN = float(os.getenv("MJR_REQUEST_DELAY_MIN", "0.20"))
+MJR_REQUEST_DELAY_MAX = float(os.getenv("MJR_REQUEST_DELAY_MAX", "0.65"))
+MJR_DOMAIN_REQUEST_CAP = int(os.getenv("MJR_DOMAIN_REQUEST_CAP", "175"))
+_v28_domain_counts = {}
+
+def _v28_source_enabled(src):
+    return (not MJR_TEST_COMPANIES or
+            clean(src.get("Company", "")).lower() in MJR_TEST_COMPANIES)
+
+def _v28_before_request(url):
+    host = urlparse(url).netloc.lower()
+    count = _v28_domain_counts.get(host, 0)
+    if count >= MJR_DOMAIN_REQUEST_CAP:
+        raise RuntimeError(f"v28 domain request cap reached for {host}: {MJR_DOMAIN_REQUEST_CAP}")
+    _v28_domain_counts[host] = count + 1
+    lo = max(0.0, MJR_REQUEST_DELAY_MIN)
+    hi = max(lo, MJR_REQUEST_DELAY_MAX)
+    if hi:
+        time.sleep(random.uniform(lo, hi))
+
+def _v28_backoff_seconds(attempt):
+    return min(12.0, 1.5 * (2 ** attempt)) + random.uniform(0.0, 0.75)
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -5817,6 +5879,10 @@ def main():
         encoding="utf-8-sig",
     ) as f:
         sources = list(csv.DictReader(f))
+    if MJR_TEST_COMPANIES:
+        sources = [s for s in sources if _v28_source_enabled(s)]
+        print("TEST MODE companies:", ", ".join(sorted(MJR_TEST_COMPANIES)))
+        print(f"TEST MODE source rows: {len(sources)}")
 
     jobs = []
     audit = []
