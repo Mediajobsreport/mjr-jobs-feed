@@ -6166,139 +6166,118 @@ def _icims_canonical_apply_url(detail_url, html):
 
 def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
     """
-    Audacy-specific direct iCIMS enumeration.
+    v41 Audacy direct enumeration using raw HTTP responses.
 
-    Avoids the branded/wrapper page entirely. Loads the actual iCIMS
-    results endpoint as the top-level document and follows only job URLs
-    explicitly present in rendered search results.
+    Audacy's browser wrapper rewrites iCIMS search pages before we can inspect
+    rendered frames. This version requests the iCIMS results endpoint directly
+    and parses only job URLs/IDs actually present in the returned payload.
     """
-    if sync_playwright is None:
-        return []
-
     base = "https://careers-audacy.icims.com"
     found = set()
+    previous_signature = None
 
-    try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(
-                headless=True,
-                args=["--disable-dev-shm-usage", "--no-sandbox"],
+    candidate_patterns = [
+        # Standard iCIMS pagination.
+        lambda p: (
+            f"{base}/jobs/search?"
+            f"ss=1&searchRelation=keyword_all&pr={p}&in_iframe=1"
+        ),
+        # Alternate ordering seen on some iCIMS portals.
+        lambda p: (
+            f"{base}/jobs/search?"
+            f"pr={p}&ss=1&searchRelation=keyword_all&in_iframe=1"
+        ),
+    ]
+
+    for pattern_index, pattern in enumerate(candidate_patterns):
+        if found:
+            break
+
+        for page_num in range(max_pages):
+            url = pattern(page_num)
+
+            try:
+                rr = req("GET", url)
+            except Exception as e:
+                print(f"Audacy v41 raw search fetch failed page {page_num}: {e}")
+                break
+
+            html = rr.text or ""
+            final_url = str(getattr(rr, "url", "") or url)
+
+            print(
+                f"Audacy v41 raw page {page_num}: "
+                f"status={getattr(rr, 'status_code', '?')} "
+                f"final={final_url} chars={len(html)}"
             )
-            context = browser.new_context(
-                user_agent=SESSION.headers.get(
-                    "User-Agent",
-                    "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)",
-                ),
-                viewport={"width": 1440, "height": 1200},
-            )
 
-            previous_signature = None
+            page_urls = set()
 
-            for page_num in range(max_pages):
-                # iCIMS commonly uses pr=0,1,2... for result pagination.
-                url = (
-                    f"{base}/jobs/search?"
-                    f"ss=1&searchRelation=keyword_all&pr={page_num}&in_iframe=1"
-                )
+            # Absolute or relative detail URLs explicitly present.
+            for m in re.finditer(
+                r"(?:https?://careers-audacy\.icims\.com)?"
+                r"(/jobs/(\d+)/(?:[^\"'<>/?# ]+/)?job(?:\?[^\"'<> ]*)?)",
+                html,
+                re.I,
+            ):
+                page_urls.add(urljoin(base, m.group(1).replace("&amp;", "&")))
 
-                _v28_before_request(url)
-                page = context.new_page()
-                page.set_default_timeout(15000)
-
-                try:
-                    page.goto(url, wait_until="commit", timeout=15000)
-                except Exception as e:
-                    print(f"Audacy v40 page {page_num} goto warning: {e}")
-
-                try:
-                    page.wait_for_timeout(4500)
-                except Exception:
-                    pass
-
-                try:
-                    html = page.content()
-                except Exception:
-                    html = ""
-
-                page_urls = set()
-
-                # DOM hrefs first.
-                try:
-                    hrefs = page.eval_on_selector_all(
-                        "a[href]", "els => els.map(e => e.href)"
-                    )
-                except Exception:
-                    hrefs = []
-
-                for href in hrefs:
-                    if not href:
-                        continue
-                    if not href.lower().startswith(base):
-                        continue
-                    if re.search(
-                        r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)",
-                        href,
-                        re.I,
-                    ):
-                        page_urls.add(href)
-
-                # Script/HTML fallbacks: only IDs/URLs actually present in
-                # rendered search content.
-                for m in re.finditer(
-                    r"(?:https?://careers-audacy\.icims\.com)?"
-                    r"(/jobs/(\d+)/(?:[^\"'<>/?# ]+/)?job(?:\?[^\"'<> ]*)?)",
-                    html,
+            # Standard href extraction.
+            for href in re.findall(r'href=["\']([^"\']+)["\']', html, re.I):
+                u = urljoin(final_url, href.replace("&amp;", "&"))
+                up = urlparse(u)
+                if up.netloc.lower() != "careers-audacy.icims.com":
+                    continue
+                if re.search(
+                    r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)",
+                    u,
                     re.I,
                 ):
-                    page_urls.add(urljoin(base, m.group(1).replace("&amp;", "&")))
+                    page_urls.add(u)
 
-                ids = set(re.findall(r"/jobs/(\d+)/", html, re.I))
-                ids.update(re.findall(r'"jobId"\s*:\s*"?(\d+)"?', html, re.I))
+            # IDs embedded in iCIMS JS/data payloads. These are accepted only
+            # when explicitly present in the returned search response.
+            ids = set(re.findall(r"/jobs/(\d+)/", html, re.I))
+            ids.update(re.findall(r'"jobId"\s*:\s*"?(\d+)"?', html, re.I))
+            ids.update(re.findall(r'"idRaw"\s*:\s*"?(\d+)"?', html, re.I))
+            ids.update(re.findall(r'job(?:Id|ID|id)[=:\s"\']+(\d+)', html, re.I))
 
-                for job_id in ids:
-                    page_urls.add(f"{base}/jobs/{job_id}/job?in_iframe=1")
+            for job_id in ids:
+                page_urls.add(f"{base}/jobs/{job_id}/job?in_iframe=1")
 
-                # Normalize to iframe detail URLs for parsing.
-                normalized = set()
-                for href in page_urls:
-                    up = urlparse(href)
-                    if up.netloc.lower() != "careers-audacy.icims.com":
-                        continue
-                    m = re.search(r"/jobs/(\d+)/", up.path, re.I)
-                    if not m:
-                        continue
-                    q = parse_qs(up.query)
-                    q["in_iframe"] = ["1"]
-                    nq = urlencode({k: v[-1] for k, v in q.items()})
-                    normalized.add(
-                        urlunparse((up.scheme, up.netloc, up.path, "", nq, ""))
-                    )
-
-                signature = tuple(sorted(normalized))
-                print(
-                    f"Audacy v40 search page {page_num}: "
-                    f"{len(normalized)} job detail URLs"
+            normalized = set()
+            for href in page_urls:
+                up = urlparse(href)
+                if up.netloc.lower() != "careers-audacy.icims.com":
+                    continue
+                m = re.search(r"/jobs/(\d+)/", up.path, re.I)
+                if not m:
+                    continue
+                q = parse_qs(up.query)
+                q["in_iframe"] = ["1"]
+                nq = urlencode({k: v[-1] for k, v in q.items()})
+                normalized.add(
+                    urlunparse((up.scheme, up.netloc, up.path, "", nq, ""))
                 )
 
-                # Stop on an empty page or repeated page signature.
-                if not normalized:
-                    page.close()
-                    break
-                if signature == previous_signature:
-                    page.close()
-                    break
+            signature = tuple(sorted(normalized))
+            print(
+                f"Audacy v41 parsed raw page {page_num}: "
+                f"{len(normalized)} detail URLs"
+            )
 
-                previous_signature = signature
-                found.update(normalized)
-                page.close()
+            if not normalized:
+                # If page 0 returns no data for a pattern, try alternate pattern.
+                break
 
-                if len(found) >= max_details:
-                    break
+            if signature == previous_signature:
+                break
 
-            browser.close()
+            previous_signature = signature
+            found.update(normalized)
 
-    except Exception as e:
-        print(f"Audacy v40 direct enumeration failed: {e}")
+            if len(found) >= max_details:
+                break
 
     return sorted(found)[:max_details]
 
@@ -6572,6 +6551,39 @@ def salem_icims_rendered_v30(src):
 
     print(f"Salem frame-aware collector qualifying jobs: {len(out)}")
     return out
+
+
+def audacy_raw_diagnostic_v41(src):
+    """
+    Save the raw Audacy iCIMS search response before any browser-side redirect.
+    """
+    path = Path("mjr-audacy-raw-response.txt")
+    lines = ["MJR AUDACY RAW RESPONSE DIAGNOSTIC v41"]
+
+    urls = [
+        "https://careers-audacy.icims.com/jobs/search?ss=1&searchRelation=keyword_all&pr=0&in_iframe=1",
+        "https://careers-audacy.icims.com/jobs/search?ss=1&searchRelation=keyword_all&in_iframe=1",
+        "https://careers-audacy.icims.com/jobs/search?ss=1",
+    ]
+
+    for url in urls:
+        lines.append("")
+        lines.append("=" * 72)
+        lines.append(url)
+        lines.append("=" * 72)
+        try:
+            rr = req("GET", url)
+            lines.append(f"status={getattr(rr, 'status_code', '?')}")
+            lines.append(f"final_url={getattr(rr, 'url', '')}")
+            text = rr.text or ""
+            lines.append(f"chars={len(text)}")
+            lines.append(text[:120000])
+        except Exception as e:
+            lines.append(f"ERROR {repr(e)}")
+
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"Audacy raw diagnostic written: {path}")
+    return str(path)
 
 
 def audacy_render_diagnostics_v38(src):
@@ -7038,6 +7050,10 @@ def main():
 
             # v38: targeted Audacy diagnostics when enumeration still fails.
             if not got and company_key == "audacy" and MJR_TEST_COMPANIES:
+                try:
+                    audacy_raw_diagnostic_v41(s)
+                except Exception as e:
+                    print(f"Audacy raw diagnostic failed: {e}")
                 try:
                     audacy_render_diagnostics_v38(s)
                 except Exception as e:
