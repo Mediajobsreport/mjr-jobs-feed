@@ -1,5 +1,12 @@
+name: MJR Jobs Feed
+
 on:
   workflow_dispatch:
+    inputs:
+      test_companies:
+        description: "Optional: company name(s) to test, comma-separated. Leave blank for full production crawl."
+        required: false
+        default: ""
 
   schedule:
     - cron: "17 9 * * *"
@@ -30,6 +37,10 @@ jobs:
           MJR_OUTPUT: "mjr-jboard-master.xml"
           MJR_AUDIT: "mjr-ats-audit.csv"
           MJR_STATE: "mjr-job-state.json"
+          MJR_TEST_COMPANIES: "${{ github.event.inputs.test_companies }}"
+          MJR_REQUEST_DELAY_MIN: "0.20"
+          MJR_REQUEST_DELAY_MAX: "0.65"
+          MJR_DOMAIN_REQUEST_CAP: "175"
         run: python mjr-ats-crawler.py
 
       - name: Validate XML
