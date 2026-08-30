@@ -6166,54 +6166,77 @@ def _icims_canonical_apply_url(detail_url, html):
 
 def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
     """
-    v42 Audacy raw iCIMS enumeration with posting-date prefiltering.
-
-    Parse Audacy's raw search response, extract job IDs/URLs plus posting dates
-    from the result payload, and return only jobs within the MJR cutoff.
-    This keeps detail-page requests far below the per-domain safety cap.
+    v43 Audacy raw iCIMS enumeration with DOM-aware posting-date extraction.
     """
     base = "https://careers-audacy.icims.com"
     fresh = {}
     enumerated_ids = set()
     previous_signature = None
+    first_raw_saved = False
 
     def parse_date_any(value):
         value = clean(value or "")
         if not value:
             return None
+
+        value = re.sub(
+            r"^(?:posted(?:\\s+date)?|date\\s+posted|posting\\s+date)\\s*[:\\-]?\\s*",
+            "",
+            value,
+            flags=re.I,
+        ).strip()
+
         candidates = [
             "%Y-%m-%d",
+            "%Y/%m/%d",
             "%m/%d/%Y",
             "%m/%d/%y",
+            "%m-%d-%Y",
+            "%m-%d-%y",
             "%b %d, %Y",
             "%B %d, %Y",
+            "%b %d %Y",
+            "%B %d %Y",
         ]
         for fmt in candidates:
             try:
                 return datetime.strptime(value, fmt).date()
             except Exception:
                 pass
+
         try:
             return dateparser.parse(value, fuzzy=True).date()
         except Exception:
             return None
 
-    def remember(job_id, href=None, posted=None):
-        if not job_id:
-            return
-        job_id = str(job_id)
-        enumerated_ids.add(job_id)
+    def extract_posted_date(text):
+        if not text:
+            return None
 
-        pd = parse_date_any(posted)
-        if pd and pd < CUTOFF:
-            return
+        text = re.sub(r"\\s+", " ", text).strip()
 
-        # If a date is absent, defer rather than fetch every job. Audacy's
-        # search payload normally includes dates; undated rows are skipped
-        # to preserve request limits and avoid stale-link risk.
-        if not pd:
-            return
+        patterns = [
+            r"Posted\\s+Date\\s*[:\\-]?\\s*([A-Z][a-z]{2,8}\\s+\\d{1,2},\\s+\\d{4})",
+            r"Posted\\s+Date\\s*[:\\-]?\\s*(\\d{1,2}/\\d{1,2}/\\d{2,4})",
+            r"Posted\\s+Date\\s*[:\\-]?\\s*(\\d{4}-\\d{2}-\\d{2})",
+            r"Date\\s+Posted\\s*[:\\-]?\\s*([A-Z][a-z]{2,8}\\s+\\d{1,2},\\s+\\d{4})",
+            r"Date\\s+Posted\\s*[:\\-]?\\s*(\\d{1,2}/\\d{1,2}/\\d{2,4})",
+            r"Posting\\s+Date\\s*[:\\-]?\\s*([A-Z][a-z]{2,8}\\s+\\d{1,2},\\s+\\d{4})",
+            r"Posting\\s+Date\\s*[:\\-]?\\s*(\\d{1,2}/\\d{1,2}/\\d{2,4})",
+            r"\\bPosted\\s*[:\\-]?\\s*(\\d{1,2}/\\d{1,2}/\\d{2,4})",
+            r"\\bPosted\\s*[:\\-]?\\s*([A-Z][a-z]{2,8}\\s+\\d{1,2},\\s+\\d{4})",
+        ]
 
+        for pat in patterns:
+            m = re.search(pat, text, re.I)
+            if m:
+                pd = parse_date_any(m.group(1))
+                if pd:
+                    return pd
+
+        return None
+
+    def normalize_job_url(job_id, href=None):
         if href:
             u = urljoin(base, href.replace("&amp;", "&"))
         else:
@@ -6221,13 +6244,36 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         up = urlparse(u)
         if up.netloc.lower() != "careers-audacy.icims.com":
-            return
+            return None
 
         q = parse_qs(up.query)
         q["in_iframe"] = ["1"]
         nq = urlencode({k: v[-1] for k, v in q.items()})
-        normalized = urlunparse((up.scheme, up.netloc, up.path, "", nq, ""))
-        fresh[job_id] = normalized
+        return urlunparse((up.scheme, up.netloc, up.path, "", nq, ""))
+
+    def remember(job_id, href=None, posted=None, context_text=None):
+        if not job_id:
+            return False
+
+        job_id = str(job_id)
+        enumerated_ids.add(job_id)
+
+        pd = parse_date_any(posted)
+        if not pd:
+            pd = extract_posted_date(context_text)
+
+        if not pd:
+            return False
+
+        if pd < CUTOFF:
+            return True
+
+        u = normalize_job_url(job_id, href)
+        if not u:
+            return False
+
+        fresh[job_id] = u
+        return True
 
     candidate_patterns = [
         lambda p: (
@@ -6250,41 +6296,89 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
             try:
                 rr = req("GET", url)
             except Exception as e:
-                print(f"Audacy v42 raw search fetch failed page {page_num}: {e}")
+                print(f"Audacy v43 raw search fetch failed page {page_num}: {e}")
                 break
 
             html = rr.text or ""
             final_url = str(getattr(rr, "url", "") or url)
 
+            if not first_raw_saved:
+                try:
+                    Path("mjr-audacy-search-page-v43.html").write_text(
+                        html[:500000],
+                        encoding="utf-8",
+                    )
+                    first_raw_saved = True
+                except Exception:
+                    pass
+
             print(
-                f"Audacy v42 raw page {page_num}: "
+                f"Audacy v43 raw page {page_num}: "
                 f"status={getattr(rr, 'status_code', '?')} "
                 f"final={final_url} chars={len(html)}"
             )
 
             page_ids = set()
+            dated_ids = set()
+            soup = BeautifulSoup(html, "html.parser")
 
-            # 1) Parse jobImpressions / JSON-like objects containing idRaw,
-            # postedDate and often title. This is the most efficient source.
-            for obj in re.findall(r"\{[^{}]{0,5000}\}", html, re.S):
+            # A. DOM-aware pairing of job link + nearest result container.
+            for a_tag in soup.find_all("a", href=True):
+                href = a_tag.get("href") or ""
+                absolute = urljoin(final_url, href)
+                m = re.search(r"/jobs/(\\d+)/", absolute, re.I)
+                if not m:
+                    continue
+
+                job_id = m.group(1)
+                page_ids.add(job_id)
+
+                context_text = ""
+                node = a_tag
+                for _ in range(7):
+                    node = getattr(node, "parent", None)
+                    if not node:
+                        break
+                    try:
+                        txt = node.get_text(" ", strip=True)
+                    except Exception:
+                        txt = ""
+                    if txt and len(txt) <= 12000:
+                        context_text = txt
+                    if re.search(
+                        r"(?:Posted\\s+Date|Date\\s+Posted|Posting\\s+Date|\\bPosted\\b)",
+                        txt or "",
+                        re.I,
+                    ):
+                        context_text = txt
+                        break
+
+                if remember(job_id, href=absolute, context_text=context_text):
+                    if extract_posted_date(context_text):
+                        dated_ids.add(job_id)
+
+            # B. JSON/JS-like objects with expanded date field support.
+            for obj in re.findall(r"\\{[^{}]{0,8000}\\}", html, re.S):
                 idm = re.search(
-                    r'"(?:idRaw|jobId|jobID|id)"\s*:\s*"?(\d+)"?',
+                    r'"(?:idRaw|jobId|jobID|job_id|requisitionId|requisitionID|id)"\\s*:\\s*"?(\\d+)"?',
                     obj,
                     re.I,
                 )
                 if not idm:
                     continue
+
                 job_id = idm.group(1)
+                page_ids.add(job_id)
 
                 dm = re.search(
-                    r'"(?:postedDate|datePosted|postingDate|posted|date)"\s*:\s*"([^"]+)"',
+                    r'"(?:postedDate|datePosted|postingDate|posted_date|createdDate|createdAt|dateCreated|publishDate|publishedDate|updatedDate|lastUpdated)"\\s*:\\s*"([^"]+)"',
                     obj,
                     re.I,
                 )
                 posted = dm.group(1) if dm else None
 
                 hm = re.search(
-                    r'"(?:url|jobUrl|jobURL|applyUrl|applyURL|href)"\s*:\s*"([^"]+/jobs/'
+                    r'"(?:url|jobUrl|jobURL|applyUrl|applyURL|href)"\\s*:\\s*"([^"]*/jobs/'
                     + re.escape(job_id)
                     + r'/[^"]*)"',
                     obj,
@@ -6292,58 +6386,45 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
                 )
                 href = hm.group(1).replace("\\/", "/") if hm else None
 
-                remember(job_id, href=href, posted=posted)
-                page_ids.add(job_id)
+                if remember(
+                    job_id,
+                    href=href,
+                    posted=posted,
+                    context_text=re.sub(r"<[^>]+>", " ", obj),
+                ):
+                    if posted or extract_posted_date(obj):
+                        dated_ids.add(job_id)
 
-            # 2) iCIMS rendered result blocks often contain a detail URL and
-            # nearby Posted date. Parse bounded chunks around each job link.
-            for m in re.finditer(r"/jobs/(\d+)/", html, re.I):
+            # C. Raw-text fallback around each job ID.
+            for m in re.finditer(r"/jobs/(\\d+)/", html, re.I):
                 job_id = m.group(1)
                 page_ids.add(job_id)
 
-                a = max(0, m.start() - 2500)
-                b = min(len(html), m.end() + 3500)
+                a = max(0, m.start() - 5000)
+                b = min(len(html), m.end() + 7000)
                 chunk = html[a:b]
+                visible = BeautifulSoup(chunk, "html.parser").get_text(" ", strip=True)
 
                 hrefm = re.search(
-                    r'(?:https?://careers-audacy\.icims\.com)?'
-                    r'(/jobs/' + re.escape(job_id) + r'/(?:[^"\'<>/?# ]+/)?job(?:\?[^"\'<> ]*)?)',
+                    r'(?:https?://careers-audacy\\.icims\\.com)?'
+                    r'(/jobs/' + re.escape(job_id) +
+                    r'/(?:[^"\\\'<>/?# ]+/)?job(?:\\?[^"\\\'<> ]*)?)',
                     chunk,
                     re.I,
                 )
                 href = hrefm.group(1) if hrefm else None
 
-                dm = re.search(
-                    r'(?:postedDate|datePosted|postingDate|Posted(?:\s+Date)?)'
-                    r'[^0-9A-Za-z]{0,30}'
-                    r'([A-Z][a-z]{2,8}\s+\d{1,2},\s+\d{4}'
-                    r'|\d{1,2}/\d{1,2}/\d{2,4}'
-                    r'|\d{4}-\d{2}-\d{2})',
-                    chunk,
-                    re.I,
-                )
-                posted = dm.group(1) if dm else None
-
-                remember(job_id, href=href, posted=posted)
-
-            # 3) Explicit idRaw + nearby postedDate fallback.
-            for m in re.finditer(r'"idRaw"\s*:\s*"?(\d+)"?', html, re.I):
-                job_id = m.group(1)
-                page_ids.add(job_id)
-                chunk = html[m.start(): min(len(html), m.start() + 1800)]
-                dm = re.search(
-                    r'"postedDate"\s*:\s*"([^"]+)"',
-                    chunk,
-                    re.I,
-                )
-                posted = dm.group(1) if dm else None
-                remember(job_id, posted=posted)
+                if remember(job_id, href=href, context_text=visible):
+                    if extract_posted_date(visible):
+                        dated_ids.add(job_id)
 
             signature = tuple(sorted(page_ids))
+
             print(
-                f"Audacy v42 parsed raw page {page_num}: "
-                f"{len(page_ids)} enumerated IDs, "
-                f"{len(fresh)} fresh IDs cumulative"
+                f"Audacy v43 parsed page {page_num}: "
+                f"{len(page_ids)} IDs, "
+                f"{len(dated_ids)} IDs with recognized dates, "
+                f"{len(fresh)} fresh cumulative"
             )
 
             if not page_ids:
@@ -6356,6 +6437,10 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
             if len(fresh) >= max_details:
                 break
 
+    print(
+        f"Audacy v43 prefilter complete: "
+        f"{len(enumerated_ids)} enumerated, {len(fresh)} fresh"
+    )
     return sorted(fresh.values())[:max_details], len(enumerated_ids)
 
 
@@ -6373,7 +6458,7 @@ def collect_audacy_v40(src):
     urls, enumerated_count = _audacy_direct_icims_urls_v40(src)
     if not urls:
         print(
-            f"Audacy v42: {enumerated_count} jobs enumerated, "
+            f"Audacy v43: {enumerated_count} jobs enumerated, "
             f"0 fresh jobs selected for detail validation"
         )
         return [], enumerated_count
@@ -6458,7 +6543,7 @@ def collect_audacy_v40(src):
         print(f"Audacy verified: {requested_id} | {title} | {live_apply}")
 
     print(
-        f"Audacy v42: {enumerated_count} jobs enumerated, "
+        f"Audacy v43: {enumerated_count} jobs enumerated, "
         f"{len(urls)} fresh candidates, "
         f"{len(out)} verified fresh jobs"
     )
