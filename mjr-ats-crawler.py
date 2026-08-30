@@ -6166,31 +6166,82 @@ def _icims_canonical_apply_url(detail_url, html):
 
 def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
     """
-    v41 Audacy direct enumeration using raw HTTP responses.
+    v42 Audacy raw iCIMS enumeration with posting-date prefiltering.
 
-    Audacy's browser wrapper rewrites iCIMS search pages before we can inspect
-    rendered frames. This version requests the iCIMS results endpoint directly
-    and parses only job URLs/IDs actually present in the returned payload.
+    Parse Audacy's raw search response, extract job IDs/URLs plus posting dates
+    from the result payload, and return only jobs within the MJR cutoff.
+    This keeps detail-page requests far below the per-domain safety cap.
     """
     base = "https://careers-audacy.icims.com"
-    found = set()
+    fresh = {}
+    enumerated_ids = set()
     previous_signature = None
 
+    def parse_date_any(value):
+        value = clean(value or "")
+        if not value:
+            return None
+        candidates = [
+            "%Y-%m-%d",
+            "%m/%d/%Y",
+            "%m/%d/%y",
+            "%b %d, %Y",
+            "%B %d, %Y",
+        ]
+        for fmt in candidates:
+            try:
+                return datetime.strptime(value, fmt).date()
+            except Exception:
+                pass
+        try:
+            return dateparser.parse(value, fuzzy=True).date()
+        except Exception:
+            return None
+
+    def remember(job_id, href=None, posted=None):
+        if not job_id:
+            return
+        job_id = str(job_id)
+        enumerated_ids.add(job_id)
+
+        pd = parse_date_any(posted)
+        if pd and pd < CUTOFF:
+            return
+
+        # If a date is absent, defer rather than fetch every job. Audacy's
+        # search payload normally includes dates; undated rows are skipped
+        # to preserve request limits and avoid stale-link risk.
+        if not pd:
+            return
+
+        if href:
+            u = urljoin(base, href.replace("&amp;", "&"))
+        else:
+            u = f"{base}/jobs/{job_id}/job?in_iframe=1"
+
+        up = urlparse(u)
+        if up.netloc.lower() != "careers-audacy.icims.com":
+            return
+
+        q = parse_qs(up.query)
+        q["in_iframe"] = ["1"]
+        nq = urlencode({k: v[-1] for k, v in q.items()})
+        normalized = urlunparse((up.scheme, up.netloc, up.path, "", nq, ""))
+        fresh[job_id] = normalized
+
     candidate_patterns = [
-        # Standard iCIMS pagination.
         lambda p: (
             f"{base}/jobs/search?"
             f"ss=1&searchRelation=keyword_all&pr={p}&in_iframe=1"
         ),
-        # Alternate ordering seen on some iCIMS portals.
         lambda p: (
             f"{base}/jobs/search?"
             f"pr={p}&ss=1&searchRelation=keyword_all&in_iframe=1"
         ),
     ]
 
-    for pattern_index, pattern in enumerate(candidate_patterns):
-        if found:
+    for pattern in candidate_patterns:
+        if fresh:
             break
 
         for page_num in range(max_pages):
@@ -6199,87 +6250,113 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
             try:
                 rr = req("GET", url)
             except Exception as e:
-                print(f"Audacy v41 raw search fetch failed page {page_num}: {e}")
+                print(f"Audacy v42 raw search fetch failed page {page_num}: {e}")
                 break
 
             html = rr.text or ""
             final_url = str(getattr(rr, "url", "") or url)
 
             print(
-                f"Audacy v41 raw page {page_num}: "
+                f"Audacy v42 raw page {page_num}: "
                 f"status={getattr(rr, 'status_code', '?')} "
                 f"final={final_url} chars={len(html)}"
             )
 
-            page_urls = set()
+            page_ids = set()
 
-            # Absolute or relative detail URLs explicitly present.
-            for m in re.finditer(
-                r"(?:https?://careers-audacy\.icims\.com)?"
-                r"(/jobs/(\d+)/(?:[^\"'<>/?# ]+/)?job(?:\?[^\"'<> ]*)?)",
-                html,
-                re.I,
-            ):
-                page_urls.add(urljoin(base, m.group(1).replace("&amp;", "&")))
-
-            # Standard href extraction.
-            for href in re.findall(r'href=["\']([^"\']+)["\']', html, re.I):
-                u = urljoin(final_url, href.replace("&amp;", "&"))
-                up = urlparse(u)
-                if up.netloc.lower() != "careers-audacy.icims.com":
-                    continue
-                if re.search(
-                    r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)",
-                    u,
+            # 1) Parse jobImpressions / JSON-like objects containing idRaw,
+            # postedDate and often title. This is the most efficient source.
+            for obj in re.findall(r"\{[^{}]{0,5000}\}", html, re.S):
+                idm = re.search(
+                    r'"(?:idRaw|jobId|jobID|id)"\s*:\s*"?(\d+)"?',
+                    obj,
                     re.I,
-                ):
-                    page_urls.add(u)
-
-            # IDs embedded in iCIMS JS/data payloads. These are accepted only
-            # when explicitly present in the returned search response.
-            ids = set(re.findall(r"/jobs/(\d+)/", html, re.I))
-            ids.update(re.findall(r'"jobId"\s*:\s*"?(\d+)"?', html, re.I))
-            ids.update(re.findall(r'"idRaw"\s*:\s*"?(\d+)"?', html, re.I))
-            ids.update(re.findall(r'job(?:Id|ID|id)[=:\s"\']+(\d+)', html, re.I))
-
-            for job_id in ids:
-                page_urls.add(f"{base}/jobs/{job_id}/job?in_iframe=1")
-
-            normalized = set()
-            for href in page_urls:
-                up = urlparse(href)
-                if up.netloc.lower() != "careers-audacy.icims.com":
-                    continue
-                m = re.search(r"/jobs/(\d+)/", up.path, re.I)
-                if not m:
-                    continue
-                q = parse_qs(up.query)
-                q["in_iframe"] = ["1"]
-                nq = urlencode({k: v[-1] for k, v in q.items()})
-                normalized.add(
-                    urlunparse((up.scheme, up.netloc, up.path, "", nq, ""))
                 )
+                if not idm:
+                    continue
+                job_id = idm.group(1)
 
-            signature = tuple(sorted(normalized))
+                dm = re.search(
+                    r'"(?:postedDate|datePosted|postingDate|posted|date)"\s*:\s*"([^"]+)"',
+                    obj,
+                    re.I,
+                )
+                posted = dm.group(1) if dm else None
+
+                hm = re.search(
+                    r'"(?:url|jobUrl|jobURL|applyUrl|applyURL|href)"\s*:\s*"([^"]+/jobs/'
+                    + re.escape(job_id)
+                    + r'/[^"]*)"',
+                    obj,
+                    re.I,
+                )
+                href = hm.group(1).replace("\\/", "/") if hm else None
+
+                remember(job_id, href=href, posted=posted)
+                page_ids.add(job_id)
+
+            # 2) iCIMS rendered result blocks often contain a detail URL and
+            # nearby Posted date. Parse bounded chunks around each job link.
+            for m in re.finditer(r"/jobs/(\d+)/", html, re.I):
+                job_id = m.group(1)
+                page_ids.add(job_id)
+
+                a = max(0, m.start() - 2500)
+                b = min(len(html), m.end() + 3500)
+                chunk = html[a:b]
+
+                hrefm = re.search(
+                    r'(?:https?://careers-audacy\.icims\.com)?'
+                    r'(/jobs/' + re.escape(job_id) + r'/(?:[^"\'<>/?# ]+/)?job(?:\?[^"\'<> ]*)?)',
+                    chunk,
+                    re.I,
+                )
+                href = hrefm.group(1) if hrefm else None
+
+                dm = re.search(
+                    r'(?:postedDate|datePosted|postingDate|Posted(?:\s+Date)?)'
+                    r'[^0-9A-Za-z]{0,30}'
+                    r'([A-Z][a-z]{2,8}\s+\d{1,2},\s+\d{4}'
+                    r'|\d{1,2}/\d{1,2}/\d{2,4}'
+                    r'|\d{4}-\d{2}-\d{2})',
+                    chunk,
+                    re.I,
+                )
+                posted = dm.group(1) if dm else None
+
+                remember(job_id, href=href, posted=posted)
+
+            # 3) Explicit idRaw + nearby postedDate fallback.
+            for m in re.finditer(r'"idRaw"\s*:\s*"?(\d+)"?', html, re.I):
+                job_id = m.group(1)
+                page_ids.add(job_id)
+                chunk = html[m.start(): min(len(html), m.start() + 1800)]
+                dm = re.search(
+                    r'"postedDate"\s*:\s*"([^"]+)"',
+                    chunk,
+                    re.I,
+                )
+                posted = dm.group(1) if dm else None
+                remember(job_id, posted=posted)
+
+            signature = tuple(sorted(page_ids))
             print(
-                f"Audacy v41 parsed raw page {page_num}: "
-                f"{len(normalized)} detail URLs"
+                f"Audacy v42 parsed raw page {page_num}: "
+                f"{len(page_ids)} enumerated IDs, "
+                f"{len(fresh)} fresh IDs cumulative"
             )
 
-            if not normalized:
-                # If page 0 returns no data for a pattern, try alternate pattern.
+            if not page_ids:
                 break
-
             if signature == previous_signature:
                 break
 
             previous_signature = signature
-            found.update(normalized)
 
-            if len(found) >= max_details:
+            if len(fresh) >= max_details:
                 break
 
-    return sorted(found)[:max_details]
+    return sorted(fresh.values())[:max_details], len(enumerated_ids)
 
 
 def collect_audacy_v40(src):
@@ -6293,9 +6370,13 @@ def collect_audacy_v40(src):
       4) the posting date is within the MJR cutoff,
       5) the final apply URL is derived from that exact detail page.
     """
-    urls = _audacy_direct_icims_urls_v40(src)
+    urls, enumerated_count = _audacy_direct_icims_urls_v40(src)
     if not urls:
-        return [], 0
+        print(
+            f"Audacy v42: {enumerated_count} jobs enumerated, "
+            f"0 fresh jobs selected for detail validation"
+        )
+        return [], enumerated_count
 
     out = []
     seen = set()
@@ -6377,10 +6458,11 @@ def collect_audacy_v40(src):
         print(f"Audacy verified: {requested_id} | {title} | {live_apply}")
 
     print(
-        f"Audacy v40: {len(urls)} enumerated detail URLs, "
+        f"Audacy v42: {enumerated_count} jobs enumerated, "
+        f"{len(urls)} fresh candidates, "
         f"{len(out)} verified fresh jobs"
     )
-    return out, len(urls)
+    return out, enumerated_count
 
 
 def collect_icims_rendered_generic(src):
@@ -7049,15 +7131,9 @@ def main():
                     got = generic_icims_jobs
 
             # v38: targeted Audacy diagnostics when enumeration still fails.
-            if not got and company_key == "audacy" and MJR_TEST_COMPANIES:
-                try:
-                    audacy_raw_diagnostic_v41(s)
-                except Exception as e:
-                    print(f"Audacy raw diagnostic failed: {e}")
-                try:
-                    audacy_render_diagnostics_v38(s)
-                except Exception as e:
-                    print(f"Audacy diagnostic failed: {e}")
+            # v42: no automatic Audacy diagnostics here. Enumeration and
+            # fresh-job validation are now the test; avoid consuming the
+            # per-domain request budget with duplicate diagnostic fetches.
 
             # Keep Salem diagnostics available only when specifically tested.
             if not got and company_key == "salem media group" and MJR_TEST_COMPANIES:
@@ -7097,7 +7173,11 @@ def main():
                     ),
                     len(got),
                     (
-                        f"enumerated_detail_urls={icims_enumerated}"
+                        (
+                            f"enumerated_jobs={icims_enumerated}"
+                            if company_key == "audacy"
+                            else f"enumerated_detail_urls={icims_enumerated}"
+                        )
                         if icims_enumerated
                         else ""
                     ),
