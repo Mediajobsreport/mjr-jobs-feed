@@ -71,7 +71,7 @@ TEGNA,Greenhouse,https://job-boards.greenhouse.io/tegnainc,zero_or_not_enumerabl
 American Public Media Group,UKG Pro,https://recruiting2.ultipro.com/AME1098APMG/JobBoard/4b7ae4eb-a67b-4318-80fc-6d9467f9c542/?q=&o=postedDateDesc&w=&wc=&we=&wpst=,zero_or_not_enumerable,0,
 Dotdash Meredith / People Inc,Workday,https://meredith.wd5.myworkdayjobs.com/EXT,ok,37,
 Gannett / USA TODAY Co.,Dayforce,https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=,ok,25,
-Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,ok,16,
+Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,error,0,RuntimeError('v28 domain request cap reached for eevd.fa.us6.oraclecloud.com: 175')
 Lee Enterprises,Dayforce,https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL,zero_or_not_enumerable,0,
 McClatchy,Company Career Site,https://mcclatchy.com/careers,zero_or_not_enumerable,0,
 New York Post,Workday,https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers,ok,44,
