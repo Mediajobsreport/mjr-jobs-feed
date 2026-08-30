@@ -151,6 +151,7 @@ jobs:
             mjr-salem-iframe.html
             mjr-audacy-diagnostic.txt
             mjr-audacy-raw-response.txt
+            mjr-audacy-search-page-v43.html
             mjr-audacy-frames/
           if-no-files-found: warn
           retention-days: 7
