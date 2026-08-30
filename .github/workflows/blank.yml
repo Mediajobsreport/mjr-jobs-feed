@@ -40,12 +40,14 @@ jobs:
             echo "MJR_OUTPUT=mjr-jboard-test.xml" >> "$GITHUB_ENV"
             echo "MJR_AUDIT=mjr-ats-audit-test.csv" >> "$GITHUB_ENV"
             echo "MJR_STATE=mjr-job-state-test.json" >> "$GITHUB_ENV"
+            echo "MJR_DIAGNOSTIC=mjr-salem-diagnostic.txt" >> "$GITHUB_ENV"
             echo "Targeted test mode enabled."
           else
             echo "MJR_TEST_MODE=false" >> "$GITHUB_ENV"
             echo "MJR_OUTPUT=mjr-jboard-master.xml" >> "$GITHUB_ENV"
             echo "MJR_AUDIT=mjr-ats-audit.csv" >> "$GITHUB_ENV"
             echo "MJR_STATE=mjr-job-state.json" >> "$GITHUB_ENV"
+            echo "MJR_DIAGNOSTIC=mjr-salem-diagnostic.txt" >> "$GITHUB_ENV"
             echo "Full production mode enabled."
           fi
 
@@ -91,11 +93,10 @@ jobs:
         shell: bash
         run: |
           echo "===== TARGETED TEST AUDIT ====="
-          if [[ -f "$MJR_AUDIT" ]]; then
-            cat "$MJR_AUDIT"
-          else
-            echo "No audit file generated."
-          fi
+          [[ -f "$MJR_AUDIT" ]] && cat "$MJR_AUDIT" || echo "No audit file generated."
+          echo ""
+          echo "===== SALEM DIAGNOSTIC ====="
+          [[ -f "$MJR_DIAGNOSTIC" ]] && cat "$MJR_DIAGNOSTIC" || echo "No diagnostic file generated."
 
       - name: Upload targeted test results
         if: env.MJR_TEST_MODE == 'true'
@@ -106,6 +107,7 @@ jobs:
             mjr-jboard-test.xml
             mjr-ats-audit-test.csv
             mjr-job-state-test.json
+            mjr-salem-diagnostic.txt
           if-no-files-found: warn
           retention-days: 7
 
