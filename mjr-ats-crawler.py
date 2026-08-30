@@ -6119,13 +6119,13 @@ def salem_icims_rendered_v30(src):
 
 def salem_render_diagnostics_v31(src):
     """
-    v32 robust Salem diagnostics.
-    ALWAYS writes mjr-salem-diagnostic.txt, even if Chromium/rendering fails.
+    v35 Salem iframe diagnostics.
+    Always writes a compact diagnostic plus a bounded HTML capture of the
+    rendered iCIMS results frame.
     """
     diag_path = Path(os.getenv("MJR_DIAGNOSTIC", "mjr-salem-diagnostic.txt"))
-    lines = ["MJR SALEM DIAGNOSTIC v32"]
-    network = []
-    responses = []
+    html_path = Path("mjr-salem-iframe.html")
+    lines = ["MJR SALEM DIAGNOSTIC v35"]
 
     try:
         if sync_playwright is None:
@@ -6151,145 +6151,127 @@ def salem_render_diagnostics_v31(src):
             page = context.new_page()
             page.set_default_timeout(20000)
 
-            def on_request(req):
-                u = req.url
-                lu = u.lower()
-                if any(k in lu for k in ("icims", "job", "search", "career", "recruit")):
-                    network.append((req.method, u))
-
-            def on_response(resp):
-                u = resp.url
-                lu = u.lower()
-                if any(k in lu for k in ("icims", "job", "search", "career", "recruit")):
-                    try:
-                        ct = resp.headers.get("content-type", "")
-                    except Exception:
-                        ct = ""
-                    responses.append((resp.status, u, ct))
-
-            page.on("request", on_request)
-            page.on("response", on_response)
-
             _v28_before_request(start_url)
-
-            try:
-                page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
-                lines.append("page.goto: SUCCESS")
-            except Exception as e:
-                lines.append(f"page.goto ERROR: {repr(e)}")
-
+            page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
             try:
                 page.wait_for_load_state("networkidle", timeout=12000)
-                lines.append("networkidle: SUCCESS")
-            except Exception as e:
-                lines.append(f"networkidle: {repr(e)}")
-
-            try:
-                page.wait_for_timeout(2500)
             except Exception:
                 pass
+            page.wait_for_timeout(2200)
 
-            try:
-                lines.append(f"Final URL: {page.url}")
-            except Exception as e:
-                lines.append(f"Final URL ERROR: {repr(e)}")
+            frames = []
+            for frame in page.frames:
+                fu = frame.url or ""
+                up = urlparse(fu)
+                if (
+                    up.netloc.lower() == parsed.netloc.lower()
+                    and "/jobs/search" in up.path.lower()
+                ):
+                    frames.append(frame)
 
-            try:
-                lines.append(f"Title: {page.title()}")
-            except Exception as e:
-                lines.append(f"Title ERROR: {repr(e)}")
+            lines.append(f"Matching search frames: {len(frames)}")
+            for i, frame in enumerate(frames):
+                lines.append(f"Frame {i}: {frame.url}")
 
-            try:
-                hrefs = page.eval_on_selector_all(
-                    "a[href]",
-                    "els => els.map(e => e.href)"
-                )
-            except Exception as e:
-                hrefs = []
-                lines.append(f"href extraction ERROR: {repr(e)}")
+            target = None
+            for frame in frames:
+                if "in_iframe=1" in (frame.url or ""):
+                    target = frame
+                    break
+            if target is None and frames:
+                target = frames[-1]
 
-            lines.append(f"Rendered href count: {len(hrefs)}")
+            if target is None:
+                raise RuntimeError("No Salem iCIMS search-results frame found")
 
-            try:
-                frames = [f.url for f in page.frames]
-            except Exception as e:
-                frames = []
-                lines.append(f"frame extraction ERROR: {repr(e)}")
+            html = target.content()
+            max_chars = 500000
+            html_path.write_text(html[:max_chars], encoding="utf-8")
+            lines.append(f"Captured iframe HTML chars: {min(len(html), max_chars)}")
+            lines.append(f"Full rendered iframe HTML chars: {len(html)}")
+
+            ids = set()
+            patterns = [
+                r"/jobs/(\d+)",
+                r"job(?:Id|ID|id)[=:\s\"']+(\d+)",
+                r"req(?:Id|ID|id)[=:\s\"']+(\d+)",
+                r"data-[^=]*job[^=]*=[\"']?(\d+)",
+                r"value=[\"']?(\d{3,})[\"']?",
+            ]
+            for pat in patterns:
+                for match in re.findall(pat, html, re.I):
+                    ids.add(str(match))
 
             lines.append("")
-            lines.append("=== FRAMES ===")
-            lines.extend(frames or ["(none)"])
+            lines.append("=== NUMERIC JOB-LIKE IDS ===")
+            lines.extend(sorted(ids)[:300] or ["(none)"])
 
-            relevant_hrefs = []
+            actions = re.findall(
+                r"<form[^>]+action=[\"']([^\"']+)[\"']",
+                html,
+                re.I,
+            )
+            lines.append("")
+            lines.append("=== FORM ACTIONS ===")
+            lines.extend(
+                [urljoin(target.url, a) for a in list(dict.fromkeys(actions))[:100]]
+                or ["(none)"]
+            )
+
+            attrs = re.findall(
+                r"(data-[a-z0-9_-]*(?:job|req|requisition)[a-z0-9_-]*=[\"'][^\"']+[\"'])",
+                html,
+                re.I,
+            )
+            lines.append("")
+            lines.append("=== JOB/REQ DATA ATTRIBUTES ===")
+            lines.extend(list(dict.fromkeys(attrs))[:200] or ["(none)"])
+
+            hrefs = re.findall(r"href=[\"']([^\"']+)[\"']", html, re.I)
+            interesting = []
             for href in hrefs:
-                if not href:
-                    continue
                 lh = href.lower()
-                if any(k in lh for k in ("/jobs/", "icims", "job-search", "search?")):
-                    relevant_hrefs.append(href)
-
-            # Unique, bounded.
-            relevant_hrefs = list(dict.fromkeys(relevant_hrefs))[:200]
+                if any(k in lh for k in ("job", "search", "icims", "requisition", "posting")):
+                    interesting.append(urljoin(target.url, href))
             lines.append("")
-            lines.append("=== RELEVANT HREFS ===")
-            lines.extend(relevant_hrefs or ["(none)"])
+            lines.append("=== INTERESTING HREFS ===")
+            lines.extend(list(dict.fromkeys(interesting))[:200] or ["(none)"])
 
+            low = html.lower()
             lines.append("")
-            lines.append("=== NETWORK REQUESTS ===")
-            for method, url in list(dict.fromkeys(network))[:200]:
-                lines.append(f"{method} {url}")
-            if not network:
+            lines.append("=== MARKER SNIPPETS ===")
+            count = 0
+            for marker in ("job", "requisition", "posting", "icims", "data-", "onclick", "form"):
+                pos = 0
+                while count < 80:
+                    idx = low.find(marker, pos)
+                    if idx < 0:
+                        break
+                    a = max(0, idx - 180)
+                    b = min(len(html), idx + 420)
+                    snippet = re.sub(r"\s+", " ", html[a:b])
+                    lines.append(f"[{marker}] {snippet}")
+                    pos = idx + len(marker)
+                    count += 1
+            if count == 0:
                 lines.append("(none)")
 
-            lines.append("")
-            lines.append("=== NETWORK RESPONSES ===")
-            for status, url, ct in list(dict.fromkeys(responses))[:200]:
-                lines.append(f"{status} {ct} {url}")
-            if not responses:
-                lines.append("(none)")
-
-            try:
-                html = page.content()
-                low = html.lower()
-                lines.append("")
-                lines.append(f"Rendered HTML length: {len(html)}")
-                lines.append("=== HTML MARKER SNIPPETS ===")
-                snippet_count = 0
-                for marker in ("icims", "/jobs/", "jobposting", "searchresults", "iframe"):
-                    pos = 0
-                    while snippet_count < 50:
-                        idx = low.find(marker, pos)
-                        if idx < 0:
-                            break
-                        a = max(0, idx - 200)
-                        b = min(len(html), idx + 400)
-                        snippet = re.sub(r"\s+", " ", html[a:b])
-                        lines.append(f"[{marker}] {snippet}")
-                        pos = idx + len(marker)
-                        snippet_count += 1
-                if snippet_count == 0:
-                    lines.append("(no markers found)")
-            except Exception as e:
-                lines.append("")
-                lines.append(f"HTML extraction ERROR: {repr(e)}")
-
-            try:
-                browser.close()
-            except Exception:
-                pass
+            browser.close()
 
     except Exception as e:
         lines.append("")
-        lines.append("=== DIAGNOSTIC FATAL ERROR ===")
+        lines.append("=== DIAGNOSTIC ERROR ===")
         lines.append(repr(e))
 
     finally:
-        # Critical v32 behavior: always create the diagnostic file.
-        try:
-            diag_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-            print(f"Salem diagnostic written: {diag_path}")
-        except Exception as e:
-            print(f"Could not write Salem diagnostic: {e}")
+        diag_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        if not html_path.exists():
+            html_path.write_text(
+                "<!-- Salem iframe HTML was not captured. See diagnostic file. -->\n",
+                encoding="utf-8",
+            )
+        print(f"Salem diagnostic written: {diag_path}")
+        print(f"Salem iframe capture written: {html_path}")
 
     return str(diag_path)
 
