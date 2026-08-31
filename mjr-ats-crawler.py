@@ -4827,21 +4827,65 @@ def _v17_samehost_details(src, starts, hosts, max_pages=120, max_jobs=4000):
 
 
 def siriusxm_v17(src):
-    """SiriusXM Phenom/current-career collector.
+    """SiriusXM targeted diagnostic + recovery collector.
 
-    The old broad same-host crawl could rediscover stale numeric requisition
-    pages. Prefer Phenom's live widgets result set, then crawl only current
-    SiriusXM job-index surfaces as a safe fallback. Canonical apply URLs are
-    always /careers/jobs/<numeric-id> with tracking parameters removed.
+    In targeted mode this writes a concise diagnostic showing exactly what the
+    GitHub runner receives from SiriusXM's widgets endpoint and jobs pages.
+    It also attempts multiple bounded recovery paths to enumerate only live,
+    numeric SiriusXM requisitions.
     """
     host = "https://careers.siriusxm.com"
     detail_urls = set()
     out = []
     seen_ids = set()
+    diag = []
 
-    # Phenom-style public widget endpoint. SiriusXM's career site currently
-    # uses the same jobs/categories/locations surface and numeric detail URLs.
-    bodies = [
+    def d(msg):
+        diag.append(str(msg))
+
+    def save_diag():
+        try:
+            Path("mjr-siriusxm-diagnostic-v62.txt").write_text(
+                "\n".join(diag) + "\n", encoding="utf-8"
+            )
+        except Exception:
+            pass
+
+    d("SIRIUSXM DIAGNOSTIC v62")
+    d(f"source={src.get('URL','')}")
+    d(f"cutoff={CUTOFF}")
+
+    # 1) Probe public index surfaces.
+    probe_pages = [
+        host + "/careers/jobs",
+        host + "/careers/jobs/categories",
+        host + "/careers/jobs/locations",
+    ]
+
+    for page in probe_pages:
+        try:
+            r = req(
+                "GET",
+                page,
+                headers={
+                    "Accept": "text/html,application/xhtml+xml",
+                    "Referer": host + "/",
+                },
+            )
+            text = r.text or ""
+            d(f"GET {page} status={getattr(r,'status_code','?')} final={getattr(r,'url',page)} bytes={len(text)}")
+            d("HEAD " + clean(BeautifulSoup(text, "html.parser").get_text(" "))[:500])
+
+            raw = html.unescape(text).replace("\\/", "/")
+            ids = set(re.findall(r"/(?:careers/)?jobs/(\d{4,})(?:/job)?", raw, re.I))
+            d(f"GET {page} numeric_job_ids={len(ids)} sample={sorted(ids, reverse=True)[:15]}")
+            for jid in ids:
+                detail_urls.add(f"{host}/careers/jobs/{jid}")
+        except Exception as e:
+            d(f"GET {page} ERROR {repr(e)}")
+
+    # 2) Probe several likely Phenom payload shapes.
+    widget_bodies = [
         {
             "lang": "en_us",
             "deviceType": "desktop",
@@ -4852,10 +4896,7 @@ def siriusxm_v17(src):
             "from": 0,
             "jobs": True,
             "counts": True,
-            "all_fields": [
-                "country", "state", "city", "category",
-                "employmentType", "requisitionRoleType"
-            ],
+            "all_fields": ["country", "state", "city", "category", "employmentType"],
             "pageName": "search-results",
             "size": 250,
             "keywords": "",
@@ -4871,10 +4912,20 @@ def siriusxm_v17(src):
             "from": 0,
             "size": 250,
             "pageName": "search-results",
+            "keywords": "",
+        },
+        {
+            "lang": "en_us",
+            "deviceType": "desktop",
+            "country": "us",
+            "ddoKey": "jobs",
+            "from": 0,
+            "size": 250,
+            "pageName": "search-results",
         },
     ]
 
-    for body in bodies:
+    for i, body in enumerate(widget_bodies, 1):
         try:
             r = req(
                 "POST",
@@ -4882,160 +4933,151 @@ def siriusxm_v17(src):
                 json=body,
                 headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
+                    "Accept": "application/json,text/plain,*/*",
                     "Referer": host + "/careers/jobs",
+                    "Origin": host,
+                    "X-Requested-With": "XMLHttpRequest",
                 },
             )
-            payload = r.json()
-            raw = html.unescape(json.dumps(payload, ensure_ascii=False)).replace("\\/", "/")
-
-            # Recover explicit current numeric SiriusXM job URLs.
-            for m in re.finditer(
-                r"(?:https?://careers\.siriusxm\.com)?"
-                r"(?:/howwework|/earlycareer|/org-culture)?"
-                r"/careers/jobs/(\d+)|"
-                r"(?:https?://careers\.siriusxm\.com)?"
-                r"(?:/howwework|/earlycareer|/org-culture)?"
-                r"/jobs/(\d+)",
-                raw,
-                re.I,
-            ):
-                jid = m.group(1) or m.group(2)
-                if jid:
-                    detail_urls.add(f"{host}/careers/jobs/{jid}")
-
-            # Some Phenom payloads expose IDs without a complete URL.
-            for key in ("jobId", "job_id", "id", "jobIdNumber"):
-                for m in re.finditer(
-                    rf'["\']{key}["\']\s*:\s*["\']?(\d{{4,}})["\']?',
-                    raw,
-                    re.I,
-                ):
-                    detail_urls.add(f"{host}/careers/jobs/{m.group(1)}")
-
-            if detail_urls:
-                break
-        except Exception:
-            continue
-
-    # Fallback: crawl ONLY current SiriusXM index/category/location surfaces,
-    # then accept numeric job links found directly on those pages.
-    if not detail_urls:
-        starts = [
-            host + "/careers/jobs",
-            host + "/careers/jobs/categories",
-            host + "/careers/jobs/locations",
-            src["URL"],
-        ]
-        queue = list(dict.fromkeys(starts))
-        seen_pages = set()
-
-        while queue and len(seen_pages) < 80 and len(detail_urls) < 1500:
-            page = queue.pop(0)
-            page_key = page.split("#", 1)[0].rstrip("/")
-            if page_key in seen_pages:
-                continue
-            seen_pages.add(page_key)
+            text = r.text or ""
+            d(f"POST /widgets #{i} status={getattr(r,'status_code','?')} bytes={len(text)}")
+            d("WIDGET_HEAD " + clean(text)[:700])
 
             try:
-                r = req("GET", page)
+                payload = r.json()
+                raw = html.unescape(json.dumps(payload, ensure_ascii=False)).replace("\\/", "/")
             except Exception:
+                raw = html.unescape(text).replace("\\/", "/")
+
+            ids = set()
+            ids.update(re.findall(r"/(?:careers/)?jobs/(\d{4,})(?:/job)?", raw, re.I))
+            for key in ("jobId", "job_id", "id", "jobIdNumber", "reqId", "requisitionId"):
+                ids.update(re.findall(rf'["\']{key}["\']\s*:\s*["\']?(\d{{4,}})', raw, re.I))
+            d(f"POST /widgets #{i} numeric_job_ids={len(ids)} sample={sorted(ids, reverse=True)[:20]}")
+            for jid in ids:
+                detail_urls.add(f"{host}/careers/jobs/{jid}")
+        except Exception as e:
+            d(f"POST /widgets #{i} ERROR {repr(e)}")
+
+    # 3) Recover IDs from embedded JavaScript/config if present.
+    try:
+        r = req("GET", host + "/careers/jobs")
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        patterns = [
+            r'jobId["\']?\s*[:=]\s*["\']?(\d{4,})',
+            r'requisitionId["\']?\s*[:=]\s*["\']?(\d{4,})',
+            r'jobIdNumber["\']?\s*[:=]\s*["\']?(\d{4,})',
+            r'/careers/jobs/(\d{4,})',
+        ]
+        recovered = set()
+        for pat in patterns:
+            recovered.update(re.findall(pat, raw, re.I))
+        d(f"EMBEDDED_CONFIG ids={len(recovered)} sample={sorted(recovered, reverse=True)[:20]}")
+        for jid in recovered:
+            detail_urls.add(f"{host}/careers/jobs/{jid}")
+    except Exception as e:
+        d(f"EMBEDDED_CONFIG ERROR {repr(e)}")
+
+    d(f"TOTAL_DISCOVERED_IDS={len(detail_urls)}")
+
+    # 4) Validate a bounded set of discovered IDs and parse actual jobs.
+    # Highest IDs first to bias toward current requisitions.
+    urls_sorted = sorted(
+        detail_urls,
+        key=lambda u: int(re.search(r"/(\d+)$", u).group(1)) if re.search(r"/(\d+)$", u) else 0,
+        reverse=True,
+    )[:220]
+
+    accepted = 0
+    rejected = 0
+
+    for url in urls_sorted:
+        jid = re.search(r"/(\d+)$", url).group(1)
+        try:
+            variants = [
+                url + "?lang=en-us",
+                url,
+                f"{host}/careers/jobs/{jid}?mode=apply&lang=en-us",
+            ]
+            rr = None
+            for candidate in variants:
+                try:
+                    test = req(
+                        "GET",
+                        candidate,
+                        headers={
+                            "Referer": host + "/careers/jobs",
+                            "Accept": "text/html,application/xhtml+xml",
+                        },
+                    )
+                    if getattr(test, "status_code", 0) < 500:
+                        rr = test
+                        break
+                except Exception:
+                    continue
+
+            if rr is None:
+                rejected += 1
+                if rejected <= 20:
+                    d(f"DETAIL {jid} no_response")
                 continue
 
-            final = str(getattr(r, "url", "") or page)
-            soup = BeautifulSoup(r.text, "html.parser")
-            raw = html.unescape(r.text or "").replace("\\/", "/")
-
-            def add_candidate(href):
-                u = urljoin(final, href)
-                p = urlparse(u)
-                if p.netloc.lower().replace("www.", "") != "careers.siriusxm.com":
-                    return
-                mm = re.search(
-                    r"/(?:careers/)?jobs/(\d+)(?:/job)?/?$",
-                    p.path,
-                    re.I,
-                )
-                if mm:
-                    detail_urls.add(f"{host}/careers/jobs/{mm.group(1)}")
-
-            for a in soup.find_all("a", href=True):
-                add_candidate(a["href"])
-                u = urljoin(final, a["href"])
-                label = clean(a.get_text(" ")).lower()
-                path = urlparse(u).path.lower()
-                if (
-                    "careers.siriusxm.com" in urlparse(u).netloc.lower()
-                    and (
-                        re.search(r"\b(next|more jobs|view more|load more)\b", label)
-                        or "/careers/jobs/categories" in path
-                        or "/careers/jobs/locations" in path
-                    )
-                    and u.rstrip("/") not in seen_pages
-                ):
-                    queue.append(u)
-
-            for m in re.finditer(
-                r'(?:https?://careers\.siriusxm\.com)?/careers/jobs/(\d+)(?:/job)?',
-                raw,
-                re.I,
-            ):
-                detail_urls.add(f"{host}/careers/jobs/{m.group(1)}")
-
-    # Detail validation/parsing. Canonical URLs intentionally omit iis/iisn,
-    # lang, mode=apply, and other tracking parameters.
-    for url in sorted(
-        detail_urls,
-        key=lambda u: int(re.search(r"/(\d+)$", u).group(1))
-        if re.search(r"/(\d+)$", u) else 0,
-        reverse=True,
-    ):
-        try:
-            rr = req(
-                "GET",
-                url + "?lang=en-us",
-                headers={
-                    "Referer": host + "/careers/jobs",
-                    "Accept": "text/html,application/xhtml+xml",
-                },
-            )
+            text = rr.text or ""
+            status = getattr(rr, "status_code", "?")
             final = str(getattr(rr, "url", "") or url)
-            canonical_match = re.search(r"/(?:careers/)?jobs/(\d+)", final, re.I)
-            canonical = (
-                f"{host}/careers/jobs/{canonical_match.group(1)}"
-                if canonical_match else url
-            )
+            soup = BeautifulSoup(text, "html.parser")
+            visible = clean(soup.get_text(" "))
 
-            j = _job_from_detail(src, canonical, rr.text)
+            if rejected < 20 or accepted < 20:
+                d(f"DETAIL {jid} status={status} final={final} bytes={len(text)} head={visible[:240]}")
+
+            # obvious dead/blocked/login/404 pages
+            low = visible.lower()
+            if status in (403, 404, 410) or re.search(
+                r"\b(job (?:is )?no longer available|page not found|access denied|forbidden)\b",
+                low,
+            ):
+                rejected += 1
+                continue
+
+            canonical = f"{host}/careers/jobs/{jid}"
+            j = _job_from_detail(src, canonical, text)
             if not j:
-                j = _direct_board_job(src, canonical, rr.text)
+                j = _direct_board_job(src, canonical, text)
 
-            if j:
-                # Normalize SiriusXM's explicit Flex labels.
-                txt = clean(BeautifulSoup(rr.text, "html.parser").get_text(" "))
-                low = txt.lower()
-                if re.search(r"\boffice first\b", low):
-                    j.work_arrangement = "On-Site"
-                elif re.search(r"\bhybrid\b", low):
-                    j.work_arrangement = "Hybrid"
-                elif re.search(r"\bremote\b", low):
-                    j.work_arrangement = "Remote"
+            if not j:
+                rejected += 1
+                continue
 
-                # Explicit SiriusXM employment labels are authoritative.
-                if re.search(r"\bintern \(fixed term\)", low):
-                    j.jobtype = "Internship"
-                    j.category = "Internships"
-                elif re.search(r"\bregular employee full-time\b", low):
-                    j.jobtype = "Full Time"
-                elif re.search(r"\bregular employee part-time\b", low):
-                    j.jobtype = "Part Time"
+            # Normalize SiriusXM's visible labels.
+            if re.search(r"\boffice first\b", low):
+                j.work_arrangement = "On-Site"
+            elif re.search(r"\bhybrid\b", low):
+                j.work_arrangement = "Hybrid"
+            elif re.search(r"\bremote\b", low):
+                j.work_arrangement = "Remote"
 
-                if j.id not in seen_ids:
-                    seen_ids.add(j.id)
-                    out.append(j)
-        except Exception:
-            continue
+            if re.search(r"\bintern \(fixed term\)", low):
+                j.jobtype = "Internship"
+                j.category = "Internships"
+            elif re.search(r"\bregular employee full-time\b", low):
+                j.jobtype = "Full Time"
+            elif re.search(r"\bregular employee part-time\b", low):
+                j.jobtype = "Part Time"
 
+            if j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+                accepted += 1
+                if accepted <= 25:
+                    d(f"ACCEPT {jid} title={j.title} type={j.jobtype} cat={j.category} loc={j.city},{j.state} wa={j.work_arrangement}")
+        except Exception as e:
+            rejected += 1
+            if rejected <= 20:
+                d(f"DETAIL {jid} ERROR {repr(e)}")
+
+    d(f"RESULT accepted={accepted} rejected={rejected} out={len(out)}")
+    save_diag()
     return out
 
 
@@ -6756,7 +6798,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v61 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v62 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6802,7 +6844,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v61 listing page {page_num}: "
+            f"Audacy v62 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6821,7 +6863,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v61 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v62 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6852,7 +6894,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v61.txt").write_text(
+        Path("mjr-audacy-validation-v62.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -7095,7 +7137,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v61 stopped at detail safety limit")
+            print("Audacy v62 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -7327,13 +7369,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v61.txt").write_text(
+    Path("mjr-audacy-validation-v62.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v61: {enumerated_count} enumerated, "
+        f"Audacy v62: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
