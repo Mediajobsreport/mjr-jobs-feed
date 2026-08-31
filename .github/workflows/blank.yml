@@ -146,7 +146,7 @@ jobs:
           path: |
             mjr-jboard-test.xml
             mjr-ats-audit-test.csv
-            mjr-audacy-validation-v60.txt
+            mjr-audacy-validation-v61.txt
             mjr-job-state-test.json
             mjr-salem-diagnostic.txt
             mjr-salem-iframe.html
