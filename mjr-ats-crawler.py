@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse, unquote, quote
 
 import requests
@@ -6186,7 +6187,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v47 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v48 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6232,7 +6233,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v47 listing page {page_num}: "
+            f"Audacy v48 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6251,7 +6252,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v47 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v48 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6282,7 +6283,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v47.txt").write_text(
+        Path("mjr-audacy-validation-v48.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6399,7 +6400,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v47 stopped at detail safety limit")
+            print("Audacy v48 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6506,7 +6507,10 @@ def collect_audacy_v40(src):
             )
 
         employer_date = trusted_detail_date(j, html)
-        pd = employer_date or TODAY
+        mjr_discovery_date = datetime.now(
+            ZoneInfo("America/New_York")
+        ).date()
+        pd = employer_date or mjr_discovery_date
 
         try:
             live_apply = _icims_canonical_apply_url(final, html)
@@ -6536,18 +6540,60 @@ def collect_audacy_v40(src):
             except Exception as e:
                 parser_attempts.append(f"_direct_board_job:{type(e).__name__}:{e}")
 
-        if not job and j:
-            try:
-                job = _job_from_jsonld(src, final, j)
-            except Exception as e:
-                parser_attempts.append(f"_job_from_jsonld:{type(e).__name__}:{e}")
-
         if not job:
-            reason = "could not instantiate standard job object"
-            if parser_attempts:
-                reason += " | " + " | ".join(parser_attempts)
-            log(requested_id, "REJECT", reason, title=title, pd=pd, apply_url=live_apply, final_url=final)
-            continue
+            # v48: Audacy's stale datePosted prevents the generic parsers from
+            # constructing a Job. We already have verified title, description,
+            # location and job-specific apply URL, so construct the project's
+            # standard Job object directly.
+            try:
+                loc_for_job = location or ""
+                job = Job(
+                    requested_id,
+                    title,
+                    src["Company"],
+                    description_text,
+                    pd,
+                    jobtype(title, description_text),
+                    category(
+                        title,
+                        description_text,
+                        src["Industry"],
+                        src["Company"],
+                    ),
+                    live_apply,
+                    src["URL"],
+                    src["URL"],
+                    "",
+                    normalize_work_arrangement(
+                        description_text,
+                        loc_for_job,
+                    ),
+                    loc_for_job,
+                    "",
+                    infer_country(
+                        loc_for_job,
+                        src["Company"],
+                        description_text,
+                    ),
+                    None,
+                )
+            except Exception as e:
+                parser_attempts.append(
+                    f"direct_Job:{type(e).__name__}:{e}"
+                )
+                reason = "could not instantiate standard job object"
+                if parser_attempts:
+                    reason += " | " + " | ".join(parser_attempts)
+                log(
+                    requested_id,
+                    "REJECT",
+                    reason,
+                    title=title,
+                    pd=pd,
+                    apply_url=live_apply,
+                    final_url=final,
+                )
+                continue
 
         job.title = title
         job.date = pd
@@ -6578,13 +6624,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v47.txt").write_text(
+    Path("mjr-audacy-validation-v48.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v47: {enumerated_count} enumerated, "
+        f"Audacy v48: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
