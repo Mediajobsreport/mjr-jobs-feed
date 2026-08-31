@@ -4331,19 +4331,40 @@ def cox_successfactors(src):
             if jld:
                 break
 
-        title = clean((jld or {}).get("title", ""))
+        # Cox's JSON-LD/page heading can be polluted by OneTrust and return
+        # "Cookie Consent Manager". The visible job body is authoritative:
+        # "Job Title: <real title> Position Overview ..."
+        visible_title = clean(soup.get_text(" ", strip=True))
+        mt = re.search(
+            r"\bJob Title:\s*(.+?)\s+Position Overview\b",
+            visible_title,
+            re.I,
+        )
+        title = clean(mt.group(1)) if mt else ""
+
+        # Defensive fallback only if Cox changes the body labels.
         if not title:
-            h = soup.find(["h1","h2"], class_=re.compile("job|title", re.I))
-            title = clean(h.get_text(" ", strip=True) if h else "")
+            jld_title = clean((jld or {}).get("title", ""))
+            if jld_title.lower() not in {
+                "cookie consent manager",
+                "cookie manager",
+                "privacy preference center",
+            }:
+                title = jld_title
+
         if not title:
-            visible_title = soup.get_text("\n", strip=True)
-            mt = re.search(
-                r"(?:^|\n)Job Title:\s*\n?\s*([^\n]+)",
-                visible_title,
-                re.I,
-            )
-            if mt:
-                title = clean(mt.group(1))
+            for h in soup.find_all(["h1", "h2"]):
+                cand = clean(h.get_text(" ", strip=True))
+                if cand and cand.lower() not in {
+                    "cookie consent manager",
+                    "cookie manager",
+                    "privacy preference center",
+                    "cox media group careers",
+                    "careers",
+                }:
+                    title = cand
+                    break
+
         if not title:
             continue
 
@@ -4424,8 +4445,72 @@ def cox_successfactors(src):
                 city = clean(location)
 
         live_apply = final.split("?",1)[0]
+
+        # Run classification from the REAL Cox title, never cookie/privacy text.
         cat = category(title, description_text, src["Industry"], src["Company"])
-        jt = jobtype(title, description_text)
+
+        # Cox employment type must be explicit. The global helper's broad
+        # "part" + "time" text search can false-positive on long descriptions.
+        tlow = title.lower()
+        dlow = description_text.lower()
+        if re.search(r"\b(intern|internship)\b", tlow):
+            jt = "Internship"
+        elif re.search(r"\bpart[\s-]*time\b|\(pt\)", tlow):
+            jt = "Part Time"
+        elif re.search(r"\b(full[\s-]*time)\b|\(ft\)", tlow):
+            jt = "Full Time"
+        elif re.search(
+            r"\b(this is|this role is|position is|this position is)\s+(?:an?\s+)?part[\s-]*time\b",
+            dlow,
+        ):
+            jt = "Part Time"
+        elif re.search(r"\btemporary\b|\btemp position\b", tlow):
+            jt = "Temporary"
+        elif re.search(r"\bcontract(?:or)?\b", tlow):
+            jt = "Contract"
+        else:
+            jt = "Full Time"
+
+        # Cox-specific MJR category safeguards.
+        low = title.lower()
+        context = (title + " " + description_text[:2200]).lower()
+
+        # Commercial traffic/continuity/log scheduling = Business Office.
+        if re.search(r"\btraffic (coordinator|assistant|director|manager)\b", low) and re.search(
+            r"\b(logs?|commercial|spots?|inventory|wide ?orbit|billing|master control)\b",
+            context,
+        ):
+            cat = "Business Office"
+
+        # On-air traffic reporter/anchor = platform category; Cox Radio defaults Radio.
+        elif re.search(r"\btraffic (reporter|anchor)\b", low):
+            cat = "Television" if re.search(r"\b(tv|television|w[a-z]{2,4}-?tv)\b", low) else "Radio"
+
+        # Clear radio talent/programming/board roles.
+        elif re.search(
+            r"\b(on[- ]air|air talent|board operator|program director|"
+            r"director of operations.*radio|branding.*programming)\b",
+            low,
+        ) and "radio" in context:
+            cat = "Radio"
+
+        # Clear TV newsroom/on-camera/production roles.
+        elif re.search(
+            r"\b(anchor|reporter|meteorologist|news producer|associate news producer|"
+            r"investigative producer|multimedia journalist|news writer)\b",
+            low,
+        ) and re.search(r"\b(tv|television|w[a-z]{2,4}-?tv|telemundo)\b", context):
+            cat = "Journalism"
+
+        # Sales/revenue roles must beat Digital/Business Office.
+        elif re.search(
+            r"\b(account executive|media consultant|sales development representative|"
+            r"business development consultant|general sales manager|digital media director|"
+            r"marketing solutions coordinator|client performance manager)\b",
+            low,
+        ) or re.search(r"\b(drive|driving|generate|growing?) (?:digital )?revenue\b", context):
+            cat = "Sales & Marketing"
+
         wa = normalize_work_arrangement(description_text, location)
 
         job = Job(
@@ -4438,7 +4523,7 @@ def cox_successfactors(src):
             cat,
             live_apply,
             src["URL"],
-            src["URL"],
+            "https://www.coxmediagroup.com/",
             "",
             wa,
             city,
@@ -6450,7 +6535,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v58 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v59 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6496,7 +6581,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v58 listing page {page_num}: "
+            f"Audacy v59 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6515,7 +6600,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v58 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v59 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6546,7 +6631,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v58.txt").write_text(
+        Path("mjr-audacy-validation-v59.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6789,7 +6874,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v58 stopped at detail safety limit")
+            print("Audacy v59 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -7021,13 +7106,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v58.txt").write_text(
+    Path("mjr-audacy-validation-v59.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v58: {enumerated_count} enumerated, "
+        f"Audacy v59: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
