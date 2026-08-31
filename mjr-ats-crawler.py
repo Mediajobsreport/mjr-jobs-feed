@@ -4297,11 +4297,119 @@ def cox_successfactors(src):
 
     out = []
     seen_ids = set()
+
     for url in detail_urls:
-        j = _recent_detail_job(src, url)
-        if j and j.id not in seen_ids:
-            seen_ids.add(j.id)
-            out.append(j)
+        try:
+            r = req("GET", url)
+        except Exception:
+            continue
+
+        final = str(getattr(r, "url", "") or url)
+        soup = BeautifulSoup(r.text, "html.parser")
+        html_text = r.text or ""
+
+        # Canonical SuccessFactors requisition id is the trailing numeric URL id.
+        m_id = re.search(r"/(\d+)/?(?:\?|$)", urlparse(final).path + "?")
+        if not m_id:
+            m_id = re.search(r"/(\d+)/?$", urlparse(final).path)
+        if not m_id:
+            continue
+        jid = m_id.group(1)
+
+        # Prefer JobPosting JSON-LD title/date/location/description.
+        jld = None
+        for sc in soup.find_all("script", type="application/ld+json"):
+            try:
+                obj = json.loads(sc.string or sc.get_text() or "{}")
+            except Exception:
+                continue
+            candidates = obj if isinstance(obj, list) else [obj]
+            for cand in candidates:
+                if isinstance(cand, dict) and str(cand.get("@type","")).lower() == "jobposting":
+                    jld = cand
+                    break
+            if jld:
+                break
+
+        title = clean((jld or {}).get("title", ""))
+        if not title:
+            h = soup.find(["h1","h2"], class_=re.compile("job|title", re.I))
+            title = clean(h.get_text(" ", strip=True) if h else "")
+        if not title:
+            continue
+
+        # Cox SuccessFactors exposes current posting dates either in JSON-LD or
+        # visible labels such as "Date: Aug 28, 2026".
+        pd = None
+        raw_date = clean((jld or {}).get("datePosted", ""))
+        if raw_date:
+            pd = parsedate(raw_date)
+        if not pd:
+            visible = soup.get_text(" ", strip=True)
+            for pat in [
+                r"(?:Date Posted|Posted Date|Date)\s*[:\-]\s*"
+                r"([A-Z][a-z]{2,8}\s+\d{1,2},\s+\d{4})",
+                r"(?:Date Posted|Posted Date|Date)\s*[:\-]\s*"
+                r"(\d{1,2}/\d{1,2}/\d{4})",
+            ]:
+                md = re.search(pat, visible, re.I)
+                if md:
+                    pd = parsedate(md.group(1))
+                    if pd:
+                        break
+        if not pd or pd < CUTOFF:
+            continue
+
+        desc_html = ""
+        if jld and jld.get("description"):
+            desc_html = str(jld.get("description"))
+        if not desc_html:
+            node = soup.select_one(
+                ".jobdescription, .job-description, [itemprop='description'], "
+                ".jobDescription, #job-description"
+            )
+            if node:
+                desc_html = str(node)
+        description_text = clean(BeautifulSoup(desc_html, "html.parser").get_text(" ", strip=True))
+        if len(description_text) < 80:
+            description_text = clean(soup.get_text(" ", strip=True))
+
+        location = get_location_from_jsonld(jld) if isinstance(jld, dict) else ""
+        city, state, country = "", "", "US"
+        if location:
+            mloc = re.match(r"^([^,]+),\s*([A-Z]{2})(?:\s|,|$)", location, re.I)
+            if mloc:
+                city, state = clean(mloc.group(1)), mloc.group(2).upper()
+            else:
+                city = location
+
+        live_apply = final.split("?",1)[0]
+        cat = category(title, description_text, src["Industry"], src["Company"])
+        jt = jobtype(title, description_text)
+        wa = normalize_work_arrangement(description_text, location)
+
+        job = Job(
+            jid,
+            title,
+            src["Company"],
+            description_text,
+            pd,
+            jt,
+            cat,
+            live_apply,
+            src["URL"],
+            src["URL"],
+            "",
+            wa,
+            city,
+            state,
+            country,
+            None,
+        )
+
+        if jid not in seen_ids:
+            seen_ids.add(jid)
+            out.append(job)
 
     return out
 
@@ -6302,7 +6410,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v55 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v56 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6348,7 +6456,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v55 listing page {page_num}: "
+            f"Audacy v56 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6367,7 +6475,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v55 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v56 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6398,7 +6506,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v55.txt").write_text(
+        Path("mjr-audacy-validation-v56.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6641,7 +6749,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v55 stopped at detail safety limit")
+            print("Audacy v56 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6873,13 +6981,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v55.txt").write_text(
+    Path("mjr-audacy-validation-v56.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v55: {enumerated_count} enumerated, "
+        f"Audacy v56: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
