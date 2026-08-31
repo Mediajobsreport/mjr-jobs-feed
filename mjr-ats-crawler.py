@@ -6247,7 +6247,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v53 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v54 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6293,7 +6293,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v53 listing page {page_num}: "
+            f"Audacy v54 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6312,7 +6312,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v53 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v54 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6343,7 +6343,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v53.txt").write_text(
+        Path("mjr-audacy-validation-v54.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6586,7 +6586,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v53 stopped at detail safety limit")
+            print("Audacy v54 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6818,13 +6818,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v53.txt").write_text(
+    Path("mjr-audacy-validation-v54.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v53: {enumerated_count} enumerated, "
+        f"Audacy v54: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
@@ -7397,6 +7397,27 @@ def main():
         encoding="utf-8-sig",
     ) as f:
         sources = list(csv.DictReader(f))
+
+    # v54: normalize any legacy Cox Radio source row before filtering/crawling.
+    # This prevents an older CSV row or stale branch copy from forcing the
+    # radio-only CMG search back into the feed.
+    for row in sources:
+        company = clean(row.get("Company", "")).lower()
+        url = str(row.get("URL", "") or "").lower()
+        if company == "cox radio" or (
+            "careers.cmg.com" in url and "q=radio" in url
+        ):
+            row["Industry"] = row.get("Industry") or "Broadcast Media"
+            row["Company"] = "Cox Media Group"
+            row["ATS"] = "SAP SuccessFactors"
+            row["URL"] = "https://careers.cmg.com/viewalljobs/?locale=en_US"
+            row["Active"] = "True"
+
+    # Also accept the legacy test name if it is ever entered manually.
+    if "cox radio" in MJR_TEST_COMPANIES:
+        MJR_TEST_COMPANIES.discard("cox radio")
+        MJR_TEST_COMPANIES.add("cox media group")
+
     if MJR_TEST_COMPANIES:
         sources = [s for s in sources if _v28_source_enabled(s)]
         print("TEST MODE companies:", ", ".join(sorted(MJR_TEST_COMPANIES)))
