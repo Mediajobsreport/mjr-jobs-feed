@@ -4229,6 +4229,27 @@ def _crawl_rendered_job_board(src, starts, allow_hosts=None, max_pages=40, max_j
     return out
 
 
+
+def cox_successfactors(src):
+    """Cox Media Group: SAP SuccessFactors public career site.
+
+    CMG exposes server-rendered listings and canonical individual detail pages
+    under careers.cmg.com. Crawl the view-all/search surfaces and retain only
+    recent individual job postings through the normal project validators.
+    """
+    starts = [
+        "https://careers.cmg.com/viewalljobs/?locale=en_US",
+        "https://careers.cmg.com/search/?createNewAlert=false&q=&locationsearch=",
+        src["URL"],
+    ]
+    return _crawl_rendered_job_board(
+        src,
+        starts,
+        allow_hosts={"careers.cmg.com"},
+        max_pages=60,
+        max_jobs=2000,
+    )
+
 def paramount_successfactors(src):
     """Paramount: SAP SuccessFactors public career site.
 
@@ -6226,7 +6247,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v52 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v53 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6272,7 +6293,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v52 listing page {page_num}: "
+            f"Audacy v53 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6291,7 +6312,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v52 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v53 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6322,7 +6343,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v52.txt").write_text(
+        Path("mjr-audacy-validation-v53.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6565,7 +6586,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v52 stopped at detail safety limit")
+            print("Audacy v53 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6797,13 +6818,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v52.txt").write_text(
+    Path("mjr-audacy-validation-v53.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v52: {enumerated_count} enumerated, "
+        f"Audacy v53: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
@@ -7415,6 +7436,8 @@ def main():
                 if company_key == "tegna"
                 else cumulus_v17(s)
                 if company_key == "cumulus media"
+                else cox_successfactors(s)
+                if company_key in {"cox media group", "cox radio"}
                 else paramount_successfactors(s)
                 if company_key == "paramount"
                 else disney_public(s)
