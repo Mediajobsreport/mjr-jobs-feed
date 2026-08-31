@@ -6188,7 +6188,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v50 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v51 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6234,7 +6234,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v50 listing page {page_num}: "
+            f"Audacy v51 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6253,7 +6253,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v50 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v51 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6284,7 +6284,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v50.txt").write_text(
+        Path("mjr-audacy-validation-v51.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6458,6 +6458,28 @@ def collect_audacy_v40(src):
 
         return ""
 
+    def audacy_city_state_country(location):
+        """Map Audacy/iCIMS location text into XML city/state/country."""
+        raw = clean(location or "")
+        if not raw:
+            return "", "", "US"
+
+        # Common Audacy format: IL-Chicago, UNAVAILABLE, 60601, USA
+        m = re.match(r"^([A-Z]{2})-([^,]+)", raw, re.I)
+        if m:
+            return clean(m.group(2)), m.group(1).upper(), "US"
+
+        # Conventional format: Chicago, IL 60601
+        m = re.match(
+            r"^([^,]+),\s*([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?",
+            raw,
+            re.I,
+        )
+        if m:
+            return clean(m.group(1)), m.group(2).upper(), "US"
+
+        return raw, "", infer_country(raw, "Audacy", "")
+
     def audacy_job_type(title, description_text):
         """
         Prevent Audacy boilerplate from turning unrelated jobs into internships.
@@ -6505,7 +6527,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v50 stopped at detail safety limit")
+            print("Audacy v51 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6599,6 +6621,9 @@ def collect_audacy_v40(src):
             continue
 
         location = audacy_location(soup, j, html)
+        audacy_city, audacy_state, audacy_country = (
+            audacy_city_state_country(location)
+        )
 
         employer_date = trusted_detail_date(j, html)
         mjr_discovery_date = datetime.now(
@@ -6662,13 +6687,9 @@ def collect_audacy_v40(src):
                         description_text,
                         loc_for_job,
                     ),
-                    loc_for_job,
-                    "",
-                    infer_country(
-                        loc_for_job,
-                        src["Company"],
-                        description_text,
-                    ),
+                    audacy_city,
+                    audacy_state,
+                    audacy_country,
                     None,
                 )
             except Exception as e:
@@ -6700,6 +6721,12 @@ def collect_audacy_v40(src):
 
         if hasattr(job, "description"):
             job.description = description
+        if hasattr(job, "city"):
+            job.city = audacy_city
+        if hasattr(job, "state"):
+            job.state = audacy_state
+        if hasattr(job, "country"):
+            job.country = audacy_country
         if hasattr(job, "location") and location:
             job.location = location
         if hasattr(job, "url"):
@@ -6719,7 +6746,7 @@ def collect_audacy_v40(src):
         log(
             requested_id,
             "ACCEPT",
-            f"date source={source}; location={location}; job_type={audacy_job_type(title, description_text)}",
+            f"date source={source}; location={location}; city={audacy_city}; state={audacy_state}; country={audacy_country}; job_type={audacy_job_type(title, description_text)}",
             title=title,
             pd=pd,
             apply_url=live_apply,
@@ -6732,13 +6759,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v50.txt").write_text(
+    Path("mjr-audacy-validation-v51.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v50: {enumerated_count} enumerated, "
+        f"Audacy v51: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
