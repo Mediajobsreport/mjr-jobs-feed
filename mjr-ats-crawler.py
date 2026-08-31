@@ -6186,7 +6186,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v45 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v46 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6232,7 +6232,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v45 listing page {page_num}: "
+            f"Audacy v46 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6251,16 +6251,23 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v45 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v46 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
 def collect_audacy_v40(src):
     """
-    v45 Audacy validator + no-extra-request diagnostics.
+    v46 Audacy importer.
 
-    Save a small sample of already-fetched detail responses and log the parser
-    outputs so we can see exactly why detail pages are being rejected.
+    Audacy's individual iCIMS pages are valid, but their structured
+    datePosted is stale/corrupted (2024 on current 2026 requisitions).
+    For Audacy only:
+      - trust the individual job detail URL + requisition ID pairing
+      - parse title/location/description directly from page content
+      - ignore obviously stale structured datePosted
+      - use today's crawl date as MJR's posting date when no trustworthy
+        current posting date is exposed
+      - preserve strict job-ID/apply-URL validation
     """
     urls, enumerated_count = _audacy_direct_icims_urls_v40(src)
     if not urls:
@@ -6268,19 +6275,124 @@ def collect_audacy_v40(src):
 
     out = []
     seen = set()
-    consecutive_old = 0
-    fresh_seen = False
     detail_fetches = 0
     max_detail_fetches = 110
-    stale_stop_after = 20
 
-    diagnostic_lines = []
-    saved_samples = 0
-    max_saved_samples = 5
+    def text_meta(soup, names):
+        for name in names:
+            tag = soup.find("meta", attrs={"name": name})
+            if not tag:
+                tag = soup.find("meta", attrs={"property": name})
+            if tag and tag.get("content"):
+                v = clean(tag.get("content"))
+                if v:
+                    return v
+        return ""
+
+    def first_text(soup, selectors):
+        for sel in selectors:
+            try:
+                node = soup.select_one(sel)
+            except Exception:
+                node = None
+            if node:
+                v = clean(node.get_text(" ", strip=True))
+                if v:
+                    return v
+        return ""
+
+    def html_from_selectors(soup, selectors):
+        for sel in selectors:
+            try:
+                node = soup.select_one(sel)
+            except Exception:
+                node = None
+            if node:
+                # Keep useful HTML but strip obvious script/style noise.
+                for bad in node.find_all(["script", "style", "noscript"]):
+                    bad.decompose()
+                raw = str(node)
+                if clean(node.get_text(" ", strip=True)):
+                    return raw
+        return ""
+
+    def extract_jsonld_job(soup):
+        for script in soup.find_all("script", attrs={"type": "application/ld+json"}):
+            raw = script.string or script.get_text(" ", strip=True)
+            if not raw:
+                continue
+            try:
+                obj = json.loads(raw)
+            except Exception:
+                continue
+
+            objs = obj if isinstance(obj, list) else [obj]
+            expanded = []
+            for item in objs:
+                if isinstance(item, dict) and isinstance(item.get("@graph"), list):
+                    expanded.extend(item["@graph"])
+                else:
+                    expanded.append(item)
+
+            for item in expanded:
+                if isinstance(item, dict) and item.get("@type") == "JobPosting":
+                    return item
+        return {}
+
+    def get_location_from_jsonld(j):
+        loc = j.get("jobLocation")
+        if isinstance(loc, list):
+            loc = loc[0] if loc else None
+        if isinstance(loc, dict):
+            addr = loc.get("address")
+            if isinstance(addr, dict):
+                parts = [
+                    clean(addr.get("addressLocality", "")),
+                    clean(addr.get("addressRegion", "")),
+                    clean(addr.get("postalCode", "")),
+                    clean(addr.get("addressCountry", "")),
+                ]
+                return ", ".join([p for p in parts if p])
+        return ""
+
+    def trusted_detail_date(j, html):
+        """
+        Accept only plausible current dates. Audacy's 2024 structured date is
+        known bad on current 2026 requisitions.
+        """
+        candidates = []
+
+        jd = j.get("datePosted") if isinstance(j, dict) else None
+        if jd:
+            candidates.append(jd)
+
+        # Also inspect visible date labels if Audacy ever restores them.
+        soup_text = BeautifulSoup(html, "html.parser").get_text(" ", strip=True)
+        for pat in [
+            r"Posted\s+Date\s*[:\-]?\s*([A-Z][a-z]{2,8}\s+\d{1,2},\s+\d{4})",
+            r"Posted\s+Date\s*[:\-]?\s*(\d{1,2}/\d{1,2}/\d{2,4})",
+            r"Date\s+Posted\s*[:\-]?\s*(\d{1,2}/\d{1,2}/\d{2,4})",
+            r"Posting\s+Date\s*[:\-]?\s*(\d{1,2}/\d{1,2}/\d{2,4})",
+        ]:
+            m = re.search(pat, soup_text, re.I)
+            if m:
+                candidates.append(m.group(1))
+
+        for value in candidates:
+            try:
+                pd = dateparser.parse(str(value), fuzzy=True).date()
+            except Exception:
+                continue
+
+            # Reject implausibly stale dates for a live 2026 Audacy posting.
+            if pd >= CUTOFF and pd <= TODAY:
+                return pd
+
+        return None
 
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
-            print("Audacy v45 stopped at detail safety limit")
+            print("Audacy v46 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6292,118 +6404,16 @@ def collect_audacy_v40(src):
             rr = req("GET", detail_url)
             detail_fetches += 1
         except Exception as e:
-            diagnostic_lines.append(
-                f"{requested_id}\tFETCH_ERROR\t{type(e).__name__}: {e}\t{detail_url}"
-            )
+            print(f"Audacy v46 detail fetch failed {requested_id}: {e}")
             continue
 
         final = str(getattr(rr, "url", "") or detail_url)
         html = rr.text or ""
-        status_code = getattr(rr, "status_code", "")
-
-        # Save a few already-fetched raw detail responses. No new requests.
-        if saved_samples < max_saved_samples:
-            try:
-                sample_path = Path(
-                    f"mjr-audacy-detail-{requested_id}-v45.html"
-                )
-                sample_path.write_text(
-                    html[:700000],
-                    encoding="utf-8",
-                )
-                saved_samples += 1
-            except Exception as e:
-                diagnostic_lines.append(
-                    f"{requested_id}\tSAVE_SAMPLE_ERROR\t{e}"
-                )
+        if not html:
+            continue
 
         final_id_match = re.search(r"/jobs/(\d+)/", final, re.I)
         final_id = final_id_match.group(1) if final_id_match else None
-
-        detail_marker_ok = (
-            f"/jobs/{requested_id}/" in final
-            or f"/jobs/{requested_id}/" in html
-        )
-
-        # Capture multiple parser attempts independently for diagnosis.
-        parsed_job = None
-        direct_job = None
-        parse_error = ""
-        direct_error = ""
-
-        try:
-            parsed_job = _job_from_detail(src, final, html)
-        except Exception as e:
-            parse_error = f"{type(e).__name__}: {e}"
-
-        try:
-            direct_job = _direct_board_job(src, final, html)
-        except Exception as e:
-            direct_error = f"{type(e).__name__}: {e}"
-
-        job = parsed_job or direct_job
-
-        parsed_title = clean(
-            getattr(parsed_job, "title", "") if parsed_job else ""
-        )
-        direct_title = clean(
-            getattr(direct_job, "title", "") if direct_job else ""
-        )
-        chosen_title = clean(
-            getattr(job, "title", "") if job else ""
-        )
-
-        icims_date = None
-        job_date = None
-        date_error = ""
-
-        try:
-            icims_date = _v18_icims_date(html)
-        except Exception as e:
-            date_error = f"_v18_icims_date {type(e).__name__}: {e}"
-
-        if job is not None:
-            try:
-                job_date = getattr(job, "date", None)
-            except Exception:
-                job_date = None
-
-        canonical_apply = ""
-        apply_error = ""
-        try:
-            canonical_apply = _icims_canonical_apply_url(final, html)
-        except Exception as e:
-            apply_error = f"{type(e).__name__}: {e}"
-
-        apply_id_match = re.search(
-            r"/jobs/(\d+)/",
-            canonical_apply or "",
-            re.I,
-        )
-        apply_id = apply_id_match.group(1) if apply_id_match else None
-
-        # Compact parser evidence line for every checked detail page.
-        diagnostic_lines.append(
-            "\t".join([
-                str(requested_id),
-                f"status={status_code}",
-                f"final_id={final_id or ''}",
-                f"detail_marker={detail_marker_ok}",
-                f"parsed_title={parsed_title}",
-                f"direct_title={direct_title}",
-                f"chosen_title={chosen_title}",
-                f"icims_date={icims_date or ''}",
-                f"job_date={job_date or ''}",
-                f"apply_id={apply_id or ''}",
-                f"final={final}",
-                f"apply={canonical_apply}",
-                f"parse_error={parse_error}",
-                f"direct_error={direct_error}",
-                f"date_error={date_error}",
-                f"apply_error={apply_error}",
-            ])
-        )
-
         if final_id and final_id != requested_id:
             print(
                 f"Audacy rejected mismatched redirect: requested {requested_id}, "
@@ -6411,48 +6421,93 @@ def collect_audacy_v40(src):
             )
             continue
 
-        if not detail_marker_ok:
+        if (
+            f"/jobs/{requested_id}/" not in final
+            and f"/jobs/{requested_id}/" not in html
+        ):
             print(f"Audacy rejected non-detail response for job {requested_id}")
             continue
 
-        if not job:
-            print(f"Audacy v45 parser returned no job for {requested_id}")
-            continue
+        soup = BeautifulSoup(html, "html.parser")
+        j = extract_jsonld_job(soup)
 
-        title = chosen_title
+        # Title: prefer structured title, then OpenGraph/title tags, then page H1.
+        title = clean(j.get("title", "")) if isinstance(j, dict) else ""
         if not title:
-            print(f"Audacy v45 parser returned blank title for {requested_id}")
-            continue
-
-        pd = icims_date or job_date
-        if not pd:
-            print(
-                f"Audacy v45 could not determine detail date: "
-                f"{requested_id} | {title}"
+            title = text_meta(
+                soup,
+                ["og:title", "twitter:title"],
             )
+        if not title:
+            title = first_text(
+                soup,
+                [
+                    "h1",
+                    ".iCIMS_Header h1",
+                    ".iCIMS_JobHeader h1",
+                    ".job-title",
+                    "[class*='job-title']",
+                    "[class*='jobTitle']",
+                ],
+            )
+
+        # Strip site suffixes commonly appended to meta titles.
+        title = re.sub(r"\s+\|\s+Audacy.*$", "", title, flags=re.I).strip()
+        title = re.sub(r"\s+-\s+Audacy.*$", "", title, flags=re.I).strip()
+
+        if not title:
+            print(f"Audacy v46 blank title: {requested_id}")
             continue
 
-        if pd < CUTOFF:
-            consecutive_old += 1
-            if fresh_seen and consecutive_old >= stale_stop_after:
-                print(
-                    f"Audacy v45 stopping after {consecutive_old} "
-                    f"consecutive stale jobs"
-                )
-                break
+        # Description: prefer JSON-LD, then main job-description container.
+        description = ""
+        if isinstance(j, dict):
+            description = j.get("description") or ""
+
+        if not clean(BeautifulSoup(description, "html.parser").get_text(" ", strip=True)) if description else True:
+            description = html_from_selectors(
+                soup,
+                [
+                    ".iCIMS_JobContent",
+                    ".iCIMS_Expandable_Text",
+                    ".iCIMS_JobDescription",
+                    "[class*='job-description']",
+                    "[class*='jobDescription']",
+                    "main",
+                    "article",
+                ],
+            )
+
+        desc_text = clean(
+            BeautifulSoup(description or "", "html.parser").get_text(" ", strip=True)
+        )
+        if not desc_text:
+            print(f"Audacy v46 blank description: {requested_id} | {title}")
             continue
 
-        fresh_seen = True
-        consecutive_old = 0
-        job.date = pd
+        # Location: JSON-LD first, then visible metadata.
+        location = get_location_from_jsonld(j) if isinstance(j, dict) else ""
+        if not location:
+            location = first_text(
+                soup,
+                [
+                    ".iCIMS_JobHeader .iCIMS_JobLocation",
+                    ".iCIMS_JobLocation",
+                    "[class*='job-location']",
+                    "[class*='jobLocation']",
+                    "[class*='location']",
+                ],
+            )
 
-        live_apply = canonical_apply
-        if not live_apply:
-            print(f"Audacy v45 no canonical apply URL: {requested_id} | {title}")
-            continue
+        # Use current crawl date when Audacy provides no trustworthy current
+        # posting date. This follows MJR's rule for open jobs without a reliable
+        # employer posting date.
+        pd = trusted_detail_date(j, html) or TODAY
 
-        live_id_match = re.search(r"/jobs/(\d+)/", live_apply, re.I)
+        live_apply = _icims_canonical_apply_url(final, html)
+        live_id_match = re.search(r"/jobs/(\d+)/", live_apply or "", re.I)
         live_id = live_id_match.group(1) if live_id_match else None
+
         if live_id != requested_id:
             print(
                 f"Audacy rejected apply URL ID mismatch: requested {requested_id}, "
@@ -6460,6 +6515,41 @@ def collect_audacy_v40(src):
             )
             continue
 
+        # Build from the project's standard detail parser if possible, then
+        # overwrite Audacy fields with the directly verified values.
+        job = None
+        try:
+            job = _job_from_detail(src, final, html)
+        except Exception:
+            job = None
+        if not job:
+            try:
+                job = _direct_board_job(src, final, html)
+            except Exception:
+                job = None
+
+        if not job:
+            # Use the standard helper that builds from a JobPosting object when
+            # available; this preserves the project's existing XML schema.
+            try:
+                job = _job_from_jsonld(src, final, j) if j else None
+            except Exception:
+                job = None
+
+        if not job:
+            print(
+                f"Audacy v46 could not instantiate standard job object: "
+                f"{requested_id} | {title}"
+            )
+            continue
+
+        job.title = title
+        job.date = pd
+
+        if hasattr(job, "description"):
+            job.description = description
+        if hasattr(job, "location") and location:
+            job.location = location
         if hasattr(job, "url"):
             job.url = live_apply
         if hasattr(job, "apply_url"):
@@ -6471,24 +6561,16 @@ def collect_audacy_v40(src):
         seen.add(dedupe_key)
         out.append(job)
 
+        date_source = "employer" if trusted_detail_date(j, html) else "MJR discovery"
         print(
-            f"Audacy verified: {requested_id} | {pd.isoformat()} | "
-            f"{title} | {live_apply}"
+            f"Audacy verified: {requested_id} | {pd.isoformat()} "
+            f"({date_source}) | {title} | {live_apply}"
         )
-
-    try:
-        Path("mjr-audacy-detail-diagnostic-v45.txt").write_text(
-            "\n".join(diagnostic_lines),
-            encoding="utf-8",
-        )
-    except Exception as e:
-        print(f"Audacy v45 diagnostic write failed: {e}")
 
     print(
-        f"Audacy v45: {enumerated_count} enumerated, "
+        f"Audacy v46: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
-        f"{len(out)} verified fresh jobs, "
-        f"{saved_samples} detail samples saved"
+        f"{len(out)} verified jobs"
     )
     return out, enumerated_count
 
