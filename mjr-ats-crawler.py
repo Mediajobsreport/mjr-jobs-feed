@@ -4336,6 +4336,15 @@ def cox_successfactors(src):
             h = soup.find(["h1","h2"], class_=re.compile("job|title", re.I))
             title = clean(h.get_text(" ", strip=True) if h else "")
         if not title:
+            visible_title = soup.get_text("\n", strip=True)
+            mt = re.search(
+                r"(?:^|\n)Job Title:\s*\n?\s*([^\n]+)",
+                visible_title,
+                re.I,
+            )
+            if mt:
+                title = clean(mt.group(1))
+        if not title:
             continue
 
         # Cox SuccessFactors exposes current posting dates either in JSON-LD or
@@ -4357,7 +4366,15 @@ def cox_successfactors(src):
                     pd = parsedate(md.group(1))
                     if pd:
                         break
-        if not pd or pd < CUTOFF:
+        # Cox does not reliably expose a posting date on its public
+        # SuccessFactors detail pages. Per MJR feed rules, an open job with no
+        # employer posting date uses the MJR discovery date.
+        if not pd:
+            pd = datetime.datetime.now(
+                ZoneInfo("America/New_York")
+            ).date()
+
+        if pd < CUTOFF:
             continue
 
         desc_html = ""
@@ -4375,13 +4392,36 @@ def cox_successfactors(src):
             description_text = clean(soup.get_text(" ", strip=True))
 
         location = get_location_from_jsonld(jld) if isinstance(jld, dict) else ""
+
+        # Cox prominently exposes the public location directly beneath the
+        # title, e.g. "Orlando, FL, US, 32801".
+        if not location:
+            visible = soup.get_text("\n", strip=True)
+            mloc_visible = re.search(
+                r"(?:^|\n)Location:\s*\n?\s*"
+                r"([^,\n]+),\s*([A-Z]{2}),\s*(US|USA)"
+                r"(?:,\s*\d{5})?",
+                visible,
+                re.I,
+            )
+            if mloc_visible:
+                location = (
+                    f"{clean(mloc_visible.group(1))}, "
+                    f"{mloc_visible.group(2).upper()}, US"
+                )
+
         city, state, country = "", "", "US"
         if location:
-            mloc = re.match(r"^([^,]+),\s*([A-Z]{2})(?:\s|,|$)", location, re.I)
+            mloc = re.match(
+                r"^([^,]+),\s*([A-Z]{2})(?:\s|,|$)",
+                location,
+                re.I,
+            )
             if mloc:
-                city, state = clean(mloc.group(1)), mloc.group(2).upper()
+                city = clean(mloc.group(1))
+                state = mloc.group(2).upper()
             else:
-                city = location
+                city = clean(location)
 
         live_apply = final.split("?",1)[0]
         cat = category(title, description_text, src["Industry"], src["Company"])
@@ -6410,7 +6450,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v56 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v57 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6456,7 +6496,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v56 listing page {page_num}: "
+            f"Audacy v57 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6475,7 +6515,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v56 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v57 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6506,7 +6546,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v56.txt").write_text(
+        Path("mjr-audacy-validation-v57.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6749,7 +6789,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v56 stopped at detail safety limit")
+            print("Audacy v57 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6981,13 +7021,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v56.txt").write_text(
+    Path("mjr-audacy-validation-v57.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v56: {enumerated_count} enumerated, "
+        f"Audacy v57: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
