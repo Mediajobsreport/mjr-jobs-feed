@@ -39,8 +39,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "$TEST" ]]; then
             echo "MJR_TEST_MODE=true" >> "$GITHUB_ENV"
             echo "MJR_OUTPUT=mjr-jboard-test.xml" >> "$GITHUB_ENV"
-            echo "MJR_AUDIT=mjr-ats-audit-test.csv
-            mjr-siriusxm-diagnostic-v62.txt" >> "$GITHUB_ENV"
+            echo "MJR_AUDIT=mjr-ats-audit-test.csv" >> "$GITHUB_ENV"
             echo "MJR_STATE=mjr-job-state-test.json" >> "$GITHUB_ENV"
             echo "MJR_DIAGNOSTIC=mjr-salem-diagnostic.txt" >> "$GITHUB_ENV"
             echo "TARGETED TEST: $TEST"
@@ -79,6 +78,13 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '' }}
         shell: bash
         run: |
+          echo ""
+          echo "----- SIRIUSXM DIAGNOSTIC -----"
+          if [[ -f "mjr-siriusxm-diagnostic-v62.txt" ]]; then
+            cat mjr-siriusxm-diagnostic-v62.txt
+          else
+            echo "No SiriusXM diagnostic file generated."
+          fi
           echo ""
           echo "========================================"
           echo "MJR TARGETED TEST"
@@ -147,6 +153,7 @@ jobs:
           path: |
             mjr-jboard-test.xml
             mjr-ats-audit-test.csv
+            mjr-siriusxm-diagnostic-v62.txt
             mjr-audacy-validation-v62.txt
             mjr-job-state-test.json
             mjr-salem-diagnostic.txt
