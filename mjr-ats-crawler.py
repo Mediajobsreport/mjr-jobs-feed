@@ -6186,7 +6186,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v46 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v47 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6232,7 +6232,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v46 listing page {page_num}: "
+            f"Audacy v47 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6251,26 +6251,40 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v46 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v47 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
 def collect_audacy_v40(src):
     """
-    v46 Audacy importer.
+    v47 Audacy importer with guaranteed validation logging.
 
-    Audacy's individual iCIMS pages are valid, but their structured
-    datePosted is stale/corrupted (2024 on current 2026 requisitions).
-    For Audacy only:
-      - trust the individual job detail URL + requisition ID pairing
-      - parse title/location/description directly from page content
-      - ignore obviously stale structured datePosted
-      - use today's crawl date as MJR's posting date when no trustworthy
-        current posting date is exposed
-      - preserve strict job-ID/apply-URL validation
+    Collection logic is intentionally unchanged from v46. The only material
+    addition is a persistent per-job decision log explaining exactly why each
+    enumerated detail page was accepted or rejected.
     """
     urls, enumerated_count = _audacy_direct_icims_urls_v40(src)
+    log_lines = [
+        "job_id\tdecision\treason\ttitle\tdate\tapply_url\tfinal_url"
+    ]
+
+    def log(job_id, decision, reason="", title="", pd="", apply_url="", final_url=""):
+        line = "\t".join([
+            str(job_id or ""),
+            str(decision or ""),
+            str(reason or "").replace("\t", " ").replace("\n", " "),
+            str(title or "").replace("\t", " ").replace("\n", " "),
+            str(pd or ""),
+            str(apply_url or "").replace("\t", " "),
+            str(final_url or "").replace("\t", " "),
+        ])
+        log_lines.append(line)
+
     if not urls:
+        log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
+        Path("mjr-audacy-validation-v47.txt").write_text(
+            "\n".join(log_lines), encoding="utf-8"
+        )
         return [], enumerated_count
 
     out = []
@@ -6308,7 +6322,6 @@ def collect_audacy_v40(src):
             except Exception:
                 node = None
             if node:
-                # Keep useful HTML but strip obvious script/style noise.
                 for bad in node.find_all(["script", "style", "noscript"]):
                     bad.decompose()
                 raw = str(node)
@@ -6356,17 +6369,12 @@ def collect_audacy_v40(src):
         return ""
 
     def trusted_detail_date(j, html):
-        """
-        Accept only plausible current dates. Audacy's 2024 structured date is
-        known bad on current 2026 requisitions.
-        """
         candidates = []
 
         jd = j.get("datePosted") if isinstance(j, dict) else None
         if jd:
             candidates.append(jd)
 
-        # Also inspect visible date labels if Audacy ever restores them.
         soup_text = BeautifulSoup(html, "html.parser").get_text(" ", strip=True)
         for pat in [
             r"Posted\s+Date\s*[:\-]?\s*([A-Z][a-z]{2,8}\s+\d{1,2},\s+\d{4})",
@@ -6383,8 +6391,6 @@ def collect_audacy_v40(src):
                 pd = dateparser.parse(str(value), fuzzy=True).date()
             except Exception:
                 continue
-
-            # Reject implausibly stale dates for a live 2026 Audacy posting.
             if pd >= CUTOFF and pd <= TODAY:
                 return pd
 
@@ -6392,52 +6398,49 @@ def collect_audacy_v40(src):
 
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
-            print("Audacy v46 stopped at detail safety limit")
+            log("", "STOP", "detail safety limit reached")
+            print("Audacy v47 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
         requested_id = requested_id_match.group(1) if requested_id_match else None
         if not requested_id:
+            log("", "REJECT", "missing job id in enumerated URL", apply_url=detail_url)
             continue
 
         try:
             rr = req("GET", detail_url)
             detail_fetches += 1
         except Exception as e:
-            print(f"Audacy v46 detail fetch failed {requested_id}: {e}")
+            log(requested_id, "REJECT", f"detail fetch failed: {type(e).__name__}: {e}", apply_url=detail_url)
             continue
 
         final = str(getattr(rr, "url", "") or detail_url)
         html = rr.text or ""
         if not html:
+            log(requested_id, "REJECT", "empty detail HTML", final_url=final)
             continue
 
         final_id_match = re.search(r"/jobs/(\d+)/", final, re.I)
         final_id = final_id_match.group(1) if final_id_match else None
         if final_id and final_id != requested_id:
-            print(
-                f"Audacy rejected mismatched redirect: requested {requested_id}, "
-                f"final {final_id}"
-            )
+            reason = f"redirect id mismatch requested={requested_id} final={final_id}"
+            log(requested_id, "REJECT", reason, final_url=final)
             continue
 
         if (
             f"/jobs/{requested_id}/" not in final
             and f"/jobs/{requested_id}/" not in html
         ):
-            print(f"Audacy rejected non-detail response for job {requested_id}")
+            log(requested_id, "REJECT", "response is not matching detail page", final_url=final)
             continue
 
         soup = BeautifulSoup(html, "html.parser")
         j = extract_jsonld_job(soup)
 
-        # Title: prefer structured title, then OpenGraph/title tags, then page H1.
         title = clean(j.get("title", "")) if isinstance(j, dict) else ""
         if not title:
-            title = text_meta(
-                soup,
-                ["og:title", "twitter:title"],
-            )
+            title = text_meta(soup, ["og:title", "twitter:title"])
         if not title:
             title = first_text(
                 soup,
@@ -6451,20 +6454,24 @@ def collect_audacy_v40(src):
                 ],
             )
 
-        # Strip site suffixes commonly appended to meta titles.
         title = re.sub(r"\s+\|\s+Audacy.*$", "", title, flags=re.I).strip()
         title = re.sub(r"\s+-\s+Audacy.*$", "", title, flags=re.I).strip()
 
         if not title:
-            print(f"Audacy v46 blank title: {requested_id}")
+            log(requested_id, "REJECT", "blank title after direct parsing", final_url=final)
             continue
 
-        # Description: prefer JSON-LD, then main job-description container.
         description = ""
         if isinstance(j, dict):
             description = j.get("description") or ""
 
-        if not clean(BeautifulSoup(description, "html.parser").get_text(" ", strip=True)) if description else True:
+        description_text = ""
+        if description:
+            description_text = clean(
+                BeautifulSoup(description, "html.parser").get_text(" ", strip=True)
+            )
+
+        if not description_text:
             description = html_from_selectors(
                 soup,
                 [
@@ -6477,15 +6484,14 @@ def collect_audacy_v40(src):
                     "article",
                 ],
             )
+            description_text = clean(
+                BeautifulSoup(description or "", "html.parser").get_text(" ", strip=True)
+            )
 
-        desc_text = clean(
-            BeautifulSoup(description or "", "html.parser").get_text(" ", strip=True)
-        )
-        if not desc_text:
-            print(f"Audacy v46 blank description: {requested_id} | {title}")
+        if not description_text:
+            log(requested_id, "REJECT", "blank description after direct parsing", title=title, final_url=final)
             continue
 
-        # Location: JSON-LD first, then visible metadata.
         location = get_location_from_jsonld(j) if isinstance(j, dict) else ""
         if not location:
             location = first_text(
@@ -6499,48 +6505,48 @@ def collect_audacy_v40(src):
                 ],
             )
 
-        # Use current crawl date when Audacy provides no trustworthy current
-        # posting date. This follows MJR's rule for open jobs without a reliable
-        # employer posting date.
-        pd = trusted_detail_date(j, html) or TODAY
+        employer_date = trusted_detail_date(j, html)
+        pd = employer_date or TODAY
 
-        live_apply = _icims_canonical_apply_url(final, html)
+        try:
+            live_apply = _icims_canonical_apply_url(final, html)
+        except Exception as e:
+            log(requested_id, "REJECT", f"canonical apply URL parser failed: {type(e).__name__}: {e}", title=title, pd=pd, final_url=final)
+            continue
+
         live_id_match = re.search(r"/jobs/(\d+)/", live_apply or "", re.I)
         live_id = live_id_match.group(1) if live_id_match else None
 
         if live_id != requested_id:
-            print(
-                f"Audacy rejected apply URL ID mismatch: requested {requested_id}, "
-                f"apply {live_id}"
-            )
+            reason = f"apply URL id mismatch requested={requested_id} apply={live_id}"
+            log(requested_id, "REJECT", reason, title=title, pd=pd, apply_url=live_apply, final_url=final)
             continue
 
-        # Build from the project's standard detail parser if possible, then
-        # overwrite Audacy fields with the directly verified values.
         job = None
+        parser_attempts = []
+
         try:
             job = _job_from_detail(src, final, html)
-        except Exception:
-            job = None
+        except Exception as e:
+            parser_attempts.append(f"_job_from_detail:{type(e).__name__}:{e}")
+
         if not job:
             try:
                 job = _direct_board_job(src, final, html)
-            except Exception:
-                job = None
+            except Exception as e:
+                parser_attempts.append(f"_direct_board_job:{type(e).__name__}:{e}")
 
-        if not job:
-            # Use the standard helper that builds from a JobPosting object when
-            # available; this preserves the project's existing XML schema.
+        if not job and j:
             try:
-                job = _job_from_jsonld(src, final, j) if j else None
-            except Exception:
-                job = None
+                job = _job_from_jsonld(src, final, j)
+            except Exception as e:
+                parser_attempts.append(f"_job_from_jsonld:{type(e).__name__}:{e}")
 
         if not job:
-            print(
-                f"Audacy v46 could not instantiate standard job object: "
-                f"{requested_id} | {title}"
-            )
+            reason = "could not instantiate standard job object"
+            if parser_attempts:
+                reason += " | " + " | ".join(parser_attempts)
+            log(requested_id, "REJECT", reason, title=title, pd=pd, apply_url=live_apply, final_url=final)
             continue
 
         job.title = title
@@ -6557,18 +6563,28 @@ def collect_audacy_v40(src):
 
         dedupe_key = (requested_id, title.lower())
         if dedupe_key in seen:
+            log(requested_id, "REJECT", "duplicate job id/title", title=title, pd=pd, apply_url=live_apply, final_url=final)
             continue
+
         seen.add(dedupe_key)
         out.append(job)
 
-        date_source = "employer" if trusted_detail_date(j, html) else "MJR discovery"
-        print(
-            f"Audacy verified: {requested_id} | {pd.isoformat()} "
-            f"({date_source}) | {title} | {live_apply}"
-        )
+        source = "employer" if employer_date else "MJR discovery"
+        log(requested_id, "ACCEPT", f"date source={source}", title=title, pd=pd, apply_url=live_apply, final_url=final)
+
+    log(
+        "",
+        "SUMMARY",
+        f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
+    )
+
+    Path("mjr-audacy-validation-v47.txt").write_text(
+        "\n".join(log_lines),
+        encoding="utf-8",
+    )
 
     print(
-        f"Audacy v46: {enumerated_count} enumerated, "
+        f"Audacy v47: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
