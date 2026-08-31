@@ -4476,8 +4476,13 @@ def cox_successfactors(src):
         context = (title + " " + description_text[:2200]).lower()
 
         # Commercial traffic/continuity/log scheduling = Business Office.
-        if re.search(r"\btraffic (coordinator|assistant|director|manager)\b", low) and re.search(
-            r"\b(logs?|commercial|spots?|inventory|wide ?orbit|billing|master control)\b",
+        # Covers both "Traffic Director" and Cox's "Dir, Traffic - TV" naming.
+        if (
+            re.search(r"\btraffic (coordinator|assistant|director|manager)\b", low)
+            or re.search(r"\b(dir|director|manager|coordinator|assistant)[,\s-]+traffic\b", low)
+        ) and re.search(
+            r"\b(logs?|commercial|spots?|inventory|wide ?orbit|billing|master control|"
+            r"sales operations|continuity|advertiser|agency profiles?)\b",
             context,
         ):
             cat = "Business Office"
@@ -4502,6 +4507,13 @@ def cox_successfactors(src):
         ) and re.search(r"\b(tv|television|w[a-z]{2,4}-?tv|telemundo)\b", context):
             cat = "Journalism"
 
+        # Commercial creative-production roles are Television, not Sales.
+        elif re.search(r"\bcommercial (editor|producer|writer|videographer)\b", low) and re.search(
+            r"\b(tv|television|telemundo|w[a-z]{2,4}-?tv)\b",
+            context,
+        ):
+            cat = "Television"
+
         # Sales/revenue roles must beat Digital/Business Office.
         elif re.search(
             r"\b(account executive|media consultant|sales development representative|"
@@ -4512,6 +4524,15 @@ def cox_successfactors(src):
             cat = "Sales & Marketing"
 
         wa = normalize_work_arrangement(description_text, location)
+
+        # Explicit negative remote language must override generic remote keywords.
+        # Example Cox copy: "This is not a remote position."
+        if re.search(
+            r"\b(?:not a remote position|not remote|no remote|remote work (?:is )?not "
+            r"(?:available|offered|permitted)|must work (?:on[- ]?site|in[- ]person))\b",
+            dlow,
+        ):
+            wa = "On-Site"
 
         job = Job(
             jid,
@@ -6535,7 +6556,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v59 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v60 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6581,7 +6602,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v59 listing page {page_num}: "
+            f"Audacy v60 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6600,7 +6621,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v59 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v60 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6631,7 +6652,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v59.txt").write_text(
+        Path("mjr-audacy-validation-v60.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6874,7 +6895,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v59 stopped at detail safety limit")
+            print("Audacy v60 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -7106,13 +7127,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v59.txt").write_text(
+    Path("mjr-audacy-validation-v60.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v59: {enumerated_count} enumerated, "
+        f"Audacy v60: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
