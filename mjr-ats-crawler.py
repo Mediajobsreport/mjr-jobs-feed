@@ -161,9 +161,17 @@ class Job:
 
 
 def jobtype(title, text=""):
+    t = clean(title).lower()
     s = (title + " " + text).lower()
 
-    if "intern" in s:
+    # Internship must be indicated by the job title itself. Employer boilerplate
+    # often mentions interns/internships and must not reclassify normal jobs.
+    if re.search(
+        r"\b(intern|internship|internships|student intern|summer intern|"
+        r"fall intern|spring intern|co-op intern)\b",
+        t,
+        re.I,
+    ):
         return "Internship"
     if "part" in s and "time" in s:
         return "Part Time"
@@ -4901,19 +4909,49 @@ def _radio_recovery_job(src, url, raw):
         return None
     if not pd:
         pd = TODAY
-    h1=soup.find("h1")
-    title=clean(h1.get_text(" ") if h1 else "")
-    bad={"careers","jobs","career opportunities","job openings","midwest careers"}
-    if not title or title.lower() in bad:
-        title=""
-        for node in soup.find_all(["h2","h3"]):
-            cand=clean(node.get_text(" "))
-            cl=cand.lower()
-            if 4 <= len(cand) <= 180 and any(k in cl for k in (
+    headings = soup.find_all(["h1", "h2", "h3"])
+    title = ""
+    bad = {
+        "careers",
+        "jobs",
+        "career opportunities",
+        "job openings",
+        "midwest careers",
+        "stingray jobs",
+        "open position at stingray",
+    }
+
+    # Prefer a real job-title heading. Stingray pages put "Stingray Jobs" first,
+    # then "Open Position at Stingray", then the actual title.
+    for node in headings:
+        cand = clean(node.get_text(" "))
+        cl = cand.lower()
+        if not cand or cl in bad:
+            continue
+        if cl.startswith("job:"):
+            cand = clean(cand[4:])
+            cl = cand.lower()
+
+        # Reject obvious section/branding headings.
+        if cl in bad or cl.startswith("career opportunities"):
+            continue
+
+        if 4 <= len(cand) <= 180:
+            # On individual Stingray /job/... pages the first remaining H1 is
+            # the actual job title, even when it lacks one of our keyword hints.
+            if "jobs.stingray.com/job/" in url.lower() and node.name == "h1":
+                title = cand
+                break
+
+            if any(k in cl for k in (
                 "producer","reporter","anchor","host","announcer","sales","account executive",
                 "engineer","technician","director","manager","coordinator","assistant",
-                "specialist","editor","personality","program","digital","marketing","promotions")):
-                title=cand; break
+                "specialist","editor","personality","program","digital","marketing","promotions",
+                "developer","analyst","auditor","partner","lead","executive","strategist",
+                "operations","content","finance","hr","human resources"
+            )):
+                title = cand
+                break
     if not title:
         return None
     main=(soup.find("main") or soup.find("article")
@@ -6188,7 +6226,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v51 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v52 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6234,7 +6272,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v51 listing page {page_num}: "
+            f"Audacy v52 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6253,7 +6291,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v51 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v52 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6284,7 +6322,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v51.txt").write_text(
+        Path("mjr-audacy-validation-v52.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6527,7 +6565,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v51 stopped at detail safety limit")
+            print("Audacy v52 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6759,13 +6797,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v51.txt").write_text(
+    Path("mjr-audacy-validation-v52.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v51: {enumerated_count} enumerated, "
+        f"Audacy v52: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
