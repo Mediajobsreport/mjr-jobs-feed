@@ -6188,7 +6188,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v49 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v50 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6234,7 +6234,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v49 listing page {page_num}: "
+            f"Audacy v50 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6253,7 +6253,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v49 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v50 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6284,7 +6284,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v49.txt").write_text(
+        Path("mjr-audacy-validation-v50.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6398,10 +6398,114 @@ def collect_audacy_v40(src):
 
         return None
 
+    def audacy_location(soup, j, html):
+        # 1. Structured JobPosting location.
+        loc = get_location_from_jsonld(j) if isinstance(j, dict) else ""
+        if loc:
+            return loc
+
+        # 2. iCIMS visible location containers / labels.
+        loc = first_text(
+            soup,
+            [
+                ".iCIMS_JobHeader .iCIMS_JobLocation",
+                ".iCIMS_JobLocation",
+                ".iCIMS_JobHeader .iCIMS_JobHeaderField",
+                "[class*='job-location']",
+                "[class*='jobLocation']",
+                "[class*='JobLocation']",
+            ],
+        )
+        if loc:
+            loc = re.sub(
+                r"^(?:Location|Job Location|Primary Location)\s*[:\-]?\s*",
+                "",
+                loc,
+                flags=re.I,
+            ).strip()
+            if loc:
+                return loc
+
+        # 3. Parse labeled visible text.
+        visible = soup.get_text(" ", strip=True)
+        patterns = [
+            r"(?:Job\s+Location|Primary\s+Location|Location)\s*[:\-]\s*"
+            r"([^|•]{2,120}?)(?=\s+(?:Job\s+ID|ID|Category|Position|Overview|Responsibilities|$))",
+            r"(?:Job\s+Location|Primary\s+Location|Location)\s*[:\-]\s*"
+            r"([A-Za-z .'-]+,\s*[A-Z]{2})(?:\s|$)",
+        ]
+        for pat in patterns:
+            m = re.search(pat, visible, re.I)
+            if m:
+                candidate = clean(m.group(1))
+                if candidate:
+                    return candidate
+
+        # 4. Common JSON/JS fields in iCIMS HTML.
+        for pat in [
+            r'"(?:jobLocation|location|locationName|primaryLocation)"\s*:\s*"([^"]+)"',
+            r"'(?:jobLocation|location|locationName|primaryLocation)'\s*:\s*'([^']+)'",
+        ]:
+            m = re.search(pat, html, re.I)
+            if m:
+                candidate = clean(
+                    m.group(1)
+                    .replace("\\/", "/")
+                    .replace("\\u0026", "&")
+                )
+                if candidate:
+                    return candidate
+
+        return ""
+
+    def audacy_job_type(title, description_text):
+        """
+        Prevent Audacy boilerplate from turning unrelated jobs into internships.
+        Internship is title-led; other job types can use the existing classifier.
+        """
+        t = clean(title).lower()
+
+        internship_title = bool(
+            re.search(
+                r"\b(intern|internship|internships|student intern|summer intern|"
+                r"fall intern|spring intern)\b",
+                t,
+                re.I,
+            )
+        )
+        if internship_title:
+            return "Internship"
+
+        # Run the existing classifier on title plus a reduced opening portion
+        # of the description, after removing internship boilerplate sentences.
+        desc = clean(description_text or "")
+        sentences = re.split(r"(?<=[.!?])\s+", desc)
+        cleaned_sentences = []
+        for sentence in sentences[:40]:
+            low = sentence.lower()
+            if (
+                "internship" in low
+                or re.search(r"\binterns?\b", low)
+                or "equal opportunity" in low
+                or "reasonable accommodation" in low
+            ):
+                continue
+            cleaned_sentences.append(sentence)
+
+        reduced = " ".join(cleaned_sentences)[:5000]
+        jt = jobtype(title, reduced)
+
+        # Hard guard: non-intern titles must never become Internship merely
+        # because of description boilerplate.
+        if str(jt).strip().lower() == "internship":
+            jt = jobtype(title, "")
+
+        return jt
+
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v49 stopped at detail safety limit")
+            print("Audacy v50 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6494,18 +6598,7 @@ def collect_audacy_v40(src):
             log(requested_id, "REJECT", "blank description after direct parsing", title=title, final_url=final)
             continue
 
-        location = get_location_from_jsonld(j) if isinstance(j, dict) else ""
-        if not location:
-            location = first_text(
-                soup,
-                [
-                    ".iCIMS_JobHeader .iCIMS_JobLocation",
-                    ".iCIMS_JobLocation",
-                    "[class*='job-location']",
-                    "[class*='jobLocation']",
-                    "[class*='location']",
-                ],
-            )
+        location = audacy_location(soup, j, html)
 
         employer_date = trusted_detail_date(j, html)
         mjr_discovery_date = datetime.now(
@@ -6554,7 +6647,7 @@ def collect_audacy_v40(src):
                     src["Company"],
                     description_text,
                     pd,
-                    jobtype(title, description_text),
+                    audacy_job_type(title, description_text),
                     category(
                         title,
                         description_text,
@@ -6598,6 +6691,12 @@ def collect_audacy_v40(src):
 
         job.title = title
         job.date = pd
+        if hasattr(job, "job_type"):
+            job.job_type = audacy_job_type(title, description_text)
+        if hasattr(job, "jobtype"):
+            job.jobtype = audacy_job_type(title, description_text)
+        if hasattr(job, "type"):
+            job.type = audacy_job_type(title, description_text)
 
         if hasattr(job, "description"):
             job.description = description
@@ -6617,7 +6716,15 @@ def collect_audacy_v40(src):
         out.append(job)
 
         source = "employer" if employer_date else "MJR discovery"
-        log(requested_id, "ACCEPT", f"date source={source}", title=title, pd=pd, apply_url=live_apply, final_url=final)
+        log(
+            requested_id,
+            "ACCEPT",
+            f"date source={source}; location={location}; job_type={audacy_job_type(title, description_text)}",
+            title=title,
+            pd=pd,
+            apply_url=live_apply,
+            final_url=final,
+        )
 
     log(
         "",
@@ -6625,13 +6732,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v49.txt").write_text(
+    Path("mjr-audacy-validation-v50.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v49: {enumerated_count} enumerated, "
+        f"Audacy v50: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
