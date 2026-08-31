@@ -4233,22 +4233,77 @@ def _crawl_rendered_job_board(src, starts, allow_hosts=None, max_pages=40, max_j
 def cox_successfactors(src):
     """Cox Media Group: SAP SuccessFactors public career site.
 
-    CMG exposes server-rendered listings and canonical individual detail pages
-    under careers.cmg.com. Crawl the view-all/search surfaces and retain only
-    recent individual job postings through the normal project validators.
+    CMG's /viewalljobs/ page is a category landing page. The real server-
+    rendered job table lives at /go/All-Jobs/9298500/ and paginates with
+    SuccessFactors path offsets such as /25/... . Crawl that surface directly,
+    collect canonical /job/.../<requisition-id>/ URLs, then pass each detail
+    page through the project's normal recent-job validator.
     """
-    starts = [
-        "https://careers.cmg.com/viewalljobs/?locale=en_US",
-        "https://careers.cmg.com/search/?createNewAlert=false&q=&locationsearch=",
-        src["URL"],
-    ]
-    return _crawl_rendered_job_board(
-        src,
-        starts,
-        allow_hosts={"careers.cmg.com"},
-        max_pages=60,
-        max_jobs=2000,
-    )
+    base = "https://careers.cmg.com/go/All-Jobs/9298500/"
+    queue = [base]
+    seen_pages = set()
+    detail_urls = []
+    seen_detail = set()
+
+    while queue and len(seen_pages) < 12 and len(detail_urls) < 500:
+        page = queue.pop(0)
+        page_key = page.split("#", 1)[0]
+        if page_key in seen_pages:
+            continue
+        seen_pages.add(page_key)
+
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+
+        final_url = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        for a in soup.find_all("a", href=True):
+            h = urljoin(final_url, a["href"]).split("#", 1)[0]
+            hp = urlparse(h)
+            host = hp.netloc.lower().replace("www.", "")
+            if host != "careers.cmg.com":
+                continue
+
+            low = hp.path.lower()
+
+            # CMG canonical individual job details look like:
+            # /job/Orlando-Media-Consultant.../1403972500/
+            if re.search(r"/job/[^/]+/\d+/?$", low):
+                if h not in seen_detail:
+                    seen_detail.add(h)
+                    detail_urls.append(h)
+                continue
+
+            # Follow SuccessFactors "All Jobs" pagination regardless of whether
+            # the anchor label is a number, chevron, or Next.
+            if low.startswith("/go/all-jobs/9298500/"):
+                if h.rstrip("/") != base.rstrip("/") and h not in seen_pages:
+                    queue.append(h)
+
+        # Defensive recovery of embedded canonical job URLs.
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        for m in re.finditer(
+            r'https?://careers\.cmg\.com/job/[^"\'<>\s]+?/\d+/?',
+            raw,
+            re.I,
+        ):
+            h = m.group(0).rstrip(".,);")
+            if h not in seen_detail:
+                seen_detail.add(h)
+                detail_urls.append(h)
+
+    out = []
+    seen_ids = set()
+    for url in detail_urls:
+        j = _recent_detail_job(src, url)
+        if j and j.id not in seen_ids:
+            seen_ids.add(j.id)
+            out.append(j)
+
+    return out
 
 def paramount_successfactors(src):
     """Paramount: SAP SuccessFactors public career site.
@@ -6247,7 +6302,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v54 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v55 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6293,7 +6348,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v54 listing page {page_num}: "
+            f"Audacy v55 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6312,7 +6367,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v54 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v55 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6343,7 +6398,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v54.txt").write_text(
+        Path("mjr-audacy-validation-v55.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -6586,7 +6641,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v54 stopped at detail safety limit")
+            print("Audacy v55 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -6818,13 +6873,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v54.txt").write_text(
+    Path("mjr-audacy-validation-v55.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v54: {enumerated_count} enumerated, "
+        f"Audacy v55: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
@@ -7410,7 +7465,7 @@ def main():
             row["Industry"] = row.get("Industry") or "Broadcast Media"
             row["Company"] = "Cox Media Group"
             row["ATS"] = "SAP SuccessFactors"
-            row["URL"] = "https://careers.cmg.com/viewalljobs/?locale=en_US"
+            row["URL"] = "https://careers.cmg.com/go/All-Jobs/9298500/"
             row["Active"] = "True"
 
     # Also accept the legacy test name if it is ever entered manually.
