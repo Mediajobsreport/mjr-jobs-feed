@@ -80,8 +80,8 @@ jobs:
         run: |
           echo ""
           echo "----- SIRIUSXM DIAGNOSTIC -----"
-          if [[ -f "mjr-siriusxm-diagnostic-v63.txt" ]]; then
-            cat mjr-siriusxm-diagnostic-v63.txt
+          if [[ -f "mjr-siriusxm-diagnostic-v64.txt" ]]; then
+            cat mjr-siriusxm-diagnostic-v64.txt
           else
             echo "No SiriusXM diagnostic file generated."
           fi
@@ -153,8 +153,8 @@ jobs:
           path: |
             mjr-jboard-test.xml
             mjr-ats-audit-test.csv
-            mjr-siriusxm-diagnostic-v63.txt
-            mjr-audacy-validation-v63.txt
+            mjr-siriusxm-diagnostic-v64.txt
+            mjr-audacy-validation-v64.txt
             mjr-job-state-test.json
             mjr-salem-diagnostic.txt
             mjr-salem-iframe.html
