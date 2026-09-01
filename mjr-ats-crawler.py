@@ -802,75 +802,121 @@ def infer_country(location, company="", description=""):
 
 def normalize_work_arrangement(description, location):
     """
-    Determine work arrangement from explicit employer language.
-    On-Site, Hybrid, and Remote are kept as separate values.
-    Explicit on-site language takes precedence over incidental mentions
-    such as "remote location." Hybrid is used only when the employer
-    explicitly describes a mixed in-office/remote arrangement.
+    Conservative work-arrangement classifier.
+
+    MJR rule:
+      - Remote only when the employer explicitly identifies THIS JOB as remote,
+        or the structured/title/location value itself is Remote.
+      - Hybrid only when the employer explicitly identifies THIS JOB as hybrid
+        or requires a recurring office/remote mix.
+      - Otherwise default to On-Site.
+
+    Incidental policy/benefits language about remote work, telework,
+    work-from-home equipment, remote employees, or remote locations must not
+    convert an otherwise site-based job to Remote.
     """
     desc = clean(description).lower()
     loc = clean(location).lower()
-    s = f" {desc} {loc} "
+    s = f" {desc} "
+    loc_s = f" {loc} "
 
-    # Strong explicit on-site signals win over incidental uses of "remote."
+    # Explicit negatives always win.
+    negative_remote_patterns = [
+        r"\bnot (?:a )?remote (?:role|position|job)\b",
+        r"\bnot remote\b",
+        r"\bno remote\b",
+        r"\bremote work (?:is )?not (?:available|offered|permitted|allowed)\b",
+        r"\bremote (?:work|option|arrangement) (?:is )?not (?:available|offered|permitted|allowed)\b",
+        r"\bmust work (?:on[- ]?site|onsite|in[- ]person)\b",
+        r"\brequired to work (?:on[- ]?site|onsite|in[- ]person)\b",
+        r"\bmust be (?:on[- ]?site|onsite|in[- ]person)\b",
+        r"\bno (?:work from home|work[- ]from[- ]home|telework|telecommuting)\b",
+    ]
+    if any(re.search(p, s) for p in negative_remote_patterns):
+        return "On-Site"
+
+    # Strong explicit on-site signals.
     onsite_patterns = [
-        r"requires full[- ]time on[- ]site presence",
-        r"requires full time on site presence",
-        r"this role requires full[- ]time on[- ]site",
-        r"this role requires full time on site",
-        r"this position is an on[- ]site role",
-        r"this position is onsite",
-        r"on[- ]site role",
-        r"on site role",
-        r"\(on[- ]site\)",
-        r"\(on site\)",
+        r"\brequires? full[- ]time on[- ]site presence\b",
+        r"\brequires? full time on site presence\b",
+        r"\bthis role requires? full[- ]time on[- ]site\b",
+        r"\bthis role requires? full time on site\b",
+        r"\bthis (?:position|role|job) is (?:an? )?on[- ]site\b",
+        r"\bthis (?:position|role|job) is onsite\b",
+        r"\bon[- ]site role\b",
+        r"\bon site role\b",
+        r"\bonsite role\b",
+        r"\bin[- ]person role\b",
+        r"\bin person role\b",
+        r"\bwork(?:ing)? on[- ]site\b",
+        r"\bwork(?:ing)? onsite\b",
+        r"\breport(?:s|ing)? (?:daily )?to (?:our|the) .{0,80}(?:office|studio|station|facility)\b",
     ]
     if any(re.search(p, s) for p in onsite_patterns):
         return "On-Site"
 
-    # Explicit hybrid signals. These must be checked before Remote.
+    # Structured/title/location values are authoritative, but only when Remote
+    # or Hybrid appears as a location/work-mode label rather than prose.
+    loc_compact = re.sub(r"\s+", " ", loc).strip()
+
+    if re.search(
+        r"^(?:remote|remote[- /](?:us|usa|united states)|us[- /]remote|"
+        r"united states[- /]remote|remote,?\s*(?:us|usa|united states))$",
+        loc_compact,
+        re.I,
+    ):
+        return "Remote"
+
+    if re.search(
+        r"^(?:hybrid|hybrid[- /].+|.+[- /]hybrid)$",
+        loc_compact,
+        re.I,
+    ):
+        return "Hybrid"
+
+    # Explicit hybrid job-arrangement statements.
     hybrid_patterns = [
-        r"telework/hybrid",
-        r"hybrid/telework",
-        r"hybrid role",
-        r"hybrid position",
-        r"hybrid work",
-        r"hybrid schedule",
-        r"hybrid arrangement",
-        r"mix of in-office and remote work",
-        r"mix of in office and remote work",
-        r"combining remote work and office presence",
-        r"combination of remote work and office presence",
-        r"partly remote",
-        r"partially remote",
-        r"days? per week in the office",
-        r"days? a week in the office",
+        r"\bthis (?:role|position|job) is hybrid\b",
+        r"\bhybrid (?:role|position|job|schedule|arrangement)\b",
+        r"\btelework/hybrid\b",
+        r"\bhybrid/telework\b",
+        r"\bhybrid work (?:model|schedule|arrangement)\b",
+        r"\bmix of in[- ]office and remote work\b",
+        r"\bcombining remote work and office presence\b",
+        r"\bcombination of remote work and office presence\b",
+        r"\bpartly remote\b",
+        r"\bpartially remote\b",
+        r"\b\d+\s+days? per week in (?:the )?office\b",
+        r"\b\d+\s+days? a week in (?:the )?office\b",
+        r"\b(?:two|three|four)\s+days? per week in (?:the )?office\b",
+        r"\b(?:two|three|four)\s+days? a week in (?:the )?office\b",
     ]
     if any(re.search(p, s) for p in hybrid_patterns):
         return "Hybrid"
 
-    # Explicit remote/work-from-home signals that do not require routine office presence.
+    # Remote requires an explicit statement about THIS role/position/job.
+    # Deliberately do NOT match bare phrases such as "remote work",
+    # "telework", or "work from home" in general policy/benefits copy.
     remote_patterns = [
-        r"fully remote",
-        r"100% remote",
-        r"remote role",
-        r"remote position",
-        r"remote work",
-        r"work from home",
-        r"work-from-home",
-        r"telework",
-        r"telecommute",
+        r"\bthis (?:role|position|job) is (?:fully |100% )?remote\b",
+        r"\bthis is (?:a )?(?:fully |100% )?remote (?:role|position|job)\b",
+        r"\b(?:role|position|job) is (?:fully |100% )?remote\b",
+        r"\b(?:fully |100% )?remote (?:role|position|job)\b",
+        r"\bcan be performed (?:fully )?remotely\b",
+        r"\bmay be performed (?:fully )?remotely\b",
+        r"\bwill be performed (?:fully )?remotely\b",
+        r"\bwork remotely from\b",
+        r"\bworking remotely from\b",
+        r"\bremote[- ]based (?:role|position|job)\b",
+        r"\bhome[- ]based (?:role|position|job)\b",
+        r"\bthis (?:role|position|job) (?:allows|offers) (?:full[- ]time )?remote work\b",
+        r"\beligible to work fully remotely\b",
     ]
     if any(re.search(p, s) for p in remote_patterns):
         return "Remote"
 
-    # Title/location can explicitly indicate the arrangement.
-    if re.search(r"\bhybrid\b", loc):
-        return "Hybrid"
-    if re.search(r"\b(remote|telework|telecommute)\b", loc):
-        return "Remote"
-
     return "On-Site"
+
 
 def _discover_workday_endpoint(src_url):
     """Return (host, tenant, site) from a Workday public career URL.
@@ -4847,7 +4893,7 @@ def siriusxm_v17(src):
 
     def save_diag():
         try:
-            Path("mjr-siriusxm-diagnostic-v63.txt").write_text(
+            Path("mjr-siriusxm-diagnostic-v64.txt").write_text(
                 "\n".join(diag) + "\n", encoding="utf-8"
             )
         except Exception:
@@ -4869,7 +4915,7 @@ def siriusxm_v17(src):
             pass
         return ""
 
-    d("SIRIUSXM RECOVERY v63")
+    d("SIRIUSXM RECOVERY v64")
     d(f"source={src.get('URL','')}")
     d(f"cutoff={CUTOFF}")
 
@@ -6897,7 +6943,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v63 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v64 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6943,7 +6989,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v63 listing page {page_num}: "
+            f"Audacy v64 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6962,7 +7008,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v63 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v64 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6993,7 +7039,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v63.txt").write_text(
+        Path("mjr-audacy-validation-v64.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -7236,7 +7282,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v63 stopped at detail safety limit")
+            print("Audacy v64 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -7468,13 +7514,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v63.txt").write_text(
+    Path("mjr-audacy-validation-v64.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v63: {enumerated_count} enumerated, "
+        f"Audacy v64: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
