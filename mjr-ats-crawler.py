@@ -4851,6 +4851,93 @@ def _v17_samehost_details(src, starts, hosts, max_pages=120, max_jobs=4000):
     return out
 
 
+
+def _siriusxm_location_parts(raw_city="", raw_state="", raw_country=""):
+    """Normalize SiriusXM/Phenom location strings into JBoard city/state/country.
+
+    SiriusXM can return values such as:
+      Lewisville, Texas, United States
+      Chicago, Illinois, United States / New York, New York, United States
+      Bucharest, UNAVAILABLE, Romania
+      UNAVAILABLE, New York, United States / UNAVAILABLE, Georgia, United States
+
+    JBoard has one city/state/country tuple, so for multi-location jobs we use
+    the first listed location and discard literal UNAVAILABLE placeholders.
+    """
+    state_names = {
+        "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR",
+        "California":"CA","Colorado":"CO","Connecticut":"CT","Delaware":"DE",
+        "Florida":"FL","Georgia":"GA","Hawaii":"HI","Idaho":"ID","Illinois":"IL",
+        "Indiana":"IN","Iowa":"IA","Kansas":"KS","Kentucky":"KY","Louisiana":"LA",
+        "Maine":"ME","Maryland":"MD","Massachusetts":"MA","Michigan":"MI",
+        "Minnesota":"MN","Mississippi":"MS","Missouri":"MO","Montana":"MT",
+        "Nebraska":"NE","Nevada":"NV","New Hampshire":"NH","New Jersey":"NJ",
+        "New Mexico":"NM","New York":"NY","North Carolina":"NC","North Dakota":"ND",
+        "Ohio":"OH","Oklahoma":"OK","Oregon":"OR","Pennsylvania":"PA",
+        "Rhode Island":"RI","South Carolina":"SC","South Dakota":"SD",
+        "Tennessee":"TN","Texas":"TX","Utah":"UT","Vermont":"VT","Virginia":"VA",
+        "Washington":"WA","West Virginia":"WV","Wisconsin":"WI","Wyoming":"WY",
+        "District of Columbia":"DC","Washington, DC":"DC",
+    }
+    country_map = {
+        "United States":"US","USA":"US","US":"US",
+        "United Kingdom":"GB","UK":"GB","Great Britain":"GB",
+        "Romania":"RO","Ireland":"IE","Canada":"CA",
+        "Germany":"DE","France":"FR","Netherlands":"NL",
+        "Belgium":"BE","Spain":"ES","Italy":"IT","Australia":"AU",
+    }
+
+    raw_city = clean(raw_city)
+    raw_state = clean(raw_state)
+    raw_country = clean(raw_country)
+
+    # First listed location is authoritative for JBoard's single-location fields.
+    first = raw_city.split(" / ", 1)[0].strip()
+
+    # If generic parsing already returned city/state/country separately and city
+    # is not a compound SiriusXM location, keep those values after normalization.
+    if "," not in first and first and first.upper() != "UNAVAILABLE":
+        city = first
+        state = state_names.get(raw_state, raw_state if re.fullmatch(r"[A-Z]{2}", raw_state) else "")
+        country = country_map.get(raw_country, raw_country if re.fullmatch(r"[A-Z]{2}", raw_country) else "US")
+        return city, state, country
+
+    parts = [clean(x) for x in first.split(",")]
+    parts = [x for x in parts if x]
+
+    city = ""
+    state = ""
+    country = ""
+
+    if len(parts) >= 3:
+        city_part = parts[0]
+        state_part = parts[1]
+        country_part = ", ".join(parts[2:])
+        city = "" if city_part.upper() == "UNAVAILABLE" else city_part
+        state = "" if state_part.upper() == "UNAVAILABLE" else state_names.get(state_part, state_part if re.fullmatch(r"[A-Z]{2}", state_part) else "")
+        country = country_map.get(country_part, country_part if re.fullmatch(r"[A-Z]{2}", country_part) else "")
+    elif len(parts) == 2:
+        # Covers e.g. "London, United Kingdom" or "Bucharest, Romania".
+        city = "" if parts[0].upper() == "UNAVAILABLE" else parts[0]
+        if parts[1] in state_names:
+            state = state_names[parts[1]]
+            country = "US"
+        else:
+            country = country_map.get(parts[1], parts[1] if re.fullmatch(r"[A-Z]{2}", parts[1]) else "")
+    elif len(parts) == 1:
+        city = "" if parts[0].upper() == "UNAVAILABLE" else parts[0]
+
+    # Fill from separately parsed fields when useful.
+    if not state:
+        state = state_names.get(raw_state, raw_state if re.fullmatch(r"[A-Z]{2}", raw_state) else "")
+    if not country:
+        country = country_map.get(raw_country, raw_country if re.fullmatch(r"[A-Z]{2}", raw_country) else "")
+    if not country:
+        country = "US" if state else ""
+
+    return city, state, country
+
+
 def siriusxm_v17(src):
     """SiriusXM browser/network collector.
 
@@ -4891,7 +4978,7 @@ def siriusxm_v17(src):
             ):
                 detail_urls.add(f"{host}/careers/jobs/{mm.group(1)}")
 
-    d("SIRIUSXM BROWSER RECOVERY v65")
+    d("SIRIUSXM BROWSER RECOVERY v66")
     d(f"source={src.get('URL','')}")
 
     if sync_playwright is None:
@@ -5132,6 +5219,25 @@ def siriusxm_v17(src):
             elif re.search(r"\bremote\b", low):
                 j.work_arrangement = "Remote"
 
+            # SiriusXM-specific production cleanup.
+            # Keep canonical job-detail URL without language/tracking parameters.
+            j.url = url
+            j.source = src["URL"]
+            j.company_website = "https://www.siriusxm.com/"
+
+            # Normalize Phenom compound/multi-location values. JBoard supports
+            # one location tuple, so use the first employer-listed location.
+            j.city, j.state, j.country = _siriusxm_location_parts(
+                j.city, j.state, j.country
+            )
+
+            # MJR category safeguards for SiriusXM edge cases found in v65 audit.
+            title_low = clean(j.title).lower()
+            if re.search(r"\b(noc|network operations center)\b", title_low):
+                j.category = "Engineering"
+            elif re.search(r"\bmajor accounts?\b", title_low):
+                j.category = "Sales & Marketing"
+
             if jid not in seen:
                 seen.add(jid)
                 out.append(j)
@@ -5145,7 +5251,7 @@ def siriusxm_v17(src):
             d(f"DETAIL_ERROR {url} {type(e).__name__}:{e}")
 
     d(f"FINAL={len(out)}")
-    Path("mjr-siriusxm-diagnostic-v65.txt").write_text(
+    Path("mjr-siriusxm-diagnostic-v66.txt").write_text(
         "\n".join(diag) + "\n", encoding="utf-8"
     )
     return out
@@ -6868,7 +6974,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v65 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v66 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6914,7 +7020,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v65 listing page {page_num}: "
+            f"Audacy v66 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -6933,7 +7039,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v65 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v66 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -6964,7 +7070,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v65.txt").write_text(
+        Path("mjr-audacy-validation-v66.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -7207,7 +7313,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v65 stopped at detail safety limit")
+            print("Audacy v66 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -7439,13 +7545,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v65.txt").write_text(
+    Path("mjr-audacy-validation-v66.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v65: {enumerated_count} enumerated, "
+        f"Audacy v66: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
