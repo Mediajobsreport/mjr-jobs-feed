@@ -4585,24 +4585,214 @@ def cox_successfactors(src):
     return out
 
 def paramount_successfactors(src):
-    """Paramount: SAP SuccessFactors public career site.
+    """Paramount SAP SuccessFactors collector — v69.
 
-    The public listing is server-rendered and exposes current requisitions with
-    real detail URLs. We crawl the view-all and jobs pages rather than inventing
-    undocumented API calls.
+    Paramount's public board lazy-loads results beyond the first 25.  Use one
+    lightweight Playwright listing session to reveal the full board, capture
+    individual job URLs plus their listing dates, then request detail pages only
+    for jobs inside MJR's freshness window.
+
+    Targeted tests remain isolated by the existing MJR_TEST_COMPANIES controls.
     """
-    starts = [
-        "https://careers.paramount.com/viewalljobs/?locale=en_US",
-        "https://careers.paramount.com/jobs/?locale=en_US&vs=0",
-        src["URL"],
-    ]
-    return _crawl_rendered_job_board(
-        src,
-        starts,
-        allow_hosts={"careers.paramount.com"},
-        max_pages=80,
-        max_jobs=2500,
+    listing = "https://careers.paramount.com/go/All-Current-Job-Opportunities/8710000/"
+    diag = []
+    discovered = {}
+    detail_urls = []
+
+    def d(msg):
+        diag.append(str(msg))
+
+    def extract_date(text):
+        # SuccessFactors listing uses dates like "Aug 31, 2026".
+        for pat in (
+            r"\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+            r"\s+\d{1,2},\s+20\d{2}\b",
+            r"\b\d{1,2}/\d{1,2}/20\d{2}\b",
+        ):
+            m = re.search(pat, text or "", re.I)
+            if m:
+                return pdate(m.group(0))
+        return None
+
+    d("PARAMOUNT SUCCESSFACTORS v69")
+    d(f"source={src.get('URL','')}")
+    d(f"listing={listing}")
+
+    # First try the fully rendered listing.  Paramount exposes a "More Search
+    # Results" control that appends additional rows.
+    if sync_playwright is not None:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page(
+                    user_agent=(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/152.0.0.0 Safari/537.36"
+                    )
+                )
+                page.goto(listing, wait_until="domcontentloaded", timeout=60000)
+                try:
+                    page.wait_for_load_state("networkidle", timeout=15000)
+                except Exception:
+                    page.wait_for_timeout(3000)
+
+                last_count = -1
+                stable_rounds = 0
+
+                for round_no in range(1, 30):
+                    rows = page.evaluate(
+                        """() => {
+                          const out = [];
+                          for (const a of document.querySelectorAll('a[href]')) {
+                            const href = a.href || '';
+                            if (!/careers\\.paramount\\.com\\/job\\//i.test(href)) continue;
+                            let box = a.closest('li, tr, article, .job, .jobResultItem, .searchResultsShell');
+                            if (!box) box = a.parentElement;
+                            out.push({
+                              href,
+                              text: (box && box.innerText) ? box.innerText : (a.innerText || '')
+                            });
+                          }
+                          return out;
+                        }"""
+                    )
+
+                    for row in rows:
+                        href = (row.get("href") or "").split("#", 1)[0]
+                        if not href:
+                            continue
+                        pd = extract_date(row.get("text") or "")
+                        prev = discovered.get(href)
+                        # Keep a discovered listing date when available.
+                        if href not in discovered or (not prev and pd):
+                            discovered[href] = pd
+
+                    count = len(discovered)
+                    d(f"LISTING round={round_no} discovered={count}")
+
+                    if count == last_count:
+                        stable_rounds += 1
+                    else:
+                        stable_rounds = 0
+                    last_count = count
+
+                    # Stop if the full board appears loaded and the button is gone,
+                    # or if multiple rounds produce no new jobs.
+                    more = page.get_by_role("button", name=re.compile(r"More Search Results", re.I))
+                    if more.count() == 0:
+                        # Some SuccessFactors themes render a link/div instead.
+                        more = page.get_by_text(re.compile(r"More Search Results", re.I), exact=False)
+
+                    if more.count() == 0 or stable_rounds >= 2:
+                        break
+
+                    clicked = False
+                    for i in range(min(more.count(), 3)):
+                        try:
+                            el = more.nth(i)
+                            if el.is_visible():
+                                el.click(timeout=8000)
+                                clicked = True
+                                page.wait_for_timeout(1800)
+                                break
+                        except Exception:
+                            continue
+                    if not clicked:
+                        break
+
+                browser.close()
+        except Exception as e:
+            d(f"PLAYWRIGHT_ERROR {type(e).__name__}:{e}")
+
+    # Server-rendered fallback if Playwright failed to expose links.
+    if not discovered:
+        try:
+            r = req("GET", listing)
+            soup = BeautifulSoup(r.text, "html.parser")
+            for a in soup.find_all("a", href=True):
+                href = urljoin(listing, a["href"]).split("#", 1)[0]
+                if urlparse(href).netloc.lower().replace("www.", "") != "careers.paramount.com":
+                    continue
+                if "/job/" not in urlparse(href).path.lower():
+                    continue
+                box = a.find_parent(["li", "tr", "article", "div"])
+                txt = clean(box.get_text(" ")) if box else clean(a.get_text(" "))
+                discovered[href] = extract_date(txt)
+            d(f"SERVER_FALLBACK discovered={len(discovered)}")
+        except Exception as e:
+            d(f"SERVER_FALLBACK_ERROR {type(e).__name__}:{e}")
+
+    # Prefer listing-date prefiltering. Unknown-date links remain eligible so a
+    # detail page can make the final freshness decision.
+    fresh_candidates = []
+    dated_old = 0
+    for href, pd in discovered.items():
+        if pd and pd < CUTOFF:
+            dated_old += 1
+            continue
+        fresh_candidates.append((href, pd))
+
+    # Newest first where the listing supplied a date.
+    fresh_candidates.sort(key=lambda x: (x[1] or date.min), reverse=True)
+    detail_urls = [u for u, _ in fresh_candidates]
+
+    d(f"DISCOVERED_TOTAL={len(discovered)}")
+    d(f"LISTING_OLD_SKIPPED={dated_old}")
+    d(f"DETAIL_CANDIDATES={len(detail_urls)}")
+
+    out = []
+    seen_ids = set()
+
+    for url in detail_urls[:300]:
+        try:
+            j = _recent_detail_job(src, url)
+            if not j or j.id in seen_ids:
+                continue
+
+            # Paramount corporate website should not be the careers host.
+            try:
+                j.company_website = "https://www.paramount.com/"
+            except Exception:
+                pass
+
+            # Paramount is television/streaming-heavy. Preserve the global
+            # classifier, but strengthen obvious CBS/TV newsroom/production
+            # titles that generic fallback can otherwise misplace.
+            low = clean(j.title).lower()
+            dlow = clean(j.description).lower()
+
+            if j.jobtype == "Internship":
+                j.category = "Internships"
+            elif re.search(
+                r"\b(anchor|meteorologist|weather anchor|news producer|"
+                r"executive producer|assignment editor|photojournalist|"
+                r"photographer|newscast|broadcast director|tv producer|"
+                r"television producer|studio technician|broadcast technician)\b",
+                low,
+            ) or (
+                "cbs television stations" in dlow
+                and re.search(r"\b(producer|director|reporter|anchor|news|studio)\b", low)
+            ):
+                j.category = "Television"
+
+            seen_ids.add(j.id)
+            out.append(j)
+
+            if len(out) <= 80:
+                d(
+                    f"ACCEPT {j.id} title={j.title} type={j.jobtype} "
+                    f"cat={j.category} loc={j.city},{j.state},{j.country} "
+                    f"wa={j.work_arrangement} date={j.date}"
+                )
+        except Exception as e:
+            d(f"DETAIL_ERROR {url} {type(e).__name__}:{e}")
+
+    d(f"FINAL={len(out)}")
+    Path("mjr-paramount-diagnostic-v69.txt").write_text(
+        "\n".join(diag) + "\n", encoding="utf-8"
     )
+    return out
 
 
 def disney_public(src):
