@@ -75,8 +75,8 @@ jobs:
           fi
           echo ""
           echo "----- PARAMOUNT DIAGNOSTIC -----"
-          if [[ -f "mjr-paramount-diagnostic-v70.txt" ]]; then
-            cat mjr-paramount-diagnostic-v70.txt
+          if [[ -f "mjr-paramount-diagnostic-v71.txt" ]]; then
+            cat mjr-paramount-diagnostic-v71.txt
           else
             echo "No Paramount diagnostic file generated."
           fi
@@ -138,7 +138,7 @@ jobs:
             mjr-jboard-test.xml
             mjr-ats-audit-test.csv
             mjr-siriusxm-diagnostic-v68.txt
-            mjr-paramount-diagnostic-v70.txt
+            mjr-paramount-diagnostic-v71.txt
             mjr-audacy-validation-v66.txt
             mjr-job-state-test.json
             mjr-audacy-diagnostic.txt
