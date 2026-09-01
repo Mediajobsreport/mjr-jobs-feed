@@ -4585,7 +4585,7 @@ def cox_successfactors(src):
     return out
 
 def paramount_successfactors(src):
-    """Paramount SAP SuccessFactors collector — v69.
+    """Paramount SAP SuccessFactors collector — v70.
 
     Paramount's public board lazy-loads results beyond the first 25.  Use one
     lightweight Playwright listing session to reveal the full board, capture
@@ -4614,7 +4614,7 @@ def paramount_successfactors(src):
                 return pdate(m.group(0))
         return None
 
-    d("PARAMOUNT SUCCESSFACTORS v69")
+    d("PARAMOUNT SUCCESSFACTORS v70")
     d(f"source={src.get('URL','')}")
     d(f"listing={listing}")
 
@@ -4744,42 +4744,174 @@ def paramount_successfactors(src):
     out = []
     seen_ids = set()
 
-    for url in detail_urls[:300]:
+    for url, listing_date in fresh_candidates[:300]:
         try:
-            j = _recent_detail_job(src, url)
-            if not j or j.id in seen_ids:
+            r = req("GET", url)
+            final = str(getattr(r, "url", "") or url).split("#", 1)[0]
+            soup = BeautifulSoup(r.text or "", "html.parser")
+            visible = clean(soup.get_text(" ", strip=True))
+
+            # Paramount detail pages expose the real title in H1.
+            h1 = soup.find("h1")
+            title = clean(h1.get_text(" ", strip=True) if h1 else "")
+            if not title:
+                d(f"REJECT title_missing {final}")
                 continue
 
-            # Paramount corporate website should not be the careers host.
-            try:
-                j.company_website = "https://www.paramount.com/"
-            except Exception:
-                pass
+            # Req ID is visible on the detail page and is a better stable ID than
+            # the large SuccessFactors URL object ID.
+            jid = ""
+            m_req = re.search(r"\bReq ID:\s*([A-Z0-9_-]{3,})\b", visible, re.I)
+            if m_req:
+                jid = clean(m_req.group(1))
+            if not jid:
+                # Paramount also places the requisition number directly under H1.
+                h1_parent = h1.parent if h1 else None
+                near = clean(h1_parent.get_text(" ", strip=True)) if h1_parent else visible[:1000]
+                m_req = re.search(r"\b(\d{4,8})\b", near)
+                if m_req:
+                    jid = m_req.group(1)
+            if not jid:
+                m_url = re.search(r"/(\d{6,12})/?$", urlparse(final).path)
+                jid = m_url.group(1) if m_url else hashlib.sha1(final.encode()).hexdigest()[:16]
+            if jid in seen_ids:
+                continue
 
-            # Paramount is television/streaming-heavy. Preserve the global
-            # classifier, but strengthen obvious CBS/TV newsroom/production
-            # titles that generic fallback can otherwise misplace.
-            low = clean(j.title).lower()
-            dlow = clean(j.description).lower()
+            # The listing date is authoritative for Paramount. Detail pages do
+            # not reliably repeat the posting date in machine-readable form.
+            pd = listing_date or TODAY
+            if pd < CUTOFF:
+                continue
 
-            if j.jobtype == "Internship":
-                j.category = "Internships"
+            # Description: prefer the main job body and remove navigation noise.
+            main = (
+                soup.select_one(".jobdescription, .job-description, [itemprop='description'], "
+                                ".jobDescription, #job-description")
+                or soup.find("main")
+                or soup
+            )
+            desc = clean(main.get_text(" ", strip=True))
+            if len(desc) < 200:
+                d(f"REJECT description_short {jid} len={len(desc)}")
+                continue
+
+            # Header metadata is compact and appears before the main description:
+            # title / req / location / function / market / job type / work model.
+            head = clean(" ".join(
+                x.get_text(" ", strip=True)
+                for x in soup.find_all(["h1","h2","div","span","p"])[:120]
+            ))
+
+            # Location examples:
+            # New York, NY, US, 10019
+            # Milan, Milan, IT, 20121
+            # Budapest, HU
+            city = state = ""
+            country = "US"
+            loc_match = re.search(
+                r"\b([A-Za-zÀ-ÿ .'-]+),\s*([A-Za-z]{2,30}),\s*"
+                r"(US|USA|CA|GB|UK|IT|RO|HU|DE|FR|ES|NL|PL|AU|NZ|MX|BR|AR|CL)"
+                r"(?:,\s*[A-Z0-9 -]{3,10})?\b",
+                visible[:1800],
+                re.I,
+            )
+            if loc_match:
+                city = clean(loc_match.group(1))
+                region = clean(loc_match.group(2))
+                cc = loc_match.group(3).upper()
+                country = {"USA":"US","UK":"GB"}.get(cc, cc)
+                if country in {"US","CA"}:
+                    state = region.upper() if len(region) == 2 else region
+                else:
+                    state = "" if region.lower() == city.lower() else region
+            else:
+                loc2 = re.search(
+                    r"\b([A-Za-zÀ-ÿ .'-]+),\s*(US|USA|CA|GB|UK|IT|RO|HU|DE|FR|ES|NL|PL|AU|NZ|MX|BR|AR|CL)\b",
+                    visible[:1800],
+                    re.I,
+                )
+                if loc2:
+                    city = clean(loc2.group(1))
+                    cc = loc2.group(2).upper()
+                    country = {"USA":"US","UK":"GB"}.get(cc, cc)
+
+            # Explicit Paramount job type.
+            meta = visible[:2200]
+            if re.search(r"\bInternship\b", meta, re.I) or re.search(r"\b(intern|internship)\b", title, re.I):
+                jt = "Internship"
+            elif re.search(r"\bPart[- ]Time\b", meta, re.I):
+                jt = "Part Time"
+            elif re.search(r"\bTemporary\b|\bPer Diem\b|\bFreelance\b|\bNon-Staff\b", meta, re.I):
+                jt = "Temporary"
+            else:
+                jt = "Full Time"
+
+            # Paramount publishes a direct work model in the header.
+            if re.search(r"\bHybrid\b", meta, re.I):
+                wa = "Hybrid"
+            elif re.search(r"\bRemote\b", meta, re.I):
+                wa = "Remote"
+            elif re.search(r"\bOn[- ]Site\b|\bOffice First\b", meta, re.I):
+                wa = "On-Site"
+            else:
+                wa = normalize_work_arrangement(desc, ", ".join(x for x in [city,state,country] if x))
+
+            cat = category(title, desc, src["Industry"], src["Company"])
+            low = title.lower()
+            dlow = desc.lower()
+
+            if jt == "Internship":
+                cat = "Internships"
             elif re.search(
-                r"\b(anchor|meteorologist|weather anchor|news producer|"
-                r"executive producer|assignment editor|photojournalist|"
-                r"photographer|newscast|broadcast director|tv producer|"
-                r"television producer|studio technician|broadcast technician)\b",
+                r"\b(software|data|machine learning|ml|devops|cloud|network|"
+                r"systems?|security|cyber|technology|technical|engineer|engineering)\b",
+                low,
+            ) and not re.search(r"\b(sales|marketing|account executive)\b", low):
+                cat = "Engineering"
+            elif re.search(
+                r"\b(account executive|sales|advertising|revenue|business development|"
+                r"account management|partnership sales|sponsorship)\b",
+                low,
+            ):
+                cat = "Sales & Marketing"
+            elif re.search(
+                r"\b(anchor|meteorologist|weather anchor|news producer|executive producer|"
+                r"assignment editor|photojournalist|photographer|newscast|broadcast director|"
+                r"tv producer|television producer|studio technician|broadcast technician|"
+                r"news director|producer/editor)\b",
                 low,
             ) or (
                 "cbs television stations" in dlow
-                and re.search(r"\b(producer|director|reporter|anchor|news|studio)\b", low)
+                and re.search(r"\b(producer|director|reporter|anchor|news|studio|photojournalist)\b", low)
             ):
-                j.category = "Television"
+                cat = "Television"
+            elif re.search(r"\b(reporter|journalist|editorial|news writer|correspondent)\b", low):
+                cat = "Journalism"
+            elif re.search(r"\b(product manager|product designer|ux|ui|digital|streaming|social media)\b", low):
+                cat = "Digital"
+
+            j = Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jt,
+                cat,
+                final,
+                src["URL"],
+                "https://www.paramount.com/",
+                "",
+                wa,
+                city,
+                state,
+                country,
+            )
 
             seen_ids.add(j.id)
             out.append(j)
 
-            if len(out) <= 80:
+            if len(out) <= 100:
                 d(
                     f"ACCEPT {j.id} title={j.title} type={j.jobtype} "
                     f"cat={j.category} loc={j.city},{j.state},{j.country} "
@@ -4789,7 +4921,7 @@ def paramount_successfactors(src):
             d(f"DETAIL_ERROR {url} {type(e).__name__}:{e}")
 
     d(f"FINAL={len(out)}")
-    Path("mjr-paramount-diagnostic-v69.txt").write_text(
+    Path("mjr-paramount-diagnostic-v70.txt").write_text(
         "\n".join(diag) + "\n", encoding="utf-8"
     )
     return out
