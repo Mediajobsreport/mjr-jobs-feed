@@ -74,6 +74,13 @@ jobs:
             echo "No SiriusXM diagnostic file generated."
           fi
           echo ""
+          echo "----- PARAMOUNT DIAGNOSTIC -----"
+          if [[ -f "mjr-paramount-diagnostic-v69.txt" ]]; then
+            cat mjr-paramount-diagnostic-v69.txt
+          else
+            echo "No Paramount diagnostic file generated."
+          fi
+          echo ""
           echo "========================================"
           echo "MJR TARGETED TEST"
           echo "Companies: ${{ github.event.inputs.test_companies }}"
@@ -131,6 +138,7 @@ jobs:
             mjr-jboard-test.xml
             mjr-ats-audit-test.csv
             mjr-siriusxm-diagnostic-v68.txt
+            mjr-paramount-diagnostic-v69.txt
             mjr-audacy-validation-v66.txt
             mjr-job-state-test.json
             mjr-audacy-diagnostic.txt
