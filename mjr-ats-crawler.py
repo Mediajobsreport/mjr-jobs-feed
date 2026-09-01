@@ -4939,15 +4939,19 @@ def _siriusxm_location_parts(raw_city="", raw_state="", raw_country=""):
 
 
 def siriusxm_v17(src):
-    """SiriusXM browser/network collector.
+    """SiriusXM direct Jibe/Phenom API collector.
 
-    SiriusXM's job cards are client-rendered. Use Playwright to load the public
-    jobs site normally, collect rendered numeric job links, and inspect
-    background XHR/fetch responses for requisition IDs. Then validate canonical
-    SiriusXM detail pages with the standard MJR detail parser.
+    v67 replaces the v65-v66 browser discovery crawl with SiriusXM's own public
+    /api/jobs endpoint. We try ordinary HTTP first. If SiriusXM requires a
+    browser-established session, Playwright is used only once to bootstrap the
+    careers page and fetch the API; we do not crawl category/location pages.
+
+    The API is the source of job IDs, titles, descriptions, posting metadata,
+    locations, employment type, and SiriusXM work-mode metadata. Canonical
+    individual job-detail URLs remain the JBoard apply URLs.
     """
     host = "https://careers.siriusxm.com"
-    detail_urls = set()
+    api_base = host + "/api/jobs"
     out = []
     seen = set()
     diag = []
@@ -4955,303 +4959,333 @@ def siriusxm_v17(src):
     def d(msg):
         diag.append(str(msg))
 
-    def add_ids(raw):
-        if not raw:
-            return
-        raw = html.unescape(str(raw)).replace("\\/", "/")
-        for mm in re.finditer(
-            r"(?:https?://careers\.siriusxm\.com)?/"
-            r"(?:careers/|howwework/|lifeatsiriusxm/|earlycareer/|org-culture/)?"
-            r"jobs/(\d{4,})(?:/job)?",
-            raw,
-            re.I,
-        ):
-            detail_urls.add(f"{host}/careers/jobs/{mm.group(1)}")
-        for keyname in (
-            "jobId", "job_id", "jobIdNumber", "requisitionId",
-            "requisition_id", "jobIdentifier", "jobID"
-        ):
-            for mm in re.finditer(
-                rf'["\']{keyname}["\']\s*:\s*["\']?(\d{{4,}})',
-                raw,
-                re.I,
-            ):
-                detail_urls.add(f"{host}/careers/jobs/{mm.group(1)}")
+    def scalars(obj, prefix=""):
+        """Yield flattened scalar key/value pairs from nested API data."""
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                p = f"{prefix}.{k}" if prefix else str(k)
+                yield from scalars(v, p)
+        elif isinstance(obj, list):
+            for i, v in enumerate(obj):
+                yield from scalars(v, f"{prefix}[{i}]")
+        elif obj is not None:
+            yield prefix.lower(), clean(str(obj))
 
-    d("SIRIUSXM BROWSER RECOVERY v66")
+    def pick_by_keys(obj, key_patterns):
+        for k, v in scalars(obj):
+            if any(re.search(p, k, re.I) for p in key_patterns) and v:
+                return v
+        return ""
+
+    def all_by_keys(obj, key_patterns):
+        vals = []
+        for k, v in scalars(obj):
+            if any(re.search(p, k, re.I) for p in key_patterns) and v and v not in vals:
+                vals.append(v)
+        return vals
+
+    def posted_date(data):
+        patterns = [
+            r"(?:^|\.)(?:date_posted|dateposted|posted_date|posteddate)$",
+            r"(?:^|\.)(?:posting_date|postingdate)$",
+            r"(?:^|\.)(?:publish_date|publisheddate|published_date)$",
+            r"(?:^|\.)(?:created_date|createddate)$",
+            r"(?:^|\.)(?:open_date|opendate)$",
+        ]
+        for v in all_by_keys(data, patterns):
+            pd = pdate(v)
+            if pd:
+                return pd
+        return None
+
+    def explicit_work_mode(data, description=""):
+        # Prefer SiriusXM/Jibe structured metadata, never generic benefits text.
+        meta_vals = all_by_keys(
+            data,
+            [
+                r"work.*(?:mode|model|arrangement|location|type)",
+                r"(?:flex|remote|hybrid).*type",
+                r"workplace",
+                r"location_type",
+                r"work_location_type",
+                r"tags",
+            ],
+        )
+        meta = " | ".join(meta_vals).lower()
+        if re.search(r"\boffice[\s_-]*first\b", meta):
+            return "On-Site"
+        if re.search(r"\bhybrid\b", meta):
+            return "Hybrid"
+        if re.search(r"\bremote\b", meta):
+            return "Remote"
+
+        # Fall back only to explicit role-level wording using the conservative
+        # global classifier introduced in v64.
+        return normalize_work_arrangement(description, "")
+
+    def employment_type(data, title, description):
+        meta = " ".join(
+            all_by_keys(
+                data,
+                [
+                    r"employment.*type",
+                    r"job.*type",
+                    r"schedule.*type",
+                    r"position.*type",
+                    r"tags",
+                ],
+            )
+        )
+        low = meta.lower()
+        if "intern" in clean(title).lower():
+            return "Internship"
+        if re.search(r"\bpart[\s_-]*time\b", low):
+            return "Part Time"
+        if re.search(r"\b(full[\s_-]*time|regular employee full)\b", low):
+            return "Full Time"
+        if re.search(r"\b(contract|contractor)\b", low):
+            return "Contract"
+        if re.search(r"\btemporary\b", low):
+            return "Temporary"
+        return jobtype(title, meta + " " + description[:2500])
+
+    def location_parts(data):
+        # Jibe commonly supplies location as a compound display value. Prefer
+        # structured display/location fields and normalize with the v66 helper.
+        candidates = all_by_keys(
+            data,
+            [
+                r"(?:^|\.)(?:location|location_name|locationname|display_location|displaylocation)$",
+                r"(?:^|\.)locations(?:\[\d+\])?(?:\.name)?$",
+                r"(?:^|\.)address(?:\.name)?$",
+            ],
+        )
+
+        city = pick_by_keys(data, [r"(?:^|\.)(?:city|locality)$"])
+        state = pick_by_keys(data, [r"(?:^|\.)(?:state|region|province)$"])
+        country = pick_by_keys(data, [r"(?:^|\.)(?:country|country_name|countryname)$"])
+
+        compound = ""
+        for val in candidates:
+            if "," in val or " / " in val:
+                compound = val
+                break
+        if not compound and candidates:
+            compound = candidates[0]
+
+        if compound:
+            return _siriusxm_location_parts(compound, state, country)
+        return _siriusxm_location_parts(city, state, country)
+
+    def category_fix(title, description, jt):
+        if jt == "Internship":
+            return "Internships"
+
+        tl = clean(title).lower()
+        if re.search(r"\b(noc|network operations center)\b", tl):
+            return "Engineering"
+        if re.search(r"\bmajor accounts?\b", tl):
+            return "Sales & Marketing"
+        if re.search(r"\bbusiness insights?\b", tl):
+            return "Digital"
+
+        return category(title, description, src["Industry"], src["Company"])
+
+    def fetch_page_http(page_num):
+        url = (
+            f"{api_base}?page={page_num}&sortBy=relevance&descending=false"
+            f"&internal=false&limit=100"
+        )
+        rr = req(
+            "GET",
+            url,
+            headers={
+                "Accept": "application/json, text/plain, */*",
+                "Referer": host + "/careers/jobs",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        )
+        return rr.json(), url
+
+    def fetch_all_browser():
+        """One-page browser bootstrap fallback; no category/location crawling."""
+        if sync_playwright is None:
+            raise RuntimeError("Playwright unavailable for SiriusXM API bootstrap")
+
+        payloads = []
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/152.0.0.0 Safari/537.36"
+                )
+            )
+            page.goto(host + "/careers/jobs", wait_until="domcontentloaded", timeout=60000)
+            try:
+                page.wait_for_load_state("networkidle", timeout=15000)
+            except Exception:
+                page.wait_for_timeout(4000)
+
+            api_page = 1
+            prior_ids = set()
+            while api_page <= 30:
+                url = (
+                    f"{api_base}?page={api_page}&sortBy=relevance&descending=false"
+                    f"&internal=false&limit=100"
+                )
+                resp = page.request.get(
+                    url,
+                    headers={
+                        "Accept": "application/json, text/plain, */*",
+                        "Referer": host + "/careers/jobs",
+                    },
+                    timeout=30000,
+                )
+                if resp.status != 200:
+                    raise RuntimeError(f"SiriusXM API browser HTTP {resp.status}")
+                payload = resp.json()
+                jobs = payload.get("jobs") or []
+                ids = set()
+                for item in jobs:
+                    data = item.get("data", item) if isinstance(item, dict) else {}
+                    jid = clean(str(data.get("slug") or data.get("req_id") or ""))
+                    if jid:
+                        ids.add(jid)
+                payloads.append((payload, url))
+                d(f"API_BROWSER page={api_page} jobs={len(jobs)}")
+                if not jobs or (ids and ids.issubset(prior_ids)):
+                    break
+                prior_ids |= ids
+                total = payload.get("totalCount")
+                if isinstance(total, int) and len(prior_ids) >= total:
+                    break
+                api_page += 1
+
+            browser.close()
+        return payloads
+
+    d("SIRIUSXM DIRECT API v67")
     d(f"source={src.get('URL','')}")
 
-    if sync_playwright is None:
-        d("PLAYWRIGHT unavailable")
-    else:
+    payloads = []
+    try:
+        prior_ids = set()
+        for page_num in range(1, 31):
+            payload, url = fetch_page_http(page_num)
+            jobs = payload.get("jobs") or []
+            ids = set()
+            for item in jobs:
+                data = item.get("data", item) if isinstance(item, dict) else {}
+                jid = clean(str(data.get("slug") or data.get("req_id") or ""))
+                if jid:
+                    ids.add(jid)
+            payloads.append((payload, url))
+            d(f"API_HTTP page={page_num} jobs={len(jobs)}")
+            if not jobs or (ids and ids.issubset(prior_ids)):
+                break
+            prior_ids |= ids
+            total = payload.get("totalCount")
+            if isinstance(total, int) and len(prior_ids) >= total:
+                break
+    except Exception as e:
+        d(f"API_HTTP_ERROR {type(e).__name__}:{e}")
+        payloads = []
         try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
-                page = browser.new_page(
-                    user_agent=(
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/152.0.0.0 Safari/537.36"
-                    )
-                )
+            payloads = fetch_all_browser()
+        except Exception as be:
+            d(f"API_BROWSER_ERROR {type(be).__name__}:{be}")
 
-                response_count = 0
+    raw_jobs = []
+    for payload, api_url in payloads:
+        for item in payload.get("jobs") or []:
+            if isinstance(item, dict):
+                raw_jobs.append(item.get("data", item))
 
-                def on_response(resp):
-                    nonlocal response_count
-                    try:
-                        rt = (resp.request.resource_type or "").lower()
-                        u = resp.url
-                        if rt not in ("xhr", "fetch", "document"):
-                            return
-                        if "siriusxm" not in u.lower() and "job" not in u.lower() and "career" not in u.lower():
-                            return
-                        response_count += 1
-                        d(f"NET {resp.status} {rt} {u}")
-                        if response_count <= 80:
-                            try:
-                                body = resp.text()
-                                d(f"NETBODY {u} bytes={len(body)} head={clean(body)[:260]}")
-                                add_ids(body)
-                            except Exception as e:
-                                d(f"NETBODY_ERROR {u} {type(e).__name__}:{e}")
-                    except Exception:
-                        pass
+    d(f"API_RECORDS={len(raw_jobs)}")
 
-                page.on("response", on_response)
-
-                starts = [
-                    host + "/careers/jobs",
-                    host + "/careers/jobs/categories",
-                    host + "/careers/jobs/locations",
-                ]
-
-                for start_url in starts:
-                    try:
-                        page.goto(start_url, wait_until="domcontentloaded", timeout=60000)
-                        try:
-                            page.wait_for_load_state("networkidle", timeout=20000)
-                        except Exception:
-                            page.wait_for_timeout(8000)
-
-                        # Rendered DOM and links.
-                        add_ids(page.content())
-                        links = page.locator("a").evaluate_all(
-                            "(els) => els.map(a => a.href).filter(Boolean)"
-                        )
-                        d(f"PAGE {start_url} links={len(links)}")
-                        for u in links:
-                            add_ids(u)
-
-                        # Scroll to trigger lazy job loading.
-                        for _ in range(8):
-                            page.mouse.wheel(0, 2500)
-                            page.wait_for_timeout(800)
-                        add_ids(page.content())
-
-                        # Click obvious "load more"/"view more jobs" controls.
-                        for label in ("Load more", "View more", "More jobs", "Show more"):
-                            try:
-                                loc = page.get_by_text(label, exact=False)
-                                for _ in range(min(loc.count(), 3)):
-                                    try:
-                                        loc.nth(0).click(timeout=2500)
-                                        page.wait_for_timeout(1500)
-                                        add_ids(page.content())
-                                    except Exception:
-                                        break
-                            except Exception:
-                                pass
-                    except Exception as e:
-                        d(f"PAGE_ERROR {start_url} {type(e).__name__}:{e}")
-
-                # Explore first several category/location links rendered by browser.
-                try:
-                    urls = page.locator("a").evaluate_all(
-                        "(els) => els.map(a => a.href).filter(Boolean)"
-                    )
-                except Exception:
-                    urls = []
-
-                second = []
-                for u in urls:
-                    lu = u.lower()
-                    if (
-                        "careers.siriusxm.com" in lu
-                        and "/jobs/" in lu
-                        and not re.search(r"/jobs/\d{4,}", lu)
-                    ):
-                        if u not in second:
-                            second.append(u)
-
-                d(f"SECOND_LEVEL_RENDERED={len(second)}")
-                for u in second[:60]:
-                    try:
-                        page.goto(u, wait_until="domcontentloaded", timeout=45000)
-                        page.wait_for_timeout(5000)
-                        add_ids(page.content())
-                        ls = page.locator("a").evaluate_all(
-                            "(els) => els.map(a => a.href).filter(Boolean)"
-                        )
-                        for href in ls:
-                            add_ids(href)
-                    except Exception as e:
-                        d(f"SECOND_ERROR {u} {type(e).__name__}:{e}")
-
-                browser.close()
-        except Exception as e:
-            d(f"PLAYWRIGHT_ERROR {type(e).__name__}:{e}")
-
-    d(f"DISCOVERED={len(detail_urls)}")
-    d("SAMPLE=" + ",".join(sorted(detail_urls, reverse=True)[:30]))
-
-    # Validate only discovered current jobs. The canonical no-tracking URL is
-    # what goes into JBoard.
-    for url in sorted(
-        detail_urls,
-        key=lambda u: int(re.search(r"/(\d+)$", u).group(1))
-        if re.search(r"/(\d+)$", u) else 0,
-        reverse=True,
-    )[:300]:
+    for data in raw_jobs:
         try:
-            jid = re.search(r"/(\d+)$", url).group(1)
-            rr = req(
-                "GET",
-                url + "?lang=en-us",
-                headers={"Referer": host + "/careers/jobs"},
-            )
-            txt = clean(BeautifulSoup(rr.text or "", "html.parser").get_text(" "))
-            low = txt.lower()
-            if getattr(rr, "status_code", 0) in (403, 404, 410):
+            jid = clean(str(data.get("slug") or data.get("req_id") or data.get("id") or ""))
+            # Real SiriusXM requisition IDs are short numeric slugs. Reject the
+            # unrelated long numeric values that polluted v66 browser discovery.
+            if not re.fullmatch(r"\d{4,8}", jid):
                 continue
-            if re.search(
-                r"\b(job (?:is )?no longer available|page not found|position has been filled)\b",
-                low,
+            if jid in seen:
+                continue
+
+            title = clean(str(data.get("title") or pick_by_keys(data, [r"(?:^|\.)title$"])))
+            desc_html = str(
+                data.get("description")
+                or pick_by_keys(data, [r"(?:^|\.)description$"])
+                or ""
+            )
+            desc = strip_html(desc_html)
+
+            if not title or len(desc) < 150:
+                continue
+
+            pd = posted_date(data)
+            if not pd:
+                # Preserve the v66 policy for an API-listed currently open job
+                # when SiriusXM does not publish a reliable posting date.
+                pd = TODAY
+            if pd < CUTOFF:
+                continue
+
+            jt = employment_type(data, title, desc)
+            cat = category_fix(title, desc, jt)
+            city, state, country = location_parts(data)
+            wa = explicit_work_mode(data, desc)
+
+            canonical = f"{host}/careers/jobs/{jid}"
+
+            # Employer deadline, if SiriusXM exposes one, may shorten MJR expiry.
+            employer_deadline = None
+            for v in all_by_keys(
+                data,
+                [
+                    r"(?:^|\.)(?:expiration_date|expirationdate|closing_date|closingdate)$",
+                    r"(?:^|\.)(?:apply_by|applyby|deadline)$",
+                ],
             ):
-                continue
+                employer_deadline = pdate(v)
+                if employer_deadline:
+                    break
 
-            j = _job_from_detail(src, url, rr.text)
-            if not j:
-                j = _direct_board_job(src, url, rr.text)
-
-            # SiriusXM commonly omits a reliable public posting date. If the
-            # detail page is currently open and parsable, use MJR discovery date.
-            if not j:
-                soup = BeautifulSoup(rr.text or "", "html.parser")
-                h1 = soup.find("h1")
-                title = clean(h1.get_text(" ") if h1 else "")
-                if not title or len(txt) < 250:
-                    continue
-
-                employment = ""
-                for val in (
-                    "Regular Employee Full-Time",
-                    "Regular Employee Part-Time",
-                    "Intern (Fixed Term)",
-                    "Temporary Employee",
-                ):
-                    if val.lower() in low:
-                        employment = val
-                        break
-
-                jt = jobtype(title, employment + " " + txt[:2500])
-                if "intern (fixed term)" in low:
-                    jt = "Internship"
-
-                cat = category(title, txt, src["Industry"], src["Company"])
-                if jt == "Internship":
-                    cat = "Internships"
-
-                wa = "On-Site"
-                if re.search(r"\boffice first\b", low):
-                    wa = "On-Site"
-                elif re.search(r"\bhybrid\b", low):
-                    wa = "Hybrid"
-                elif re.search(r"\bremote\b", low):
-                    wa = "Remote"
-
-                # First US City, State pair; structured parser can improve this
-                # when SiriusXM exposes JSON-LD.
-                city, state, country = "", "", "US"
-                lm = re.search(
-                    r"\b([A-Z][A-Za-z .'-]{1,45}),\s*"
-                    r"(Alabama|Alaska|Arizona|Arkansas|California|Colorado|"
-                    r"Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|"
-                    r"Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|"
-                    r"Massachusetts|Michigan|Minnesota|Mississippi|Missouri|"
-                    r"Montana|Nebraska|Nevada|New Hampshire|New Jersey|New Mexico|"
-                    r"New York|North Carolina|North Dakota|Ohio|Oklahoma|Oregon|"
-                    r"Pennsylvania|Rhode Island|South Carolina|South Dakota|"
-                    r"Tennessee|Texas|Utah|Vermont|Virginia|Washington|"
-                    r"West Virginia|Wisconsin|Wyoming|Washington, DC)\b",
-                    txt,
-                )
-                if lm:
-                    city = clean(lm.group(1))
-                    state_names = {
-                        "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR",
-                        "California":"CA","Colorado":"CO","Connecticut":"CT","Delaware":"DE",
-                        "Florida":"FL","Georgia":"GA","Hawaii":"HI","Idaho":"ID",
-                        "Illinois":"IL","Indiana":"IN","Iowa":"IA","Kansas":"KS",
-                        "Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD",
-                        "Massachusetts":"MA","Michigan":"MI","Minnesota":"MN","Mississippi":"MS",
-                        "Missouri":"MO","Montana":"MT","Nebraska":"NE","Nevada":"NV",
-                        "New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM","New York":"NY",
-                        "North Carolina":"NC","North Dakota":"ND","Ohio":"OH","Oklahoma":"OK",
-                        "Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
-                        "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT",
-                        "Vermont":"VT","Virginia":"VA","Washington":"WA","West Virginia":"WV",
-                        "Wisconsin":"WI","Wyoming":"WY","Washington, DC":"DC",
-                    }
-                    state = state_names.get(lm.group(2), "")
-
-                j = Job(
-                    jid, title, src["Company"], txt, TODAY, jt, cat, url,
-                    src["URL"], "https://www.siriusxm.com/", "", wa,
-                    city, state, country, None
-                )
-
-            # SiriusXM's explicit Flex label beats generic prose classification.
-            if re.search(r"\boffice first\b", low):
-                j.work_arrangement = "On-Site"
-            elif re.search(r"\bhybrid\b", low):
-                j.work_arrangement = "Hybrid"
-            elif re.search(r"\bremote\b", low):
-                j.work_arrangement = "Remote"
-
-            # SiriusXM-specific production cleanup.
-            # Keep canonical job-detail URL without language/tracking parameters.
-            j.url = url
-            j.source = src["URL"]
-            j.company_website = "https://www.siriusxm.com/"
-
-            # Normalize Phenom compound/multi-location values. JBoard supports
-            # one location tuple, so use the first employer-listed location.
-            j.city, j.state, j.country = _siriusxm_location_parts(
-                j.city, j.state, j.country
+            j = Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jt,
+                cat,
+                canonical,
+                src["URL"],
+                "https://www.siriusxm.com/",
+                "",
+                wa,
+                city,
+                state,
+                country or "",
+                employer_deadline,
             )
 
-            # MJR category safeguards for SiriusXM edge cases found in v65 audit.
-            title_low = clean(j.title).lower()
-            if re.search(r"\b(noc|network operations center)\b", title_low):
-                j.category = "Engineering"
-            elif re.search(r"\bmajor accounts?\b", title_low):
-                j.category = "Sales & Marketing"
-
-            if jid not in seen:
-                seen.add(jid)
-                out.append(j)
-                if len(out) <= 40:
-                    d(
-                        f"ACCEPT {jid} title={j.title} type={j.jobtype} "
-                        f"cat={j.category} loc={j.city},{j.state},{j.country} "
-                        f"wa={j.work_arrangement}"
-                    )
+            seen.add(jid)
+            out.append(j)
+            if len(out) <= 60:
+                d(
+                    f"ACCEPT {jid} title={j.title} type={j.jobtype} "
+                    f"cat={j.category} loc={j.city},{j.state},{j.country} "
+                    f"wa={j.work_arrangement} date={j.date}"
+                )
         except Exception as e:
-            d(f"DETAIL_ERROR {url} {type(e).__name__}:{e}")
+            d(f"PARSE_ERROR {type(e).__name__}:{e}")
 
     d(f"FINAL={len(out)}")
-    Path("mjr-siriusxm-diagnostic-v66.txt").write_text(
+    Path("mjr-siriusxm-diagnostic-v67.txt").write_text(
         "\n".join(diag) + "\n", encoding="utf-8"
     )
     return out
