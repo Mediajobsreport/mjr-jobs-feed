@@ -802,25 +802,16 @@ def infer_country(location, company="", description=""):
 
 def normalize_work_arrangement(description, location):
     """
-    Conservative work-arrangement classifier.
+    Conservative MJR work-arrangement classifier.
 
-    MJR rule:
-      - Remote only when the employer explicitly identifies THIS JOB as remote,
-        or the structured/title/location value itself is Remote.
-      - Hybrid only when the employer explicitly identifies THIS JOB as hybrid
-        or requires a recurring office/remote mix.
-      - Otherwise default to On-Site.
-
-    Incidental policy/benefits language about remote work, telework,
-    work-from-home equipment, remote employees, or remote locations must not
-    convert an otherwise site-based job to Remote.
+    Remote only when THIS JOB is explicitly remote, or a structured location
+    value itself is Remote. Hybrid only when THIS JOB is explicitly hybrid or
+    requires a recurring office/remote mix. Otherwise default On-Site.
     """
     desc = clean(description).lower()
     loc = clean(location).lower()
     s = f" {desc} "
-    loc_s = f" {loc} "
 
-    # Explicit negatives always win.
     negative_remote_patterns = [
         r"\bnot (?:a )?remote (?:role|position|job)\b",
         r"\bnot remote\b",
@@ -835,7 +826,6 @@ def normalize_work_arrangement(description, location):
     if any(re.search(p, s) for p in negative_remote_patterns):
         return "On-Site"
 
-    # Strong explicit on-site signals.
     onsite_patterns = [
         r"\brequires? full[- ]time on[- ]site presence\b",
         r"\brequires? full time on site presence\b",
@@ -855,10 +845,7 @@ def normalize_work_arrangement(description, location):
     if any(re.search(p, s) for p in onsite_patterns):
         return "On-Site"
 
-    # Structured/title/location values are authoritative, but only when Remote
-    # or Hybrid appears as a location/work-mode label rather than prose.
     loc_compact = re.sub(r"\s+", " ", loc).strip()
-
     if re.search(
         r"^(?:remote|remote[- /](?:us|usa|united states)|us[- /]remote|"
         r"united states[- /]remote|remote,?\s*(?:us|usa|united states))$",
@@ -867,14 +854,9 @@ def normalize_work_arrangement(description, location):
     ):
         return "Remote"
 
-    if re.search(
-        r"^(?:hybrid|hybrid[- /].+|.+[- /]hybrid)$",
-        loc_compact,
-        re.I,
-    ):
+    if re.search(r"^(?:hybrid|hybrid[- /].+|.+[- /]hybrid)$", loc_compact, re.I):
         return "Hybrid"
 
-    # Explicit hybrid job-arrangement statements.
     hybrid_patterns = [
         r"\bthis (?:role|position|job) is hybrid\b",
         r"\bhybrid (?:role|position|job|schedule|arrangement)\b",
@@ -894,9 +876,6 @@ def normalize_work_arrangement(description, location):
     if any(re.search(p, s) for p in hybrid_patterns):
         return "Hybrid"
 
-    # Remote requires an explicit statement about THIS role/position/job.
-    # Deliberately do NOT match bare phrases such as "remote work",
-    # "telework", or "work from home" in general policy/benefits copy.
     remote_patterns = [
         r"\bthis (?:role|position|job) is (?:fully |100% )?remote\b",
         r"\bthis is (?:a )?(?:fully |100% )?remote (?:role|position|job)\b",
@@ -4873,356 +4852,302 @@ def _v17_samehost_details(src, starts, hosts, max_pages=120, max_jobs=4000):
 
 
 def siriusxm_v17(src):
-    """SiriusXM current-jobs collector.
+    """SiriusXM browser/network collector.
 
-    SiriusXM's main categories/locations pages are server-visible but do not
-    themselves expose numeric requisition URLs. Follow their second-level live
-    search/filter links, recover numeric requisition URLs there, and parse each
-    detail page directly. Current open pages without a public posting date use
-    the MJR discovery date, per feed policy.
+    SiriusXM's job cards are client-rendered. Use Playwright to load the public
+    jobs site normally, collect rendered numeric job links, and inspect
+    background XHR/fetch responses for requisition IDs. Then validate canonical
+    SiriusXM detail pages with the standard MJR detail parser.
     """
     host = "https://careers.siriusxm.com"
-    diag = []
     detail_urls = set()
-    second_level = set()
     out = []
-    seen_ids = set()
+    seen = set()
+    diag = []
 
     def d(msg):
         diag.append(str(msg))
 
-    def save_diag():
-        try:
-            Path("mjr-siriusxm-diagnostic-v64.txt").write_text(
-                "\n".join(diag) + "\n", encoding="utf-8"
-            )
-        except Exception:
-            pass
+    def add_ids(raw):
+        if not raw:
+            return
+        raw = html.unescape(str(raw)).replace("\\/", "/")
+        for mm in re.finditer(
+            r"(?:https?://careers\.siriusxm\.com)?/"
+            r"(?:careers/|howwework/|lifeatsiriusxm/|earlycareer/|org-culture/)?"
+            r"jobs/(\d{4,})(?:/job)?",
+            raw,
+            re.I,
+        ):
+            detail_urls.add(f"{host}/careers/jobs/{mm.group(1)}")
+        for keyname in (
+            "jobId", "job_id", "jobIdNumber", "requisitionId",
+            "requisition_id", "jobIdentifier", "jobID"
+        ):
+            for mm in re.finditer(
+                rf'["\']{keyname}["\']\s*:\s*["\']?(\d{{4,}})',
+                raw,
+                re.I,
+            ):
+                detail_urls.add(f"{host}/careers/jobs/{mm.group(1)}")
 
-    def same_host(u):
-        try:
-            return urlparse(u).netloc.lower().replace("www.", "") == "careers.siriusxm.com"
-        except Exception:
-            return False
-
-    def canonical_job(u):
-        try:
-            p = urlparse(u)
-            m = re.search(r"/(?:careers/|howwework/|lifeatsiriusxm/|earlycareer/|org-culture/)?jobs/(\d{4,})", p.path, re.I)
-            if m:
-                return f"{host}/careers/jobs/{m.group(1)}"
-        except Exception:
-            pass
-        return ""
-
-    d("SIRIUSXM RECOVERY v64")
+    d("SIRIUSXM BROWSER RECOVERY v65")
     d(f"source={src.get('URL','')}")
-    d(f"cutoff={CUTOFF}")
 
-    # Phase 1: enumerate every category/location/search link exposed by the
-    # server-rendered index pages GitHub can already access.
-    starts = [
-        host + "/careers/jobs",
-        host + "/careers/jobs/categories",
-        host + "/careers/jobs/locations",
-        host + "/howwework/jobs/categories",
-        host + "/howwework/jobs/locations",
-        host + "/earlycareer/jobs",
-        host + "/earlycareer/jobs/categories",
-        host + "/earlycareer/jobs/locations",
-        host + "/org-culture/jobs/categories",
-        host + "/org-culture/jobs/locations",
-    ]
-
-    for page in starts:
+    if sync_playwright is None:
+        d("PLAYWRIGHT unavailable")
+    else:
         try:
-            r = req(
-                "GET",
-                page,
-                headers={
-                    "Accept": "text/html,application/xhtml+xml",
-                    "Referer": host + "/",
-                },
-            )
-            raw = html.unescape(r.text or "").replace("\\/", "/")
-            soup = BeautifulSoup(raw, "html.parser")
-            d(f"INDEX status={getattr(r,'status_code','?')} page={page} bytes={len(raw)}")
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page(
+                    user_agent=(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/152.0.0.0 Safari/537.36"
+                    )
+                )
 
-            for a in soup.find_all("a", href=True):
-                u = urljoin(str(getattr(r, "url", "") or page), a["href"]).split("#", 1)[0]
-                if not same_host(u):
-                    continue
+                response_count = 0
 
-                cj = canonical_job(u)
-                if cj:
-                    detail_urls.add(cj)
-                    continue
+                def on_response(resp):
+                    nonlocal response_count
+                    try:
+                        rt = (resp.request.resource_type or "").lower()
+                        u = resp.url
+                        if rt not in ("xhr", "fetch", "document"):
+                            return
+                        if "siriusxm" not in u.lower() and "job" not in u.lower() and "career" not in u.lower():
+                            return
+                        response_count += 1
+                        d(f"NET {resp.status} {rt} {u}")
+                        if response_count <= 80:
+                            try:
+                                body = resp.text()
+                                d(f"NETBODY {u} bytes={len(body)} head={clean(body)[:260]}")
+                                add_ids(body)
+                            except Exception as e:
+                                d(f"NETBODY_ERROR {u} {type(e).__name__}:{e}")
+                    except Exception:
+                        pass
 
-                p = urlparse(u)
-                path = p.path.lower()
-                q = p.query.lower()
-                label = clean(a.get_text(" ")).lower()
+                page.on("response", on_response)
 
-                # Category/location/filter/search result routes. Keep bounded to
-                # jobs-related SiriusXM pages only.
-                if (
-                    "/jobs/" in path
-                    or path.endswith("/jobs")
-                    or "job" in q
-                    or "category" in q
-                    or "location" in q
-                    or label in {
-                        "analytics", "broadcast operations", "engineering",
-                        "entertainment content & production", "finance & accounting",
-                        "human resources", "information technology", "legal",
-                        "marketing & communications", "product management",
-                        "program management", "programming operations", "sales",
-                        "customer support", "united states", "new york",
-                        "los angeles", "atlanta", "washington", "oakland",
-                        "chicago", "miami", "irving", "lawrenceville",
-                        "farmington hills", "deerfield beach", "lewisville"
-                    }
-                ):
-                    if u.rstrip("/") not in {x.rstrip("/") for x in starts}:
-                        second_level.add(u)
+                starts = [
+                    host + "/careers/jobs",
+                    host + "/careers/jobs/categories",
+                    host + "/careers/jobs/locations",
+                ]
 
-            # Embedded absolute/relative live links.
-            for mm in re.finditer(
-                r'(?:"|\')((?:https?://careers\.siriusxm\.com)?/[^"\']*jobs[^"\']*)(?:"|\')',
-                raw,
-                re.I,
-            ):
-                u = urljoin(page, html.unescape(mm.group(1)).replace("\\/", "/"))
-                cj = canonical_job(u)
-                if cj:
-                    detail_urls.add(cj)
-                elif same_host(u) and len(u) < 500:
-                    second_level.add(u.split("#", 1)[0])
+                for start_url in starts:
+                    try:
+                        page.goto(start_url, wait_until="domcontentloaded", timeout=60000)
+                        try:
+                            page.wait_for_load_state("networkidle", timeout=20000)
+                        except Exception:
+                            page.wait_for_timeout(8000)
 
+                        # Rendered DOM and links.
+                        add_ids(page.content())
+                        links = page.locator("a").evaluate_all(
+                            "(els) => els.map(a => a.href).filter(Boolean)"
+                        )
+                        d(f"PAGE {start_url} links={len(links)}")
+                        for u in links:
+                            add_ids(u)
+
+                        # Scroll to trigger lazy job loading.
+                        for _ in range(8):
+                            page.mouse.wheel(0, 2500)
+                            page.wait_for_timeout(800)
+                        add_ids(page.content())
+
+                        # Click obvious "load more"/"view more jobs" controls.
+                        for label in ("Load more", "View more", "More jobs", "Show more"):
+                            try:
+                                loc = page.get_by_text(label, exact=False)
+                                for _ in range(min(loc.count(), 3)):
+                                    try:
+                                        loc.nth(0).click(timeout=2500)
+                                        page.wait_for_timeout(1500)
+                                        add_ids(page.content())
+                                    except Exception:
+                                        break
+                            except Exception:
+                                pass
+                    except Exception as e:
+                        d(f"PAGE_ERROR {start_url} {type(e).__name__}:{e}")
+
+                # Explore first several category/location links rendered by browser.
+                try:
+                    urls = page.locator("a").evaluate_all(
+                        "(els) => els.map(a => a.href).filter(Boolean)"
+                    )
+                except Exception:
+                    urls = []
+
+                second = []
+                for u in urls:
+                    lu = u.lower()
+                    if (
+                        "careers.siriusxm.com" in lu
+                        and "/jobs/" in lu
+                        and not re.search(r"/jobs/\d{4,}", lu)
+                    ):
+                        if u not in second:
+                            second.append(u)
+
+                d(f"SECOND_LEVEL_RENDERED={len(second)}")
+                for u in second[:60]:
+                    try:
+                        page.goto(u, wait_until="domcontentloaded", timeout=45000)
+                        page.wait_for_timeout(5000)
+                        add_ids(page.content())
+                        ls = page.locator("a").evaluate_all(
+                            "(els) => els.map(a => a.href).filter(Boolean)"
+                        )
+                        for href in ls:
+                            add_ids(href)
+                    except Exception as e:
+                        d(f"SECOND_ERROR {u} {type(e).__name__}:{e}")
+
+                browser.close()
         except Exception as e:
-            d(f"INDEX ERROR page={page} err={repr(e)}")
+            d(f"PLAYWRIGHT_ERROR {type(e).__name__}:{e}")
 
-    d(f"SECOND_LEVEL_DISCOVERED={len(second_level)}")
-    for u in sorted(second_level)[:80]:
-        d(f"SECOND {u}")
+    d(f"DISCOVERED={len(detail_urls)}")
+    d("SAMPLE=" + ",".join(sorted(detail_urls, reverse=True)[:30]))
 
-    # Phase 2: follow those category/location result routes. These pages are the
-    # missing layer in v62. Follow limited pagination/filter links too.
-    queue = list(sorted(second_level))
-    seen_pages = set()
-    while queue and len(seen_pages) < 180 and len(detail_urls) < 1200:
-        page = queue.pop(0)
-        key = page.split("#", 1)[0]
-        if key in seen_pages:
-            continue
-        seen_pages.add(key)
-
-        try:
-            r = req(
-                "GET",
-                page,
-                headers={
-                    "Accept": "text/html,application/xhtml+xml",
-                    "Referer": host + "/careers/jobs",
-                },
-            )
-            raw = html.unescape(r.text or "").replace("\\/", "/")
-            soup = BeautifulSoup(raw, "html.parser")
-            found_here = 0
-
-            for a in soup.find_all("a", href=True):
-                u = urljoin(str(getattr(r, "url", "") or page), a["href"]).split("#", 1)[0]
-                if not same_host(u):
-                    continue
-                cj = canonical_job(u)
-                if cj:
-                    if cj not in detail_urls:
-                        found_here += 1
-                    detail_urls.add(cj)
-                    continue
-
-                label = clean(a.get_text(" ")).lower()
-                p = urlparse(u)
-                if (
-                    re.search(r"\b(next|more|view more|load more)\b", label)
-                    or any(k in p.query.lower() for k in ("page=", "from=", "offset=", "start=", "sort=", "category=", "location="))
-                ):
-                    if u not in seen_pages and u not in queue:
-                        queue.append(u)
-
-            # Hydrated/config URLs.
-            for mm in re.finditer(
-                r'(?:https?://careers\.siriusxm\.com)?/(?:careers/|howwework/|lifeatsiriusxm/|earlycareer/|org-culture/)?jobs/(\d{4,})(?:/job)?',
-                raw,
-                re.I,
-            ):
-                cj = f"{host}/careers/jobs/{mm.group(1)}"
-                if cj not in detail_urls:
-                    found_here += 1
-                detail_urls.add(cj)
-
-            # IDs can also appear in JSON data with no full URL.
-            for keyname in ("jobId", "job_id", "jobIdNumber", "requisitionId"):
-                for mm in re.finditer(
-                    rf'["\']{keyname}["\']\s*:\s*["\']?(\d{{4,}})',
-                    raw,
-                    re.I,
-                ):
-                    cj = f"{host}/careers/jobs/{mm.group(1)}"
-                    if cj not in detail_urls:
-                        found_here += 1
-                    detail_urls.add(cj)
-
-            d(f"RESULT_PAGE status={getattr(r,'status_code','?')} jobs+={found_here} page={page}")
-        except Exception as e:
-            d(f"RESULT_PAGE ERROR page={page} err={repr(e)}")
-
-    d(f"TOTAL_DETAIL_URLS={len(detail_urls)}")
-    d("DETAIL_SAMPLE=" + ",".join(sorted(detail_urls, reverse=True)[:25]))
-
-    # US state name -> abbreviation for SiriusXM visible location metadata.
-    state_map = {
-        "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR","California":"CA",
-        "Colorado":"CO","Connecticut":"CT","Delaware":"DE","Florida":"FL","Georgia":"GA",
-        "Hawaii":"HI","Idaho":"ID","Illinois":"IL","Indiana":"IN","Iowa":"IA","Kansas":"KS",
-        "Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD","Massachusetts":"MA",
-        "Michigan":"MI","Minnesota":"MN","Mississippi":"MS","Missouri":"MO","Montana":"MT",
-        "Nebraska":"NE","Nevada":"NV","New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM",
-        "New York":"NY","North Carolina":"NC","North Dakota":"ND","Ohio":"OH","Oklahoma":"OK",
-        "Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
-        "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Vermont":"VT",
-        "Virginia":"VA","Washington":"WA","West Virginia":"WV","Wisconsin":"WI","Wyoming":"WY",
-        "Washington, DC":"DC","District of Columbia":"DC"
-    }
-
-    # Phase 3: current detail pages. SiriusXM often omits a public Date Posted,
-    # so a currently open page uses TODAY as discovery date.
+    # Validate only discovered current jobs. The canonical no-tracking URL is
+    # what goes into JBoard.
     for url in sorted(
         detail_urls,
-        key=lambda u: int(re.search(r"/(\d+)$", u).group(1)) if re.search(r"/(\d+)$", u) else 0,
+        key=lambda u: int(re.search(r"/(\d+)$", u).group(1))
+        if re.search(r"/(\d+)$", u) else 0,
         reverse=True,
-    )[:350]:
-        jid = re.search(r"/(\d+)$", url).group(1)
+    )[:300]:
         try:
+            jid = re.search(r"/(\d+)$", url).group(1)
             rr = req(
                 "GET",
                 url + "?lang=en-us",
-                headers={
-                    "Accept": "text/html,application/xhtml+xml",
-                    "Referer": host + "/careers/jobs",
-                },
+                headers={"Referer": host + "/careers/jobs"},
             )
+            txt = clean(BeautifulSoup(rr.text or "", "html.parser").get_text(" "))
+            low = txt.lower()
             if getattr(rr, "status_code", 0) in (403, 404, 410):
                 continue
-
-            soup = BeautifulSoup(rr.text or "", "html.parser")
-            txt = clean(soup.get_text(" "))
-            low = txt.lower()
-
-            if re.search(r"\b(job (?:is )?no longer available|page not found|position has been filled)\b", low):
+            if re.search(
+                r"\b(job (?:is )?no longer available|page not found|position has been filled)\b",
+                low,
+            ):
                 continue
 
-            h1 = soup.find("h1")
-            title = clean(h1.get_text(" ") if h1 else "")
-            if not title or title.lower() in {"siriusxm careers", "careers"}:
-                continue
+            j = _job_from_detail(src, url, rr.text)
+            if not j:
+                j = _direct_board_job(src, url, rr.text)
 
-            # Prefer the Job Description body, but retain enough page metadata
-            # for classification and work arrangement.
-            desc_node = (
-                soup.find(id=re.compile(r"job.?description", re.I))
-                or soup.find(attrs={"class": re.compile(r"job.?description", re.I)})
-                or soup.find("main")
-                or soup
-            )
-            desc = clean(desc_node.get_text(" "))
-            if len(desc) < 200:
-                continue
+            # SiriusXM commonly omits a reliable public posting date. If the
+            # detail page is currently open and parsable, use MJR discovery date.
+            if not j:
+                soup = BeautifulSoup(rr.text or "", "html.parser")
+                h1 = soup.find("h1")
+                title = clean(h1.get_text(" ") if h1 else "")
+                if not title or len(txt) < 250:
+                    continue
 
-            # Visible SiriusXM metadata appears immediately around the heading:
-            # location(s), category, employment type, requisition and Flex mode.
-            employment = ""
-            for val in ("Regular Employee Full-Time", "Regular Employee Part-Time", "Intern (Fixed Term)", "Temporary Employee"):
-                if val.lower() in low:
-                    employment = val
-                    break
+                employment = ""
+                for val in (
+                    "Regular Employee Full-Time",
+                    "Regular Employee Part-Time",
+                    "Intern (Fixed Term)",
+                    "Temporary Employee",
+                ):
+                    if val.lower() in low:
+                        employment = val
+                        break
 
-            flex = "Not Specified"
+                jt = jobtype(title, employment + " " + txt[:2500])
+                if "intern (fixed term)" in low:
+                    jt = "Internship"
+
+                cat = category(title, txt, src["Industry"], src["Company"])
+                if jt == "Internship":
+                    cat = "Internships"
+
+                wa = "On-Site"
+                if re.search(r"\boffice first\b", low):
+                    wa = "On-Site"
+                elif re.search(r"\bhybrid\b", low):
+                    wa = "Hybrid"
+                elif re.search(r"\bremote\b", low):
+                    wa = "Remote"
+
+                # First US City, State pair; structured parser can improve this
+                # when SiriusXM exposes JSON-LD.
+                city, state, country = "", "", "US"
+                lm = re.search(
+                    r"\b([A-Z][A-Za-z .'-]{1,45}),\s*"
+                    r"(Alabama|Alaska|Arizona|Arkansas|California|Colorado|"
+                    r"Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|"
+                    r"Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|"
+                    r"Massachusetts|Michigan|Minnesota|Mississippi|Missouri|"
+                    r"Montana|Nebraska|Nevada|New Hampshire|New Jersey|New Mexico|"
+                    r"New York|North Carolina|North Dakota|Ohio|Oklahoma|Oregon|"
+                    r"Pennsylvania|Rhode Island|South Carolina|South Dakota|"
+                    r"Tennessee|Texas|Utah|Vermont|Virginia|Washington|"
+                    r"West Virginia|Wisconsin|Wyoming|Washington, DC)\b",
+                    txt,
+                )
+                if lm:
+                    city = clean(lm.group(1))
+                    state_names = {
+                        "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR",
+                        "California":"CA","Colorado":"CO","Connecticut":"CT","Delaware":"DE",
+                        "Florida":"FL","Georgia":"GA","Hawaii":"HI","Idaho":"ID",
+                        "Illinois":"IL","Indiana":"IN","Iowa":"IA","Kansas":"KS",
+                        "Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD",
+                        "Massachusetts":"MA","Michigan":"MI","Minnesota":"MN","Mississippi":"MS",
+                        "Missouri":"MO","Montana":"MT","Nebraska":"NE","Nevada":"NV",
+                        "New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM","New York":"NY",
+                        "North Carolina":"NC","North Dakota":"ND","Ohio":"OH","Oklahoma":"OK",
+                        "Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
+                        "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT",
+                        "Vermont":"VT","Virginia":"VA","Washington":"WA","West Virginia":"WV",
+                        "Wisconsin":"WI","Wyoming":"WY","Washington, DC":"DC",
+                    }
+                    state = state_names.get(lm.group(2), "")
+
+                j = Job(
+                    jid, title, src["Company"], txt, TODAY, jt, cat, url,
+                    src["URL"], "https://www.siriusxm.com/", "", wa,
+                    city, state, country, None
+                )
+
+            # SiriusXM's explicit Flex label beats generic prose classification.
             if re.search(r"\boffice first\b", low):
-                flex = "On-Site"
+                j.work_arrangement = "On-Site"
             elif re.search(r"\bhybrid\b", low):
-                flex = "Hybrid"
+                j.work_arrangement = "Hybrid"
             elif re.search(r"\bremote\b", low):
-                flex = "Remote"
+                j.work_arrangement = "Remote"
 
-            # First recognizable City, State pair from page metadata.
-            city = ""
-            state = ""
-            country = "US"
-            loc_match = re.search(
-                r"\b([A-Z][A-Za-z .'-]{1,50}),\s*("
-                + "|".join(re.escape(x) for x in sorted(state_map, key=len, reverse=True))
-                + r")\b",
-                txt
-            )
-            if loc_match:
-                city = clean(loc_match.group(1))
-                state = state_map.get(loc_match.group(2), "")
-
-            # International jobs can remain with inferred country; MJR source
-            # currently primarily serves US media jobs.
-            if not state:
-                if re.search(r"\bDublin\b", txt):
-                    country = "IE"
-                    city = city or "Dublin"
-                elif re.search(r"\bBucharest\b", txt):
-                    country = "RO"
-                    city = city or "Bucharest"
-                elif re.search(r"\bLondon\b", txt):
-                    country = "GB"
-                    city = city or "London"
-
-            jt = jobtype(title, employment + " " + txt[:2000])
-            if "intern (fixed term)" in low or re.search(r"\bintern(ship)?\b", title, re.I):
-                jt = "Internship"
-            elif "regular employee part-time" in low:
-                jt = "Part Time"
-            elif "regular employee full-time" in low:
-                jt = "Full Time"
-
-            cat = category(title, desc, src["Industry"], src["Company"])
-            if jt == "Internship":
-                cat = "Internships"
-
-            job = Job(
-                jid,
-                title,
-                src["Company"],
-                desc,
-                TODAY,
-                jt,
-                cat,
-                url,
-                src["URL"],
-                "https://www.siriusxm.com/",
-                "",
-                flex,
-                city,
-                state,
-                country,
-                None,
-            )
-
-            if jid not in seen_ids:
-                seen_ids.add(jid)
-                out.append(job)
-                if len(out) <= 35:
-                    d(f"ACCEPT {jid} title={title} type={jt} cat={cat} loc={city},{state},{country} flex={flex}")
+            if jid not in seen:
+                seen.add(jid)
+                out.append(j)
+                if len(out) <= 40:
+                    d(
+                        f"ACCEPT {jid} title={j.title} type={j.jobtype} "
+                        f"cat={j.category} loc={j.city},{j.state},{j.country} "
+                        f"wa={j.work_arrangement}"
+                    )
         except Exception as e:
-            d(f"DETAIL ERROR {jid} {repr(e)}")
+            d(f"DETAIL_ERROR {url} {type(e).__name__}:{e}")
 
-    d(f"FINAL accepted={len(out)}")
-    save_diag()
+    d(f"FINAL={len(out)}")
+    Path("mjr-siriusxm-diagnostic-v65.txt").write_text(
+        "\n".join(diag) + "\n", encoding="utf-8"
+    )
     return out
 
 
@@ -6943,7 +6868,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         try:
             rr = req("GET", url)
         except Exception as e:
-            print(f"Audacy v64 search fetch failed page {page_num}: {e}")
+            print(f"Audacy v65 search fetch failed page {page_num}: {e}")
             break
 
         html = rr.text or ""
@@ -6989,7 +6914,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
 
         signature = tuple(page_ids)
         print(
-            f"Audacy v64 listing page {page_num}: "
+            f"Audacy v65 listing page {page_num}: "
             f"{len(page_ids)} ordered job IDs"
         )
 
@@ -7008,7 +6933,7 @@ def _audacy_direct_icims_urls_v40(src, max_pages=12, max_details=180):
         if len(ordered) >= max_details:
             break
 
-    print(f"Audacy v64 enumerated {len(ordered)} ordered jobs")
+    print(f"Audacy v65 enumerated {len(ordered)} ordered jobs")
     return ordered[:max_details], len(ordered)
 
 
@@ -7039,7 +6964,7 @@ def collect_audacy_v40(src):
 
     if not urls:
         log("", "SUMMARY", f"0 URLs enumerated; enumerated_count={enumerated_count}")
-        Path("mjr-audacy-validation-v64.txt").write_text(
+        Path("mjr-audacy-validation-v65.txt").write_text(
             "\n".join(log_lines), encoding="utf-8"
         )
         return [], enumerated_count
@@ -7282,7 +7207,7 @@ def collect_audacy_v40(src):
     for detail_url in urls:
         if detail_fetches >= max_detail_fetches:
             log("", "STOP", "detail safety limit reached")
-            print("Audacy v64 stopped at detail safety limit")
+            print("Audacy v65 stopped at detail safety limit")
             break
 
         requested_id_match = re.search(r"/jobs/(\d+)/", detail_url, re.I)
@@ -7514,13 +7439,13 @@ def collect_audacy_v40(src):
         f"enumerated={enumerated_count}; detail_checked={detail_fetches}; accepted={len(out)}"
     )
 
-    Path("mjr-audacy-validation-v64.txt").write_text(
+    Path("mjr-audacy-validation-v65.txt").write_text(
         "\n".join(log_lines),
         encoding="utf-8",
     )
 
     print(
-        f"Audacy v64: {enumerated_count} enumerated, "
+        f"Audacy v65: {enumerated_count} enumerated, "
         f"{detail_fetches} detail pages checked, "
         f"{len(out)} verified jobs"
     )
