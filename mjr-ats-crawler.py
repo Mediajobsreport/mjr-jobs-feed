@@ -4585,7 +4585,7 @@ def cox_successfactors(src):
     return out
 
 def paramount_successfactors(src):
-    """Paramount SAP SuccessFactors collector — v70.
+    """Paramount SAP SuccessFactors collector — v71.
 
     Paramount's public board lazy-loads results beyond the first 25.  Use one
     lightweight Playwright listing session to reveal the full board, capture
@@ -4614,7 +4614,7 @@ def paramount_successfactors(src):
                 return pdate(m.group(0))
         return None
 
-    d("PARAMOUNT SUCCESSFACTORS v70")
+    d("PARAMOUNT SUCCESSFACTORS v71")
     d(f"source={src.get('URL','')}")
     d(f"listing={listing}")
 
@@ -4846,15 +4846,40 @@ def paramount_successfactors(src):
             else:
                 jt = "Full Time"
 
-            # Paramount publishes a direct work model in the header.
-            if re.search(r"\bHybrid\b", meta, re.I):
-                wa = "Hybrid"
-            elif re.search(r"\bRemote\b", meta, re.I):
-                wa = "Remote"
-            elif re.search(r"\bOn[- ]Site\b|\bOffice First\b", meta, re.I):
-                wa = "On-Site"
+            # Paramount work arrangement must come from an explicit job-level
+            # statement. Do not classify from generic benefits/event boilerplate
+            # that happens to contain words such as "remote" or "virtual".
+            wa = "On-Site"
+
+            # First look for compact SuccessFactors header labels.
+            header_slice = visible[:2600]
+            work_model = ""
+            for pat in (
+                r"\bWork(?:place|ing)?\s*(?:Model|Arrangement|Location|Type)\s*[:\-]?\s*"
+                r"(On[- ]?Site|Onsite|Hybrid|Remote|Office First)\b",
+                r"\bJob\s*Type\s*[:\-]?\s*(?:Full[- ]?Time|Part[- ]?Time|Temporary|Internship)"
+                r".{0,180}?\b(On[- ]?Site|Onsite|Hybrid|Remote|Office First)\b",
+            ):
+                mm = re.search(pat, header_slice, re.I | re.S)
+                if mm:
+                    work_model = clean(mm.group(1))
+                    break
+
+            wm = work_model.lower()
+            if wm:
+                if "hybrid" in wm:
+                    wa = "Hybrid"
+                elif "remote" in wm:
+                    wa = "Remote"
+                else:
+                    wa = "On-Site"
             else:
-                wa = normalize_work_arrangement(desc, ", ".join(x for x in [city,state,country] if x))
+                # Fall back to the conservative global v64 classifier. It
+                # requires language about THIS position, not incidental mentions.
+                wa = normalize_work_arrangement(
+                    desc,
+                    ", ".join(x for x in [city, state, country] if x),
+                )
 
             cat = category(title, desc, src["Industry"], src["Company"])
             low = title.lower()
@@ -4862,33 +4887,84 @@ def paramount_successfactors(src):
 
             if jt == "Internship":
                 cat = "Internships"
+
+            # Engineering / technical roles first.
             elif re.search(
-                r"\b(software|data|machine learning|ml|devops|cloud|network|"
-                r"systems?|security|cyber|technology|technical|engineer|engineering)\b",
+                r"\b(software|data engineer|data scientist|machine learning|ml|devops|cloud|"
+                r"network|systems?|security|cyber|technology|technical|engineer|engineering|"
+                r"broadcast maintenance|maintenance technician|403\s*\(?g\)?\s*(?:maintenance )?technician|"
+                r"media operations specialist)\b",
                 low,
             ) and not re.search(r"\b(sales|marketing|account executive)\b", low):
                 cat = "Engineering"
+
+            # Sales, advertising, revenue and marketing.
             elif re.search(
-                r"\b(account executive|sales|advertising|revenue|business development|"
-                r"account management|partnership sales|sponsorship)\b",
+                r"\b(account executive|account manager|sales|advertising|ad sales|revenue|"
+                r"business development|account management|partnership marketing|"
+                r"integrated marketing|performance marketing|retail marketing|"
+                r"partnership sales|sponsorship|biddable platforms)\b",
                 low,
             ):
                 cat = "Sales & Marketing"
+
+            # Product / UX / streaming / social are Digital unless technical
+            # engineering rules above already matched.
+            elif re.search(
+                r"\b(product management|product manager|product designer|ux|ui|"
+                r"digital|streaming|social media|social video|merchandising)\b",
+                low,
+            ):
+                cat = "Digital"
+
+            # CBS/local television newsroom and production functions.
             elif re.search(
                 r"\b(anchor|meteorologist|weather anchor|news producer|executive producer|"
                 r"assignment editor|photojournalist|photographer|newscast|broadcast director|"
                 r"tv producer|television producer|studio technician|broadcast technician|"
-                r"news director|producer/editor)\b",
+                r"news director|producer/editor|multi-skilled producer|line producer|"
+                r"multi-skilled journalist|sports reporter|toc/editor)\b",
                 low,
             ) or (
-                "cbs television stations" in dlow
-                and re.search(r"\b(producer|director|reporter|anchor|news|studio|photojournalist)\b", low)
+                re.search(r"\bcbs news and stations\b|\bcbs television stations\b|\bwjz\b|\bwwj-tv\b", dlow)
+                and re.search(r"\b(producer|director|reporter|anchor|news|studio|photojournalist|photographer)\b", low)
             ):
                 cat = "Television"
-            elif re.search(r"\b(reporter|journalist|editorial|news writer|correspondent)\b", low):
+
+            elif re.search(r"\b(reporter|journalist|editorial|news writer|correspondent|staff writer)\b", low):
                 cat = "Journalism"
-            elif re.search(r"\b(product manager|product designer|ux|ui|digital|streaming|social media)\b", low):
-                cat = "Digital"
+
+            # Finance/accounting/administrative and operational analyst roles.
+            elif re.search(
+                r"\b(rtr|record to report|t&e|tande|travel and expense|"
+                r"business analyst|financial analyst|finance analyst|accountant|"
+                r"pension|internal audit|auditor|royalty compliance|fp&a|"
+                r"office coordinator|operations assistant|executive assistant)\b",
+                low,
+            ):
+                cat = "Business Office"
+
+            # Catch vague analyst titles using functional description context.
+            elif re.search(r"\banalyst\b", low):
+                if re.search(
+                    r"\b(accounting|general ledger|record to report|travel and expense|"
+                    r"accounts payable|accounts receivable|finance|financial reporting|"
+                    r"audit|pension|payroll|treasury|tax|collections)\b",
+                    dlow[:3500],
+                ):
+                    cat = "Business Office"
+                elif re.search(
+                    r"\b(data pipeline|sql|python|data engineering|machine learning|"
+                    r"data infrastructure|etl|analytics engineering)\b",
+                    dlow[:3500],
+                ):
+                    cat = "Engineering"
+                elif re.search(
+                    r"\b(marketing analytics|audience analytics|digital analytics|"
+                    r"streaming analytics|product analytics)\b",
+                    dlow[:3500],
+                ):
+                    cat = "Digital"
 
             j = Job(
                 jid,
@@ -4921,7 +4997,7 @@ def paramount_successfactors(src):
             d(f"DETAIL_ERROR {url} {type(e).__name__}:{e}")
 
     d(f"FINAL={len(out)}")
-    Path("mjr-paramount-diagnostic-v70.txt").write_text(
+    Path("mjr-paramount-diagnostic-v71.txt").write_text(
         "\n".join(diag) + "\n", encoding="utf-8"
     )
     return out
@@ -6841,8 +6917,17 @@ def _v28_source_enabled(src):
 def _v28_before_request(url):
     host = urlparse(url).netloc.lower()
     count = _v28_domain_counts.get(host, 0)
-    if count >= MJR_DOMAIN_REQUEST_CAP:
-        raise RuntimeError(f"v28 domain request cap reached for {host}: {MJR_DOMAIN_REQUEST_CAP}")
+
+    # Paramount has a very large active SuccessFactors board. Its listing is
+    # pre-filtered by posting date before detail pages are requested, so allow
+    # enough requests to complete the current 21-day set without weakening the
+    # 175-request protection used by every other source.
+    host_cap = MJR_DOMAIN_REQUEST_CAP
+    if host in {"careers.paramount.com", "www.careers.paramount.com"}:
+        host_cap = max(host_cap, int(os.getenv("MJR_PARAMOUNT_REQUEST_CAP", "300")))
+
+    if count >= host_cap:
+        raise RuntimeError(f"v28 domain request cap reached for {host}: {host_cap}")
     _v28_domain_counts[host] = count + 1
     lo = max(0.0, MJR_REQUEST_DELAY_MIN)
     hi = max(lo, MJR_REQUEST_DELAY_MAX)
