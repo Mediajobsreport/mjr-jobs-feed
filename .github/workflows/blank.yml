@@ -62,26 +62,14 @@ jobs:
           MJR_DOMAIN_REQUEST_CAP: "175"
         run: python mjr-ats-crawler.py
 
-      - name: Ensure diagnostic exists
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '' }}
-        shell: bash
-        run: |
-          if [[ ! -f "mjr-salem-diagnostic.txt" ]]; then
-            {
-              echo "MJR SALEM DIAGNOSTIC"
-              echo "Diagnostic file was NOT created by the crawler."
-              echo "Requested test companies: ${{ github.event.inputs.test_companies }}"
-            } > mjr-salem-diagnostic.txt
-          fi
-
       - name: Print targeted test results
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '' }}
         shell: bash
         run: |
           echo ""
           echo "----- SIRIUSXM DIAGNOSTIC -----"
-          if [[ -f "mjr-siriusxm-diagnostic-v65.txt" ]]; then
-            cat mjr-siriusxm-diagnostic-v65.txt
+          if [[ -f "mjr-siriusxm-diagnostic-v66.txt" ]]; then
+            cat mjr-siriusxm-diagnostic-v66.txt
           else
             echo "No SiriusXM diagnostic file generated."
           fi
@@ -97,18 +85,7 @@ jobs:
           else
             echo "Audit file missing."
           fi
-          echo ""
-          echo "----- SALEM DIAGNOSTIC -----"
-          cat mjr-salem-diagnostic.txt
-          echo ""
-          echo "----- SALEM IFRAME HTML PREVIEW -----"
-          if [[ -f "mjr-salem-iframe.html" ]]; then
-            head -c 12000 mjr-salem-iframe.html
-            echo ""
-          else
-            echo "No Salem iframe HTML file generated."
-          fi
-          echo ""
+
           echo "----- AUDACY DIAGNOSTIC -----"
           if [[ -f "mjr-audacy-diagnostic.txt" ]]; then
             cat mjr-audacy-diagnostic.txt
@@ -153,11 +130,9 @@ jobs:
           path: |
             mjr-jboard-test.xml
             mjr-ats-audit-test.csv
-            mjr-siriusxm-diagnostic-v65.txt
-            mjr-audacy-validation-v65.txt
+            mjr-siriusxm-diagnostic-v66.txt
+            mjr-audacy-validation-v66.txt
             mjr-job-state-test.json
-            mjr-salem-diagnostic.txt
-            mjr-salem-iframe.html
             mjr-audacy-diagnostic.txt
             mjr-audacy-raw-response.txt
             mjr-audacy-search-page-v43.html
