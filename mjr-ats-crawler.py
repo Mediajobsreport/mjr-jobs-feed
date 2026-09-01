@@ -5050,8 +5050,9 @@ def siriusxm_v17(src):
         return jobtype(title, meta + " " + description[:2500])
 
     def location_parts(data):
-        # Jibe commonly supplies location as a compound display value. Prefer
-        # structured display/location fields and normalize with the v66 helper.
+        # Jibe exposes both normal geographic data and internal display labels
+        # such as "CA - Los Angeles - Sycamore Ave". Normalize those labels to
+        # the actual city while retaining state/country separately.
         candidates = all_by_keys(
             data,
             [
@@ -5067,15 +5068,68 @@ def siriusxm_v17(src):
 
         compound = ""
         for val in candidates:
-            if "," in val or " / " in val:
+            if val:
                 compound = val
-                break
-        if not compound and candidates:
-            compound = candidates[0]
+                # Prefer a meaningful display location over generic fields.
+                if "," in val or " / " in val or " - " in val:
+                    break
 
-        if compound:
-            return _siriusxm_location_parts(compound, state, country)
-        return _siriusxm_location_parts(city, state, country)
+        raw = clean(compound or city)
+
+        # SiriusXM/Jibe common display labels:
+        #   CA - Los Angeles - Sycamore Ave
+        #   TX - Lewisville - Highland Dr
+        #   NY - New York - 1221 Ave of Americas
+        #   RO - Bucharest - AFI Park Floreasca
+        #   UK - London - Swan House
+        #   Remote - New York
+        #
+        # Keep only the actual city portion for JBoard.
+        if " - " in raw:
+            parts = [clean(x) for x in raw.split(" - ") if clean(x)]
+            if parts:
+                first = parts[0].upper()
+                if first == "REMOTE":
+                    # Keep geographic city while work_arrangement carries Remote.
+                    raw = parts[1] if len(parts) > 1 else ""
+                elif re.fullmatch(r"[A-Z]{2,3}", first):
+                    # Prefix is state/country code; second token is city.
+                    raw = parts[1] if len(parts) > 1 else ""
+                elif len(parts) >= 2 and parts[0].lower() in {
+                    "united states", "united kingdom", "romania", "ireland"
+                }:
+                    raw = parts[1]
+
+        c, s, co = _siriusxm_location_parts(raw, state, country)
+
+        # Preserve API-provided state/country when the cleaned city no longer
+        # contains those components.
+        if state:
+            state_map = {
+                "california":"CA","colorado":"CO","connecticut":"CT","florida":"FL",
+                "georgia":"GA","illinois":"IL","indiana":"IN","maryland":"MD",
+                "massachusetts":"MA","michigan":"MI","nevada":"NV","new jersey":"NJ",
+                "new york":"NY","north carolina":"NC","ohio":"OH","oregon":"OR",
+                "tennessee":"TN","texas":"TX","virginia":"VA","washington":"WA",
+                "west virginia":"WV","washington, dc":"DC","district of columbia":"DC"
+            }
+            sv = clean(state)
+            s = state_map.get(sv.lower(), sv if re.fullmatch(r"[A-Z]{2}", sv.upper()) else s)
+            if re.fullmatch(r"[A-Z]{2}", sv.upper()):
+                s = sv.upper()
+
+        if country:
+            cv = clean(country).lower()
+            country_map = {
+                "united states":"US","usa":"US","us":"US",
+                "united kingdom":"GB","uk":"GB","gb":"GB",
+                "romania":"RO","ro":"RO",
+                "ireland":"IE","ie":"IE",
+                "canada":"CA","ca":"CA",
+            }
+            co = country_map.get(cv, co)
+
+        return c, s, co
 
     def category_fix(title, description, jt):
         if jt == "Internship":
@@ -5166,7 +5220,7 @@ def siriusxm_v17(src):
             browser.close()
         return payloads
 
-    d("SIRIUSXM DIRECT API v67")
+    d("SIRIUSXM DIRECT API v68")
     d(f"source={src.get('URL','')}")
 
     payloads = []
@@ -5285,7 +5339,7 @@ def siriusxm_v17(src):
             d(f"PARSE_ERROR {type(e).__name__}:{e}")
 
     d(f"FINAL={len(out)}")
-    Path("mjr-siriusxm-diagnostic-v67.txt").write_text(
+    Path("mjr-siriusxm-diagnostic-v68.txt").write_text(
         "\n".join(diag) + "\n", encoding="utf-8"
     )
     return out
