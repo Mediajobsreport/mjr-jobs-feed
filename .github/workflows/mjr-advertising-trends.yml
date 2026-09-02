@@ -1,0 +1,43 @@
+name: MJR Advertising Trends
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 4:20 AM and 3:20 PM Eastern during EDT; harmless if DST shifts by an hour.
+    - cron: "20 8 * * *"
+    - cron: "20 19 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  build-trends:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Generate MJR advertising trends
+        env:
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+        run: node generate-advertising-trends.js
+
+      - name: Validate JSON
+        run: node -e "const f=require('./mjr-advertising-trends.json'); if(!f.groups) process.exit(1); console.log('Trend JSON valid')"
+
+      - name: Commit updated trend file
+        run: |
+          git config user.name "MJR Trends Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add mjr-advertising-trends.json
+          if git diff --cached --quiet; then
+            echo "No trend changes to commit."
+          else
+            git commit -m "Update MJR advertising trends"
+            git push
+          fi
