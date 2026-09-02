@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-02T20:07:59.665Z",
+  "generated_at": "2026-09-02T20:16:06.566Z",
   "source": "U.S. Census Bureau Monthly Retail Trade; MJR analysis",
   "methodology": "MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available, averages those monthly shares, identifies each category’s three strongest months, then converts the timing into forward-looking prospecting signals.",
   "years_requested": [
@@ -9,75 +9,544 @@
   ],
   "groups": {
     "sell_now": [],
-    "start_prospecting": [],
-    "on_deck": [],
+    "start_prospecting": [
+      {
+        "category": "Electronics & Appliance Stores",
+        "category_code": "443",
+        "signal": "start_prospecting",
+        "strong_months": "August, November, December",
+        "lead_time": "About 60 days ahead",
+        "target_month": "November",
+        "target_month_avg_share": 9.62,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Connect campaigns to upgrade cycles, product launches, home projects, major shopping periods and gift demand."
+      },
+      {
+        "category": "Clothing & Accessories",
+        "category_code": "448",
+        "signal": "start_prospecting",
+        "strong_months": "August, November, December",
+        "lead_time": "About 60 days ahead",
+        "target_month": "November",
+        "target_month_avg_share": 9.44,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Start before key shopping periods with seasonal wardrobe, gifting, events, back-to-school and promotional urgency."
+      },
+      {
+        "category": "Sporting Goods, Hobby, Book & Music Stores",
+        "category_code": "451",
+        "signal": "start_prospecting",
+        "strong_months": "August, November, December",
+        "lead_time": "About 60 days ahead",
+        "target_month": "November",
+        "target_month_avg_share": 9.39,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Use sports seasons, hobbies, recreation, school calendars, gifting and major local events as timely hooks."
+      },
+      {
+        "category": "Miscellaneous Store Retailers",
+        "category_code": "453",
+        "signal": "start_prospecting",
+        "strong_months": "May, October, December",
+        "lead_time": "About 30 days ahead",
+        "target_month": "October",
+        "target_month_avg_share": 9.1,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Identify the specific retail niche, then connect the stronger window to a concrete offer, event or customer need."
+      },
+      {
+        "category": "Furniture & Home Furnishings",
+        "category_code": "442",
+        "signal": "start_prospecting",
+        "strong_months": "August, November, December",
+        "lead_time": "About 60 days ahead",
+        "target_month": "November",
+        "target_month_avg_share": 8.96,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Use home projects, financing, moving activity, seasonal refreshes and promotional events as conversation starters."
+      },
+      {
+        "category": "Health & Personal Care Stores",
+        "category_code": "446",
+        "signal": "start_prospecting",
+        "strong_months": "August, October, December",
+        "lead_time": "About 30 days ahead",
+        "target_month": "October",
+        "target_month_avg_share": 8.88,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Use wellness seasons, benefits timing, back-to-school health, allergy periods and holiday/self-care demand."
+      },
+      {
+        "category": "General Merchandise Stores",
+        "category_code": "452",
+        "signal": "start_prospecting",
+        "strong_months": "August, November, December",
+        "lead_time": "About 60 days ahead",
+        "target_month": "November",
+        "target_month_avg_share": 8.87,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Lead ahead of major shopping periods, seasonal resets, gift buying, school calendars and promotional events."
+      },
+      {
+        "category": "Nonstore Retailers",
+        "category_code": "454",
+        "signal": "start_prospecting",
+        "strong_months": "October, November, December",
+        "lead_time": "About 30 days ahead",
+        "target_month": "October",
+        "target_month_avg_share": 8.67,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Use shopping peaks, gifting, promotions, digital response, retargeting and customer-acquisition timing."
+      },
+      {
+        "category": "Food & Beverage Stores",
+        "category_code": "445",
+        "signal": "start_prospecting",
+        "strong_months": "May, November, December",
+        "lead_time": "About 60 days ahead",
+        "target_month": "November",
+        "target_month_avg_share": 8.52,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Build around seasonal entertaining, holidays, game days, meal occasions, promotions and local shopping behavior."
+      }
+    ],
+    "on_deck": [
+      {
+        "category": "Restaurants & Drinking Places",
+        "category_code": "722",
+        "signal": "on_deck",
+        "strong_months": "May, August, December",
+        "lead_time": "About 90 days ahead",
+        "target_month": "December",
+        "target_month_avg_share": 8.59,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+        "sales_angle": "Build around dayparts, game days, events, holidays, catering, gift cards, traffic needs and limited-time offers."
+      }
+    ],
     "watch_ahead": []
   },
-  "diagnostics": [
-    {
-      "category_code": "441",
-      "category": "Motor Vehicle & Parts Dealers",
-      "status": "insufficient_complete_years"
+  "diagnostics": [],
+  "parser_debug": {
+    "seasonally_adj_values": {
+      "yes": 9144,
+      "no": 10836
     },
-    {
-      "category_code": "442",
-      "category": "Furniture & Home Furnishings",
-      "status": "insufficient_complete_years"
+    "chosen_series": {
+      "2025:441": "SM",
+      "2025:442": "SM",
+      "2025:443": "SM",
+      "2025:444": "SM",
+      "2025:445": "SM",
+      "2025:446": "SM",
+      "2025:447": "SM",
+      "2025:448": "SM",
+      "2025:451": "SM",
+      "2025:452": "SM",
+      "2025:453": "SM",
+      "2025:454": "SM",
+      "2025:722": "SM",
+      "2024:441": "SM",
+      "2024:442": "SM",
+      "2024:443": "SM",
+      "2024:444": "SM",
+      "2024:445": "SM",
+      "2024:446": "SM",
+      "2024:447": "SM",
+      "2024:448": "SM",
+      "2024:451": "SM",
+      "2024:452": "SM",
+      "2024:453": "SM",
+      "2024:454": "SM",
+      "2024:722": "SM",
+      "2023:441": "SM",
+      "2023:442": "SM",
+      "2023:443": "SM",
+      "2023:444": "SM",
+      "2023:445": "SM",
+      "2023:446": "SM",
+      "2023:447": "SM",
+      "2023:448": "SM",
+      "2023:451": "SM",
+      "2023:452": "SM",
+      "2023:453": "SM",
+      "2023:454": "SM",
+      "2023:722": "SM"
     },
-    {
-      "category_code": "443",
-      "category": "Electronics & Appliance Stores",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "444",
-      "category": "Building Material & Garden Supply",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "445",
-      "category": "Food & Beverage Stores",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "446",
-      "category": "Health & Personal Care Stores",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "447",
-      "category": "Gasoline Stations",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "448",
-      "category": "Clothing & Accessories",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "451",
-      "category": "Sporting Goods, Hobby, Book & Music Stores",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "452",
-      "category": "General Merchandise Stores",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "453",
-      "category": "Miscellaneous Store Retailers",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "454",
-      "category": "Nonstore Retailers",
-      "status": "insufficient_complete_years"
-    },
-    {
-      "category_code": "722",
-      "category": "Restaurants & Drinking Places",
-      "status": "insufficient_complete_years"
+    "category_type_month_counts": {
+      "2025:441": {
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 4,
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "E_MPCIM": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12
+      },
+      "2025:442": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:443": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:444": {
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 7,
+        "E_MPCIM": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:445": {
+        "IR": 12,
+        "E_IR": 12,
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 8,
+        "E_MPCIM": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12
+      },
+      "2025:446": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:447": {
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:448": {
+        "MPCIM": 9,
+        "E_MPCIM": 12,
+        "MPCSM": 8,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "IM": 12,
+        "E_IM": 12
+      },
+      "2025:451": {
+        "E_SM": 12,
+        "MPCSM": 7,
+        "E_MPCSM": 12,
+        "SM": 12
+      },
+      "2025:452": {
+        "IM": 12,
+        "E_IM": 12,
+        "E_MPCIM": 11,
+        "MPCSM": 7,
+        "E_MPCSM": 11,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 8,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:453": {
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:454": {
+        "MPCSM": 7,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:722": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:441": {
+        "MPCSM": 7,
+        "E_MPCSM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 9,
+        "E_MPCIM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:442": {
+        "MPCSM": 8,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:443": {
+        "E_MPCSM": 12,
+        "MPCSM": 6,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:444": {
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCSM": 6,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 7,
+        "E_MPCIM": 12
+      },
+      "2024:445": {
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 6,
+        "E_MPCIM": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:446": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:447": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:448": {
+        "MPCSM": 8,
+        "E_MPCSM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 8,
+        "E_MPCIM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:451": {
+        "MPCSM": 7,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:452": {
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 6,
+        "E_MPCIM": 11,
+        "MPCSM": 7,
+        "E_MPCSM": 11,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:453": {
+        "MPCSM": 7,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2024:454": {
+        "E_SM": 12,
+        "MPCSM": 7,
+        "E_MPCSM": 12,
+        "SM": 12
+      },
+      "2024:722": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2023:441": {
+        "IM": 12,
+        "MPCIM": 11,
+        "E_MPCIM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2023:442": {
+        "MPCSM": 4,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2023:443": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2023:444": {
+        "MPCIM": 3,
+        "E_MPCIM": 12,
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12
+      },
+      "2023:445": {
+        "IM": 12,
+        "MPCIM": 7,
+        "E_MPCIM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2023:446": {
+        "SM": 12,
+        "E_SM": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12
+      },
+      "2023:447": {
+        "MPCSM": 4,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2023:448": {
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCIM": 7,
+        "E_MPCIM": 12,
+        "MPCSM": 8,
+        "E_MPCSM": 12,
+        "SM": 12
+      },
+      "2023:451": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2023:452": {
+        "SM": 12,
+        "E_SM": 12,
+        "IR": 12,
+        "E_IR": 12,
+        "MPCSM": 8,
+        "E_MPCSM": 10,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 6,
+        "E_MPCIM": 10
+      },
+      "2023:453": {
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2023:454": {
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12,
+        "MPCSM": 7
+      },
+      "2023:722": {
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      }
     }
-  ]
+  }
 }
