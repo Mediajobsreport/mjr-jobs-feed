@@ -1,0 +1,83 @@
+{
+  "generated_at": "2026-09-02T20:07:59.665Z",
+  "source": "U.S. Census Bureau Monthly Retail Trade; MJR analysis",
+  "methodology": "MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available, averages those monthly shares, identifies each category’s three strongest months, then converts the timing into forward-looking prospecting signals.",
+  "years_requested": [
+    2025,
+    2024,
+    2023
+  ],
+  "groups": {
+    "sell_now": [],
+    "start_prospecting": [],
+    "on_deck": [],
+    "watch_ahead": []
+  },
+  "diagnostics": [
+    {
+      "category_code": "441",
+      "category": "Motor Vehicle & Parts Dealers",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "442",
+      "category": "Furniture & Home Furnishings",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "443",
+      "category": "Electronics & Appliance Stores",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "444",
+      "category": "Building Material & Garden Supply",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "445",
+      "category": "Food & Beverage Stores",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "446",
+      "category": "Health & Personal Care Stores",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "447",
+      "category": "Gasoline Stations",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "448",
+      "category": "Clothing & Accessories",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "451",
+      "category": "Sporting Goods, Hobby, Book & Music Stores",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "452",
+      "category": "General Merchandise Stores",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "453",
+      "category": "Miscellaneous Store Retailers",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "454",
+      "category": "Nonstore Retailers",
+      "status": "insufficient_complete_years"
+    },
+    {
+      "category_code": "722",
+      "category": "Restaurants & Drinking Places",
+      "status": "insufficient_complete_years"
+    }
+  ]
+}
