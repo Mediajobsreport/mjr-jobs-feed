@@ -188,12 +188,11 @@ def category(title, desc, industry, company):
     MJR job-category classifier.
 
     Rule:
-      1. Classify by the actual job function, led by the title.
-      2. Use a small amount of description context only when a title is vague.
-      3. Never classify a job as Radio or Television simply because its employer
-         or source list is labeled Radio or Television.
-      4. Employer/source context is reserved for narrow final fallbacks such as
-         Music Industry and Public Media / Higher Ed.
+      1. Classify by definitive job-title function first.
+      2. Use employer/media context to resolve platform-specific titles such as Producer.
+      3. Use description context only when the title remains ambiguous.
+      4. If still ambiguous, fall back to the employer/source media type (Radio,
+         Television, Journalism, Music Industry, or Public Media / Higher Ed).
     """
 
     t = clean(title).lower()
@@ -206,11 +205,64 @@ def category(title, desc, industry, company):
     d_short = d[:2500]
     td = f" {t} {d_short} "
 
+    # Employer/media context is used for platform-specific roles and the final
+    # fallback only. Functional titles such as Sales, Engineering, HR, etc.
+    # continue to override employer type.
+    radio_context = (
+        ind == "radio"
+        or any(x in c for x in [
+            "audacy", "beasley", "bonneville", "cumulus", "iheart",
+            "lotus communications", "stingray", "pattison", "evanov",
+            "urban one", "siriusxm", "sun broadcasting", "good karma"
+        ])
+        or re.search(r"\b(radio station|radio group|fm station|am station|broadcast radio)\b", d_short)
+    )
+    television_context = (
+        ind == "television"
+        or any(x in c for x in [
+            "paramount", "cbs", "fox television", "nexstar", "sinclair",
+            "televisaunivision", "qvc", "hearst television", "gray television",
+            "weigel", "telemundo"
+        ])
+        or re.search(r"\b(television station|tv station|newscast|television studio|local television|broadcast television)\b", d_short)
+    )
+
     # ------------------------------------------------------------------
     # 1) INTERNSHIPS
     # ------------------------------------------------------------------
     if re.search(r"\b(intern|internship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
         return "Internships"
+
+    # ------------------------------------------------------------------
+    # 1A) DEFINITIVE TITLE-FIRST OVERRIDES
+    # These titles should not be displaced by broad words in descriptions.
+    # ------------------------------------------------------------------
+    if re.search(r"\b(sales associate|associate,? sales|sales account associate|account associate,? sales|sales representative)\b", t):
+        return "Sales & Marketing"
+
+    # Any clear Sales-department title should remain Sales & Marketing.
+    if re.search(r"\bsales\b", t) and not re.search(r"\bsalesforce\b", t):
+        return "Sales & Marketing"
+
+    if re.search(r"\b(morning show personality|radio personality|air personality|on[- ]air personality)\b", t):
+        return "Radio"
+
+    if re.search(r"\b(business supervisor|business director|director,? business|supervisor,? business)\b", t):
+        return "Business Office"
+
+    # Master Control is a television operations function in the MJR taxonomy,
+    # not Engineering.
+    if re.search(r"\b(master control|master control operator|master control supervisor|master control coordinator)\b", t):
+        return "Television"
+
+    # Production technicians at television operations belong in Television.
+    if re.search(r"\bproduction technician\b", t) and television_context:
+        return "Television"
+
+    # Assignment-desk jobs at television operations are Television rather than
+    # generic Journalism.
+    if re.search(r"\bassignment desk(?: assistant| editor| manager| coordinator)?\b", t) and television_context:
+        return "Television"
 
     # ------------------------------------------------------------------
     # 2) ENGINEERING / IT / SOFTWARE / PROGRAMMING / TECHNICAL SYSTEMS
@@ -249,7 +301,7 @@ def category(title, desc, industry, company):
         r"video engineer|studio engineer|field engineer|transmission engineer|"
         r"broadcast technician|studio technician|maintenance technician|maintenance tech|"
         r"audio technician|broadcast audio|technical maintenance|technical director|"
-        r"technical operations|master control|master control operator|transmission|transmitter|"
+        r"technical operations|transmission|transmitter|"
         r"systems technician|av technician|audiovisual technician|electronics technician"
         r")\b",
         t,
@@ -337,6 +389,14 @@ def category(title, desc, industry, company):
         r"partnerships?|client services|customer success|account"
         r")\b",
         t,
+    ):
+        return "Sales & Marketing"
+
+    # Strategy/insights roles tied directly to audience, brand, campaigns or
+    # marketing are Sales & Marketing rather than Journalism or a platform fallback.
+    if re.search(r"\b(strategy|strategic|insights?)\b", t) and re.search(
+        r"\b(marketing|consumer insights?|audience insights?|brand strategy|campaigns?|advertising|market research|go-to-market)\b",
+        d_short,
     ):
         return "Sales & Marketing"
 
@@ -443,9 +503,29 @@ def category(title, desc, industry, company):
             return "Television"
         return "Radio"
 
-    # Exact newsroom photography title; avoids treating product photography as news.
+    # Exact newsroom photography title; television employer context wins.
     if t == "photographer":
+        return "Television" if television_context else "Journalism"
+
+    # Platform-specific editorial/production titles. Generic Producer should
+    # follow the actual media operation instead of defaulting to Journalism.
+    if re.search(r"\b(assignment editor|assignment manager)\b", t):
+        if television_context:
+            return "Television"
+        if radio_context:
+            return "Radio"
         return "Journalism"
+
+    if re.search(r"\b(producer|associate producer|executive producer|show producer|line producer|segment producer)\b", t):
+        # Specialized digital/podcast/streaming producers are handled by their
+        # explicit functional wording later; resolve only generic platform roles here.
+        if not re.search(r"\b(digital|web|social|podcast|streaming)\b", t):
+            if television_context:
+                return "Television"
+            if radio_context:
+                return "Radio"
+            if ind == "journalism":
+                return "Journalism"
 
     # 7) JOURNALISM / NEWS / EDITORIAL
     # Place Journalism before platform production so photojournalists,
@@ -455,7 +535,7 @@ def category(title, desc, industry, company):
         r"\b("
         r"reporter|journalist|news anchor|anchor/reporter|anchor reporter|"
         r"multimedia journalist|mmj|correspondent|investigative reporter|"
-        r"investigative journalist|bureau chief|assignment editor|assignment manager|"
+        r"investigative journalist|bureau chief|"
         r"news editor|managing editor|copy editor|editorial editor|"
         r"news writer|newsroom editor|news director|digital journalist|"
         r"breaking news|photojournalist|news photographer|sports reporter|"
@@ -598,7 +678,7 @@ def category(title, desc, industry, company):
     if re.search(
         r"\b("
         r"broadcasting systems?|broadcast systems?|production systems?|"
-        r"transmitter|transmission systems?|master control|technical systems?|"
+        r"transmitter|transmission systems?|technical systems?|"
         r"networking|electronics|audiovisual|telecommunications|"
         r"studio equipment|technical infrastructure"
         r")\b",
@@ -732,17 +812,21 @@ def category(title, desc, industry, company):
     }:
         return "Public Media / Higher Ed"
 
-    # Journalism and Digital source labels are less platform-specific than
-    # Radio/Television and are acceptable only as cautious final fallbacks.
+    # Final employer/media-type fallbacks. These run only after functional
+    # categories such as Sales, Engineering, Business Office, Digital and PR
+    # have already had a chance to classify the job.
     if ind == "journalism":
         return "Journalism"
 
     if ind == "digital":
         return "Digital"
 
-    # IMPORTANT:
-    # Do not use Radio or Television source-family fallback.
-    # A broadcaster employs finance, design, engineering, HR, sales, etc.
+    if television_context or ind == "television":
+        return "Television"
+
+    if radio_context or ind == "radio":
+        return "Radio"
+
     return "Business Office"
 
 
@@ -4888,6 +4972,19 @@ def paramount_successfactors(src):
             if jt == "Internship":
                 cat = "Internships"
 
+            # Definitive MJR title-first rules.
+            elif re.search(r"\bsales\b", low) and "salesforce" not in low:
+                cat = "Sales & Marketing"
+
+            elif re.search(r"\b(business supervisor|business director|director,? business|supervisor,? business)\b", low):
+                cat = "Business Office"
+
+            elif re.search(r"\b(master control|master control operator|master control supervisor|master control coordinator)\b", low):
+                cat = "Television"
+
+            elif re.search(r"\b(production technician|assignment desk(?: assistant| editor| manager| coordinator)?)\b", low):
+                cat = "Television"
+
             # Engineering / technical roles first.
             elif re.search(
                 r"\b(software|data engineer|data scientist|machine learning|ml|devops|cloud|"
@@ -4920,7 +5017,7 @@ def paramount_successfactors(src):
             # CBS/local television newsroom and production functions.
             elif re.search(
                 r"\b(anchor|meteorologist|weather anchor|news producer|executive producer|"
-                r"assignment editor|photojournalist|photographer|newscast|broadcast director|"
+                r"assignment editor|assignment desk|photojournalist|photographer|newscast|broadcast director|master control|production technician|"
                 r"tv producer|television producer|studio technician|broadcast technician|"
                 r"news director|producer/editor|multi-skilled producer|line producer|"
                 r"multi-skilled journalist|sports reporter|toc/editor)\b",
@@ -4929,6 +5026,9 @@ def paramount_successfactors(src):
                 re.search(r"\bcbs news and stations\b|\bcbs television stations\b|\bwjz\b|\bwwj-tv\b", dlow)
                 and re.search(r"\b(producer|director|reporter|anchor|news|studio|photojournalist|photographer)\b", low)
             ):
+                cat = "Television"
+
+            elif re.search(r"\bproducer\b", low) and not re.search(r"\b(digital|web|social|podcast|streaming)\b", low):
                 cat = "Television"
 
             elif re.search(r"\b(reporter|journalist|editorial|news writer|correspondent|staff writer)\b", low):
@@ -4997,7 +5097,7 @@ def paramount_successfactors(src):
             d(f"DETAIL_ERROR {url} {type(e).__name__}:{e}")
 
     d(f"FINAL={len(out)}")
-    Path("mjr-paramount-diagnostic-v71.txt").write_text(
+    Path("mjr-paramount-diagnostic-v72.txt").write_text(
         "\n".join(diag) + "\n", encoding="utf-8"
     )
     return out
