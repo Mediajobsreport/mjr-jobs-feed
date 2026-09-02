@@ -1,5 +1,5 @@
 /**
- * MJR Advertising Trends Generator v2
+ * MJR Advertising Trends Generator v3
  * Fixes the first parser by:
  *  - parsing Census month identifiers from time_slot_date / time_slot_name / time_slot_id
  *  - discovering the actual non-seasonally-adjusted flag returned by Census
@@ -143,6 +143,7 @@ function build(yearData,years,debug){
   const currentMonth=new Date().getUTCMonth()+1;
   const groups={sell_now:[],start_prospecting:[],on_deck:[],watch_ahead:[]};
   const diagnostics=[];
+  const categorySummary=[];
 
   for(const [code,meta] of Object.entries(categoryMeta)){
     const shares=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,[]]));
@@ -151,10 +152,14 @@ function build(yearData,years,debug){
     for(const year of years){
       const series=yearData[year]?.[code];
       if(!series || Object.keys(series.months).length!==12) continue;
+
       const total=Object.values(series.months).reduce((a,b)=>a+b,0);
       if(!(total>0)) continue;
+
       completeYears.push(year);
-      for(let m=1;m<=12;m++) shares[m].push(series.months[m]/total*100);
+      for(let m=1;m<=12;m++){
+        shares[m].push(series.months[m]/total*100);
+      }
     }
 
     if(completeYears.length<2){
@@ -169,48 +174,127 @@ function build(yearData,years,debug){
 
     const avg={};
     for(let m=1;m<=12;m++){
-      if(shares[m].length) avg[m]=shares[m].reduce((a,b)=>a+b,0)/shares[m].length;
+      avg[m]=shares[m].reduce((a,b)=>a+b,0)/shares[m].length;
     }
 
-    const strongest=Object.entries(avg)
-      .sort((a,b)=>b[1]-a[1]).slice(0,3)
-      .map(([m])=>Number(m)).sort((a,b)=>a-b);
+    // MJR V3 methodology:
+    // Use the strongest one-third of the calendar (top 4 months) as the
+    // category's stronger historical selling windows. This avoids an arbitrary
+    // national percentage threshold and gives sellers a more useful rolling
+    // 12-month planning model.
+    const ranked=Object.entries(avg)
+      .map(([m,v])=>({month:Number(m),share:v}))
+      .sort((a,b)=>b.share-a.share);
 
-    const next=strongest.map(m=>({month:m,ahead:monthsAhead(currentMonth,m)}))
-      .sort((a,b)=>a.ahead-b.ahead)[0];
+    const strongerMonths=ranked.slice(0,4).map(x=>x.month);
+    const currentRank=ranked.findIndex(x=>x.month===currentMonth)+1;
+    const currentShare=avg[currentMonth];
+
+    // Every category with complete data gets exactly one primary action bucket.
+    // 0 months ahead = Sell Now
+    // 1 month ahead = Start Prospecting
+    // 2-3 months ahead = On Deck
+    // 4+ months ahead = Watch Ahead
+    const upcoming=strongerMonths
+      .map(m=>({month:m,ahead:monthsAhead(currentMonth,m)}))
+      .sort((a,b)=>a.ahead-b.ahead);
+
+    const next=upcoming[0];
     if(!next) continue;
 
-    let signal=null,lead=null;
-    if(next.ahead===0){signal="sell_now";lead="Stronger selling window is active now";}
-    else if(next.ahead<=2){signal="start_prospecting";lead=next.ahead===1?"About 30 days ahead":"About 60 days ahead";}
-    else if(next.ahead===3){signal="on_deck";lead="About 90 days ahead";}
-    else if(next.ahead===4){signal="watch_ahead";lead="About 120 days ahead";}
-    else continue;
+    let signal,lead;
+    if(next.ahead===0){
+      signal="sell_now";
+      lead=`${monthNames[currentMonth]} ranks #${currentRank} of 12 for this category`;
+    }else if(next.ahead===1){
+      signal="start_prospecting";
+      lead="About 30 days ahead";
+    }else if(next.ahead<=3){
+      signal="on_deck";
+      lead=next.ahead===2 ? "About 60 days ahead" : "About 90 days ahead";
+    }else{
+      signal="watch_ahead";
+      lead=next.ahead===4 ? "About 120 days ahead" : `${next.ahead} months ahead`;
+    }
 
-    groups[signal].push({
+    // Combine consecutive stronger months beginning with the next target month.
+    const byAhead=upcoming.filter(x=>x.ahead>=next.ahead).sort((a,b)=>a.ahead-b.ahead);
+    const window=[byAhead[0]];
+    for(let i=1;i<byAhead.length;i++){
+      if(byAhead[i].ahead===window[window.length-1].ahead+1) window.push(byAhead[i]);
+      else break;
+    }
+
+    const targetWindow=window.length>1
+      ? `${monthNames[window[0].month]}–${monthNames[window[window.length-1].month]}`
+      : monthNames[next.month];
+
+    const item={
       category:meta.name,
       category_code:code,
       signal,
-      strong_months:strongest.map(m=>monthNames[m]).join(", "),
-      lead_time:lead,
+      stronger_months:strongerMonths
+        .slice()
+        .sort((a,b)=>a-b)
+        .map(m=>monthNames[m])
+        .join(", "),
+      strong_months:strongerMonths
+        .slice()
+        .sort((a,b)=>a-b)
+        .map(m=>monthNames[m])
+        .join(", "),
       target_month:monthNames[next.month],
+      target_window:targetWindow,
+      lead_time:lead,
       target_month_avg_share:Number(avg[next.month].toFixed(2)),
+      current_month:monthNames[currentMonth],
+      current_month_rank:currentRank,
+      current_month_avg_share:Number(currentShare.toFixed(2)),
       years_used:completeYears,
-      rationale:"MJR analysis places the upcoming month among this category’s three strongest average monthly shares across the complete years used.",
+      rationale: signal==="sell_now"
+        ? `MJR analysis places ${monthNames[currentMonth]} in this category’s strongest one-third of historical months across the complete years used.`
+        : `MJR analysis places ${targetWindow} in this category’s stronger historical selling window across the complete years used.`,
       sales_angle:meta.angle
+    };
+
+    groups[signal].push(item);
+    categorySummary.push({
+      category_code:code,
+      category:meta.name,
+      signal,
+      next_stronger_window:targetWindow,
+      months_ahead:next.ahead,
+      current_month_rank:currentRank,
+      years_used:completeYears
     });
   }
 
+  // Put the most immediate opportunities first within each action group.
   for(const items of Object.values(groups)){
-    items.sort((a,b)=>(b.target_month_avg_share||0)-(a.target_month_avg_share||0));
+    items.sort((a,b)=>{
+      const monthA=TREND_MONTH_INDEX(a.target_month);
+      const monthB=TREND_MONTH_INDEX(b.target_month);
+      const aheadA=monthsAhead(currentMonth,monthA);
+      const aheadB=monthsAhead(currentMonth,monthB);
+      if(aheadA!==aheadB) return aheadA-aheadB;
+      return (b.target_month_avg_share||0)-(a.target_month_avg_share||0);
+    });
   }
+
+  const counts=Object.fromEntries(
+    Object.entries(groups).map(([k,v])=>[k,v.length])
+  );
 
   return {
     generated_at:new Date().toISOString(),
     source:"U.S. Census Bureau Monthly Retail Trade; MJR analysis",
-    methodology:"MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available, averages those monthly shares, identifies each category’s three strongest months, then converts the timing into forward-looking prospecting signals.",
+    methodology:"MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available, averages those monthly shares, identifies the strongest one-third of months for each category, and assigns every category with complete data to one primary action window: Sell Now (current month), Start Prospecting (about 30 days ahead), On Deck (about 60–90 days ahead), or Watch Ahead (longer-range opportunity).",
     years_requested:years,
+    current_month:monthNames[currentMonth],
+    group_counts:counts,
+    categories_analyzed:categorySummary.length,
     groups,
+    category_summary:categorySummary,
     diagnostics,
     parser_debug:{
       seasonally_adj_values:debug.seasonally_adj_values,
@@ -218,6 +302,10 @@ function build(yearData,years,debug){
       category_type_month_counts:debug.category_type_month_counts
     }
   };
+}
+
+function TREND_MONTH_INDEX(name){
+  return monthNames.indexOf(name);
 }
 
 async function main(){
