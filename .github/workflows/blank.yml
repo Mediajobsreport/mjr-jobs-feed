@@ -147,6 +147,9 @@ jobs:
             mjr-audacy-detail-diagnostic-v45.txt
             mjr-audacy-detail-*-v45.html
             mjr-audacy-frames/
+            mjr-salem-v76-diagnostic.txt
+            mjr-salem-diagnostic.txt
+            mjr-salem-iframe.html
           if-no-files-found: warn
           retention-days: 7
 
