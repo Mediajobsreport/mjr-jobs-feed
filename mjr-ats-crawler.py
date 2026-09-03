@@ -162,7 +162,7 @@ class Job:
 
 def jobtype(title, text=""):
     t = clean(title).lower()
-    s = (title + " " + text).lower()
+    raw = clean(text or "")
 
     # Internship must be indicated by the job title itself. Employer boilerplate
     # often mentions interns/internships and must not reclassify normal jobs.
@@ -173,11 +173,50 @@ def jobtype(title, text=""):
         re.I,
     ):
         return "Internship"
-    if "part" in s and "time" in s:
+
+    # v73: employment type must come from an explicit phrase, not from the
+    # unrelated words "part" and "time" appearing somewhere in a long
+    # description. Title signals are strongest.
+    if re.search(r"\bpart[ -]?time\b|\bparttime\b", t, re.I):
         return "Part Time"
-    if "temporary" in s or " temp " in " " + s:
+    if re.search(r"\bfull[ -]?time\b|\bfulltime\b", t, re.I):
+        return "Full Time"
+    if re.search(r"\btemporary\b|\btemp\b", t, re.I):
         return "Temporary"
-    if "contract" in s:
+    if re.search(r"\bcontract(?:or)?\b", t, re.I):
+        return "Contract"
+
+    # Prefer structured labels near the beginning of the posting. This handles
+    # iCIMS labels such as "Type: Full Time Employee" and
+    # "Employment Type: Full-Time" while avoiding benefits boilerplate later.
+    opening = raw[:2200]
+    structured_patterns = [
+        (r"(?:employment|position)\s*type\s*[:\-]?\s*(?:regular\s+)?part[ -]?time", "Part Time"),
+        (r"(?:employment|position)\s*type\s*[:\-]?\s*(?:regular\s+)?full[ -]?time", "Full Time"),
+        (r"\btype\s*[:\-]?\s*(?:regular\s+)?part[ -]?time(?:\s+employee)?\b", "Part Time"),
+        (r"\btype\s*[:\-]?\s*(?:regular\s+)?full[ -]?time(?:\s+employee)?\b", "Full Time"),
+    ]
+    for pat, value in structured_patterns:
+        if re.search(pat, opening, re.I):
+            return value
+
+    # Fall back to explicit employment phrases in the opening portion only.
+    # If both occur, use whichever explicit phrase appears first.
+    signals = []
+    for pat, value in [
+        (r"\bpart[ -]?time(?:\s+employee)?\b|\bparttime\b", "Part Time"),
+        (r"\bfull[ -]?time(?:\s+employee)?\b|\bfulltime\b", "Full Time"),
+    ]:
+        m = re.search(pat, opening, re.I)
+        if m:
+            signals.append((m.start(), value))
+    if signals:
+        signals.sort(key=lambda x: x[0])
+        return signals[0][1]
+
+    if re.search(r"\btemporary\b|\btemp\b", opening, re.I):
+        return "Temporary"
+    if re.search(r"\bcontract(?:or)?\b", opening, re.I):
         return "Contract"
 
     return "Full Time"
@@ -7199,6 +7238,12 @@ def stateful(jobs):
                 "",
                 x.get("company", ""),
             )
+            # v73: employment-type parser improvements also apply immediately
+            # to jobs retained from state.
+            x["jobtype"] = jobtype(
+                x.get("title", ""),
+                x.get("description", ""),
+            )
             x["country"] = infer_country(
                 x.get("city", ""),
                 x.get("company", ""),
@@ -7358,10 +7403,24 @@ def salem_icims_v29(src):
         if not j:
             continue
 
-        # Salem detail pages must provide an explicit recent posting date.
-        # Do not fabricate TODAY for an undated posting.
+        # v73 Salem: iCIMS often omits a trustworthy posting date even while
+        # the requisition is live. Use the employer date when available;
+        # otherwise preserve MJR's original discovery date from state. A newly
+        # discovered live job starts its 21-day MJR window today.
         pd = _v18_icims_date(rr.text)
-        if not pd or pd < CUTOFF:
+        if not pd:
+            try:
+                st = load_state()
+                key = (getattr(j, "url", "") or final).rstrip("/").lower()
+                rec = st.get(key, {})
+                saved = (rec.get("job") or {}).get("date")
+                if saved:
+                    pd = date.fromisoformat(saved)
+            except Exception:
+                pd = None
+        if not pd:
+            pd = TODAY
+        if pd < CUTOFF:
             continue
         j.date = pd
 
@@ -7502,32 +7561,45 @@ def _icims_frame_detail_urls(src, max_details=160):
 
 def _icims_canonical_apply_url(detail_url, html):
     """
-    Build the public apply/detail URL from the exact job detail page being parsed.
-    This prevents stale or mismatched Audacy links from being carried forward.
+    Return the job-specific Audacy/iCIMS application URL when one is present.
+    v73 prefers the actual "Apply for this job online" URL over the wrapper
+    detail page so JBoard does not send applicants to a generic iCIMS page.
     """
     soup = BeautifulSoup(html or "", "html.parser")
-    candidates = []
+    host = urlparse(detail_url).netloc.lower()
+    m = re.search(r"/jobs/(\d+)/", detail_url, re.I)
+    job_id = m.group(1) if m else None
 
+    # Strongest candidate: an explicit apply link for this exact requisition.
+    if job_id:
+        for a in soup.find_all("a", href=True):
+            href = a.get("href") or ""
+            label = clean(a.get_text(" ", strip=True)).lower()
+            u = urljoin(detail_url, href)
+            p = urlparse(u)
+            if p.netloc.lower() != host:
+                continue
+            if not re.search(rf"/jobs/{re.escape(job_id)}/", u, re.I):
+                continue
+            q = parse_qs(p.query)
+            is_apply = (
+                q.get("apply", [""])[-1].lower() == "yes"
+                or "apply for this job" in label
+                or re.search(r"\bapply\b", label)
+            )
+            if is_apply:
+                return u
+
+    # Fallback: exact job detail URL, never a search/intro page.
+    candidates = []
     can = soup.find("link", rel=lambda x: x and "canonical" in str(x).lower())
     if can and can.get("href"):
         candidates.append(can.get("href"))
-
     og = soup.find("meta", attrs={"property": "og:url"})
     if og and og.get("content"):
         candidates.append(og.get("content"))
-
-    # Prefer links on the current page that point to the same job id.
-    m = re.search(r"/jobs/(\d+)/", detail_url, re.I)
-    job_id = m.group(1) if m else None
-    if job_id:
-        for a in soup.find_all("a", href=True):
-            href = a.get("href")
-            if href and re.search(rf"/jobs/{re.escape(job_id)}/", href, re.I):
-                candidates.append(href)
-
     candidates.append(detail_url)
 
-    host = urlparse(detail_url).netloc.lower()
     for c in candidates:
         if not c:
             continue
@@ -7537,7 +7609,6 @@ def _icims_canonical_apply_url(detail_url, html):
             continue
         if not re.search(r"/jobs/\d+/(?:[^/?#]+/)?job(?:[/?#]|$)", u, re.I):
             continue
-
         q = parse_qs(p.query)
         q.pop("in_iframe", None)
         nq = urlencode({k: v[-1] for k, v in q.items()})
