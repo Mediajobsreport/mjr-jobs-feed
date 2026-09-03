@@ -8579,6 +8579,284 @@ def salem_icims_v75(src):
     print(f"Salem v75 qualifying live jobs: {len(out)}")
     return out
 
+
+
+# ============================================================
+# v76 SALEM BROWSER-DRIVEN ENUMERATION
+# ============================================================
+
+def salem_icims_v76(src):
+    """Enumerate Salem from the live rendered iCIMS portal.
+
+    Unlike v75, this does not assume a ``pr=`` URL contract.  It follows
+    pagination/load-more controls the browser actually renders and also mines
+    same-host search/network responses for requisition URLs/IDs.  IDs are only
+    accepted when observed on Salem's live portal; there is no numeric scanning.
+    """
+    if sync_playwright is None:
+        raise RuntimeError("Playwright is not installed")
+
+    parsed = urlparse(src["URL"])
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    start_url = base + "/jobs/search?ss=1&searchRelation=keyword_all"
+    detail_urls = {}
+    network_urls = []
+    page_log = []
+    max_steps = 30
+
+    def add_candidate(u):
+        if not u:
+            return
+        u = html.unescape(str(u)).replace("\\/", "/")
+        up = urlparse(urljoin(base, u))
+        if up.netloc.lower() != parsed.netloc.lower():
+            return
+        m = re.search(r"/jobs/(\d+)(?:/([^/?#]+))?/job(?:[/?#]|$)", up.geturl(), re.I)
+        if not m:
+            return
+        jid = m.group(1)
+        q = parse_qs(up.query)
+        q["in_iframe"] = ["1"]
+        nq = urlencode({k: v[-1] for k, v in q.items()})
+        detail_urls[jid] = urlunparse((up.scheme, up.netloc, up.path, "", nq, ""))
+
+    def mine_text(raw, base_url):
+        raw = html.unescape(raw or "").replace("\\/", "/")
+        for m in re.finditer(r"(?:https?://[^\"'<> ]+)?/jobs/(\d+)(?:/[^\"'<>/?# ]+)?/job(?:\?[^\"'<> ]*)?", raw, re.I):
+            add_candidate(urljoin(base_url, m.group(0)))
+        # Bare IDs are only accepted when they appear next to explicit iCIMS
+        # job/requisition field names in a live search/network payload.
+        for jid in re.findall(r'"(?:jobId|jobID|job_id|requisitionId|requisitionID)"\s*:\s*"?(\d{3,8})"?', raw, re.I):
+            detail_urls.setdefault(jid, f"{base}/jobs/{jid}/job?in_iframe=1")
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, args=["--disable-dev-shm-usage", "--no-sandbox"])
+        context = browser.new_context(
+            user_agent=SESSION.headers.get("User-Agent", "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)"),
+            viewport={"width": 1440, "height": 1100},
+        )
+        page = context.new_page()
+        page.set_default_timeout(10000)
+
+        def on_response(resp):
+            try:
+                ru = resp.url or ""
+                up = urlparse(ru)
+                if up.netloc.lower() != parsed.netloc.lower():
+                    return
+                if not any(k in ru.lower() for k in ("/jobs", "search", "requisition", "posting")):
+                    return
+                network_urls.append(ru)
+                ct = (resp.headers or {}).get("content-type", "").lower()
+                if any(x in ct for x in ("text", "json", "javascript", "html")):
+                    try:
+                        mine_text(resp.text(), ru)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+        page.on("response", on_response)
+        _v28_before_request(start_url)
+        page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
+        try:
+            page.wait_for_load_state("networkidle", timeout=12000)
+        except Exception:
+            pass
+        page.wait_for_timeout(1800)
+
+        seen_fingerprints = set()
+        for step in range(max_steps):
+            page.wait_for_timeout(700)
+            try:
+                page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+            except Exception:
+                pass
+            page.wait_for_timeout(500)
+
+            frames = [f for f in page.frames if urlparse(f.url or "").netloc.lower() == parsed.netloc.lower()]
+            before = len(detail_urls)
+            for frame in frames:
+                try:
+                    for href in frame.eval_on_selector_all("a[href]", "els => els.map(e => e.href)"):
+                        add_candidate(href)
+                except Exception:
+                    pass
+                try:
+                    mine_text(frame.content(), frame.url or start_url)
+                except Exception:
+                    pass
+
+            fingerprint = tuple(sorted(detail_urls))
+            page_log.append(f"step={step} frames={len(frames)} jobs={len(detail_urls)} added={len(detail_urls)-before}")
+            if fingerprint in seen_fingerprints and step > 0:
+                # Still attempt one pagination click below; break only if none exists.
+                pass
+            seen_fingerprints.add(fingerprint)
+
+            clicked = False
+            selectors = [
+                'a[rel="next"]',
+                'a[aria-label*="next" i]',
+                'button[aria-label*="next" i]',
+                'a[title*="next" i]',
+                'button[title*="next" i]',
+                'a:has-text("Next")',
+                'button:has-text("Next")',
+                'a:has-text("Load More")',
+                'button:has-text("Load More")',
+                'a:has-text("Show More")',
+                'button:has-text("Show More")',
+            ]
+            # Prefer the innermost search frame, then other same-host frames.
+            ordered_frames = sorted(frames, key=lambda f: ("/jobs/search" not in (f.url or "").lower(), -len(f.url or "")))
+            for frame in ordered_frames:
+                for sel in selectors:
+                    try:
+                        loc = frame.locator(sel)
+                        count = loc.count()
+                    except Exception:
+                        continue
+                    for i in range(min(count, 4)):
+                        try:
+                            el = loc.nth(i)
+                            if not el.is_visible() or not el.is_enabled():
+                                continue
+                            txt = clean(el.inner_text()) if hasattr(el, "inner_text") else ""
+                            href = el.get_attribute("href")
+                            if href and href.strip().lower().startswith(("javascript:", "#")):
+                                href = None
+                            page_log.append(f"click step={step} selector={sel} text={txt!r} href={href!r} frame={frame.url}")
+                            el.click(timeout=7000)
+                            try:
+                                page.wait_for_load_state("networkidle", timeout=7000)
+                            except Exception:
+                                pass
+                            page.wait_for_timeout(1200)
+                            clicked = True
+                            break
+                        except Exception:
+                            continue
+                    if clicked:
+                        break
+                if clicked:
+                    break
+
+            if not clicked:
+                # Some iCIMS portals render numbered paging links without a Next label.
+                numbered = []
+                for frame in ordered_frames:
+                    try:
+                        vals = frame.eval_on_selector_all(
+                            'a[href]',
+                            "els => els.map(e => ({href:e.href, text:(e.innerText||'').trim()}))"
+                        )
+                    except Exception:
+                        vals = []
+                    for item in vals:
+                        t = (item.get("text") or "").strip()
+                        href = item.get("href") or ""
+                        if t.isdigit() and 1 <= int(t) <= 100 and "/jobs/search" in href.lower():
+                            numbered.append((int(t), href, frame))
+                # Navigate to the smallest not-yet-seen explicit result URL.
+                used = set(x for x in network_urls if "/jobs/search" in x.lower())
+                for _, href, frame in sorted(numbered, key=lambda x: x[0]):
+                    if href in used:
+                        continue
+                    page_log.append(f"navigate numbered href={href}")
+                    try:
+                        frame.goto(href, wait_until="domcontentloaded", timeout=20000)
+                        page.wait_for_timeout(1200)
+                        clicked = True
+                        break
+                    except Exception:
+                        continue
+
+            if not clicked:
+                break
+
+        # Final harvest after last navigation/click.
+        for frame in page.frames:
+            if urlparse(frame.url or "").netloc.lower() != parsed.netloc.lower():
+                continue
+            try:
+                mine_text(frame.content(), frame.url or start_url)
+                for href in frame.eval_on_selector_all("a[href]", "els => els.map(e => e.href)"):
+                    add_candidate(href)
+            except Exception:
+                pass
+        browser.close()
+
+    # Always leave a compact diagnostic in targeted runs.
+    if MJR_TEST_COMPANIES:
+        diag = Path("mjr-salem-v76-diagnostic.txt")
+        diag.write_text(
+            "MJR SALEM BROWSER ENUMERATION v76\n"
+            + f"start={start_url}\n"
+            + f"unique_jobs={len(detail_urls)}\n\n"
+            + "=== PAGE LOG ===\n" + "\n".join(page_log[:300])
+            + "\n\n=== NETWORK URLS ===\n" + "\n".join(list(dict.fromkeys(network_urls))[:500])
+            + "\n\n=== JOB IDS ===\n" + "\n".join(sorted(detail_urls, key=lambda x: int(x)))
+            + "\n",
+            encoding="utf-8",
+        )
+
+    print(f"Salem v76 browser enumeration: {len(detail_urls)} unique requisitions observed")
+
+    out = []
+    seen_ids = set()
+    state = {}
+    try:
+        state = load_state()
+    except Exception:
+        pass
+
+    for requested_id, url in sorted(detail_urls.items(), key=lambda kv: int(kv[0])):
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+        final = str(getattr(rr, "url", "") or url)
+        raw = rr.text or ""
+        fid = re.search(r"/jobs/(\d+)/", final, re.I)
+        if fid and fid.group(1) != requested_id:
+            continue
+        low = clean(BeautifulSoup(raw, "html.parser").get_text(" ", strip=True)).lower()
+        if any(x in low for x in ("job is no longer available", "position is no longer available", "job has been filled", "job is no longer open")):
+            continue
+
+        j = _job_from_detail(src, final, raw) or _direct_board_job(src, final, raw)
+        if not j:
+            continue
+
+        pd = _v18_icims_date(raw)
+        if not pd:
+            for key in ((getattr(j, "url", "") or "").rstrip("/").lower(), final.rstrip("/").lower(), url.rstrip("/").lower()):
+                rec = state.get(key, {}) if key else {}
+                saved = (rec.get("job") or {}).get("date")
+                if saved:
+                    try:
+                        pd = date.fromisoformat(saved)
+                        break
+                    except Exception:
+                        pass
+        if not pd or pd < CUTOFF:
+            pd = TODAY
+        j.date = pd
+
+        live_apply = _icims_canonical_apply_url(final, raw)
+        if hasattr(j, "url"):
+            j.url = live_apply
+        if hasattr(j, "apply_url"):
+            j.apply_url = live_apply
+
+        if j.id not in seen_ids:
+            seen_ids.add(j.id)
+            out.append(j)
+
+    print(f"Salem v76 qualifying live jobs: {len(out)}")
+    return out
+
 def salem_icims_v74(src):
     """v75 Salem collector: explicit pagination first, older fallbacks only on zero."""
     try:
@@ -9071,7 +9349,7 @@ def main():
                 if "adp" in a
                 else dayforce(s)
                 if "dayforce" in a
-                else salem_icims_v74(s)
+                else salem_icims_v76(s)
                 if company_key == "salem media group"
                 else icims(s)
                 if "icims" in a
