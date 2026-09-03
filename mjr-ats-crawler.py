@@ -8585,6 +8585,144 @@ def salem_icims_v75(src):
 # v76 SALEM BROWSER-DRIVEN ENUMERATION
 # ============================================================
 
+
+
+def _salem_live_detail_job_v77(src, requested_id, final_url, raw, state):
+    """Parse a Salem detail page already proven live by v76 browser discovery.
+
+    Salem's iCIMS detail HTML often omits a trustworthy datePosted.  Because
+    requested_id came from the live rendered Salem search, do not gate parsing
+    on a posting date.  Preserve the first MJR discovery date from state when
+    possible; otherwise start the normal MJR lifespan today.
+    """
+    soup = BeautifulSoup(raw or "", "html.parser")
+    txt = clean(soup.get_text(" ", strip=True))
+    low = txt.lower()
+    if any(x in low for x in (
+        "job is no longer available",
+        "position is no longer available",
+        "job has been filled",
+        "job is no longer open",
+    )):
+        return None
+
+    # Confirm the page is actually the requested Salem requisition.
+    page_id = ""
+    m = re.search(r"\bID\s*:?\s*(\d{3,8})\b", txt, re.I)
+    if m:
+        page_id = m.group(1)
+    if page_id and page_id != str(requested_id):
+        return None
+
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title or title.lower() in {"careers", "job search", "search jobs"}:
+        return None
+
+    # Require meaningful Salem job content so cookie/error shells are rejected.
+    if "overview" not in low and "responsibilities" not in low and len(txt) < 350:
+        return None
+
+    # Keep the useful job body while avoiding navigation where possible.
+    main = (
+        soup.find("main")
+        or soup.find(attrs={"class": re.compile(r"(iCIMS_MainWrapper|job.?description|job.?detail|posting)", re.I)})
+        or soup
+    )
+    desc = clean(main.get_text(" ", strip=True))
+    if len(desc) < 200:
+        desc = txt
+    if len(desc) < 200:
+        return None
+
+    # Salem exposes Position Type explicitly (e.g. Regular Full-Time).
+    pos_type = ""
+    for pat in (
+        r"Position Type\s*:?\s*(Regular Full[- ]Time|Regular Part[- ]Time|Full[- ]Time|Part[- ]Time|Temporary|Seasonal|Internship|Contract)",
+        r"Employment Type\s*:?\s*(Regular Full[- ]Time|Regular Part[- ]Time|Full[- ]Time|Part[- ]Time|Temporary|Seasonal|Internship|Contract)",
+    ):
+        mm = re.search(pat, txt, re.I)
+        if mm:
+            pos_type = clean(mm.group(1))
+            break
+
+    # Salem location labels commonly look like US-CA-Sacramento.
+    loc_raw = ""
+    mm = re.search(
+        r"Location\s*:?\s*(?:Location\s*)?(US-[A-Z]{2}-[A-Za-z0-9 .'/&()-]+?)(?=\s+(?:Overview|Responsibilities|Qualifications|Options|$))",
+        txt, re.I
+    )
+    if mm:
+        loc_raw = clean(mm.group(1))
+    if not loc_raw:
+        mm = re.search(r"\bUS-([A-Z]{2})-([A-Za-z][A-Za-z0-9 .'/&()-]{1,80})", txt)
+        if mm:
+            loc_raw = f"US-{mm.group(1)}-{clean(mm.group(2))}"
+
+    city, st = "", ""
+    if loc_raw:
+        mm = re.match(r"US-([A-Z]{2})-(.+)", loc_raw)
+        if mm:
+            st = mm.group(1)
+            city = clean(mm.group(2).replace("-", " "))
+    loc = ", ".join(x for x in (city, st) if x) or loc_raw
+
+    # Prefer an explicit Salem/iCIMS date when it exists, but never require it.
+    pd = _v18_icims_date(raw)
+    canonical_detail = final_url.split("#", 1)[0]
+    live_apply = _icims_canonical_apply_url(canonical_detail, raw)
+
+    if not pd:
+        # Exact URL keys first.
+        candidate_keys = {
+            canonical_detail.rstrip("/").lower(),
+            live_apply.rstrip("/").lower(),
+        }
+        for key in candidate_keys:
+            rec = state.get(key, {}) if key else {}
+            saved = (rec.get("job") or {}).get("date")
+            if saved:
+                try:
+                    pd = date.fromisoformat(saved)
+                    break
+                except Exception:
+                    pass
+
+    if not pd:
+        # Apply URLs can change query strings; recover first-seen by Salem ID.
+        rid = str(requested_id)
+        for rec in state.values():
+            job = (rec or {}).get("job") or {}
+            if clean(str(job.get("id") or "")) != rid:
+                continue
+            saved = job.get("date")
+            if saved:
+                try:
+                    pd = date.fromisoformat(saved)
+                    break
+                except Exception:
+                    pass
+    if not pd:
+        pd = TODAY
+
+    return Job(
+        str(requested_id),
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, pos_type or txt),
+        category(title, desc, src.get("Industry", ""), src["Company"]),
+        live_apply,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or txt),
+        city or loc,
+        st,
+        infer_country(loc or txt, src["Company"], desc),
+    )
+
 def salem_icims_v76(src):
     """Enumerate Salem from the live rendered iCIMS portal.
 
@@ -8789,9 +8927,9 @@ def salem_icims_v76(src):
 
     # Always leave a compact diagnostic in targeted runs.
     if MJR_TEST_COMPANIES:
-        diag = Path("mjr-salem-v76-diagnostic.txt")
+        diag = Path("mjr-salem-v77-diagnostic.txt")
         diag.write_text(
-            "MJR SALEM BROWSER ENUMERATION v76\n"
+            "MJR SALEM BROWSER ENUMERATION v77\n"
             + f"start={start_url}\n"
             + f"unique_jobs={len(detail_urls)}\n\n"
             + "=== PAGE LOG ===\n" + "\n".join(page_log[:300])
@@ -8801,7 +8939,7 @@ def salem_icims_v76(src):
             encoding="utf-8",
         )
 
-    print(f"Salem v76 browser enumeration: {len(detail_urls)} unique requisitions observed")
+    print(f"Salem v77 browser enumeration: {len(detail_urls)} unique requisitions observed")
 
     out = []
     seen_ids = set()
@@ -8825,36 +8963,18 @@ def salem_icims_v76(src):
         if any(x in low for x in ("job is no longer available", "position is no longer available", "job has been filled", "job is no longer open")):
             continue
 
-        j = _job_from_detail(src, final, raw) or _direct_board_job(src, final, raw)
+        # v77: this requisition was observed on Salem's live rendered search.
+        # Parse it with Salem's non-date-gated detail parser so missing/stale
+        # iCIMS datePosted metadata cannot discard an otherwise-live job.
+        j = _salem_live_detail_job_v77(src, requested_id, final, raw, state)
         if not j:
             continue
-
-        pd = _v18_icims_date(raw)
-        if not pd:
-            for key in ((getattr(j, "url", "") or "").rstrip("/").lower(), final.rstrip("/").lower(), url.rstrip("/").lower()):
-                rec = state.get(key, {}) if key else {}
-                saved = (rec.get("job") or {}).get("date")
-                if saved:
-                    try:
-                        pd = date.fromisoformat(saved)
-                        break
-                    except Exception:
-                        pass
-        if not pd or pd < CUTOFF:
-            pd = TODAY
-        j.date = pd
-
-        live_apply = _icims_canonical_apply_url(final, raw)
-        if hasattr(j, "url"):
-            j.url = live_apply
-        if hasattr(j, "apply_url"):
-            j.apply_url = live_apply
 
         if j.id not in seen_ids:
             seen_ids.add(j.id)
             out.append(j)
 
-    print(f"Salem v76 qualifying live jobs: {len(out)}")
+    print(f"Salem v77 qualifying live jobs: {len(out)}")
     return out
 
 def salem_icims_v74(src):
