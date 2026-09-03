@@ -9538,6 +9538,69 @@ def main():
             if not got and company_key in RADIO_RECOVERY_COMPANIES:
                 got = radio_recovery(s)
 
+            # v78 Salem targeted diagnostic: account for every successfully
+            # parsed Salem requisition immediately before the global feed gate.
+            # This proves whether an enumerated/parsed job is later excluded for
+            # age, description length, URL, or category rather than conflating
+            # collection with final XML inclusion.
+            if company_key == "salem media group" and MJR_TEST_COMPANIES:
+                salem_gate_rows = []
+                for j in got:
+                    reasons = []
+                    if not j.url:
+                        reasons.append("missing_url")
+                    if len(j.description or "") < 200:
+                        reasons.append(f"description_under_200:{len(j.description or '')}")
+                    if not j.date:
+                        reasons.append("missing_date")
+                    elif j.date < CUTOFF:
+                        reasons.append(f"older_than_cutoff:{j.date.isoformat()}")
+                    if j.category not in APPROVED:
+                        reasons.append(f"unapproved_category:{j.category}")
+                    salem_gate_rows.append({
+                        "id": j.id,
+                        "title": j.title,
+                        "effective_date": j.date.isoformat() if j.date else "",
+                        "age_days": (TODAY - j.date).days if j.date else "",
+                        "cutoff_date": CUTOFF.isoformat(),
+                        "description_length": len(j.description or ""),
+                        "category": j.category,
+                        "jobtype": j.jobtype,
+                        "city": j.city,
+                        "state": j.state,
+                        "url": j.url,
+                        "final_gate": "KEEP" if not reasons else "DROP",
+                        "reason": ";".join(reasons) if reasons else "included",
+                    })
+
+                gate_path = Path("mjr-salem-v78-final-gate-audit.csv")
+                with gate_path.open("w", newline="", encoding="utf-8") as f:
+                    w = csv.DictWriter(
+                        f,
+                        fieldnames=[
+                            "id", "title", "effective_date", "age_days",
+                            "cutoff_date", "description_length", "category",
+                            "jobtype", "city", "state", "url",
+                            "final_gate", "reason",
+                        ],
+                    )
+                    w.writeheader()
+                    w.writerows(salem_gate_rows)
+
+                counts = {}
+                for r in salem_gate_rows:
+                    key = r["reason"]
+                    counts[key] = counts.get(key, 0) + 1
+                diag = Path("mjr-salem-v77-diagnostic.txt")
+                with diag.open("a", encoding="utf-8") as f:
+                    f.write("\n=== V78 FINAL GATE ACCOUNTING ===\n")
+                    f.write(f"parsed_jobs={len(salem_gate_rows)}\n")
+                    f.write(f"cutoff_date={CUTOFF.isoformat()}\n")
+                    f.write(f"kept={sum(1 for r in salem_gate_rows if r['final_gate'] == 'KEEP')}\n")
+                    f.write(f"dropped={sum(1 for r in salem_gate_rows if r['final_gate'] == 'DROP')}\n")
+                    for reason, count in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])):
+                        f.write(f"{reason}={count}\n")
+
             jobs += got
 
             audit.append(
