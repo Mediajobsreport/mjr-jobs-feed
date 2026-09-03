@@ -234,6 +234,24 @@ def jobtype(title, text=""):
 
 
 def category(title, desc, industry, company):
+    # v82 strong Engineering overrides.
+    _v82_title = (title or "").lower()
+    _v82_engineering_title_patterns = (
+        "software tester", "software test", "software qa", "qa engineer",
+        "quality assurance engineer", "quality assurance tester", "test engineer",
+        "software engineer", "software developer", "application developer",
+        "web developer", "programmer", "devops", "site reliability engineer",
+        "systems engineer", "system engineer", "network engineer", "network administrator",
+        "systems administrator", "system administrator", "cybersecurity", "cyber security",
+        "information security", "security engineer", "it support", "technical support",
+        "help desk", "service desk", "desktop support", "it technician",
+        "information technology", "infrastructure engineer", "cloud engineer",
+        "building maintenance", "building maintenance technician",
+        "maintenance engineer", "facilities maintenance",
+    )
+    if any(p in _v82_title for p in _v82_engineering_title_patterns):
+        return "Engineering"
+
     """
     MJR job-category classifier.
 
@@ -258,12 +276,21 @@ def category(title, desc, industry, company):
     # Employer/media context is used for platform-specific roles and the final
     # fallback only. Functional titles such as Sales, Engineering, HR, etc.
     # continue to override employer type.
+    # Some diversified media companies are radio-first for MJR job classification.
+    # Their generic media wording can mention television/video in boilerplate, so keep
+    # an explicit employer signal that wins for ambiguous station/on-air roles.
+    radio_first_employer = any(x in c for x in [
+        "iheartmedia", "iheart media", "iheart",
+        "urban one", "radio one",
+    ])
+
     radio_context = (
         ind == "radio"
+        or radio_first_employer
         or any(x in c for x in [
-            "audacy", "beasley", "bonneville", "cumulus", "iheart",
+            "audacy", "beasley", "bonneville", "cumulus",
             "lotus communications", "stingray", "pattison", "evanov",
-            "urban one", "siriusxm", "sun broadcasting", "good karma"
+            "siriusxm", "sun broadcasting", "good karma"
         ])
         or re.search(r"\b(radio station|radio group|fm station|am station|broadcast radio)\b", d_short)
     )
@@ -294,6 +321,11 @@ def category(title, desc, industry, company):
     if re.search(r"\bsales\b", t) and not re.search(r"\bsalesforce\b", t):
         return "Sales & Marketing"
 
+    # Integrated marketing is a revenue/advertising function. This must resolve
+    # before vague Specialist wording can be interpreted as technical/Engineering.
+    if re.search(r"\b(integrated marketing|integrated marketing specialist|marketing specialist)\b", t):
+        return "Sales & Marketing"
+
     if re.search(r"\b(morning show personality|radio personality|air personality|on[- ]air personality)\b", t):
         return "Radio"
 
@@ -313,8 +345,21 @@ def category(title, desc, industry, company):
             return "Radio"
         return "Television"
 
-    # Promotions is a station/platform programming function for MJR.
+    # All anchor roles follow the employer/platform: radio company => Radio;
+    # otherwise Television. This runs before generic Journalism anchor rules.
+    if re.search(r"\banchor\b", t):
+        if radio_first_employer or (radio_context and not television_context):
+            return "Radio"
+        return "Television"
+
+    # Promotions is a station/platform function for MJR. Explicit radio-first
+    # employers (notably iHeartMedia and Urban One/Radio One) must win before
+    # incidental television/video wording in descriptions.
     if re.search(r"\b(promotions?|promotion)\b", t):
+        if radio_first_employer:
+            return "Radio"
+        if radio_context and not television_context:
+            return "Radio"
         if television_context or re.search(r"\b(tv|television|newscast|television station)\b", td):
             return "Television"
         if radio_context or re.search(r"\b(radio|fm station|am station|radio station)\b", td):
@@ -921,6 +966,11 @@ def category(title, desc, industry, company):
 
     if ind == "digital":
         return "Digital"
+
+    # Radio-first employers should not be pushed into Television by generic
+    # description boilerplate after all specific functional categories have run.
+    if radio_first_employer:
+        return "Radio"
 
     if television_context or ind == "television":
         return "Television"
