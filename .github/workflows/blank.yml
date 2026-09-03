@@ -54,7 +54,7 @@ jobs:
 
       - name: Crawl ATS sources
         env:
-          MJR_WINDOW_DAYS: "21"
+          MJR_WINDOW_DAYS: "30"
           MJR_SOURCES: "mjr-ats-sources.csv"
           MJR_TEST_COMPANIES: "${{ github.event.inputs.test_companies }}"
           MJR_REQUEST_DELAY_MIN: "0.20"
@@ -148,7 +148,6 @@ jobs:
             mjr-audacy-detail-*-v45.html
             mjr-audacy-frames/
             mjr-salem-v77-diagnostic.txt
-            mjr-salem-v78-final-gate-audit.csv
             mjr-salem-diagnostic.txt
             mjr-salem-iframe.html
           if-no-files-found: warn
