@@ -8381,8 +8381,25 @@ def salem_icims_rendered_v30(src):
         if not j:
             continue
 
+        # v74 Salem: rendered iCIMS discovery is authoritative for liveness.
+        # Salem frequently omits a dependable posting date on otherwise-live
+        # detail pages. Prefer the employer date; otherwise preserve MJR's
+        # first-discovery date from state, and use TODAY only for a genuinely
+        # new live requisition.
         pd = _v18_icims_date(rr.text)
-        if not pd or pd < CUTOFF:
+        if not pd:
+            try:
+                st = load_state()
+                key = (getattr(j, "url", "") or final).rstrip("/").lower()
+                rec = st.get(key, {})
+                saved = (rec.get("job") or {}).get("date")
+                if saved:
+                    pd = date.fromisoformat(saved)
+            except Exception:
+                pd = None
+        if not pd:
+            pd = TODAY
+        if pd < CUTOFF:
             continue
         j.date = pd
 
@@ -8393,6 +8410,18 @@ def salem_icims_rendered_v30(src):
     print(f"Salem frame-aware collector qualifying jobs: {len(out)}")
     return out
 
+
+
+
+def salem_icims_v74(src):
+    """v74 Salem collector: rendered enumeration first, bounded requests fallback."""
+    try:
+        jobs = salem_icims_rendered_v30(src)
+        if jobs:
+            return jobs
+    except Exception as e:
+        print(f"Salem rendered collector failed; falling back to requests collector: {e}")
+    return salem_icims_v29(src)
 
 def audacy_raw_diagnostic_v41(src):
     """
@@ -8870,7 +8899,7 @@ def main():
                 if "adp" in a
                 else dayforce(s)
                 if "dayforce" in a
-                else salem_icims_v29(s)
+                else salem_icims_v74(s)
                 if company_key == "salem media group"
                 else icims(s)
                 if "icims" in a
