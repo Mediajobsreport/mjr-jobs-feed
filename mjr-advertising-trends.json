@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-02T20:59:56.306Z",
+  "generated_at": "2026-09-03T08:30:08.530Z",
   "source": "U.S. Census Bureau Monthly Retail Trade; MJR analysis",
   "methodology": "MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available, averages those monthly shares, identifies the strongest one-third of months for each category, and assigns every category with complete data to one primary action window: Sell Now (current month), Start Prospecting (about 30 days ahead), On Deck (about 60–90 days ahead), or Watch Ahead (longer-range opportunity).",
   "years_requested": [
