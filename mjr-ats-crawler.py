@@ -270,9 +270,9 @@ def category(title, desc, industry, company):
     television_context = (
         ind == "television"
         or any(x in c for x in [
-            "paramount", "cbs", "fox television", "nexstar", "sinclair",
-            "televisaunivision", "qvc", "hearst television", "gray television",
-            "weigel", "telemundo"
+            "paramount", "cbs", "fox television", "fox entertainment", "fox tv stations",
+            "nexstar", "sinclair", "televisaunivision", "qvc", "hearst television",
+            "gray television", "weigel", "telemundo", "disney", "abc"
         ])
         or re.search(r"\b(television station|tv station|newscast|television studio|local television|broadcast television)\b", d_short)
     )
@@ -280,7 +280,7 @@ def category(title, desc, industry, company):
     # ------------------------------------------------------------------
     # 1) INTERNSHIPS
     # ------------------------------------------------------------------
-    if re.search(r"\b(intern|internship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
+    if re.search(r"\b(intern|internship|fellow|fellowship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
         return "Internships"
 
     # ------------------------------------------------------------------
@@ -304,6 +304,30 @@ def category(title, desc, industry, company):
     # not Engineering.
     if re.search(r"\b(master control|master control operator|master control supervisor|master control coordinator)\b", t):
         return "Television"
+
+    # Weather/on-air meteorology is a platform role, not generic Journalism.
+    if re.search(r"\b(meteorologist|weather anchor|weather reporter|weathercaster|weather forecaster)\b", t):
+        if television_context or re.search(r"\b(tv|television|newscast|on-camera|on camera)\b", td):
+            return "Television"
+        if radio_context or re.search(r"\b(radio|on-air radio|audio broadcast)\b", td):
+            return "Radio"
+        return "Television"
+
+    # Promotions is a station/platform programming function for MJR.
+    if re.search(r"\b(promotions?|promotion)\b", t):
+        if television_context or re.search(r"\b(tv|television|newscast|television station)\b", td):
+            return "Television"
+        if radio_context or re.search(r"\b(radio|fm station|am station|radio station)\b", td):
+            return "Radio"
+
+    # Television/studio/broadcast operations identified directly by title.
+    if re.search(r"\b(studio tech|studio technician|audio tech|audio technician|ticker operator|broadcasting assistant|broadcast assistant)\b", t):
+        if television_context or re.search(r"\b(tv|television|video|studio|broadcasting)\b", td):
+            return "Television"
+
+    # Print-production and physical newspaper operations belong in Business Office.
+    if re.search(r"\b(warehouse worker|mailroom inserter|mailroom|inserter|packaging team lead|packaging|press operator)\b", t):
+        return "Business Office"
 
     # Production technicians at television operations belong in Television.
     if re.search(r"\bproduction technician\b", t) and television_context:
@@ -418,8 +442,7 @@ def category(title, desc, industry, company):
         r"marketing|growth marketing|performance marketing|product marketing|"
         r"marketing manager|marketing director|marketing coordinator|"
         r"marketing specialist|marketing assistant|brand marketing|brand manager|"
-        r"brand ambassador|promotions assistant|promotions coordinator|"
-        r"promotions manager|promotion coordinator|promotion manager|"
+        r"brand ambassador|"
         r"event marketing|event marketing coordinator|field marketing|"
         r"affiliate sales|partnership sales|partnerships coordinator|"
         r"sponsorship sales|sponsorship manager|sponsorship coordinator|"
@@ -435,7 +458,7 @@ def category(title, desc, industry, company):
     if re.search(
         r"\bcoordinator\s*,?\s*("
         r"sales|physical sales|marketing|digital marketing|advertising|"
-        r"business development|revenue|promotions?|sponsorships?|"
+        r"business development|revenue|sponsorships?|"
         r"partnerships?|client services|customer success|account"
         r")\b",
         t,
@@ -536,7 +559,8 @@ def category(title, desc, industry, company):
         r"\b("
         r"product manager|product owner|digital product|technology product|"
         r"ux|ui|user experience|user interface|"
-        r"digital programming|youtube programming|digital insights|digital business|"
+        r"digital programming|youtube programming|youtube editor|digital insights|digital business|"
+        r"digital social|social content creator|digital & social|digital and social|"
         r"label analytics|crm manager|digital analyst|video partnerships|youtube"
         r")\b",
         t,
@@ -590,7 +614,7 @@ def category(title, desc, industry, company):
         r"news editor|managing editor|copy editor|editorial editor|"
         r"news writer|newsroom editor|news director|digital journalist|"
         r"breaking news|photojournalist|news photographer|sports reporter|"
-        r"sports anchor|weather anchor|meteorologist|weather reporter|"
+        r"sports anchor|"
         r"fact checker|fact-checker|contributing editor|photo editor|editorial page assistant editor|senior editor"
         r")\b",
         t,
@@ -621,6 +645,24 @@ def category(title, desc, industry, company):
         td,
     ):
         return "Radio"
+
+    # Generic content creators inherit a television employer/platform unless
+    # the title explicitly says digital/social, which is handled as Digital.
+    if re.search(r"\bcontent creator\b", t):
+        if re.search(r"\b(digital|social|web|youtube)\b", t):
+            return "Digital"
+        if television_context:
+            return "Television"
+        if radio_context:
+            return "Radio"
+
+    # Media coordinators tied to a television employer/platform are Television.
+    if re.search(r"\bmedia coordinator\b", t) and television_context:
+        return "Television"
+
+    # Project/seasonal broadcast-assistant and ticker roles are television operations.
+    if re.search(r"\b(project employee,? )?(broadcasting assistant|broadcast assistant|ticker operator)\b", t):
+        return "Television"
 
     # ------------------------------------------------------------------
     # 8) TELEVISION / VIDEO PRODUCTION / STUDIO PRODUCTION
@@ -711,6 +753,14 @@ def category(title, desc, industry, company):
     # 12) DESCRIPTION FALLBACKS FOR VAGUE TITLES
     # These are intentionally ordered by job function and kept narrow.
     # ------------------------------------------------------------------
+
+    # ATS shell titles such as "Company Careers" are not real functional titles;
+    # use the employer media type rather than incidental newsroom wording.
+    if re.search(r"\b(careers?|career opportunities|job opportunities)\b", t):
+        if television_context:
+            return "Television"
+        if radio_context:
+            return "Radio"
 
     # Finance/HR/admin/scheduling.
     if re.search(
