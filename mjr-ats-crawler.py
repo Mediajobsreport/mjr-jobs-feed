@@ -8413,14 +8413,186 @@ def salem_icims_rendered_v30(src):
 
 
 
+
+
+# ============================================================
+# v75 SALEM EXPLICIT iCIMS PAGINATION
+# ============================================================
+
+def salem_icims_v75(src):
+    """Enumerate Salem jobs from explicit public iCIMS result pages.
+
+    Salem's portal does not reliably expose pagination links to the rendered
+    wrapper. Probe the documented/public iCIMS ``pr=`` result pages directly,
+    extract only requisition IDs/URLs actually present in those result pages,
+    then parse those live details. No numeric requisition-ID scanning is used.
+    """
+    parsed = urlparse(src["URL"])
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    details = {}
+    pages_checked = 0
+    empty_after_results = 0
+    found_any = False
+
+    # Salem has historically exposed fewer than 100 current jobs. Twenty-four
+    # pages is intentionally bounded while leaving ample room for growth.
+    for pr in range(0, 24):
+        page_urls = [
+            f"{base}/jobs/search?ss=1&searchRelation=keyword_all&pr={pr}&in_iframe=1",
+            f"{base}/jobs/search?ss=1&searchRelation=keyword_all&pr={pr}&mobile=true&needsRedirect=false",
+        ]
+        page_ids = set()
+        page_urls_found = set()
+
+        for page_url in page_urls:
+            try:
+                r = req("GET", page_url)
+            except Exception:
+                continue
+            pages_checked += 1
+            final = str(getattr(r, "url", "") or page_url)
+            raw = html.unescape(r.text or "").replace("\\/", "/")
+            soup = BeautifulSoup(raw, "html.parser")
+
+            # Anchor-based canonical paths.
+            for a in soup.find_all("a", href=True):
+                u = urljoin(final, a.get("href") or "")
+                up = urlparse(u)
+                if up.netloc.lower() != parsed.netloc.lower():
+                    continue
+                m = re.search(r"/jobs/(\d+)(?:/([^/?#]+))?/job(?:[/?#]|$)", u, re.I)
+                if m:
+                    jid = m.group(1)
+                    page_ids.add(jid)
+                    q = parse_qs(up.query)
+                    q["in_iframe"] = ["1"]
+                    nq = urlencode({k: v[-1] for k, v in q.items()})
+                    page_urls_found.add(urlunparse((up.scheme, up.netloc, up.path, "", nq, "")))
+
+            # iCIMS can serialize job paths or bare IDs into script state.
+            for m in re.finditer(r"/jobs/(\d+)(?:/[^\"'<>/?# ]+)?/job(?:[^\"'<> ]*)?", raw, re.I):
+                jid = m.group(1)
+                page_ids.add(jid)
+                u = urljoin(final, m.group(0).replace("&amp;", "&"))
+                up = urlparse(u)
+                if up.netloc.lower() == parsed.netloc.lower():
+                    q = parse_qs(up.query)
+                    q["in_iframe"] = ["1"]
+                    nq = urlencode({k: v[-1] for k, v in q.items()})
+                    page_urls_found.add(urlunparse((up.scheme, up.netloc, up.path, "", nq, "")))
+
+            # Some Salem/iCIMS result payloads expose the requisition ID without
+            # a fully formed href. These IDs still came from the listing page.
+            page_ids.update(re.findall(r'"(?:jobId|jobID|job_id|id)"\s*:\s*"?(\d{3,8})"?', raw, re.I))
+
+        if page_ids or page_urls_found:
+            found_any = True
+            empty_after_results = 0
+            for u in page_urls_found:
+                m = re.search(r"/jobs/(\d+)/", u, re.I)
+                if m:
+                    details[m.group(1)] = u
+            for jid in page_ids:
+                details.setdefault(jid, f"{base}/jobs/{jid}/job?in_iframe=1")
+        elif found_any:
+            empty_after_results += 1
+            # Two consecutive empty result pages means we've passed the live set.
+            if empty_after_results >= 2:
+                break
+
+    print(f"Salem v75 pagination: {pages_checked} result requests, {len(details)} unique requisitions enumerated")
+
+    out = []
+    seen_ids = set()
+    state = {}
+    try:
+        state = load_state()
+    except Exception:
+        state = {}
+
+    for requested_id, url in sorted(details.items(), key=lambda kv: int(kv[0])):
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+        final = str(getattr(rr, "url", "") or url)
+        raw = rr.text or ""
+
+        # Closed/redirected requisitions must not be retained just because their
+        # ID appeared in cached/listing markup.
+        final_id = re.search(r"/jobs/(\d+)/", final, re.I)
+        if final_id and final_id.group(1) != requested_id:
+            continue
+        low = clean(BeautifulSoup(raw, "html.parser").get_text(" ", strip=True)).lower()
+        if any(x in low for x in (
+            "job is no longer available", "position is no longer available",
+            "job has been filled", "job is no longer open"
+        )):
+            continue
+
+        j = _job_from_detail(src, final, raw)
+        if not j:
+            j = _direct_board_job(src, final, raw)
+        if not j:
+            continue
+
+        # Salem listing presence is authoritative for current liveness. Preserve
+        # a reliable employer date where available; otherwise use MJR first-seen.
+        pd = _v18_icims_date(raw)
+        if not pd:
+            candidates = []
+            for k in (
+                (getattr(j, "url", "") or "").rstrip("/").lower(),
+                final.rstrip("/").lower(),
+                url.rstrip("/").lower(),
+            ):
+                if k:
+                    candidates.append(k)
+            for key in candidates:
+                rec = state.get(key, {})
+                saved = (rec.get("job") or {}).get("date")
+                if saved:
+                    try:
+                        pd = date.fromisoformat(saved)
+                        break
+                    except Exception:
+                        pass
+        if not pd:
+            pd = TODAY
+        if pd < CUTOFF:
+            # A currently enumerated Salem job with an old employer date is still
+            # live. Start/retain the MJR visibility window from current discovery
+            # rather than silently dropping an open requisition.
+            pd = TODAY
+        j.date = pd
+
+        live_apply = _icims_canonical_apply_url(final, raw)
+        if hasattr(j, "url"):
+            j.url = live_apply
+        if hasattr(j, "apply_url"):
+            j.apply_url = live_apply
+
+        if j.id not in seen_ids:
+            seen_ids.add(j.id)
+            out.append(j)
+
+    print(f"Salem v75 qualifying live jobs: {len(out)}")
+    return out
+
 def salem_icims_v74(src):
-    """v74 Salem collector: rendered enumeration first, bounded requests fallback."""
+    """v75 Salem collector: explicit pagination first, older fallbacks only on zero."""
+    try:
+        jobs = salem_icims_v75(src)
+        if jobs:
+            return jobs
+    except Exception as e:
+        print(f"Salem v75 pagination collector failed: {e}")
     try:
         jobs = salem_icims_rendered_v30(src)
         if jobs:
             return jobs
     except Exception as e:
-        print(f"Salem rendered collector failed; falling back to requests collector: {e}")
+        print(f"Salem rendered fallback failed: {e}")
     return salem_icims_v29(src)
 
 def audacy_raw_diagnostic_v41(src):
