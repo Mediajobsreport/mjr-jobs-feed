@@ -148,6 +148,7 @@ jobs:
             mjr-audacy-detail-*-v45.html
             mjr-audacy-frames/
             mjr-salem-v77-diagnostic.txt
+            mjr-salem-v78-final-gate-audit.csv
             mjr-salem-diagnostic.txt
             mjr-salem-iframe.html
           if-no-files-found: warn
