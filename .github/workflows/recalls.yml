@@ -1,0 +1,40 @@
+name: Build MJR Recall Feed
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */4 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  build-recalls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install recall dependencies
+        working-directory: recalls
+        run: npm install
+      - name: Build recall feed
+        working-directory: recalls
+        run: npm run build
+      - name: Show feed summary
+        run: |
+          node -e "const f=require('./data/mjr-recalls.json'); console.log('Generated:',f.generated); console.log('Newest:',f.newestDate); console.log('Total:',f.count); console.log('Sources:',f.sources); f.items.slice(0,15).forEach((x,i)=>console.log((i+1)+'.',x.source,x.date,x.score,x.title));"
+      - name: Commit updated recall feed
+        run: |
+          git config user.name "MJR Recall Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/mjr-recalls.json recalls/package-lock.json
+          if git diff --cached --quiet; then
+            echo "No recall changes."
+          else
+            git commit -m "Update MJR recall feed"
+            git push
+          fi
