@@ -20,24 +20,116 @@ const NHTSA_ZIP =
 
 const FDA_PAGE =
   "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts";
-const CPSC_PAGE = "https://www.cpsc.gov/Recalls";
-const USDA_PAGE = "https://www.fsis.usda.gov/recalls";
-const NHTSA_PAGE = "https://www.nhtsa.gov/recalls";
+
+const CPSC_PAGE =
+  "https://www.cpsc.gov/Recalls";
+
+const USDA_PAGE =
+  "https://www.fsis.usda.gov/recalls";
+
+const NHTSA_PAGE =
+  "https://www.nhtsa.gov/recalls";
 
 const MAJOR_BRANDS = [
-  "great value","walmart","mainstays","costco","kirkland","target","amazon","aldi",
-  "kroger","publix","trader joe's","trader joes","whole foods","h-e-b","heb","wegmans",
-  "safeway","albertsons","meijer","food lion","nestle","kraft","heinz","pepsico",
-  "coca-cola","general mills","kellogg","kellanova","campbell","conagra","tyson",
-  "perdue","smucker","purina","pedigree","iams","royal canin","hill's","hills",
-  "blue buffalo","fromm","northwest naturals","freshpet","abbott","baxter","b. braun",
-  "b braun","medtronic","ge healthcare","boston scientific","cardinal health",
-  "stryker","philips","cuisinart","conair","apple","samsung","sony","lg","whirlpool",
-  "frigidaire","maytag","kitchenaid","dewalt","ryobi","milwaukee","ikea","home depot",
-  "lowe's","lowes","ford","lincoln","general motors","chevrolet","gmc","buick",
-  "cadillac","toyota","lexus","honda","acura","nissan","infiniti","hyundai","kia",
-  "subaru","mazda","volkswagen","audi","bmw","mercedes","volvo","tesla","rivian",
-  "stellantis","chrysler","dodge","jeep","ram"
+  "great value",
+  "walmart",
+  "mainstays",
+  "costco",
+  "kirkland",
+  "target",
+  "amazon",
+  "aldi",
+  "kroger",
+  "publix",
+  "trader joe's",
+  "trader joes",
+  "whole foods",
+  "h-e-b",
+  "heb",
+  "wegmans",
+  "safeway",
+  "albertsons",
+  "meijer",
+  "food lion",
+  "nestle",
+  "kraft",
+  "heinz",
+  "pepsico",
+  "coca-cola",
+  "general mills",
+  "kellogg",
+  "kellanova",
+  "campbell",
+  "conagra",
+  "tyson",
+  "perdue",
+  "smucker",
+  "purina",
+  "pedigree",
+  "iams",
+  "royal canin",
+  "hill's",
+  "hills",
+  "blue buffalo",
+  "fromm",
+  "northwest naturals",
+  "freshpet",
+  "abbott",
+  "baxter",
+  "b. braun",
+  "b braun",
+  "medtronic",
+  "ge healthcare",
+  "boston scientific",
+  "cardinal health",
+  "stryker",
+  "philips",
+  "cuisinart",
+  "conair",
+  "apple",
+  "samsung",
+  "sony",
+  "lg",
+  "whirlpool",
+  "frigidaire",
+  "maytag",
+  "kitchenaid",
+  "dewalt",
+  "ryobi",
+  "milwaukee",
+  "ikea",
+  "home depot",
+  "lowe's",
+  "lowes",
+  "ford",
+  "lincoln",
+  "general motors",
+  "chevrolet",
+  "gmc",
+  "buick",
+  "cadillac",
+  "toyota",
+  "lexus",
+  "honda",
+  "acura",
+  "nissan",
+  "infiniti",
+  "hyundai",
+  "kia",
+  "subaru",
+  "mazda",
+  "volkswagen",
+  "audi",
+  "bmw",
+  "mercedes",
+  "volvo",
+  "tesla",
+  "rivian",
+  "stellantis",
+  "chrysler",
+  "dodge",
+  "jeep",
+  "ram"
 ];
 
 function clean(v) {
@@ -59,19 +151,28 @@ function slug(v) {
     .slice(0, 70);
 }
 
+function normalizeHeader(v) {
+  return clean(v)
+    .toLowerCase()
+    .replace(/[-_]+/g, " ")
+    .replace(/[()]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function safeDate(v) {
   const s = clean(v);
 
   if (!s) return "";
 
   if (/^\d{8}$/.test(s)) {
-    return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
+    return `${s.slice(0, 4)}-${s.slice(4, 6)}-${s.slice(6, 8)}`;
   }
 
   let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
 
   if (m) {
-    return `${m[3]}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`;
+    return `${m[3]}-${m[1].padStart(2, "0")}-${m[2].padStart(2, "0")}`;
   }
 
   m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -84,7 +185,7 @@ function safeDate(v) {
 
   return Number.isNaN(d.getTime())
     ? ""
-    : d.toISOString().slice(0,10);
+    : d.toISOString().slice(0, 10);
 }
 
 function daysOld(date) {
@@ -96,9 +197,7 @@ function daysOld(date) {
     ? 999
     : Math.max(
         0,
-        Math.floor(
-          (Date.now() - d.getTime()) / 86400000
-        )
+        Math.floor((Date.now() - d.getTime()) / 86400000)
       );
 }
 
@@ -108,9 +207,9 @@ function shorten(v, max) {
   if (s.length <= max) return s;
 
   return (
-    s.slice(0, max - 1)
-      .replace(/\s+\S*$/, "") +
-    "…"
+    s
+      .slice(0, max - 1)
+      .replace(/\s+\S*$/, "") + "…"
   );
 }
 
@@ -319,7 +418,7 @@ async function fetchBuffer(url) {
     {
       headers: {
         "User-Agent":
-          "MediaJobsReport-RecallFeed/1.1"
+          "MediaJobsReport-RecallFeed/1.2"
       }
     }
   );
@@ -341,7 +440,8 @@ async function fetchJSON(url) {
     {
       headers: {
         "User-Agent":
-          "MediaJobsReport-RecallFeed/1.1",
+          "MediaJobsReport-RecallFeed/1.2",
+
         "Accept":
           "application/json"
       }
@@ -395,6 +495,7 @@ function makeFDAHeadline(
 ) {
   const b = clean(brand);
   const p = cleanProductName(product);
+
   const s = lower(
     `${b} ${p} ${company}`
   );
@@ -420,8 +521,17 @@ function makeFDAHeadline(
     return "Baxter Sodium Chloride Injection Recalled";
   }
 
-  if (/feline milk replacer/.test(s)) {
+  if (
+    /feline milk replacer/.test(s)
+  ) {
     return "Shelter’s Choice and Breeder’s Edge Feline Milk Replacers Recalled";
+  }
+
+  if (
+    /great value/.test(s) &&
+    /triple berry/.test(s)
+  ) {
+    return "Great Value Organic Triple Berry Blend Recalled";
   }
 
   if (b && p) {
@@ -464,7 +574,7 @@ function fdaRowsFromSheet(sheet) {
       row =>
         row.map(
           cell =>
-            clean(cell).toLowerCase()
+            normalizeHeader(cell)
         )
     );
 
@@ -472,19 +582,9 @@ function fdaRowsFromSheet(sheet) {
     normalized.findIndex(
       row =>
         row.includes("date") &&
-        row.some(
-          x =>
-            x === "brand name(s)" ||
-            x === "brand name"
-        ) &&
-        row.some(
-          x =>
-            x === "product description"
-        ) &&
-        row.some(
-          x =>
-            x === "company name"
-        )
+        row.includes("brand names") &&
+        row.includes("product description") &&
+        row.includes("company name")
     );
 
   if (headerIndex < 0) {
@@ -497,6 +597,11 @@ function fdaRowsFromSheet(sheet) {
       "FDA header row not found"
     );
   }
+
+  console.log(
+    "FDA header row:",
+    matrix[headerIndex]
+  );
 
   const headers =
     matrix[headerIndex].map(
@@ -528,14 +633,17 @@ function fdaRowsFromSheet(sheet) {
 }
 
 function pickField(row, names) {
-  const keys = Object.keys(row);
+  const keys =
+    Object.keys(row);
 
   for (const name of names) {
+    const wanted =
+      normalizeHeader(name);
+
     const exact =
       keys.find(
         k =>
-          lower(k) ===
-          lower(name)
+          normalizeHeader(k) === wanted
       );
 
     if (exact) {
@@ -596,8 +704,10 @@ async function loadFDA() {
         pickField(
           row,
           [
+            "Brand Names",
             "Brand Name(s)",
-            "Brand Name"
+            "Brand Name",
+            "Brand-Names"
           ]
         );
 
@@ -605,7 +715,8 @@ async function loadFDA() {
         pickField(
           row,
           [
-            "Product Description"
+            "Product Description",
+            "Product-Description"
           ]
         );
 
@@ -613,7 +724,9 @@ async function loadFDA() {
         pickField(
           row,
           [
-            "Product Type"
+            "Product Types",
+            "Product Type",
+            "Product-Types"
           ]
         );
 
@@ -622,7 +735,8 @@ async function loadFDA() {
           row,
           [
             "Recall Reason Description",
-            "Reason for Announcement"
+            "Reason for Announcement",
+            "Recall-Reason-Description"
           ]
         );
 
@@ -630,7 +744,16 @@ async function loadFDA() {
         pickField(
           row,
           [
-            "Company Name"
+            "Company Name",
+            "Company-Name"
+          ]
+        );
+
+      const terminated =
+        pickField(
+          row,
+          [
+            "Terminated Recall"
           ]
         );
 
@@ -652,7 +775,8 @@ async function loadFDA() {
             company
           )}`,
 
-        source: "FDA",
+        source:
+          "FDA",
 
         category:
           classify(
@@ -678,9 +802,11 @@ async function loadFDA() {
         brand,
         company,
         product,
+        productType,
         date,
 
-        units: 0,
+        units:
+          0,
 
         pet:
           isPetRecall(
@@ -691,6 +817,9 @@ async function loadFDA() {
           hasMajorBrand(
             `${brand} ${company} ${product}`
           ),
+
+        terminated:
+          lower(terminated) === "terminated",
 
         url:
           FDA_PAGE
@@ -826,8 +955,11 @@ async function loadCPSC() {
           row.RecallID || ""
         )}-${slug(title)}`,
 
-      source: "CPSC",
-      category: "consumer",
+      source:
+        "CPSC",
+
+      category:
+        "consumer",
 
       title:
         shorten(
@@ -856,7 +988,8 @@ async function loadCPSC() {
       date,
       units,
 
-      pet: false,
+      pet:
+        false,
 
       majorBrand:
         hasMajorBrand(
@@ -932,8 +1065,11 @@ async function loadUSDA() {
       id:
         `USDA-${date}-${slug(title)}`,
 
-      source: "USDA",
-      category: "food",
+      source:
+        "USDA",
+
+      category:
+        "food",
 
       title:
         shorten(
@@ -947,9 +1083,14 @@ async function loadUSDA() {
           220
         ),
 
-      brand: "",
+      brand:
+        "",
+
       company,
-      product: "",
+
+      product:
+        "",
+
       date,
 
       units:
@@ -957,7 +1098,8 @@ async function loadUSDA() {
           combined
         ),
 
-      pet: false,
+      pet:
+        false,
 
       majorBrand:
         hasMajorBrand(
@@ -1010,8 +1152,10 @@ function detectDelimiter(line) {
   const counts = {
     "\t":
       (line.match(/\t/g) || []).length,
+
     "|":
       (line.match(/\|/g) || []).length,
+
     ",":
       (line.match(/,/g) || []).length
   };
@@ -1054,6 +1198,7 @@ function parseDelimitedLine(
       } else {
         quoted = !quoted;
       }
+
     } else if (
       ch === "," &&
       !quoted
@@ -1061,7 +1206,9 @@ function parseDelimitedLine(
       out.push(
         clean(cur)
       );
+
       cur = "";
+
     } else {
       cur += ch;
     }
@@ -1081,12 +1228,15 @@ async function loadNHTSA() {
     );
 
   const zip =
-    new AdmZip(buffer);
+    new AdmZip(
+      buffer
+    );
 
   const candidates =
     zip.getEntries()
       .filter(
-        e => !e.isDirectory
+        e =>
+          !e.isDirectory
       )
       .filter(
         e =>
@@ -1511,6 +1661,7 @@ function diversifyLead(
       if (count >= 4) {
         penalty =
           28 * (count - 3);
+
       } else if (count >= 2) {
         penalty =
           10 * (count - 1);
@@ -1526,7 +1677,9 @@ function diversifyLead(
       ) {
         bestAdjusted =
           adjusted;
-        bestIndex = i;
+
+        bestIndex =
+          i;
       }
     }
 
@@ -1557,7 +1710,7 @@ function diversifyLead(
 
 async function run() {
   console.log(
-    "Building MJR recall feed v1.1..."
+    "Building MJR recall feed v1.2..."
   );
 
   const results =
@@ -1601,6 +1754,7 @@ async function run() {
         console.log(
           `${name}: ${result.value.length} records`
         );
+
       } else {
         sources[name] = {
           ok: false,
@@ -1622,7 +1776,9 @@ async function run() {
 
   combined =
     rank(
-      dedupe(combined)
+      dedupe(
+        combined
+      )
         .filter(
           item =>
             item.date &&
@@ -1635,10 +1791,10 @@ async function run() {
       combined,
       15
     )
-    .slice(
-      0,
-      120
-    );
+      .slice(
+        0,
+        120
+      );
 
   const newestDate =
     combined.reduce(
@@ -1655,7 +1811,7 @@ async function run() {
         .toISOString(),
 
     version:
-      "1.1",
+      "1.2",
 
     newestDate,
 
