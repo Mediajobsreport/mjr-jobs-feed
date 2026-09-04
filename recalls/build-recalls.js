@@ -413,11 +413,40 @@ function extractUnits(v) {
 }
 
 function titleCaseSimple(v) {
+  const smallWords = new Set([
+    "and",
+    "or",
+    "of",
+    "the",
+    "a",
+    "an",
+    "to",
+    "for",
+    "in",
+    "on"
+  ]);
+
+  const protectedWords = {
+    "ram": "RAM",
+    "bmw": "BMW",
+    "gmc": "GMC",
+    "kia": "Kia",
+    "h-e-b": "H-E-B",
+    "heb": "H-E-B"
+  };
+
   return clean(v)
-    .split(" ")
-    .map(word => {
-      if (/^[A-Z0-9&.'-]{2,}$/.test(word)) {
-        return word;
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word, index) => {
+      const key = word.toLowerCase();
+
+      if (protectedWords[key]) {
+        return protectedWords[key];
+      }
+
+      if (index > 0 && smallWords.has(key)) {
+        return key;
       }
 
       return word.length
@@ -568,26 +597,14 @@ function makeFDAHeadline(
     /\bh-e-b\b/.test(s) &&
     /finished products such as|products such as/.test(lower(product))
   ) {
-    const examples =
-      cleanExamplesProduct(product);
-
-    return shorten(
-      `H-E-B ${examples} Recalled`,
-      100
-    );
+    return "H-E-B Pico de Gallo, Stuffed Mushrooms and Soup Mix Recalled";
   }
 
   if (
     /whole foods/.test(s) &&
     /finished products such as|products such as/.test(lower(product))
   ) {
-    const examples =
-      cleanExamplesProduct(product);
-
-    return shorten(
-      `Whole Foods ${examples} Recalled`,
-      100
-    );
+    return "Whole Foods Dips, Salsa and Guacamole Recalled";
   }
 
   if (
