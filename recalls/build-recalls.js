@@ -412,49 +412,34 @@ function extractUnits(v) {
   return 0;
 }
 
-async function fetchBuffer(url) {
-  const r = await fetch(
-    url,
-    {
-      headers: {
-        "User-Agent":
-          "MediaJobsReport-RecallFeed/1.2"
+function titleCaseSimple(v) {
+  return clean(v)
+    .split(" ")
+    .map(word => {
+      if (/^[A-Z0-9&.'-]{2,}$/.test(word)) {
+        return word;
       }
-    }
-  );
 
-  if (!r.ok) {
-    throw new Error(
-      `${url} returned HTTP ${r.status}`
-    );
-  }
-
-  return Buffer.from(
-    await r.arrayBuffer()
-  );
+      return word.length
+        ? word.charAt(0).toUpperCase() + word.slice(1)
+        : word;
+    })
+    .join(" ");
 }
 
-async function fetchJSON(url) {
-  const r = await fetch(
-    url,
-    {
-      headers: {
-        "User-Agent":
-          "MediaJobsReport-RecallFeed/1.2",
+function cleanBrandName(v) {
+  let s = clean(v)
+    .replace(/\s*,\s*/g, ", ")
+    .replace(/\bH E B\b/gi, "H-E-B")
+    .replace(/\bHEB\b/g, "H-E-B")
+    .replace(/\bWhole Foods Market\b/gi, "Whole Foods")
+    .replace(/\bWal-Mart\b/gi, "Walmart");
 
-        "Accept":
-          "application/json"
-      }
-    }
-  );
-
-  if (!r.ok) {
-    throw new Error(
-      `${url} returned HTTP ${r.status}`
-    );
+  if (/naturebest.*h-e-b/i.test(s)) {
+    return "H-E-B";
   }
 
-  return r.json();
+  return s;
 }
 
 function cleanProductName(v) {
@@ -483,9 +468,54 @@ function cleanProductName(v) {
       /\bkeep refrigerated\b.*$/i,
       ""
     )
+    .replace(
+      /\bwith lot codes?\b.*$/i,
+      ""
+    )
+    .replace(
+      /\blot numbers?\b.*$/i,
+      ""
+    )
     .trim();
 
-  return shorten(s, 80);
+  return shorten(s, 85);
+}
+
+function cleanExamplesProduct(v) {
+  let s = cleanProductName(v);
+
+  s = s
+    .replace(
+      /^finished products such as\s+/i,
+      ""
+    )
+    .replace(
+      /^products such as\s+/i,
+      ""
+    )
+    .replace(
+      /\s+containing\b.*$/i,
+      ""
+    )
+    .replace(
+      /,\s*and more\b.*$/i,
+      ""
+    )
+    .replace(
+      /\s+and more\b.*$/i,
+      ""
+    )
+    .replace(
+      /\betc\.?$/i,
+      ""
+    )
+    .replace(
+      /\.$/,
+      ""
+    )
+    .trim();
+
+  return s;
 }
 
 function makeFDAHeadline(
@@ -493,11 +523,11 @@ function makeFDAHeadline(
   product,
   company
 ) {
-  const b = clean(brand);
-  const p = cleanProductName(product);
+  const rawBrand = cleanBrandName(brand);
+  const rawProduct = cleanProductName(product);
 
   const s = lower(
-    `${b} ${p} ${company}`
+    `${rawBrand} ${rawProduct} ${company}`
   );
 
   if (
@@ -524,7 +554,7 @@ function makeFDAHeadline(
   if (
     /feline milk replacer/.test(s)
   ) {
-    return "Shelter’s Choice and Breeder’s Edge Feline Milk Replacers Recalled";
+    return "Feline Milk Replacer Products Recalled";
   }
 
   if (
@@ -532,6 +562,71 @@ function makeFDAHeadline(
     /triple berry/.test(s)
   ) {
     return "Great Value Organic Triple Berry Blend Recalled";
+  }
+
+  if (
+    /\bh-e-b\b/.test(s) &&
+    /finished products such as|products such as/.test(lower(product))
+  ) {
+    const examples =
+      cleanExamplesProduct(product);
+
+    return shorten(
+      `H-E-B ${examples} Recalled`,
+      100
+    );
+  }
+
+  if (
+    /whole foods/.test(s) &&
+    /finished products such as|products such as/.test(lower(product))
+  ) {
+    const examples =
+      cleanExamplesProduct(product);
+
+    return shorten(
+      `Whole Foods ${examples} Recalled`,
+      100
+    );
+  }
+
+  if (
+    /kroger/.test(s) &&
+    /egg/.test(s) &&
+    rawBrand.length > 55
+  ) {
+    return "Kroger and Other Egg Products Recalled";
+  }
+
+  if (
+    /simple truth/.test(s) &&
+    /egg/.test(s)
+  ) {
+    return "Simple Truth Cage-Free Eggs Recalled";
+  }
+
+  if (
+    /clover hill/.test(s) &&
+    /cheese/.test(s)
+  ) {
+    return "Clover Hill Dairy Cheese Products Recalled";
+  }
+
+  if (
+    /zen principle/.test(s) &&
+    /moringa/.test(s)
+  ) {
+    return "Zen Principle Moringa Leaf Supplement Recalled";
+  }
+
+  const b = rawBrand;
+  let p = rawProduct;
+
+  if (
+    /^finished products such as/i.test(p) ||
+    /^products such as/i.test(p)
+  ) {
+    p = cleanExamplesProduct(p);
   }
 
   if (b && p) {
@@ -556,6 +651,155 @@ function makeFDAHeadline(
   }
 
   return "FDA Product Recall";
+}
+
+function makeCPSCHeadline(
+  originalTitle,
+  products,
+  manufacturers
+) {
+  const title = clean(originalTitle);
+  const productList = products.filter(Boolean);
+  const manufacturerList = manufacturers.filter(Boolean);
+
+  let m;
+
+  m = title.match(
+    /^(.+?)\s+(?:expands|reannounces|announces)?\s*recall of\s+(.+?)\s+due to\b/i
+  );
+
+  if (m) {
+    let subject = clean(m[2]);
+
+    subject = subject
+      .replace(
+        /\s+because of\b.*$/i,
+        ""
+      )
+      .trim();
+
+    return shorten(
+      `${subject} Recalled`,
+      100
+    );
+  }
+
+  m = title.match(
+    /^(.+?)\s+recalls\s+(.+?)\s+due to\b/i
+  );
+
+  if (m) {
+    const company = clean(m[1]);
+    let subject = clean(m[2]);
+
+    if (
+      company &&
+      !containsBrand(subject, company) &&
+      company.length <= 28 &&
+      !/distribution corporation|group|company|inc\.?$/i.test(company)
+    ) {
+      subject =
+        `${company} ${subject}`;
+    }
+
+    return shorten(
+      `${subject} Recalled`,
+      100
+    );
+  }
+
+  m = title.match(
+    /^(.+?)\s+recalls\s+(.+?)$/i
+  );
+
+  if (m) {
+    return shorten(
+      `${clean(m[2])} Recalled`,
+      100
+    );
+  }
+
+  if (productList.length) {
+    let subject =
+      productList
+        .slice(0, 2)
+        .join(" and ");
+
+    const firstManufacturer =
+      manufacturerList[0] || "";
+
+    if (
+      firstManufacturer &&
+      firstManufacturer.length <= 25 &&
+      !containsBrand(subject, firstManufacturer)
+    ) {
+      subject =
+        `${firstManufacturer} ${subject}`;
+    }
+
+    return shorten(
+      `${subject} Recalled`,
+      100
+    );
+  }
+
+  return shorten(
+    title
+      .replace(
+        /\s+due to\b.*$/i,
+        ""
+      )
+      .replace(
+        /;\s*.*$/,
+        ""
+      ),
+    100
+  );
+}
+
+async function fetchBuffer(url) {
+  const r = await fetch(
+    url,
+    {
+      headers: {
+        "User-Agent":
+          "MediaJobsReport-RecallFeed/1.3"
+      }
+    }
+  );
+
+  if (!r.ok) {
+    throw new Error(
+      `${url} returned HTTP ${r.status}`
+    );
+  }
+
+  return Buffer.from(
+    await r.arrayBuffer()
+  );
+}
+
+async function fetchJSON(url) {
+  const r = await fetch(
+    url,
+    {
+      headers: {
+        "User-Agent":
+          "MediaJobsReport-RecallFeed/1.3",
+
+        "Accept":
+          "application/json"
+      }
+    }
+  );
+
+  if (!r.ok) {
+    throw new Error(
+      `${url} returned HTTP ${r.status}`
+    );
+  }
+
+  return r.json();
 }
 
 function fdaRowsFromSheet(sheet) {
@@ -799,7 +1043,9 @@ async function loadFDA() {
             220
           ),
 
-        brand,
+        brand:
+          cleanBrandName(brand),
+
         company,
         product,
         productType,
@@ -902,12 +1148,19 @@ async function loadCPSC() {
         row.LastPublishDate
       );
 
-    const title =
+    const rawTitle =
       clean(
         row.Title ||
         row.RecallTitle ||
         products[0] ||
         "Consumer Product Recall"
+      );
+
+    const title =
+      makeCPSCHeadline(
+        rawTitle,
+        products,
+        mfgs
       );
 
     const reason =
@@ -918,7 +1171,7 @@ async function loadCPSC() {
     const fallbackUnits =
       extractUnits(
         [
-          title,
+          rawTitle,
           reason,
           clean(row.Description)
         ].join(" ")
@@ -929,7 +1182,7 @@ async function loadCPSC() {
       fallbackUnits;
 
     const titleForBrand =
-      title
+      rawTitle
         .replace(
           /\bsold on walmart\.com\b.*$/i,
           ""
@@ -953,7 +1206,7 @@ async function loadCPSC() {
       id:
         `CPSC-${clean(
           row.RecallID || ""
-        )}-${slug(title)}`,
+        )}-${slug(rawTitle)}`,
 
       source:
         "CPSC",
@@ -961,11 +1214,7 @@ async function loadCPSC() {
       category:
         "consumer",
 
-      title:
-        shorten(
-          title,
-          105
-        ),
+      title,
 
       reason:
         shorten(
@@ -1028,12 +1277,45 @@ async function loadUSDA() {
         );
 
   return rows.map(row => {
-    const title =
+    const rawTitle =
       clean(
         row.title ||
         row.recall_title ||
         row.field_title ||
         "USDA Food Recall"
+      );
+
+    let title =
+      rawTitle
+        .replace(
+          /^FSIS Issues Public Health Alert for\s+/i,
+          ""
+        )
+        .replace(
+          /^.+?\s+Recalls\s+/i,
+          ""
+        )
+        .replace(
+          /\s+Due To\b.*$/i,
+          ""
+        )
+        .replace(
+          /\s+Due to\b.*$/i,
+          ""
+        )
+        .trim();
+
+    if (
+      title &&
+      !/recalled$/i.test(title)
+    ) {
+      title += " Recalled";
+    }
+
+    title =
+      shorten(
+        title || rawTitle,
+        100
       );
 
     const reason =
@@ -1059,11 +1341,11 @@ async function loadUSDA() {
       );
 
     const combined =
-      `${title} ${reason} ${company}`;
+      `${rawTitle} ${reason} ${company}`;
 
     const item = {
       id:
-        `USDA-${date}-${slug(title)}`,
+        `USDA-${date}-${slug(rawTitle)}`,
 
       source:
         "USDA",
@@ -1071,11 +1353,7 @@ async function loadUSDA() {
       category:
         "food",
 
-      title:
-        shorten(
-          title,
-          105
-        ),
+      title,
 
       reason:
         shorten(
@@ -1103,7 +1381,7 @@ async function loadUSDA() {
 
       majorBrand:
         hasMajorBrand(
-          `${title} ${company}`
+          `${rawTitle} ${company}`
         ),
 
       url:
@@ -1250,14 +1528,6 @@ async function loadNHTSA() {
       );
 
   if (!candidates.length) {
-    console.log(
-      "NHTSA ZIP entries:",
-      zip.getEntries()
-        .map(
-          e => e.entryName
-        )
-    );
-
     throw new Error(
       "No usable NHTSA flat data file found"
     );
@@ -1492,14 +1762,23 @@ async function loadNHTSA() {
           g.manufacturer
         );
 
-      const title =
-        make
-          ? (
-              g.models.length === 1
-                ? `${make} ${g.models[0]} Vehicles Recalled`
-                : `${make} Vehicles Recalled`
-            )
-          : "Vehicle Recall";
+      const model =
+        g.models.length === 1
+          ? clean(g.models[0])
+          : "";
+
+      let title;
+
+      if (make && model) {
+        title =
+          `${titleCaseSimple(make)} ${titleCaseSimple(model)} Vehicles Recalled`;
+      } else if (make) {
+        title =
+          `${titleCaseSimple(make)} Vehicles Recalled`;
+      } else {
+        title =
+          "Vehicles Recalled";
+      }
 
       let reason =
         clean(
@@ -1532,7 +1811,7 @@ async function loadNHTSA() {
         title:
           shorten(
             title,
-            105
+            100
           ),
 
         reason:
@@ -1710,7 +1989,7 @@ function diversifyLead(
 
 async function run() {
   console.log(
-    "Building MJR recall feed v1.2..."
+    "Building MJR recall feed v1.3..."
   );
 
   const results =
@@ -1811,7 +2090,7 @@ async function run() {
         .toISOString(),
 
     version:
-      "1.2",
+      "1.3",
 
     newestDate,
 
