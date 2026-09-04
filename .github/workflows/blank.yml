@@ -153,6 +153,18 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+      - name: Upload full crawl results
+        if: ${{ !(github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mjr-full-crawl-results-${{ github.run_number }}
+          path: |
+            mjr-jboard-master.xml
+            mjr-ats-audit.csv
+            mjr-job-state.json
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Commit updated production feed
         if: ${{ !(github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '') }}
         run: |
