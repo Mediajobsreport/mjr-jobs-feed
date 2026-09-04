@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-04T08:29:51.996Z",
+  "generated_at": "2026-09-04T19:24:46.717Z",
   "source": "U.S. Census Bureau Monthly Retail Trade; MJR analysis",
   "methodology": "MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available, averages those monthly shares, identifies the strongest one-third of months for each category, and assigns every category with complete data to one primary action window: Sell Now (current month), Start Prospecting (about 30 days ahead), On Deck (about 60–90 days ahead), or Watch Ahead (longer-range opportunity).",
   "years_requested": [
@@ -472,8 +472,8 @@
   "diagnostics": [],
   "parser_debug": {
     "seasonally_adj_values": {
-      "yes": 9144,
-      "no": 10836
+      "no": 10836,
+      "yes": 9144
     },
     "chosen_series": {
       "2025:441": "SM",
@@ -518,16 +518,16 @@
     },
     "category_type_month_counts": {
       "2025:441": {
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "IM": 12,
+        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 4,
-        "SM": 12,
-        "E_SM": 12,
-        "IM": 12,
-        "E_IM": 12,
         "E_MPCIM": 12,
-        "MPCSM": 5,
-        "E_MPCSM": 12
+        "SM": 12,
+        "E_SM": 12
       },
       "2025:442": {
         "MPCSM": 6,
@@ -536,30 +536,30 @@
         "E_SM": 12
       },
       "2025:443": {
-        "MPCSM": 6,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12
       },
       "2025:444": {
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 7,
         "E_MPCIM": 12,
-        "MPCSM": 5,
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "MPCSM": 5
       },
       "2025:445": {
-        "IR": 12,
-        "E_IR": 12,
         "SM": 12,
         "E_SM": 12,
         "IM": 12,
         "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
         "MPCIM": 8,
         "E_MPCIM": 12,
         "MPCSM": 5,
@@ -578,34 +578,34 @@
         "E_SM": 12
       },
       "2025:448": {
+        "IR": 12,
+        "E_IR": 12,
         "MPCIM": 9,
         "E_MPCIM": 12,
         "MPCSM": 8,
         "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12,
-        "IR": 12,
-        "E_IR": 12,
-        "IM": 12,
-        "E_IM": 12
-      },
-      "2025:451": {
-        "E_SM": 12,
-        "MPCSM": 7,
-        "E_MPCSM": 12,
-        "SM": 12
-      },
-      "2025:452": {
         "IM": 12,
         "E_IM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:451": {
+        "MPCSM": 7,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
+      },
+      "2025:452": {
         "E_MPCIM": 11,
         "MPCSM": 7,
         "E_MPCSM": 11,
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 8,
-        "SM": 12,
-        "E_SM": 12
+        "MPCIM": 8
       },
       "2025:453": {
         "MPCSM": 5,
@@ -626,14 +626,14 @@
         "E_SM": 12
       },
       "2024:441": {
-        "MPCSM": 7,
-        "E_MPCSM": 12,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 9,
         "E_MPCIM": 12,
+        "MPCSM": 7,
+        "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
@@ -644,22 +644,22 @@
         "E_SM": 12
       },
       "2024:443": {
-        "E_MPCSM": 12,
         "MPCSM": 6,
+        "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
       "2024:444": {
-        "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12,
         "IM": 12,
         "E_IM": 12,
-        "MPCSM": 6,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 7,
-        "E_MPCIM": 12
+        "E_MPCIM": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12
       },
       "2024:445": {
         "IM": 12,
@@ -686,16 +686,16 @@
         "E_SM": 12
       },
       "2024:448": {
-        "MPCSM": 8,
-        "E_MPCSM": 12,
+        "E_SM": 12,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 8,
         "E_MPCIM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "MPCSM": 8,
+        "E_MPCSM": 12,
+        "SM": 12
       },
       "2024:451": {
         "MPCSM": 7,
@@ -704,28 +704,28 @@
         "E_SM": 12
       },
       "2024:452": {
-        "IM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 6,
-        "E_MPCIM": 11,
         "MPCSM": 7,
         "E_MPCSM": 11,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 6,
+        "E_MPCIM": 11,
         "SM": 12,
         "E_SM": 12
       },
       "2024:453": {
+        "SM": 12,
+        "E_SM": 12,
+        "MPCSM": 7,
+        "E_MPCSM": 12
+      },
+      "2024:454": {
         "MPCSM": 7,
         "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
-      },
-      "2024:454": {
-        "E_SM": 12,
-        "MPCSM": 7,
-        "E_MPCSM": 12,
-        "SM": 12
       },
       "2024:722": {
         "MPCSM": 6,
@@ -734,16 +734,16 @@
         "E_SM": 12
       },
       "2023:441": {
-        "IM": 12,
-        "MPCIM": 11,
-        "E_MPCIM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCSM": 5,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 11,
+        "E_MPCIM": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12
       },
       "2023:442": {
         "MPCSM": 4,
@@ -752,40 +752,40 @@
         "E_SM": 12
       },
       "2023:443": {
-        "MPCSM": 6,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12
       },
       "2023:444": {
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
         "MPCIM": 3,
         "E_MPCIM": 12,
-        "SM": 12,
-        "E_SM": 12,
-        "IM": 12,
-        "E_IM": 12,
-        "IR": 12,
-        "E_IR": 12,
         "MPCSM": 5,
-        "E_MPCSM": 12
-      },
-      "2023:445": {
-        "IM": 12,
-        "MPCIM": 7,
-        "E_MPCIM": 12,
-        "E_IM": 12,
-        "IR": 12,
-        "E_IR": 12,
-        "MPCSM": 6,
         "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
-      "2023:446": {
+      "2023:445": {
+        "IR": 12,
+        "E_IR": 12,
         "SM": 12,
         "E_SM": 12,
-        "MPCSM": 5,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 7,
+        "E_MPCIM": 12,
+        "MPCSM": 6,
         "E_MPCSM": 12
+      },
+      "2023:446": {
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
       },
       "2023:447": {
         "MPCSM": 4,
@@ -794,7 +794,6 @@
         "E_SM": 12
       },
       "2023:448": {
-        "E_SM": 12,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
@@ -803,25 +802,26 @@
         "E_MPCIM": 12,
         "MPCSM": 8,
         "E_MPCSM": 12,
-        "SM": 12
-      },
-      "2023:451": {
-        "MPCSM": 6,
-        "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
-      "2023:452": {
+      "2023:451": {
         "SM": 12,
         "E_SM": 12,
-        "IR": 12,
-        "E_IR": 12,
-        "MPCSM": 8,
-        "E_MPCSM": 10,
+        "MPCSM": 6,
+        "E_MPCSM": 12
+      },
+      "2023:452": {
         "IM": 12,
         "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
         "MPCIM": 6,
-        "E_MPCIM": 10
+        "E_MPCIM": 10,
+        "MPCSM": 8,
+        "E_MPCSM": 10,
+        "SM": 12,
+        "E_SM": 12
       },
       "2023:453": {
         "MPCSM": 6,
@@ -830,16 +830,16 @@
         "E_SM": 12
       },
       "2023:454": {
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12,
-        "MPCSM": 7
-      },
-      "2023:722": {
-        "MPCSM": 5,
+        "MPCSM": 7,
         "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
+      },
+      "2023:722": {
+        "E_SM": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "SM": 12
       }
     }
   }
