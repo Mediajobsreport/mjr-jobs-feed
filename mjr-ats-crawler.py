@@ -234,9 +234,9 @@ def jobtype(title, text=""):
 
 
 def category(title, desc, industry, company):
-    # v82 strong Engineering overrides.
-    _v82_title = (title or "").lower()
-    _v82_engineering_title_patterns = (
+    # v83 strong Engineering overrides.
+    _v83_title = (title or "").lower()
+    _v83_engineering_title_patterns = (
         "software tester", "software test", "software qa", "qa engineer",
         "quality assurance engineer", "quality assurance tester", "test engineer",
         "software engineer", "software developer", "application developer",
@@ -249,7 +249,7 @@ def category(title, desc, industry, company):
         "building maintenance", "building maintenance technician",
         "maintenance engineer", "facilities maintenance",
     )
-    if any(p in _v82_title for p in _v82_engineering_title_patterns):
+    if any(p in _v83_title for p in _v83_engineering_title_patterns):
         return "Engineering"
 
     """
