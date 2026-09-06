@@ -12,24 +12,21 @@ const USDA_API = "https://www.fsis.usda.gov/fsis/api/recall/v/1";
 const NHTSA_ZIP = "https://static.nhtsa.gov/odi/ffdd/rcl/FLAT_RCL_POST_2010.zip";
 
 const FDA_PAGE = "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts";
+const FDA_ANIMAL_PAGE = "https://www.fda.gov/animal-veterinary/safety-health/recalls-withdrawals";
 const CPSC_PAGE = "https://www.cpsc.gov/Recalls";
 const USDA_PAGE = "https://www.fsis.usda.gov/recalls";
 const NHTSA_PAGE = "https://www.nhtsa.gov/recalls";
 
 const MAJOR_BRANDS = [
-  "great value","walmart","mainstays","costco","kirkland","target","amazon","aldi",
-  "kroger","publix","trader joe's","trader joes","whole foods","h-e-b","heb","wegmans",
-  "safeway","albertsons","meijer","food lion","nestle","kraft","heinz","pepsico",
-  "coca-cola","general mills","kellogg","kellanova","campbell","conagra","tyson",
-  "perdue","smucker","purina","pedigree","iams","royal canin","hill's","hills",
-  "blue buffalo","fromm","northwest naturals","freshpet","abbott","baxter","b. braun",
-  "b braun","medtronic","ge healthcare","boston scientific","cardinal health",
-  "stryker","philips","cuisinart","conair","apple","samsung","sony","lg","whirlpool",
-  "frigidaire","maytag","kitchenaid","dewalt","ryobi","milwaukee","ikea","home depot",
-  "lowe's","lowes","ford","lincoln","general motors","chevrolet","gmc","buick",
-  "cadillac","toyota","lexus","honda","acura","nissan","infiniti","hyundai","kia",
-  "subaru","mazda","volkswagen","audi","bmw","mercedes","volvo","tesla","rivian",
-  "stellantis","chrysler","dodge","jeep","ram"
+  "great value","walmart","mainstays","costco","kirkland","target","amazon","aldi","kroger","publix",
+  "trader joe's","trader joes","whole foods","h-e-b","heb","wegmans","safeway","albertsons","meijer","food lion",
+  "nestle","kraft","heinz","pepsico","coca-cola","general mills","kellogg","kellanova","campbell","conagra","tyson",
+  "perdue","smucker","purina","pedigree","iams","royal canin","hill's","hills","blue buffalo","fromm","northwest naturals",
+  "freshpet","abbott","baxter","b. braun","b braun","medtronic","ge healthcare","boston scientific","cardinal health",
+  "stryker","philips","cuisinart","conair","apple","samsung","sony","lg","whirlpool","frigidaire","maytag","kitchenaid",
+  "dewalt","ryobi","milwaukee","ikea","home depot","lowe's","lowes","ford","lincoln","general motors","chevrolet","gmc",
+  "buick","cadillac","toyota","lexus","honda","acura","nissan","infiniti","hyundai","kia","subaru","mazda","volkswagen",
+  "audi","bmw","mercedes","volvo","tesla","rivian","stellantis","chrysler","dodge","jeep","ram"
 ];
 
 function clean(v) {
@@ -120,8 +117,7 @@ function shorten(v, max) {
   if (s.length <= max) return s;
 
   return (
-    s
-      .slice(0, max - 1)
+    s.slice(0, max - 1)
       .replace(/\s+\S*$/, "") +
     "…"
   );
@@ -157,14 +153,8 @@ function isPetRecall(v) {
     .test(v);
 }
 
-function classify(
-  text,
-  productType,
-  source
-) {
-  const s = lower(
-    `${text} ${productType}`
-  );
+function classify(text, productType, source) {
+  const s = lower(`${text} ${productType}`);
 
   if (
     source === "NHTSA" ||
@@ -371,7 +361,7 @@ async function fetchBuffer(url) {
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/1.8"
+            "MediaJobsReport-RecallFeed/1.9"
         },
 
         redirect:
@@ -399,7 +389,7 @@ async function fetchJSON(url) {
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/1.8",
+            "MediaJobsReport-RecallFeed/1.9",
 
           "Accept":
             "application/json"
@@ -428,7 +418,7 @@ async function fetchText(url) {
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/1.8",
+            "MediaJobsReport-RecallFeed/1.9",
 
           "Accept":
             "text/html,application/xhtml+xml"
@@ -1011,17 +1001,6 @@ function pickField(
   return "";
 }
 
-/*
-  v1.8 FDA FIX
-
-  FDA's XLSX export does not consistently preserve the
-  individual recall announcement hyperlink.
-
-  The public FDA table does.
-
-  Read the table rows and capture the actual FDA detail URL.
-*/
-
 function parseFDAListingRows(html) {
   const found =
     [];
@@ -1159,11 +1138,20 @@ function parseFDAListingRows(html) {
 }
 
 async function loadFDADetailLinks() {
+  const found =
+    [];
+
+  /*
+    v1.9 FIX
+
+    FDA pagination uses capital-P "Page".
+    Lowercase ?page= caused every request to return page one.
+  */
   const pages =
     Array.from(
       {
         length:
-          15
+          20
       },
 
       (
@@ -1172,11 +1160,16 @@ async function loadFDADetailLinks() {
       ) =>
         i === 0
           ? FDA_PAGE
-          : `${FDA_PAGE}?page=${i}`
+          : `${FDA_PAGE}?Page=${i}`
     );
 
-  const rows =
-    [];
+  /*
+    Add FDA's veterinary recall table as a second official source.
+    This catches pet-food items such as Northwest Naturals.
+  */
+  pages.push(
+    FDA_ANIMAL_PAGE
+  );
 
   await mapLimit(
     pages,
@@ -1188,7 +1181,7 @@ async function loadFDADetailLinks() {
             pageUrl
           );
 
-        rows.push(
+        found.push(
           ...parseFDAListingRows(
             html
           )
@@ -1210,7 +1203,7 @@ async function loadFDADetailLinks() {
     new Map();
 
   for (
-    const row of rows
+    const row of found
   ) {
     unique.set(
       `${row.date}|${normalizeMatchText(row.brand)}|${normalizeMatchText(row.product)}|${row.url}`,
@@ -2869,14 +2862,11 @@ async function loadNHTSA() {
       )
     );
 
-  const resolvedCount =
-    documents.filter(
+  console.log(
+    `NHTSA readable documents resolved: ${documents.filter(
       x =>
         x.url
-    ).length;
-
-  console.log(
-    `NHTSA readable documents resolved: ${resolvedCount}/${campaignRows.length}`
+    ).length}/${campaignRows.length}`
   );
 
   return campaignRows
@@ -3187,7 +3177,7 @@ function diversifyLead(
 
 async function run() {
   console.log(
-    "Building MJR recall feed v1.8..."
+    "Building MJR recall feed v1.9..."
   );
 
   const results =
@@ -3314,7 +3304,7 @@ async function run() {
         .toISOString(),
 
     version:
-      "1.8",
+      "1.9",
 
     newestDate,
 
