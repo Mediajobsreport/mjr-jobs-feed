@@ -6,27 +6,51 @@ const AdmZip = require("adm-zip");
 const OUTPUT_DIR = path.join(process.cwd(), "..", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "mjr-recalls.json");
 
-const FDA_XLSX = "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/datatables-data?_format=xlsx&page=";
-const CPSC_API = "https://www.saferproducts.gov/RestWebServices/Recall?format=json";
-const USDA_API = "https://www.fsis.usda.gov/fsis/api/recall/v/1";
-const NHTSA_ZIP = "https://static.nhtsa.gov/odi/ffdd/rcl/FLAT_RCL_POST_2010.zip";
+const FDA_XLSX =
+  "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/datatables-data?_format=xlsx&page=";
 
-const FDA_PAGE = "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts";
-const FDA_ANIMAL_PAGE = "https://www.fda.gov/animal-veterinary/safety-health/recalls-withdrawals";
-const CPSC_PAGE = "https://www.cpsc.gov/Recalls";
-const USDA_PAGE = "https://www.fsis.usda.gov/recalls";
-const NHTSA_PAGE = "https://www.nhtsa.gov/recalls";
+const CPSC_API =
+  "https://www.saferproducts.gov/RestWebServices/Recall?format=json";
+
+const USDA_API =
+  "https://www.fsis.usda.gov/fsis/api/recall/v/1";
+
+const NHTSA_ZIP =
+  "https://static.nhtsa.gov/odi/ffdd/rcl/FLAT_RCL_POST_2010.zip";
+
+const FDA_PAGE =
+  "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts";
+
+const FDA_ANIMAL_PAGE =
+  "https://www.fda.gov/animal-veterinary/safety-health/recalls-withdrawals";
+
+const FDA_SEARCH =
+  "https://www.fda.gov/search";
+
+const CPSC_PAGE =
+  "https://www.cpsc.gov/Recalls";
+
+const USDA_PAGE =
+  "https://www.fsis.usda.gov/recalls";
+
+const NHTSA_PAGE =
+  "https://www.nhtsa.gov/recalls";
 
 const MAJOR_BRANDS = [
-  "great value","walmart","mainstays","costco","kirkland","target","amazon","aldi","kroger","publix",
-  "trader joe's","trader joes","whole foods","h-e-b","heb","wegmans","safeway","albertsons","meijer","food lion",
-  "nestle","kraft","heinz","pepsico","coca-cola","general mills","kellogg","kellanova","campbell","conagra","tyson",
-  "perdue","smucker","purina","pedigree","iams","royal canin","hill's","hills","blue buffalo","fromm","northwest naturals",
-  "freshpet","abbott","baxter","b. braun","b braun","medtronic","ge healthcare","boston scientific","cardinal health",
-  "stryker","philips","cuisinart","conair","apple","samsung","sony","lg","whirlpool","frigidaire","maytag","kitchenaid",
-  "dewalt","ryobi","milwaukee","ikea","home depot","lowe's","lowes","ford","lincoln","general motors","chevrolet","gmc",
-  "buick","cadillac","toyota","lexus","honda","acura","nissan","infiniti","hyundai","kia","subaru","mazda","volkswagen",
-  "audi","bmw","mercedes","volvo","tesla","rivian","stellantis","chrysler","dodge","jeep","ram"
+  "great value","walmart","mainstays","costco","kirkland","target","amazon","aldi",
+  "kroger","publix","trader joe's","trader joes","whole foods","h-e-b","heb",
+  "wegmans","safeway","albertsons","meijer","food lion","nestle","kraft","heinz",
+  "pepsico","coca-cola","general mills","kellogg","kellanova","campbell","conagra",
+  "tyson","perdue","smucker","purina","pedigree","iams","royal canin","hill's",
+  "hills","blue buffalo","fromm","northwest naturals","freshpet","abbott","baxter",
+  "b. braun","b braun","medtronic","ge healthcare","boston scientific",
+  "cardinal health","stryker","philips","cuisinart","conair","apple","samsung",
+  "sony","lg","whirlpool","frigidaire","maytag","kitchenaid","dewalt","ryobi",
+  "milwaukee","ikea","home depot","lowe's","lowes","ford","lincoln",
+  "general motors","chevrolet","gmc","buick","cadillac","toyota","lexus","honda",
+  "acura","nissan","infiniti","hyundai","kia","subaru","mazda","volkswagen",
+  "audi","bmw","mercedes","volvo","tesla","rivian","stellantis","chrysler",
+  "dodge","jeep","ram"
 ];
 
 function clean(v) {
@@ -117,7 +141,8 @@ function shorten(v, max) {
   if (s.length <= max) return s;
 
   return (
-    s.slice(0, max - 1)
+    s
+      .slice(0, max - 1)
       .replace(/\s+\S*$/, "") +
     "…"
   );
@@ -140,11 +165,7 @@ function containsBrand(text, brand) {
 
 function hasMajorBrand(text) {
   return MAJOR_BRANDS.some(
-    brand =>
-      containsBrand(
-        text,
-        brand
-      )
+    brand => containsBrand(text, brand)
   );
 }
 
@@ -156,10 +177,7 @@ function isPetRecall(v) {
 function classify(text, productType, source) {
   const s = lower(`${text} ${productType}`);
 
-  if (
-    source === "NHTSA" ||
-    source === "CPSC"
-  ) {
+  if (source === "NHTSA" || source === "CPSC") {
     return "consumer";
   }
 
@@ -285,17 +303,11 @@ function totalScore(item) {
     severityScore(hazardText) +
     scaleScore(item.units);
 
-  if (
-    hasMajorBrand(
-      brandText
-    )
-  ) {
+  if (hasMajorBrand(brandText)) {
     n += 55;
   }
 
-  if (
-    item.pet
-  ) {
+  if (item.pet) {
     n += 18;
   }
 
@@ -328,24 +340,15 @@ function extractUnits(v) {
     /recall(?:s|ed|ing)?\s+(?:about|approximately|nearly|more than|over)?\s*([\d,]+)/i
   ];
 
-  for (
-    const p of patterns
-  ) {
-    const m =
-      s.match(p);
+  for (const p of patterns) {
+    const m = s.match(p);
 
-    if (
-      m
-    ) {
-      const n =
-        Number(
-          m[1]
-            .replace(/,/g, "")
-        );
+    if (m) {
+      const n = Number(
+        m[1].replace(/,/g, "")
+      );
 
-      if (
-        Number.isFinite(n)
-      ) {
+      if (Number.isFinite(n)) {
         return n;
       }
     }
@@ -355,23 +358,15 @@ function extractUnits(v) {
 }
 
 async function fetchBuffer(url) {
-  const r =
-    await fetch(
-      url,
-      {
-        headers: {
-          "User-Agent":
-            "MediaJobsReport-RecallFeed/1.9"
-        },
+  const r = await fetch(url, {
+    headers: {
+      "User-Agent":
+        "MediaJobsReport-RecallFeed/2.0"
+    },
+    redirect: "follow"
+  });
 
-        redirect:
-          "follow"
-      }
-    );
-
-  if (
-    !r.ok
-  ) {
+  if (!r.ok) {
     throw new Error(
       `${url} returned HTTP ${r.status}`
     );
@@ -383,26 +378,17 @@ async function fetchBuffer(url) {
 }
 
 async function fetchJSON(url) {
-  const r =
-    await fetch(
-      url,
-      {
-        headers: {
-          "User-Agent":
-            "MediaJobsReport-RecallFeed/1.9",
+  const r = await fetch(url, {
+    headers: {
+      "User-Agent":
+        "MediaJobsReport-RecallFeed/2.0",
+      "Accept":
+        "application/json"
+    },
+    redirect: "follow"
+  });
 
-          "Accept":
-            "application/json"
-        },
-
-        redirect:
-          "follow"
-      }
-    );
-
-  if (
-    !r.ok
-  ) {
+  if (!r.ok) {
     throw new Error(
       `${url} returned HTTP ${r.status}`
     );
@@ -412,26 +398,17 @@ async function fetchJSON(url) {
 }
 
 async function fetchText(url) {
-  const r =
-    await fetch(
-      url,
-      {
-        headers: {
-          "User-Agent":
-            "MediaJobsReport-RecallFeed/1.9",
+  const r = await fetch(url, {
+    headers: {
+      "User-Agent":
+        "MediaJobsReport-RecallFeed/2.0",
+      "Accept":
+        "text/html,application/xhtml+xml"
+    },
+    redirect: "follow"
+  });
 
-          "Accept":
-            "text/html,application/xhtml+xml"
-        },
-
-        redirect:
-          "follow"
-      }
-    );
-
-  if (
-    !r.ok
-  ) {
+  if (!r.ok) {
     throw new Error(
       `${url} returned HTTP ${r.status}`
     );
@@ -446,24 +423,15 @@ async function mapLimit(
   worker
 ) {
   const results =
-    new Array(
-      items.length
-    );
+    new Array(items.length);
 
-  let next =
-    0;
+  let next = 0;
 
   async function runner() {
-    while (
-      true
-    ) {
-      const i =
-        next++;
+    while (true) {
+      const i = next++;
 
-      if (
-        i >=
-        items.length
-      ) {
+      if (i >= items.length) {
         return;
       }
 
@@ -484,25 +452,17 @@ async function mapLimit(
             items.length
           )
       },
-
-      () =>
-        runner()
+      () => runner()
     )
   );
 
   return results;
 }
 
-function absoluteUrl(
-  v,
-  base
-) {
-  const s =
-    clean(v);
+function absoluteUrl(v, base) {
+  const s = clean(v);
 
-  if (
-    !s
-  ) {
+  if (!s) {
     return "";
   }
 
@@ -522,70 +482,41 @@ function isGenericRecallPage(
 ) {
   const s =
     lower(url)
-      .replace(
-        /\/$/,
-        ""
-      );
+      .replace(/\/$/, "");
 
-  if (
-    !s
-  ) {
+  if (!s) {
     return true;
   }
 
-  if (
-    source === "FDA"
-  ) {
+  if (source === "FDA") {
     return (
       s ===
-      lower(
-        FDA_PAGE
-      ).replace(
-        /\/$/,
-        ""
-      )
+      lower(FDA_PAGE)
+        .replace(/\/$/, "")
     );
   }
 
-  if (
-    source === "CPSC"
-  ) {
+  if (source === "CPSC") {
     return (
       s ===
-      lower(
-        CPSC_PAGE
-      ).replace(
-        /\/$/,
-        ""
-      )
+      lower(CPSC_PAGE)
+        .replace(/\/$/, "")
     );
   }
 
-  if (
-    source === "USDA"
-  ) {
+  if (source === "USDA") {
     return (
       s ===
-      lower(
-        USDA_PAGE
-      ).replace(
-        /\/$/,
-        ""
-      )
+      lower(USDA_PAGE)
+        .replace(/\/$/, "")
     );
   }
 
-  if (
-    source === "NHTSA"
-  ) {
+  if (source === "NHTSA") {
     return (
       s ===
-      lower(
-        NHTSA_PAGE
-      ).replace(
-        /\/$/,
-        ""
-      )
+      lower(NHTSA_PAGE)
+        .replace(/\/$/, "")
     );
   }
 
@@ -597,9 +528,7 @@ function firstSpecificUrl(
   base,
   source
 ) {
-  for (
-    const v of values
-  ) {
+  for (const v of values) {
     const url =
       absoluteUrl(
         v,
@@ -620,10 +549,7 @@ function firstSpecificUrl(
   return "";
 }
 
-function tokenSimilarity(
-  a,
-  b
-) {
+function tokenSimilarity(a, b) {
   const aa =
     new Set(
       normalizeMatchText(a)
@@ -651,15 +577,10 @@ function tokenSimilarity(
     return 0;
   }
 
-  let common =
-    0;
+  let common = 0;
 
-  for (
-    const x of aa
-  ) {
-    if (
-      bb.has(x)
-    ) {
+  for (const x of aa) {
+    if (bb.has(x)) {
       common++;
     }
   }
@@ -701,7 +622,6 @@ function cleanProductName(v) {
         ""
       )
       .trim(),
-
     80
   );
 }
@@ -711,13 +631,9 @@ function makeFDAHeadline(
   product,
   company
 ) {
-  const b =
-    clean(brand);
-
+  const b = clean(brand);
   const p =
-    cleanProductName(
-      product
-    );
+    cleanProductName(product);
 
   const s =
     lower(
@@ -725,61 +641,47 @@ function makeFDAHeadline(
     );
 
   if (
-    /northwest naturals/
-      .test(s) &&
-    /chicken/
-      .test(s)
+    /northwest naturals/.test(s) &&
+    /chicken/.test(s)
   ) {
     return "Northwest Naturals Chicken Recipe Pet Food Recalled";
   }
 
   if (
-    /b\.?\s*braun/
-      .test(s) &&
-    /sodium chloride/
-      .test(s)
+    /b\.?\s*braun/.test(s) &&
+    /sodium chloride/.test(s)
   ) {
     return "B. Braun Sodium Chloride Injection Recalled";
   }
 
   if (
-    /baxter/
-      .test(s) &&
-    /sodium chloride/
-      .test(s)
+    /baxter/.test(s) &&
+    /sodium chloride/.test(s)
   ) {
     return "Baxter Sodium Chloride Injection Recalled";
   }
 
   if (
-    /feline milk replacer/
-      .test(s)
+    /feline milk replacer/.test(s)
   ) {
     return "Shelter’s Choice and Breeder’s Edge Feline Milk Replacers Recalled";
   }
 
-  if (
-    b &&
-    p
-  ) {
+  if (b && p) {
     return shorten(
       `${b} ${p} Recalled`,
       100
     );
   }
 
-  if (
-    p
-  ) {
+  if (p) {
     return shorten(
       `${p} Recalled`,
       100
     );
   }
 
-  if (
-    b
-  ) {
+  if (b) {
     return shorten(
       `${b} Product Recalled`,
       100
@@ -791,20 +693,14 @@ function makeFDAHeadline(
 
 function fdaRowsFromSheet(sheet) {
   const matrix =
-    XLSX.utils
-      .sheet_to_json(
-        sheet,
-        {
-          header:
-            1,
-
-          defval:
-            "",
-
-          raw:
-            false
-        }
-      );
+    XLSX.utils.sheet_to_json(
+      sheet,
+      {
+        header: 1,
+        defval: "",
+        raw: false
+      }
+    );
 
   const normalized =
     matrix.map(
@@ -818,26 +714,15 @@ function fdaRowsFromSheet(sheet) {
     );
 
   const headerIndex =
-    normalized
-      .findIndex(
-        row =>
-          row.includes(
-            "date"
-          ) &&
-          row.includes(
-            "brandnames"
-          ) &&
-          row.includes(
-            "productdescription"
-          ) &&
-          row.includes(
-            "companyname"
-          )
-      );
+    normalized.findIndex(
+      row =>
+        row.includes("date") &&
+        row.includes("brandnames") &&
+        row.includes("productdescription") &&
+        row.includes("companyname")
+    );
 
-  if (
-    headerIndex < 0
-  ) {
+  if (headerIndex < 0) {
     console.log(
       "FDA first rows:",
       matrix.slice(
@@ -874,7 +759,6 @@ function fdaRowsFromSheet(sheet) {
         offset
       ) => ({
         row,
-
         sheetRow:
           headerIndex +
           1 +
@@ -893,39 +777,26 @@ function fdaRowsFromSheet(sheet) {
         row,
         sheetRow
       }) => {
-        const obj =
-          {};
-
-        const directLinks =
-          [];
+        const obj = {};
+        const directLinks = [];
 
         headers.forEach(
           (
             header,
             i
           ) => {
-            if (
-              header
-            ) {
-              obj[
-                header
-              ] =
-                clean(
-                  row[i]
-                );
+            if (header) {
+              obj[header] =
+                clean(row[i]);
             }
 
             const cellAddress =
-              XLSX.utils
-                .encode_cell(
-                  {
-                    r:
-                      sheetRow,
-
-                    c:
-                      i
-                  }
-                );
+              XLSX.utils.encode_cell(
+                {
+                  r: sheetRow,
+                  c: i
+                }
+              );
 
             const cell =
               sheet[
@@ -939,9 +810,7 @@ function fdaRowsFromSheet(sheet) {
                 cell.l.Target
               );
 
-            if (
-              target
-            ) {
+            if (target) {
               directLinks.push(
                 target
               );
@@ -966,34 +835,22 @@ function pickField(
   names
 ) {
   const keys =
-    Object.keys(
-      row
-    );
+    Object.keys(row);
 
-  for (
-    const name of names
-  ) {
+  for (const name of names) {
     const wanted =
-      normalizeFieldName(
-        name
-      );
+      normalizeFieldName(name);
 
     const exact =
       keys.find(
         k =>
-          normalizeFieldName(
-            k
-          ) ===
+          normalizeFieldName(k) ===
           wanted
       );
 
-    if (
-      exact
-    ) {
+    if (exact) {
       return clean(
-        row[
-          exact
-        ]
+        row[exact]
       );
     }
   }
@@ -1002,8 +859,7 @@ function pickField(
 }
 
 function parseFDAListingRows(html) {
-  const found =
-    [];
+  const found = [];
 
   const rowRe =
     /<tr\b[^>]*>([\s\S]*?)<\/tr>/gi;
@@ -1013,16 +869,13 @@ function parseFDAListingRows(html) {
   while (
     (
       rowMatch =
-        rowRe.exec(
-          html
-        )
+        rowRe.exec(html)
     )
   ) {
     const rowHtml =
       rowMatch[1];
 
-    const cells =
-      [];
+    const cells = [];
 
     const cellRe =
       /<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi;
@@ -1032,9 +885,7 @@ function parseFDAListingRows(html) {
     while (
       (
         cellMatch =
-          cellRe.exec(
-            rowHtml
-          )
+          cellRe.exec(rowHtml)
       )
     ) {
       cells.push(
@@ -1068,92 +919,63 @@ function parseFDAListingRows(html) {
         .find(
           url =>
             /\/safety\/recalls-market-withdrawals-safety-alerts\/[^/?#]+/i
-              .test(
-                url
-              ) &&
+              .test(url) &&
             lower(url)
-              .replace(
-                /\/$/,
-                ""
-              ) !==
-            lower(
-              FDA_PAGE
-            )
-              .replace(
-                /\/$/,
-                ""
-              )
+              .replace(/\/$/, "") !==
+            lower(FDA_PAGE)
+              .replace(/\/$/, "")
         );
 
-    if (
-      !link
-    ) {
+    if (!link) {
       continue;
     }
 
-    found.push(
-      {
-        date:
-          safeDate(
-            cells[0]
-          ),
-
-        brand:
-          clean(
-            cells[1] ||
-            ""
-          ),
-
-        product:
-          clean(
-            cells[2] ||
-            ""
-          ),
-
-        productType:
-          clean(
-            cells[3] ||
-            ""
-          ),
-
-        reason:
-          clean(
-            cells[4] ||
-            ""
-          ),
-
-        company:
-          clean(
-            cells[5] ||
-            ""
-          ),
-
-        url:
-          link
-      }
-    );
+    found.push({
+      date:
+        safeDate(
+          cells[0]
+        ),
+      brand:
+        clean(
+          cells[1] ||
+          ""
+        ),
+      product:
+        clean(
+          cells[2] ||
+          ""
+        ),
+      productType:
+        clean(
+          cells[3] ||
+          ""
+        ),
+      reason:
+        clean(
+          cells[4] ||
+          ""
+        ),
+      company:
+        clean(
+          cells[5] ||
+          ""
+        ),
+      url:
+        link
+    });
   }
 
   return found;
 }
 
 async function loadFDADetailLinks() {
-  const found =
-    [];
+  const found = [];
 
-  /*
-    v1.9 FIX
-
-    FDA pagination uses capital-P "Page".
-    Lowercase ?page= caused every request to return page one.
-  */
   const pages =
     Array.from(
       {
-        length:
-          20
+        length: 20
       },
-
       (
         _,
         i
@@ -1163,10 +985,6 @@ async function loadFDADetailLinks() {
           : `${FDA_PAGE}?Page=${i}`
     );
 
-  /*
-    Add FDA's veterinary recall table as a second official source.
-    This catches pet-food items such as Northwest Naturals.
-  */
   pages.push(
     FDA_ANIMAL_PAGE
   );
@@ -1186,9 +1004,7 @@ async function loadFDADetailLinks() {
             html
           )
         );
-      } catch (
-        err
-      ) {
+      } catch (err) {
         console.warn(
           "FDA listing page failed:",
           pageUrl,
@@ -1202,9 +1018,7 @@ async function loadFDADetailLinks() {
   const unique =
     new Map();
 
-  for (
-    const row of found
-  ) {
+  for (const row of found) {
     unique.set(
       `${row.date}|${normalizeMatchText(row.brand)}|${normalizeMatchText(row.product)}|${row.url}`,
       row
@@ -1254,21 +1068,14 @@ function matchFDADetailUrl(
           )
     );
 
-  if (
-    exact
-  ) {
+  if (exact) {
     return exact.url;
   }
 
-  let best =
-    null;
+  let best = null;
+  let bestScore = 0;
 
-  let bestScore =
-    0;
-
-  for (
-    const x of pool
-  ) {
+  for (const x of pool) {
     const brandScore =
       tokenSimilarity(
         item.brand,
@@ -1305,11 +1112,8 @@ function matchFDADetailUrl(
       score >
       bestScore
     ) {
-      bestScore =
-        score;
-
-      best =
-        x;
+      bestScore = score;
+      best = x;
     }
   }
 
@@ -1321,20 +1125,438 @@ function matchFDADetailUrl(
     : "";
 }
 
+/*
+  FINAL FDA RESOLVER - v2.0
+
+  This is only used when:
+    1. the recall survived into the final 120 items,
+    2. it is an FDA Food recall,
+    3. it still has the generic FDA recall page.
+
+  FDA's own /search endpoint is searched using brand/product/company.
+  Candidate recall pages are then verified before we use them.
+*/
+
+function extractFDARecallSearchLinks(html) {
+  const results = [];
+  const seen = new Set();
+
+  const re =
+    /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+
+  let m;
+
+  while (
+    (
+      m =
+        re.exec(html)
+    )
+  ) {
+    const url =
+      absoluteUrl(
+        m[1],
+        "https://www.fda.gov"
+      );
+
+    if (
+      !url ||
+      !/\/safety\/recalls-market-withdrawals-safety-alerts\/[^/?#]+/i
+        .test(url)
+    ) {
+      continue;
+    }
+
+    if (
+      lower(url)
+        .replace(/\/$/, "") ===
+      lower(FDA_PAGE)
+        .replace(/\/$/, "")
+    ) {
+      continue;
+    }
+
+    if (
+      seen.has(url)
+    ) {
+      continue;
+    }
+
+    seen.add(url);
+
+    results.push({
+      url,
+      anchor:
+        clean(m[2])
+    });
+  }
+
+  return results;
+}
+
+function buildFDASearchQueries(item) {
+  const queries = [];
+
+  const add = value => {
+    const q =
+      clean(value);
+
+    if (
+      q &&
+      !queries.includes(q)
+    ) {
+      queries.push(q);
+    }
+  };
+
+  if (
+    item.brand &&
+    item.product
+  ) {
+    add(
+      `${item.brand} ${cleanProductName(item.product)}`
+    );
+  }
+
+  if (
+    item.company &&
+    item.product
+  ) {
+    add(
+      `${item.company} ${cleanProductName(item.product)}`
+    );
+  }
+
+  if (
+    item.brand
+  ) {
+    add(item.brand);
+  }
+
+  if (
+    item.company
+  ) {
+    add(item.company);
+  }
+
+  return queries
+    .slice(
+      0,
+      3
+    );
+}
+
+function scoreFDARecallPage(
+  item,
+  html,
+  anchorText
+) {
+  const text =
+    normalizeMatchText(
+      `${anchorText} ${html}`
+    );
+
+  let score = 0;
+
+  const brand =
+    normalizeMatchText(
+      item.brand
+    );
+
+  const product =
+    normalizeMatchText(
+      cleanProductName(
+        item.product
+      )
+    );
+
+  const company =
+    normalizeMatchText(
+      item.company
+    );
+
+  if (
+    brand &&
+    text.includes(brand)
+  ) {
+    score += 45;
+  }
+
+  if (
+    product &&
+    text.includes(product)
+  ) {
+    score += 40;
+  } else if (
+    product &&
+    tokenSimilarity(
+      product,
+      text
+    ) >= 0.60
+  ) {
+    score += 25;
+  }
+
+  if (
+    company &&
+    text.includes(company)
+  ) {
+    score += 15;
+  }
+
+  if (
+    item.date
+  ) {
+    const d =
+      new Date(
+        item.date +
+        "T12:00:00Z"
+      );
+
+    if (
+      !Number.isNaN(
+        d.getTime()
+      )
+    ) {
+      const month =
+        d.toLocaleString(
+          "en-US",
+          {
+            month:
+              "long",
+            timeZone:
+              "UTC"
+          }
+        );
+
+      const day =
+        d.getUTCDate();
+
+      const year =
+        d.getUTCFullYear();
+
+      const datePattern =
+        new RegExp(
+          `${month}\\s+0?${day},\\s+${year}`,
+          "i"
+        );
+
+      if (
+        datePattern.test(
+          clean(html)
+        )
+      ) {
+        score += 20;
+      }
+    }
+  }
+
+  return score;
+}
+
+async function resolveFDAFoodViaSearch(
+  item
+) {
+  const queries =
+    buildFDASearchQueries(
+      item
+    );
+
+  const candidates =
+    new Map();
+
+  for (const query of queries) {
+    try {
+      const searchUrl =
+        `${FDA_SEARCH}?s=${encodeURIComponent(query)}`;
+
+      const html =
+        await fetchText(
+          searchUrl
+        );
+
+      for (
+        const candidate of
+          extractFDARecallSearchLinks(
+            html
+          )
+      ) {
+        if (
+          !candidates.has(
+            candidate.url
+          )
+        ) {
+          candidates.set(
+            candidate.url,
+            candidate
+          );
+        }
+      }
+    } catch (err) {
+      console.warn(
+        `FDA search failed for "${query}":`,
+        err.message ||
+        err
+      );
+    }
+
+    if (
+      candidates.size >= 8
+    ) {
+      break;
+    }
+  }
+
+  if (
+    !candidates.size
+  ) {
+    return "";
+  }
+
+  let bestUrl = "";
+  let bestScore = 0;
+
+  const candidateList =
+    Array.from(
+      candidates.values()
+    )
+      .slice(
+        0,
+        8
+      );
+
+  const checked =
+    await mapLimit(
+      candidateList,
+      2,
+      async candidate => {
+        try {
+          const html =
+            await fetchText(
+              candidate.url
+            );
+
+          return {
+            url:
+              candidate.url,
+
+            score:
+              scoreFDARecallPage(
+                item,
+                html,
+                candidate.anchor
+              )
+          };
+        } catch (err) {
+          return {
+            url:
+              candidate.url,
+            score:
+              0
+          };
+        }
+      }
+    );
+
+  for (
+    const result of checked
+  ) {
+    if (
+      result.score >
+      bestScore
+    ) {
+      bestScore =
+        result.score;
+
+      bestUrl =
+        result.url;
+    }
+  }
+
+  /*
+    Require a strong match.
+
+    Brand + product alone = 85 points.
+    We do not use weak search guesses.
+  */
+  return (
+    bestScore >= 70
+  )
+    ? bestUrl
+    : "";
+}
+
+async function resolveFinalFDAFoodLinks(
+  items
+) {
+  const targets =
+    items.filter(
+      item =>
+        item.source === "FDA" &&
+        item.category === "food" &&
+        isGenericRecallPage(
+          item.url,
+          "FDA"
+        )
+    );
+
+  if (
+    !targets.length
+  ) {
+    console.log(
+      "FDA final Food resolver: no unresolved FDA food links"
+    );
+
+    return items;
+  }
+
+  console.log(
+    `FDA final Food resolver checking: ${targets.length}`
+  );
+
+  let resolved = 0;
+
+  await mapLimit(
+    targets,
+    2,
+    async item => {
+      const url =
+        await resolveFDAFoodViaSearch(
+          item
+        );
+
+      if (url) {
+        item.url = url;
+        resolved++;
+
+        console.log(
+          `FDA final link resolved: ${item.title}`
+        );
+      } else {
+        console.warn(
+          `FDA final link unresolved: ${item.title}`
+        );
+      }
+    }
+  );
+
+  console.log(
+    `FDA final Food links resolved: ${resolved}/${targets.length}`
+  );
+
+  return items;
+}
+
 async function loadFDA() {
   const [
     buffer,
     detailLinks
   ] =
-    await Promise.all(
-      [
-        fetchBuffer(
-          FDA_XLSX
-        ),
-
-        loadFDADetailLinks()
-      ]
-    );
+    await Promise.all([
+      fetchBuffer(
+        FDA_XLSX
+      ),
+      loadFDADetailLinks()
+    ]);
 
   const wb =
     XLSX.read(
@@ -1347,9 +1569,7 @@ async function loadFDA() {
 
   const sheet =
     wb.Sheets[
-      wb.SheetNames[
-        0
-      ]
+      wb.SheetNames[0]
     ];
 
   const rows =
@@ -1365,8 +1585,7 @@ async function loadFDA() {
     )
   );
 
-  let matchedListing =
-    0;
+  let matchedListing = 0;
 
   const items =
     rows
@@ -1433,9 +1652,7 @@ async function loadFDA() {
             productType,
             reason,
             company
-          ].join(
-            " "
-          );
+          ].join(" ");
 
           const item = {
             id:
@@ -1492,18 +1709,14 @@ async function loadFDA() {
               ""
           };
 
-          if (
-            !item.url
-          ) {
+          if (!item.url) {
             const listingUrl =
               matchFDADetailUrl(
                 item,
                 detailLinks
               );
 
-            if (
-              listingUrl
-            ) {
+            if (listingUrl) {
               item.url =
                 listingUrl;
 
@@ -1511,17 +1724,13 @@ async function loadFDA() {
             }
           }
 
-          if (
-            !item.url
-          ) {
+          if (!item.url) {
             item.url =
               FDA_PAGE;
           }
 
           item.score =
-            totalScore(
-              item
-            );
+            totalScore(item);
 
           return item;
         }
@@ -1550,9 +1759,7 @@ async function loadCPSC() {
     );
 
   const rows =
-    Array.isArray(
-      data
-    )
+    Array.isArray(data)
       ? data
       : [];
 
@@ -1565,13 +1772,9 @@ async function loadCPSC() {
         )
           .map(
             x =>
-              clean(
-                x.Name
-              )
+              clean(x.Name)
           )
-          .filter(
-            Boolean
-          );
+          .filter(Boolean);
 
       const mfgs =
         (
@@ -1580,13 +1783,9 @@ async function loadCPSC() {
         )
           .map(
             x =>
-              clean(
-                x.Name
-              )
+              clean(x.Name)
           )
-          .filter(
-            Boolean
-          );
+          .filter(Boolean);
 
       const retailers =
         (
@@ -1595,13 +1794,9 @@ async function loadCPSC() {
         )
           .map(
             x =>
-              clean(
-                x.Name
-              )
+              clean(x.Name)
           )
-          .filter(
-            Boolean
-          );
+          .filter(Boolean);
 
       const hazards =
         (
@@ -1610,13 +1805,9 @@ async function loadCPSC() {
         )
           .map(
             x =>
-              clean(
-                x.Name
-              )
+              clean(x.Name)
           )
-          .filter(
-            Boolean
-          );
+          .filter(Boolean);
 
       const directUnits =
         Math.max(
@@ -1651,9 +1842,7 @@ async function loadCPSC() {
         );
 
       const reason =
-        hazards.join(
-          "; "
-        ) ||
+        hazards.join("; ") ||
         clean(
           row.Description
         ) ||
@@ -1667,9 +1856,7 @@ async function loadCPSC() {
             clean(
               row.Description
             )
-          ].join(
-            " "
-          )
+          ].join(" ")
         );
 
       const units =
@@ -1693,24 +1880,16 @@ async function loadCPSC() {
 
       const brandSignal = [
         titleForBrand,
-        mfgs.join(
-          " "
-        ),
-        products.join(
-          " "
-        )
-      ].join(
-        " "
-      );
+        mfgs.join(" "),
+        products.join(" ")
+      ].join(" ");
 
       const item = {
         id:
           `CPSC-${clean(
             row.RecallID ||
             ""
-          )}-${slug(
-            title
-          )}`,
+          )}-${slug(title)}`,
 
         source:
           "CPSC",
@@ -1735,19 +1914,13 @@ async function loadCPSC() {
           "",
 
         company:
-          mfgs.join(
-            ", "
-          ),
+          mfgs.join(", "),
 
         retailers:
-          retailers.join(
-            ", "
-          ),
+          retailers.join(", "),
 
         product:
-          products.join(
-            ", "
-          ),
+          products.join(", "),
 
         date,
         units,
@@ -1771,22 +1944,16 @@ async function loadCPSC() {
             "CPSC"
           ) ||
           (
-            clean(
-              row.RecallID
-            )
+            clean(row.RecallID)
               ? `${CPSC_API}&RecallID=${encodeURIComponent(
-                  clean(
-                    row.RecallID
-                  )
+                  clean(row.RecallID)
                 )}`
               : CPSC_PAGE
           )
       };
 
       item.score =
-        totalScore(
-          item
-        );
+        totalScore(item);
 
       return item;
     }
@@ -1794,8 +1961,7 @@ async function loadCPSC() {
 }
 
 function parseUSDAListingRows(html) {
-  const found =
-    [];
+  const found = [];
 
   const re =
     /<a\b[^>]*href=["']([^"']*\/recalls-alerts\/[^"'#?]+)["'][^>]*>([\s\S]*?)<\/a>/gi;
@@ -1805,9 +1971,7 @@ function parseUSDAListingRows(html) {
   while (
     (
       m =
-        re.exec(
-          html
-        )
+        re.exec(html)
     )
   ) {
     const href =
@@ -1817,21 +1981,16 @@ function parseUSDAListingRows(html) {
       );
 
     const title =
-      clean(
-        m[2]
-      );
+      clean(m[2]);
 
     if (
       href &&
       title
     ) {
-      found.push(
-        {
-          title,
-          url:
-            href
-        }
-      );
+      found.push({
+        title,
+        url: href
+      });
     }
   }
 
@@ -1839,16 +1998,13 @@ function parseUSDAListingRows(html) {
 }
 
 async function loadUSDARecallLinks() {
-  const found =
-    [];
+  const found = [];
 
   const pages =
     Array.from(
       {
-        length:
-          15
+        length: 15
       },
-
       (
         _,
         i
@@ -1871,9 +2027,7 @@ async function loadUSDARecallLinks() {
             html
           )
         );
-      } catch (
-        err
-      ) {
+      } catch (err) {
         console.warn(
           "USDA listing page failed:",
           pageUrl,
@@ -1887,9 +2041,7 @@ async function loadUSDARecallLinks() {
   const unique =
     new Map();
 
-  for (
-    const x of found
-  ) {
+  for (const x of found) {
     unique.set(
       x.url,
       x
@@ -1910,13 +2062,9 @@ function matchUSDARecallUrl(
   links
 ) {
   const wanted =
-    normalizeMatchText(
-      title
-    );
+    normalizeMatchText(title);
 
-  if (
-    !wanted
-  ) {
+  if (!wanted) {
     return "";
   }
 
@@ -1929,21 +2077,14 @@ function matchUSDARecallUrl(
         wanted
     );
 
-  if (
-    exact
-  ) {
+  if (exact) {
     return exact.url;
   }
 
-  let best =
-    null;
+  let best = null;
+  let bestScore = 0;
 
-  let bestScore =
-    0;
-
-  for (
-    const x of links
-  ) {
+  for (const x of links) {
     const score =
       tokenSimilarity(
         title,
@@ -1954,11 +2095,8 @@ function matchUSDARecallUrl(
       score >
       bestScore
     ) {
-      bestScore =
-        score;
-
-      best =
-        x;
+      bestScore = score;
+      best = x;
     }
   }
 
@@ -1975,20 +2113,15 @@ async function loadUSDA() {
     data,
     detailLinks
   ] =
-    await Promise.all(
-      [
-        fetchJSON(
-          USDA_API
-        ),
-
-        loadUSDARecallLinks()
-      ]
-    );
+    await Promise.all([
+      fetchJSON(
+        USDA_API
+      ),
+      loadUSDARecallLinks()
+    ]);
 
   const rows =
-    Array.isArray(
-      data
-    )
+    Array.isArray(data)
       ? data
       : (
           data &&
@@ -1999,8 +2132,7 @@ async function loadUSDA() {
             : []
         );
 
-  let matched =
-    0;
+  let matched = 0;
 
   const items =
     rows.map(
@@ -2060,17 +2192,13 @@ async function loadUSDA() {
             detailLinks
           );
 
-        if (
-          listedUrl
-        ) {
+        if (listedUrl) {
           matched++;
         }
 
         const item = {
           id:
-            `USDA-${date}-${slug(
-              title
-            )}`,
+            `USDA-${date}-${slug(title)}`,
 
           source:
             "USDA",
@@ -2120,9 +2248,7 @@ async function loadUSDA() {
         };
 
         item.score =
-          totalScore(
-            item
-          );
+          totalScore(item);
 
         return item;
       }
@@ -2169,25 +2295,19 @@ function detectDelimiter(line) {
   const counts = {
     "\t":
       (
-        line.match(
-          /\t/g
-        ) ||
+        line.match(/\t/g) ||
         []
       ).length,
 
     "|":
       (
-        line.match(
-          /\|/g
-        ) ||
+        line.match(/\|/g) ||
         []
       ).length,
 
     ",":
       (
-        line.match(
-          /,/g
-        ) ||
+        line.match(/,/g) ||
         []
       ).length
   };
@@ -2196,10 +2316,7 @@ function detectDelimiter(line) {
     counts
   )
     .sort(
-      (
-        a,
-        b
-      ) =>
+      (a, b) =>
         b[1] -
         a[1]
     )[0][0];
@@ -2213,22 +2330,14 @@ function parseDelimitedLine(
     delimiter !== ","
   ) {
     return line
-      .split(
-        delimiter
-      )
-      .map(
-        clean
-      );
+      .split(delimiter)
+      .map(clean);
   }
 
-  const out =
-    [];
+  const out = [];
 
-  let cur =
-    "";
-
-  let quoted =
-    false;
+  let cur = "";
+  let quoted = false;
 
   for (
     let i = 0;
@@ -2238,18 +2347,14 @@ function parseDelimitedLine(
     const ch =
       line[i];
 
-    if (
-      ch === '"'
-    ) {
+    if (ch === '"') {
       if (
         quoted &&
         line[
           i + 1
         ] === '"'
       ) {
-        cur +=
-          '"';
-
+        cur += '"';
         i++;
       } else {
         quoted =
@@ -2260,23 +2365,17 @@ function parseDelimitedLine(
       !quoted
     ) {
       out.push(
-        clean(
-          cur
-        )
+        clean(cur)
       );
 
-      cur =
-        "";
+      cur = "";
     } else {
-      cur +=
-        ch;
+      cur += ch;
     }
   }
 
   out.push(
-    clean(
-      cur
-    )
+    clean(cur)
   );
 
   return out;
@@ -2284,59 +2383,22 @@ function parseDelimitedLine(
 
 function vehicleDisplayName(v) {
   const special =
-    new Map(
-      [
-        [
-          "BMW",
-          "BMW"
-        ],
-        [
-          "GMC",
-          "GMC"
-        ],
-        [
-          "MINI",
-          "MINI"
-        ],
-        [
-          "FIAT",
-          "FIAT"
-        ],
-        [
-          "EV",
-          "EV"
-        ],
-        [
-          "PHEV",
-          "PHEV"
-        ],
-        [
-          "HEV",
-          "HEV"
-        ],
-        [
-          "SUV",
-          "SUV"
-        ],
-        [
-          "AWD",
-          "AWD"
-        ],
-        [
-          "4WD",
-          "4WD"
-        ],
-        [
-          "2WD",
-          "2WD"
-        ]
-      ]
-    );
+    new Map([
+      ["BMW", "BMW"],
+      ["GMC", "GMC"],
+      ["MINI", "MINI"],
+      ["FIAT", "FIAT"],
+      ["EV", "EV"],
+      ["PHEV", "PHEV"],
+      ["HEV", "HEV"],
+      ["SUV", "SUV"],
+      ["AWD", "AWD"],
+      ["4WD", "4WD"],
+      ["2WD", "2WD"]
+    ]);
 
   return clean(v)
-    .split(
-      /\s+/
-    )
+    .split(/\s+/)
     .map(
       word => {
         const upper =
@@ -2354,9 +2416,7 @@ function vehicleDisplayName(v) {
 
         if (
           /^[A-Z]*\d[A-Z0-9-]*$/i
-            .test(
-              word
-            )
+            .test(word)
         ) {
           return upper;
         }
@@ -2375,9 +2435,7 @@ function vehicleDisplayName(v) {
           );
       }
     )
-    .join(
-      " "
-    );
+    .join(" ");
 }
 
 function collectUrls(
@@ -2390,26 +2448,18 @@ function collectUrls(
   ) {
     if (
       /^https?:\/\//i
-        .test(
-          value
-        )
+        .test(value)
     ) {
-      out.push(
-        value
-      );
+      out.push(value);
     }
 
     return out;
   }
 
   if (
-    Array.isArray(
-      value
-    )
+    Array.isArray(value)
   ) {
-    for (
-      const x of value
-    ) {
+    for (const x of value) {
       collectUrls(
         x,
         out
@@ -2426,9 +2476,7 @@ function collectUrls(
   ) {
     for (
       const x of
-        Object.values(
-          value
-        )
+        Object.values(value)
     ) {
       collectUrls(
         x,
@@ -2445,9 +2493,7 @@ async function resolveNHTSADocument(
 ) {
   const endpoint =
     "https://api.nhtsa.gov/safetyIssues/byNhtsaId" +
-    `?nhtsaId=${encodeURIComponent(
-      campaign
-    )}` +
+    `?nhtsaId=${encodeURIComponent(campaign)}` +
     "&filter=issueType&filterValue=recalls";
 
   try {
@@ -2466,14 +2512,10 @@ async function resolveNHTSADocument(
       urls.find(
         url =>
           /static\.nhtsa\.gov\/odi\/rcl\/\d{4}\/RCLRPT-[^/?#]+\.pdf/i
-            .test(
-              url
-            )
+            .test(url)
       );
 
-    if (
-      report
-    ) {
+    if (report) {
       return report;
     }
 
@@ -2481,15 +2523,11 @@ async function resolveNHTSADocument(
       urls.find(
         url =>
           /static\.nhtsa\.gov\/odi\/rcl\/\d{4}\/[^/?#]+\.pdf/i
-            .test(
-              url
-            )
+            .test(url)
       ) ||
       ""
     );
-  } catch (
-    err
-  ) {
+  } catch (err) {
     console.warn(
       `NHTSA document lookup failed for ${campaign}:`,
       err.message ||
@@ -2507,9 +2545,7 @@ async function loadNHTSA() {
     );
 
   const zip =
-    new AdmZip(
-      buffer
-    );
+    new AdmZip(buffer);
 
   const candidates =
     zip
@@ -2526,17 +2562,12 @@ async function loadNHTSA() {
             )
       )
       .sort(
-        (
-          a,
-          b
-        ) =>
+        (a, b) =>
           b.header.size -
           a.header.size
       );
 
-  if (
-    !candidates.length
-  ) {
+  if (!candidates.length) {
     console.log(
       "NHTSA ZIP entries:",
       zip
@@ -2565,9 +2596,7 @@ async function loadNHTSA() {
   const text =
     entry
       .getData()
-      .toString(
-        "utf8"
-      )
+      .toString("utf8")
       .replace(
         /^\uFEFF/,
         ""
@@ -2575,19 +2604,13 @@ async function loadNHTSA() {
 
   const lines =
     text
-      .split(
-        /\r?\n/
-      )
+      .split(/\r?\n/)
       .filter(
         line =>
-          clean(
-            line
-          )
+          clean(line)
       );
 
-  if (
-    !lines.length
-  ) {
+  if (!lines.length) {
     throw new Error(
       "NHTSA data file was empty"
     );
@@ -2607,9 +2630,7 @@ async function loadNHTSA() {
   const firstUpper =
     first.map(
       x =>
-        clean(
-          x
-        )
+        clean(x)
           .toUpperCase()
     );
 
@@ -2631,13 +2652,10 @@ async function loadNHTSA() {
 
   const dataLines =
     hasHeader
-      ? lines.slice(
-          1
-        )
+      ? lines.slice(1)
       : lines;
 
-  const campaigns =
-    {};
+  const campaigns = {};
 
   for (
     const line of
@@ -2649,17 +2667,14 @@ async function loadNHTSA() {
         delimiter
       );
 
-    const row =
-      {};
+    const row = {};
 
     headers.forEach(
       (
         field,
         i
       ) => {
-        row[
-          field
-        ] =
+        row[field] =
           clean(
             values[i] ||
             ""
@@ -2673,9 +2688,7 @@ async function loadNHTSA() {
       row.NHTSA_CAMPAIGN_NUMBER ||
       "";
 
-    if (
-      !campaign
-    ) {
+    if (!campaign) {
       continue;
     }
 
@@ -2689,9 +2702,7 @@ async function loadNHTSA() {
 
     if (
       date &&
-      daysOld(
-        date
-      ) > 45
+      daysOld(date) > 45
     ) {
       continue;
     }
@@ -2750,10 +2761,7 @@ async function loadNHTSA() {
         date,
         make,
         manufacturer,
-
-        models:
-          [],
-
+        models: [],
         component,
         defect,
         consequence,
@@ -2783,20 +2791,12 @@ async function loadNHTSA() {
         units
       );
 
-    if (
-      !g.date &&
-      date
-    ) {
-      g.date =
-        date;
+    if (!g.date && date) {
+      g.date = date;
     }
 
-    if (
-      !g.make &&
-      make
-    ) {
-      g.make =
-        make;
+    if (!g.make && make) {
+      g.make = make;
     }
 
     if (
@@ -2844,7 +2844,6 @@ async function loadNHTSA() {
       async g => ({
         campaign:
           g.campaign,
-
         url:
           await resolveNHTSADocument(
             g.campaign
@@ -2863,10 +2862,12 @@ async function loadNHTSA() {
     );
 
   console.log(
-    `NHTSA readable documents resolved: ${documents.filter(
-      x =>
-        x.url
-    ).length}/${campaignRows.length}`
+    `NHTSA readable documents resolved: ${
+      documents.filter(
+        x =>
+          x.url
+      ).length
+    }/${campaignRows.length}`
   );
 
   return campaignRows
@@ -2917,12 +2918,8 @@ async function loadNHTSA() {
         const brandSignal = [
           makeRaw,
           g.manufacturer,
-          g.models.join(
-            " "
-          )
-        ].join(
-          " "
-        );
+          g.models.join(" ")
+        ].join(" ");
 
         const item = {
           id:
@@ -2957,13 +2954,8 @@ async function loadNHTSA() {
 
           product:
             displayModels
-              .slice(
-                0,
-                8
-              )
-              .join(
-                ", "
-              ),
+              .slice(0, 8)
+              .join(", "),
 
           date:
             g.date,
@@ -2992,9 +2984,7 @@ async function loadNHTSA() {
         };
 
         item.score =
-          totalScore(
-            item
-          );
+          totalScore(item);
 
         return item;
       }
@@ -3009,27 +2999,17 @@ function dedupe(items) {
   const seen =
     new Map();
 
-  for (
-    const item of
-      items
-  ) {
+  for (const item of items) {
     const key =
-      item.source ===
-        "NHTSA" &&
+      item.source === "NHTSA" &&
       item.campaign
         ? `NHTSA|${item.campaign}`
-        : `${item.source}|${slug(
-            item.title
-          )}|${item.date}`;
+        : `${item.source}|${slug(item.title)}|${item.date}`;
 
     if (
-      !seen.has(
-        key
-      ) ||
+      !seen.has(key) ||
       item.score >
-        seen.get(
-          key
-        ).score
+        seen.get(key).score
     ) {
       seen.set(
         key,
@@ -3045,21 +3025,14 @@ function dedupe(items) {
 
 function rank(items) {
   return items.sort(
-    (
-      a,
-      b
-    ) =>
+    (a, b) =>
       (
         b.score -
         a.score
       ) ||
-      String(
-        b.date
-      )
+      String(b.date)
         .localeCompare(
-          String(
-            a.date
-          )
+          String(a.date)
         )
   );
 }
@@ -3068,32 +3041,25 @@ function diversifyLead(
   items,
   leadCount = 15
 ) {
-  const remaining =
-    [
-      ...items
-    ];
+  const remaining = [
+    ...items
+  ];
 
-  const chosen =
-    [];
-
-  const sourceCounts =
-    {};
+  const chosen = [];
+  const sourceCounts = {};
 
   while (
     remaining.length &&
     chosen.length <
       leadCount
   ) {
-    let bestIndex =
-      0;
-
+    let bestIndex = 0;
     let bestAdjusted =
       -Infinity;
 
     for (
       let i = 0;
-      i <
-        remaining.length;
+      i < remaining.length;
       i++
     ) {
       const item =
@@ -3105,12 +3071,10 @@ function diversifyLead(
         ] ||
         0;
 
-      let penalty =
-        0;
+      let penalty = 0;
 
       if (
-        count >=
-        4
+        count >= 4
       ) {
         penalty =
           28 *
@@ -3119,8 +3083,7 @@ function diversifyLead(
             3
           );
       } else if (
-        count >=
-        2
+        count >= 2
       ) {
         penalty =
           10 *
@@ -3177,18 +3140,16 @@ function diversifyLead(
 
 async function run() {
   console.log(
-    "Building MJR recall feed v1.9..."
+    "Building MJR recall feed v2.0..."
   );
 
   const results =
-    await Promise.allSettled(
-      [
-        loadFDA(),
-        loadCPSC(),
-        loadUSDA(),
-        loadNHTSA()
-      ]
-    );
+    await Promise.allSettled([
+      loadFDA(),
+      loadCPSC(),
+      loadUSDA(),
+      loadNHTSA()
+    ]);
 
   const names = [
     "FDA",
@@ -3197,11 +3158,8 @@ async function run() {
     "NHTSA"
   ];
 
-  const sources =
-    {};
-
-  let combined =
-    [];
+  const sources = {};
+  let combined = [];
 
   results.forEach(
     (
@@ -3215,12 +3173,8 @@ async function run() {
         result.status ===
         "fulfilled"
       ) {
-        sources[
-          name
-        ] = {
-          ok:
-            true,
-
+        sources[name] = {
+          ok: true,
           count:
             result.value.length
         };
@@ -3234,15 +3188,9 @@ async function run() {
           `${name}: ${result.value.length} records`
         );
       } else {
-        sources[
-          name
-        ] = {
-          ok:
-            false,
-
-          count:
-            0,
-
+        sources[name] = {
+          ok: false,
+          count: 0,
           error:
             String(
               result.reason
@@ -3269,8 +3217,7 @@ async function run() {
             item.date &&
             daysOld(
               item.date
-            ) <=
-              45
+            ) <= 45
         )
     );
 
@@ -3284,6 +3231,49 @@ async function run() {
         120
       );
 
+  /*
+    v2.0:
+    Only now, after the final 120 are known,
+    resolve FDA Food items that still have
+    the generic FDA URL.
+  */
+  combined =
+    await resolveFinalFDAFoodLinks(
+      combined
+    );
+
+  const foodItems =
+    combined.filter(
+      item =>
+        item.category ===
+        "food"
+    );
+
+  const genericFood =
+    foodItems.filter(
+      item =>
+        isGenericRecallPage(
+          item.url,
+          item.source
+        )
+    );
+
+  console.log(
+    `Final Food recalls: ${foodItems.length}`
+  );
+
+  console.log(
+    `Final Food recalls still using generic agency page: ${genericFood.length}`
+  );
+
+  for (
+    const item of genericFood
+  ) {
+    console.log(
+      `  UNRESOLVED FOOD: [${item.source}] ${item.title}`
+    );
+  }
+
   const newestDate =
     combined.reduce(
       (
@@ -3294,7 +3284,6 @@ async function run() {
         best
           ? item.date
           : best,
-
       ""
     );
 
@@ -3304,7 +3293,7 @@ async function run() {
         .toISOString(),
 
     version:
-      "1.9",
+      "2.0",
 
     newestDate,
 
@@ -3328,8 +3317,7 @@ async function run() {
   fs.mkdirSync(
     OUTPUT_DIR,
     {
-      recursive:
-        true
+      recursive: true
     }
   );
 
@@ -3385,12 +3373,7 @@ async function run() {
 run()
   .catch(
     err => {
-      console.error(
-        err
-      );
-
-      process.exit(
-        1
-      );
+      console.error(err);
+      process.exit(1);
     }
   );
