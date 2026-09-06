@@ -37,20 +37,6 @@ const USDA_PAGE =
 const NHTSA_PAGE =
   "https://www.nhtsa.gov/recalls";
 
-/*
-  SAFETY FLOOR
-
-  These are intentionally far below the normal counts.
-
-  Normal recent runs:
-  FDA   ~1,000
-  CPSC  ~9,990
-  USDA  ~2,023
-  NHTSA ~100
-
-  If a source suddenly falls below these floors, the build stops
-  BEFORE overwriting the existing live JSON.
-*/
 const MIN_SOURCE_COUNTS = {
   FDA: 500,
   CPSC: 5000,
@@ -474,7 +460,10 @@ function extractUnits(v) {
 }
 
 /* =========================================================
-   NETWORK RETRY / RELIABILITY
+   NETWORK RETRY — v2.3
+
+   IMPORTANT:
+   Parsing/downloading the body happens INSIDE the retry.
    ========================================================= */
 
 function sleep(ms) {
@@ -500,26 +489,27 @@ function isRetryableStatus(status) {
 }
 
 function isRetryableError(err) {
-  const code =
-    err &&
-    (
-      err.code ||
-      err.cause?.code
-    );
+  const codes = [
+    err?.code,
+    err?.cause?.code
+  ].filter(Boolean);
 
   if (
-    [
-      "ECONNRESET",
-      "ETIMEDOUT",
-      "ECONNREFUSED",
-      "EAI_AGAIN",
-      "ENETUNREACH",
-      "EPIPE",
-      "UND_ERR_SOCKET",
-      "UND_ERR_CONNECT_TIMEOUT",
-      "UND_ERR_HEADERS_TIMEOUT",
-      "UND_ERR_BODY_TIMEOUT"
-    ].includes(code)
+    codes.some(
+      code =>
+        [
+          "ECONNRESET",
+          "ETIMEDOUT",
+          "ECONNREFUSED",
+          "EAI_AGAIN",
+          "ENETUNREACH",
+          "EPIPE",
+          "UND_ERR_SOCKET",
+          "UND_ERR_CONNECT_TIMEOUT",
+          "UND_ERR_HEADERS_TIMEOUT",
+          "UND_ERR_BODY_TIMEOUT"
+        ].includes(code)
+    )
   ) {
     return true;
   }
@@ -536,15 +526,17 @@ function isRetryableError(err) {
     message.includes("fetch failed") ||
     message.includes("socket") ||
     message.includes("connection reset") ||
-    message.includes("network")
+    message.includes("network") ||
+    message.includes("aborted")
   );
 }
 
-async function fetchWithRetry(
+async function requestWithRetry(
   url,
-  options = {},
-  label = "",
-  maxAttempts = 4
+  options,
+  label,
+  bodyReader,
+  maxAttempts = 5
 ) {
   let lastError = null;
 
@@ -560,39 +552,49 @@ async function fetchWithRetry(
           options
         );
 
-      if (response.ok) {
-        if (attempt > 1) {
-          console.log(
-            `${label || url} succeeded on retry ${attempt}/${maxAttempts}`
+      if (!response.ok) {
+        const error =
+          new Error(
+            `${url} returned HTTP ${response.status}`
           );
+
+        error.status =
+          response.status;
+
+        if (
+          !isRetryableStatus(
+            response.status
+          )
+        ) {
+          throw error;
         }
 
-        return response;
-      }
-
-      const error =
-        new Error(
-          `${url} returned HTTP ${response.status}`
-        );
-
-      error.status =
-        response.status;
-
-      if (
-        !isRetryableStatus(
-          response.status
-        ) ||
-        attempt === maxAttempts
-      ) {
         throw error;
       }
 
-      lastError =
-        error;
+      /*
+        CRITICAL v2.3 CHANGE:
 
-      console.warn(
-        `${label || url} temporary HTTP ${response.status}; retry ${attempt}/${maxAttempts}`
-      );
+        Read and parse the ENTIRE response here,
+        while still inside the retry try/catch.
+
+        If ECONNRESET happens while downloading JSON
+        or the 300+ MB NHTSA ZIP, it retries.
+      */
+      const result =
+        await bodyReader(
+          response
+        );
+
+      if (
+        attempt > 1
+      ) {
+        console.log(
+          `${label} succeeded on attempt ${attempt}/${maxAttempts}`
+        );
+      }
+
+      return result;
     } catch (err) {
       lastError =
         err;
@@ -612,138 +614,150 @@ async function fetchWithRetry(
         throw err;
       }
 
+      const delay =
+        Math.min(
+          20000,
+          2000 *
+            Math.pow(
+              2,
+              attempt - 1
+            )
+        );
+
       console.warn(
-        `${label || url} temporary network failure; retry ${attempt}/${maxAttempts}:`,
+        `${label} failed on attempt ${attempt}/${maxAttempts}; retrying after ${Math.round(delay / 1000)}s:`,
         err.message ||
         err
       );
-    }
 
-    /*
-      Short progressive delay:
-      1.5 sec
-      3 sec
-      6 sec
-    */
-    const delay =
-      1500 *
-      Math.pow(
-        2,
-        attempt - 1
+      await sleep(
+        delay
       );
-
-    await sleep(
-      delay
-    );
+    }
   }
 
   throw lastError ||
     new Error(
-      `Unable to fetch ${url}`
+      `${label} failed`
     );
+}
+
+function defaultHeaders(accept) {
+  return {
+    "User-Agent":
+      "MediaJobsReport-RecallFeed/2.3",
+
+    ...(accept
+      ? {
+          Accept:
+            accept
+        }
+      : {})
+  };
 }
 
 async function fetchBuffer(
   url,
-  label = ""
+  label = "Download"
 ) {
-  const r =
-    await fetchWithRetry(
-      url,
-      {
-        headers: {
-          "User-Agent":
-            "MediaJobsReport-RecallFeed/2.2"
-        },
+  return requestWithRetry(
+    url,
+    {
+      headers:
+        defaultHeaders(
+          "*/*"
+        ),
 
-        redirect:
-          "follow"
-      },
-      label ||
-      url
-    );
-
-  return Buffer.from(
-    await r.arrayBuffer()
+      redirect:
+        "follow"
+    },
+    label,
+    async response =>
+      Buffer.from(
+        await response.arrayBuffer()
+      )
   );
 }
 
 async function fetchJSON(
   url,
-  label = ""
+  label = "JSON"
 ) {
-  const r =
-    await fetchWithRetry(
-      url,
-      {
-        headers: {
-          "User-Agent":
-            "MediaJobsReport-RecallFeed/2.2",
+  return requestWithRetry(
+    url,
+    {
+      headers:
+        defaultHeaders(
+          "application/json"
+        ),
 
-          "Accept":
-            "application/json"
-        },
+      redirect:
+        "follow"
+    },
+    label,
+    async response => {
+      /*
+        Read text first.
 
-        redirect:
-          "follow"
-      },
-      label ||
-      url
-    );
+        This means a connection reset while reading the body
+        is caught by requestWithRetry before JSON.parse runs.
+      */
+      const text =
+        await response.text();
 
-  return r.json();
+      if (!text.trim()) {
+        throw new Error(
+          `${label} returned an empty response`
+        );
+      }
+
+      return JSON.parse(
+        text
+      );
+    }
+  );
 }
 
 async function fetchText(
   url,
-  label = ""
+  label = "HTML"
 ) {
-  const r =
-    await fetchWithRetry(
-      url,
-      {
-        headers: {
-          "User-Agent":
-            "MediaJobsReport-RecallFeed/2.2",
+  return requestWithRetry(
+    url,
+    {
+      headers:
+        defaultHeaders(
+          "text/html,application/xhtml+xml"
+        ),
 
-          "Accept":
-            "text/html,application/xhtml+xml"
-        },
-
-        redirect:
-          "follow"
-      },
-      label ||
-      url
-    );
-
-  return r.text();
+      redirect:
+        "follow"
+    },
+    label,
+    async response =>
+      response.text()
+  );
 }
 
 async function fetchXML(
   url,
-  label = ""
+  label = "XML"
 ) {
-  const r =
-    await fetchWithRetry(
-      url,
-      {
-        headers: {
-          "User-Agent":
-            "MediaJobsReport-RecallFeed/2.2",
+  return requestWithRetry(
+    url,
+    {
+      headers:
+        defaultHeaders(
+          "application/xml,text/xml,text/plain,*/*"
+        ),
 
-          "Accept":
-            "application/xml,text/xml,text/plain,*/*"
-        },
-
-        redirect:
-          "follow"
-      },
-      label ||
-      url
-    );
-
-  return r.text();
+      redirect:
+        "follow"
+    },
+    label,
+    async response =>
+      response.text()
+  );
 }
 
 async function mapLimit(
@@ -916,7 +930,9 @@ function tokenSimilarity(
 ) {
   const aa =
     new Set(
-      normalizeMatchText(a)
+      normalizeMatchText(
+        a
+      )
         .split(" ")
         .filter(
           x =>
@@ -926,7 +942,9 @@ function tokenSimilarity(
 
   const bb =
     new Set(
-      normalizeMatchText(b)
+      normalizeMatchText(
+        b
+      )
         .split(" ")
         .filter(
           x =>
@@ -945,7 +963,11 @@ function tokenSimilarity(
     0;
 
   for (const x of aa) {
-    if (bb.has(x)) {
+    if (
+      bb.has(
+        x
+      )
+    ) {
       common++;
     }
   }
@@ -998,12 +1020,19 @@ function tokenCoverage(
     0;
 
   for (const x of needed) {
-    if (available.has(x)) {
+    if (
+      available.has(
+        x
+      )
+    ) {
       common++;
     }
   }
 
-  return common / needed.size;
+  return (
+    common /
+    needed.size
+  );
 }
 
 function cleanProductName(v) {
@@ -1243,7 +1272,9 @@ function fdaRowsFromSheet(sheet) {
             header,
             i
           ) => {
-            if (header) {
+            if (
+              header
+            ) {
               obj[
                 header
               ] =
@@ -1276,7 +1307,9 @@ function fdaRowsFromSheet(sheet) {
                 cell.l.Target
               );
 
-            if (target) {
+            if (
+              target
+            ) {
               directLinks.push(
                 target
               );
@@ -1320,7 +1353,9 @@ function pickField(
           wanted
       );
 
-    if (exact) {
+    if (
+      exact
+    ) {
       return clean(
         row[
           exact
@@ -1380,7 +1415,8 @@ function parseFDAListingRows(html) {
     }
 
     if (
-      cells.length < 5
+      cells.length <
+      5
     ) {
       continue;
     }
@@ -1422,7 +1458,9 @@ function parseFDAListingRows(html) {
               )
         );
 
-    if (!link) {
+    if (
+      !link
+    ) {
       continue;
     }
 
@@ -1576,7 +1614,9 @@ function matchFDADetailUrl(
           )
     );
 
-  if (exact) {
+  if (
+    exact
+  ) {
     return exact.url;
   }
 
@@ -1633,14 +1673,15 @@ function matchFDADetailUrl(
 
   return (
     best &&
-    bestScore >= 0.62
+    bestScore >=
+      0.62
   )
     ? best.url
     : "";
 }
 
 /* =========================================================
-   FDA OFFICIAL 2026 XML
+   FDA OFFICIAL XML
    ========================================================= */
 
 function decodeXml(v) {
@@ -1778,12 +1819,6 @@ async function loadFDAOfficialXmlLinks() {
       err
     );
 
-    /*
-      XML is supplemental.
-
-      Failure here should not fail FDA because the XLSX
-      feed and existing HTML matcher still work.
-    */
     return [];
   }
 }
@@ -1792,7 +1827,9 @@ function fdaDateMatch(
   date,
   context
 ) {
-  if (!date) {
+  if (
+    !date
+  ) {
     return false;
   }
 
@@ -1874,7 +1911,9 @@ function fdaXmlMatchScore(
       candidate.context
     );
 
-  if (!context) {
+  if (
+    !context
+  ) {
     return 0;
   }
 
@@ -1906,7 +1945,9 @@ function fdaXmlMatchScore(
   ) {
     score +=
       45;
-  } else if (brand) {
+  } else if (
+    brand
+  ) {
     const coverage =
       tokenCoverage(
         brand,
@@ -1914,12 +1955,14 @@ function fdaXmlMatchScore(
       );
 
     if (
-      coverage >= 0.80
+      coverage >=
+      0.80
     ) {
       score +=
         35;
     } else if (
-      coverage >= 0.60
+      coverage >=
+      0.60
     ) {
       score +=
         25;
@@ -1934,7 +1977,9 @@ function fdaXmlMatchScore(
   ) {
     score +=
       45;
-  } else if (product) {
+  } else if (
+    product
+  ) {
     const coverage =
       tokenCoverage(
         product,
@@ -1942,22 +1987,26 @@ function fdaXmlMatchScore(
       );
 
     if (
-      coverage >= 0.85
+      coverage >=
+      0.85
     ) {
       score +=
         40;
     } else if (
-      coverage >= 0.70
+      coverage >=
+      0.70
     ) {
       score +=
         32;
     } else if (
-      coverage >= 0.55
+      coverage >=
+      0.55
     ) {
       score +=
         22;
     } else if (
-      coverage >= 0.40
+      coverage >=
+      0.40
     ) {
       score +=
         12;
@@ -1972,7 +2021,9 @@ function fdaXmlMatchScore(
   ) {
     score +=
       20;
-  } else if (company) {
+  } else if (
+    company
+  ) {
     const coverage =
       tokenCoverage(
         company,
@@ -1980,12 +2031,14 @@ function fdaXmlMatchScore(
       );
 
     if (
-      coverage >= 0.80
+      coverage >=
+      0.80
     ) {
       score +=
         15;
     } else if (
-      coverage >= 0.60
+      coverage >=
+      0.60
     ) {
       score +=
         8;
@@ -2788,7 +2841,9 @@ function matchUSDARecallUrl(
       title
     );
 
-  if (!wanted) {
+  if (
+    !wanted
+  ) {
     return "";
   }
 
@@ -2801,7 +2856,9 @@ function matchUSDARecallUrl(
         wanted
     );
 
-  if (exact) {
+  if (
+    exact
+  ) {
     return exact.url;
   }
 
@@ -2832,7 +2889,8 @@ function matchUSDARecallUrl(
 
   return (
     best &&
-    bestScore >= 0.68
+    bestScore >=
+      0.68
   )
     ? best.url
     : "";
@@ -3160,59 +3218,22 @@ function vehicleDisplayName(v) {
   const special =
     new Map(
       [
-        [
-          "BMW",
-          "BMW"
-        ],
-        [
-          "GMC",
-          "GMC"
-        ],
-        [
-          "MINI",
-          "MINI"
-        ],
-        [
-          "FIAT",
-          "FIAT"
-        ],
-        [
-          "EV",
-          "EV"
-        ],
-        [
-          "PHEV",
-          "PHEV"
-        ],
-        [
-          "HEV",
-          "HEV"
-        ],
-        [
-          "SUV",
-          "SUV"
-        ],
-        [
-          "AWD",
-          "AWD"
-        ],
-        [
-          "4WD",
-          "4WD"
-        ],
-        [
-          "2WD",
-          "2WD"
-        ]
+        ["BMW", "BMW"],
+        ["GMC", "GMC"],
+        ["MINI", "MINI"],
+        ["FIAT", "FIAT"],
+        ["EV", "EV"],
+        ["PHEV", "PHEV"],
+        ["HEV", "HEV"],
+        ["SUV", "SUV"],
+        ["AWD", "AWD"],
+        ["4WD", "4WD"],
+        ["2WD", "2WD"]
       ]
     );
 
-  return clean(
-    v
-  )
-    .split(
-      /\s+/
-    )
+  return clean(v)
+    .split(/\s+/)
     .map(
       word => {
         const upper =
@@ -3229,10 +3250,9 @@ function vehicleDisplayName(v) {
         }
 
         if (
-          /^[A-Z]*\d[A-Z0-9-]*$/i
-            .test(
-              word
-            )
+          /^[A-Z]*\d[A-Z0-9-]*$/i.test(
+            word
+          )
         ) {
           return upper;
         }
@@ -3251,9 +3271,7 @@ function vehicleDisplayName(v) {
           );
       }
     )
-    .join(
-      " "
-    );
+    .join(" ");
 }
 
 function collectUrls(
@@ -3265,10 +3283,9 @@ function collectUrls(
     "string"
   ) {
     if (
-      /^https?:\/\//i
-        .test(
-          value
-        )
+      /^https?:\/\//i.test(
+        value
+      )
     ) {
       out.push(
         value
@@ -3342,10 +3359,9 @@ async function resolveNHTSADocument(
     const report =
       urls.find(
         url =>
-          /static\.nhtsa\.gov\/odi\/rcl\/\d{4}\/RCLRPT-[^/?#]+\.pdf/i
-            .test(
-              url
-            )
+          /static\.nhtsa\.gov\/odi\/rcl\/\d{4}\/RCLRPT-[^/?#]+\.pdf/i.test(
+            url
+          )
       );
 
     if (
@@ -3357,18 +3373,13 @@ async function resolveNHTSADocument(
     return (
       urls.find(
         url =>
-          /static\.nhtsa\.gov\/odi\/rcl\/\d{4}\/[^/?#]+\.pdf/i
-            .test(
-              url
-            )
+          /static\.nhtsa\.gov\/odi\/rcl\/\d{4}\/[^/?#]+\.pdf/i.test(
+            url
+          )
       ) ||
       ""
     );
   } catch (err) {
-    /*
-      Individual PDF resolution failure does not kill NHTSA.
-      We still have the NHTSA recall search fallback.
-    */
     console.warn(
       `NHTSA document lookup failed for ${campaign}:`,
       err.message ||
@@ -3400,10 +3411,9 @@ async function loadNHTSA() {
       )
       .filter(
         e =>
-          /\.(txt|csv|dat)$/i
-            .test(
-              e.entryName
-            )
+          /\.(txt|csv|dat)$/i.test(
+            e.entryName
+          )
       )
       .sort(
         (
@@ -3417,16 +3427,6 @@ async function loadNHTSA() {
   if (
     !candidates.length
   ) {
-    console.log(
-      "NHTSA ZIP entries:",
-      zip
-        .getEntries()
-        .map(
-          e =>
-            e.entryName
-        )
-    );
-
     throw new Error(
       "No usable NHTSA flat data file found"
     );
@@ -3489,8 +3489,7 @@ async function loadNHTSA() {
       x =>
         clean(
           x
-        )
-          .toUpperCase()
+        ).toUpperCase()
     );
 
   const hasHeader =
@@ -3511,9 +3510,7 @@ async function loadNHTSA() {
 
   const dataLines =
     hasHeader
-      ? lines.slice(
-          1
-        )
+      ? lines.slice(1)
       : lines;
 
   const campaigns =
@@ -3631,10 +3628,8 @@ async function loadNHTSA() {
         date,
         make,
         manufacturer,
-
         models:
           [],
-
         component,
         defect,
         consequence,
@@ -3801,12 +3796,8 @@ async function loadNHTSA() {
         const brandSignal = [
           makeRaw,
           g.manufacturer,
-          g.models.join(
-            " "
-          )
-        ].join(
-          " "
-        );
+          g.models.join(" ")
+        ].join(" ");
 
         const item = {
           id:
@@ -3845,9 +3836,7 @@ async function loadNHTSA() {
                 0,
                 8
               )
-              .join(
-                ", "
-              ),
+              .join(", "),
 
           date:
             g.date,
@@ -3943,12 +3932,11 @@ function rank(items) {
       ) ||
       String(
         b.date
-      )
-        .localeCompare(
-          String(
-            a.date
-          )
+      ).localeCompare(
+        String(
+          a.date
         )
+      )
   );
 }
 
@@ -4163,104 +4151,211 @@ function atomicWriteJSON(
   );
 }
 
+async function runSource(
+  name,
+  loader
+) {
+  try {
+    const value =
+      await loader();
+
+    console.log(
+      `${name}: ${value.length} records`
+    );
+
+    return {
+      ok:
+        true,
+
+      value,
+
+      count:
+        value.length
+    };
+  } catch (err) {
+    console.error(
+      `${name} FAILED:`,
+      err
+    );
+
+    return {
+      ok:
+        false,
+
+      value:
+        [],
+
+      count:
+        0,
+
+      error:
+        String(
+          err?.message ||
+          err
+        )
+    };
+  }
+}
+
 async function run() {
   console.log(
-    "Building MJR recall feed v2.2..."
+    "Building MJR recall feed v2.3..."
   );
 
   /*
-    We still run the sources concurrently.
-
-    Each network request now has automatic retry protection.
+    Phase 1:
+    FDA + USDA can run together.
+    They are comparatively modest downloads.
   */
-  const results =
-    await Promise.allSettled(
+  console.log(
+    "Loading FDA and USDA..."
+  );
+
+  const [
+    fdaResult,
+    usdaResult
+  ] =
+    await Promise.all(
       [
-        loadFDA(),
-        loadCPSC(),
-        loadUSDA(),
-        loadNHTSA()
+        runSource(
+          "FDA",
+          loadFDA
+        ),
+
+        runSource(
+          "USDA",
+          loadUSDA
+        )
       ]
     );
 
-  const names = [
-    "FDA",
-    "CPSC",
-    "USDA",
-    "NHTSA"
-  ];
+  /*
+    Phase 2:
+    CPSC runs by itself.
 
-  const sources =
-    {};
-
-  let combined =
-    [];
-
-  results.forEach(
-    (
-      result,
-      i
-    ) => {
-      const name =
-        names[i];
-
-      if (
-        result.status ===
-        "fulfilled"
-      ) {
-        sources[
-          name
-        ] = {
-          ok:
-            true,
-
-          count:
-            result.value.length
-        };
-
-        combined =
-          combined.concat(
-            result.value
-          );
-
-        console.log(
-          `${name}: ${result.value.length} records`
-        );
-      } else {
-        sources[
-          name
-        ] = {
-          ok:
-            false,
-
-          count:
-            0,
-
-          error:
-            String(
-              result.reason
-                ?.message ||
-              result.reason
-            )
-        };
-
-        console.error(
-          `${name} FAILED:`,
-          result.reason
-        );
-      }
-    }
+    This avoids competing with the huge NHTSA ZIP.
+  */
+  console.log(
+    "Loading CPSC..."
   );
 
-  /*
-    CRITICAL:
+  const cpscResult =
+    await runSource(
+      "CPSC",
+      loadCPSC
+    );
 
-    Stop here before generating or writing anything if
-    one of the main feeds failed or collapsed.
+  /*
+    Phase 3:
+    NHTSA starts only after CPSC has completely finished.
+  */
+  console.log(
+    "Loading NHTSA..."
+  );
+
+  const nhtsaResult =
+    await runSource(
+      "NHTSA",
+      loadNHTSA
+    );
+
+  const resultMap = {
+    FDA:
+      fdaResult,
+
+    CPSC:
+      cpscResult,
+
+    USDA:
+      usdaResult,
+
+    NHTSA:
+      nhtsaResult
+  };
+
+  const sources = {
+    FDA: {
+      ok:
+        fdaResult.ok,
+
+      count:
+        fdaResult.count,
+
+      ...(fdaResult.error
+        ? {
+            error:
+              fdaResult.error
+          }
+        : {})
+    },
+
+    CPSC: {
+      ok:
+        cpscResult.ok,
+
+      count:
+        cpscResult.count,
+
+      ...(cpscResult.error
+        ? {
+            error:
+              cpscResult.error
+          }
+        : {})
+    },
+
+    USDA: {
+      ok:
+        usdaResult.ok,
+
+      count:
+        usdaResult.count,
+
+      ...(usdaResult.error
+        ? {
+            error:
+              usdaResult.error
+          }
+        : {})
+    },
+
+    NHTSA: {
+      ok:
+        nhtsaResult.ok,
+
+      count:
+        nhtsaResult.count,
+
+      ...(nhtsaResult.error
+        ? {
+            error:
+              nhtsaResult.error
+          }
+        : {})
+    }
+  };
+
+  /*
+    Do not touch the existing JSON until every
+    source passes the safety check.
   */
   validateSources(
     sources
   );
+
+  let combined = [];
+
+  for (
+    const result of
+      Object.values(
+        resultMap
+      )
+  ) {
+    combined =
+      combined.concat(
+        result.value
+      );
+  }
 
   combined =
     rank(
@@ -4283,12 +4378,6 @@ async function run() {
       15
     );
 
-  /*
-    Another final protection.
-
-    We expect enough valid records to publish 120.
-    If we don't have 120, keep the existing feed.
-  */
   if (
     combined.length <
     120
@@ -4332,7 +4421,7 @@ async function run() {
         .toISOString(),
 
     version:
-      "2.2",
+      "2.3",
 
     newestDate,
 
@@ -4361,11 +4450,6 @@ async function run() {
     }
   );
 
-  /*
-    Atomic write:
-    first create .tmp, then rename only after the file
-    has been completely written.
-  */
   atomicWriteJSON(
     OUTPUT_FILE,
     TEMP_OUTPUT_FILE,
@@ -4413,9 +4497,6 @@ async function run() {
 run()
   .catch(
     err => {
-      /*
-        Clean up any abandoned temp file.
-      */
       try {
         if (
           fs.existsSync(
@@ -4427,7 +4508,7 @@ run()
           );
         }
       } catch (_) {
-        // No action needed.
+        // Ignore temp cleanup errors.
       }
 
       console.error(
