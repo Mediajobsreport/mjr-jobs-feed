@@ -7403,12 +7403,14 @@ def write_xml(jobs):
             ("url_verified", TODAY.isoformat()),
             ("company_website", j.company_website),
             ("logo", j.logo),
-            ("work_arrangement", j.work_arrangement),
-            # JBoard's Work Arrangement/Remote importer field is boolean.
-            # Never map the non-empty three-way work_arrangement value to it,
-            # because "On-Site" and "Hybrid" would also be treated as remote.
-            # Preserve work_arrangement above for MJR and expose a dedicated
-            # true-or-empty flag for JBoard's remote setting.
+            # The existing JBoard importer maps its boolean Remote field to
+            # work_arrangement. It treats any non-empty XML value as remote,
+            # so only genuinely remote jobs may contain a value here.
+            ("work_arrangement", "true" if j.work_arrangement == "Remote" else ""),
+            # Preserve MJR's three-way classification for audits, future
+            # integrations, and any importer that supports Hybrid explicitly.
+            ("arrangement_type", j.work_arrangement),
+            # Also expose a clearly named boolean field for new importers.
             ("remote", "true" if j.work_arrangement == "Remote" else ""),
         ]
 
