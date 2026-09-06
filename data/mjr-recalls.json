@@ -1,13 +1,12 @@
 {
-  "generated": "2026-09-06T13:00:02.355Z",
-  "version": "1.4",
-  "newestDate": "2026-09-03",
+  "generated": "2026-09-06T13:18:35.535Z",
+  "version": "1.5",
+  "newestDate": "2026-09-04",
   "stale": false,
   "sources": {
     "FDA": {
-      "ok": false,
-      "count": 0,
-      "error": "FDA header row not found"
+      "ok": true,
+      "count": 1028
     },
     "CPSC": {
       "ok": true,
@@ -38,7 +37,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V562000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V562000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V562000",
       "score": 192
     },
     {
@@ -55,7 +54,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V560000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V560000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V560000",
       "score": 182
     },
     {
@@ -74,6 +73,22 @@
       "majorBrand": true,
       "url": "https://cpsc.gov/Recalls/2026/Conair-Expands-Recall-of-Cuisinart-Grill-Brushes-Due-to-Ingestion-Hazard-Over-3-6-Million-Brushes-Now-Recalled",
       "score": 177
+    },
+    {
+      "id": "FDA-2026-09-03-great-value-organic-triple-berry-blend-frutas-y-hortalizas-del-sur-s-a",
+      "source": "FDA",
+      "category": "food",
+      "title": "Great Value Organic Triple Berry Blend Recalled",
+      "reason": "Possible E. Coli Contamination",
+      "brand": "Great Value",
+      "company": "Frutas y Hortalizas del Sur S.A.",
+      "product": "Organic Triple Berry Blend",
+      "date": "2026-09-03",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 176
     },
     {
       "id": "CPSC-10957-walmart-reannounces-recall-of-mainstays-nine-drawer-fabric-dressers-du",
@@ -106,8 +121,24 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V495000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V495000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V495000",
       "score": 162
+    },
+    {
+      "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
+      "source": "FDA",
+      "category": "food",
+      "title": "Northwest Naturals Chicken Recipe Pet Food Recalled",
+      "reason": "Potential contamination with Salmonella and/or Listeria monocytogenes",
+      "brand": "Northwest Naturals",
+      "company": "Northwest Naturals",
+      "product": "Chicken Recipe",
+      "date": "2026-08-28",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 148
     },
     {
       "id": "NHTSA-26V531000",
@@ -123,7 +154,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V531000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V531000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V531000",
       "score": 152
     },
     {
@@ -157,8 +188,24 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V511000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V511000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V511000",
       "score": 152
+    },
+    {
+      "id": "FDA-2026-09-03-b-braun-0-9-sodium-chloride-injection-usp-100-ml-in-a-150-ml-pab-conta",
+      "source": "FDA",
+      "category": "health",
+      "title": "B. Braun Sodium Chloride Injection Recalled",
+      "reason": "Presence of particulate matter identified as iron oxide",
+      "brand": "B. Braun",
+      "company": "B. Braun Medical Inc.",
+      "product": "0.9% Sodium Chloride Injection USP, 100 mL, in a 150 mL PAB® Container",
+      "date": "2026-09-03",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 131
     },
     {
       "id": "CPSC-10939-truststone-group-recalls-xo-poppy-power-trip-magnetic-wireless-power-b",
@@ -178,6 +225,22 @@
       "score": 123
     },
     {
+      "id": "FDA-2026-08-14-naturebest-heb-finished-products-such-as-pico-de-gallo-stuffed-mushroo",
+      "source": "FDA",
+      "category": "food",
+      "title": "NatureBest, HEB Finished products such as Pico de Gallo, Stuffed Mushrooms, and Soup-mix… Recalled",
+      "reason": "Potential for contamination with Salmonella",
+      "brand": "NatureBest, HEB",
+      "company": "NatureBest Precut & Produce LLC",
+      "product": "Finished products such as Pico de Gallo, Stuffed Mushrooms, and Soup-mix Containing Jalapeno.",
+      "date": "2026-08-14",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 118
+    },
+    {
       "id": "NHTSA-26V547000",
       "source": "NHTSA",
       "category": "consumer",
@@ -191,7 +254,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V547000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V547000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V547000",
       "score": 150
     },
     {
@@ -212,6 +275,23 @@
       "score": 122
     },
     {
+      "id": "NHTSA-26V481000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "MERCEDES-BENZ Vehicles Recalled",
+      "reason": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2020-2021 CLA, 2019-2022 A-Class, 2022-2023 C-Class, 2024 CLE, 2020-2026 GLA/GLB, and 2023-2024 GLC vehicles. Please refer to MBUSA's recall report for specific model…",
+      "brand": "MERCEDES-BENZ",
+      "company": "Mercedes-Benz USA, LLC",
+      "product": "A 220 4MATIC, GLC 300 4MATIC COUPE, GLC 300 4MATIC, GLC 300, AMG GLC43 4MATIC, AMG GLB35 4MATIC, AMG GLA 35, AMG A35",
+      "date": "2026-07-24",
+      "units": 310667,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V481000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V481000",
+      "score": 142
+    },
+    {
       "id": "CPSC-10897-louisville-ladder-recalls-over-one-million-attic-stairway-ladders-due-",
       "source": "CPSC",
       "category": "consumer",
@@ -229,53 +309,36 @@
       "score": 120
     },
     {
-      "id": "USDA-2026-08-08-city-foods-inc-recalls-ready-to-eat-pastrami-and-corned-beef-products-",
-      "source": "USDA",
+      "id": "FDA-2026-08-12-whole-foods-market-finished-products-such-as-dips-salsa-guacamole-and-",
+      "source": "FDA",
       "category": "food",
-      "title": "City Foods, Inc. Recalls Ready-To-Eat Pastrami and Corned Beef Products Due To Possible Listeria…",
-      "reason": "Product Contamination",
-      "brand": "",
-      "company": "City Foods, Inc./Bea&#039;s Best Corned Beef",
-      "product": "",
-      "date": "2026-08-08",
+      "title": "Whole Foods Market Finished products such as dips, salsa, guacamole, and more containing jalapeno.…",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Whole Foods Market",
+      "company": "Whole Foods Market",
+      "product": "Finished products such as dips, salsa, guacamole, and more containing jalapeno.",
+      "date": "2026-08-12",
       "units": 0,
       "pet": false,
-      "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/city-foods-inc--recalls-ready-eat-pastrami-and-corned-beef-products-due-possible",
-      "score": 63
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 118
     },
     {
-      "id": "USDA-2026-07-30-fsis-issues-public-health-alert-for-chicken-salad-product-that-may-be-",
-      "source": "USDA",
+      "id": "FDA-2026-07-30-greenwise-organic-iqf-frozen-blueberries-and-whole-mixed-berries-10-oz",
+      "source": "FDA",
       "category": "food",
-      "title": "FSIS Issues Public Health Alert for Chicken Salad Product that May Be Contaminated with Listeria",
-      "reason": "Product Contamination",
-      "brand": "",
-      "company": "Mary&#039;s Harvest Fresh Foods, Inc.",
-      "product": "",
+      "title": "GreenWise Organic IQF Frozen Blueberries and Whole Mixed Berries, 10 oz and 48 oz Recalled",
+      "reason": "Possible E. Coli Contamination",
+      "brand": "GreenWise",
+      "company": "Publix",
+      "product": "Organic IQF Frozen Blueberries and Whole Mixed Berries, 10 oz and 48 oz",
       "date": "2026-07-30",
       "units": 0,
       "pet": false,
-      "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-chicken-salad-product-may-be-contaminated-listeria",
-      "score": 63
-    },
-    {
-      "id": "NHTSA-26V481000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "MERCEDES-BENZ Vehicles Recalled",
-      "reason": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2020-2021 CLA, 2019-2022 A-Class, 2022-2023 C-Class, 2024 CLE, 2020-2026 GLA/GLB, and 2023-2024 GLC vehicles. Please refer to MBUSA's recall report for specific model…",
-      "brand": "MERCEDES-BENZ",
-      "company": "Mercedes-Benz USA, LLC",
-      "product": "A 220 4MATIC, GLC 300 4MATIC COUPE, GLC 300 4MATIC, GLC 300, AMG GLC43 4MATIC, AMG GLB35 4MATIC, AMG GLA 35, AMG A35",
-      "date": "2026-07-24",
-      "units": 310667,
-      "pet": false,
       "majorBrand": true,
-      "campaign": "26V481000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V481000",
-      "score": 142
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 118
     },
     {
       "id": "NHTSA-26V561000",
@@ -291,7 +354,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V561000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V561000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V561000",
       "score": 117
     },
     {
@@ -346,6 +409,22 @@
       "score": 111
     },
     {
+      "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Foods Alive Moringa Leaf Powder Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "Foods Alive",
+      "company": "Foods Alive Inc.",
+      "product": "Moringa Leaf Powder",
+      "date": "2026-09-04",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 109
+    },
+    {
       "id": "CPSC-10950-okk-trading-recalls-rainbow-mystery-squishy-bun-toys-due-to-risk-of-se",
       "source": "CPSC",
       "category": "consumer",
@@ -393,7 +472,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V528000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V528000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V528000",
       "score": 105
     },
     {
@@ -410,7 +489,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V487000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V487000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V487000",
       "score": 105
     },
     {
@@ -444,7 +523,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V548000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V548000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V548000",
       "score": 103
     },
     {
@@ -463,6 +542,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/KTM-North-America-Recalls-Off-Road-Motorcycles-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard",
       "score": 101
+    },
+    {
+      "id": "FDA-2026-08-21-fromm-fromm-wet-canned-dog-food-fromm-family-foods-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Fromm Fromm wet canned dog food Recalled",
+      "reason": "Potential metal contamination",
+      "brand": "Fromm",
+      "company": "Fromm Family Foods LLC",
+      "product": "Fromm wet canned dog food",
+      "date": "2026-08-21",
+      "units": 0,
+      "pet": true,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 99
     },
     {
       "id": "CPSC-10949-adult-portable-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
@@ -512,7 +607,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V558000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V558000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V558000",
       "score": 97
     },
     {
@@ -563,7 +658,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V525000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V525000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V525000",
       "score": 95
     },
     {
@@ -580,7 +675,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V514000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V514000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V514000",
       "score": 95
     },
     {
@@ -597,7 +692,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V510000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V510000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V510000",
       "score": 95
     },
     {
@@ -614,7 +709,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V500000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V500000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V500000",
       "score": 95
     },
     {
@@ -631,7 +726,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V489000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V489000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V489000",
       "score": 95
     },
     {
@@ -649,6 +744,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Audio-Partnership-Recalls-Cambridge-Audio-Yoyo-M-Portable-Bluetooth-Speakers-Due-to-Fire-Hazard",
+      "score": 93
+    },
+    {
+      "id": "FDA-2026-08-29-martina-mangoes-panorama-produce",
+      "source": "FDA",
+      "category": "food",
+      "title": "Martina Mangoes Recalled",
+      "reason": "Potential contamination with Salmonella",
+      "brand": "Martina",
+      "company": "Panorama Produce",
+      "product": "Mangoes",
+      "date": "2026-08-29",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 93
     },
     {
@@ -716,8 +827,56 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V545000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V545000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V545000",
       "score": 93
+    },
+    {
+      "id": "FDA-2026-08-26-baxter-0-9-sodium-chloride-injection-usp-500-ml-viaflex-plastic-contai",
+      "source": "FDA",
+      "category": "health",
+      "title": "Baxter Sodium Chloride Injection Recalled",
+      "reason": "Potential presence of particulate matter identified as fiberglass in the solution.",
+      "brand": "Baxter",
+      "company": "Baxter International Inc.",
+      "product": "0.9% Sodium Chloride Injection, USP, 500 mL VIAFLEX Plastic Container",
+      "date": "2026-08-26",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 91
+    },
+    {
+      "id": "FDA-2026-08-25-baxter-anticoagulant-sodium-citrate-solution-usp-250-ml-viaflex-plasti",
+      "source": "FDA",
+      "category": "health",
+      "title": "Baxter Anticoagulant Sodium Citrate Solution USP, 250 mL VIAFLEX Plastic Container Recalled",
+      "reason": "Potential presence of particulate matter identified as fiberglass in the solution",
+      "brand": "Baxter",
+      "company": "Baxter International Inc.",
+      "product": "Anticoagulant Sodium Citrate Solution USP, 250 mL VIAFLEX Plastic Container",
+      "date": "2026-08-25",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 91
+    },
+    {
+      "id": "FDA-2026-08-25-baxter-70-dextrose-injection-usp-in-2000-ml-viaflex-plastic-container-",
+      "source": "FDA",
+      "category": "health",
+      "title": "Baxter 70% Dextrose Injection, USP in 2000 mL VIAFLEX Plastic Container Recalled",
+      "reason": "Potential presence of particulate matter identified as stainless steel particles in the solution.",
+      "brand": "Baxter",
+      "company": "Baxter International Inc.",
+      "product": "70% Dextrose Injection, USP in 2000 mL VIAFLEX Plastic Container",
+      "date": "2026-08-25",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 91
     },
     {
       "id": "CPSC-10914-goody-king-magnetic-building-cubes-and-blocks-recalled-due-to-risk-of-",
@@ -818,7 +977,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26C006000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26C006000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26C006000",
       "score": 85
     },
     {
@@ -835,7 +994,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V507000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V507000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V507000",
       "score": 85
     },
     {
@@ -852,7 +1011,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V478000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V478000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V478000",
       "score": 85
     },
     {
@@ -888,6 +1047,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/TooyBing-Wooden-Bead-Stacking-Toys-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Violate-Small-Parts-Ban",
       "score": 83
+    },
+    {
+      "id": "FDA-2026-08-19-b-braun-excel-lactated-ringers-injection-1000ml-b-braun",
+      "source": "FDA",
+      "category": "health",
+      "title": "B. Braun Excel® Lactated Ringers Injection, 1000mL Recalled",
+      "reason": "Presence of particulate matter identified primarily as cellulose cotton fibers, with individual particles also identified as cellulose wood fiber and polystyrene",
+      "brand": "B. Braun",
+      "company": "(B. Braun)",
+      "product": "Excel® Lactated Ringers Injection, 1000mL",
+      "date": "2026-08-19",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 81
     },
     {
       "id": "CPSC-10958-diamond-wipes-international-recalls-md-wipe-outz-numbing-tattoo-wipes-",
@@ -941,6 +1116,38 @@
       "score": 77
     },
     {
+      "id": "FDA-2026-09-03-american-regent-inc-epinephrine-injection-usp-30-mg-30-ml-1-mg-ml-mult",
+      "source": "FDA",
+      "category": "health",
+      "title": "American Regent, Inc. Epinephrine Injection, USP 30 mg/ 30 mL (1 mg/mL) multi dose vial Recalled",
+      "reason": "Presence of particulate matter and lack of sterility assurance",
+      "brand": "American Regent, Inc.",
+      "company": "American Regent, Inc.",
+      "product": "Epinephrine Injection, USP 30 mg/ 30 mL (1 mg/mL) multi dose vial",
+      "date": "2026-09-03",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 76
+    },
+    {
+      "id": "FDA-2026-08-29-everything-sprouts-robust-radish-mix-5oz-cups-everything-sprouts-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Everything Sprouts Robust Radish Mix, 5oz Cups Recalled",
+      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (STEC) or Salmonella.",
+      "brand": "Everything Sprouts",
+      "company": "Everything Sprouts, LLC",
+      "product": "Robust Radish Mix, 5oz Cups",
+      "date": "2026-08-29",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 75
+    },
+    {
       "id": "CPSC-10920-commowner-pressure-washers-recalled-due-to-serious-risk-of-injury-or-d",
       "source": "CPSC",
       "category": "consumer",
@@ -971,7 +1178,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V550000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V550000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V550000",
       "score": 73
     },
     {
@@ -989,6 +1196,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Goal-Zero-Recalls-YETI-3000X-Power-Stations-Due-to-Serious-Risk-of-Injury-from-Fire-and-Burn-Hazards",
+      "score": 73
+    },
+    {
+      "id": "FDA-2026-07-24-baxter-cefazolin-in-dextrose-injection-baxter-international-inc",
+      "source": "FDA",
+      "category": "health",
+      "title": "Baxter Cefazolin in Dextrose Injection Recalled",
+      "reason": "Particulate matter (cardboard) found in the solution.",
+      "brand": "Baxter",
+      "company": "Baxter International Inc.",
+      "product": "Cefazolin in Dextrose Injection",
+      "date": "2026-07-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 73
     },
     {
@@ -1026,6 +1249,54 @@
       "score": 71
     },
     {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 71
+    },
+    {
+      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Oma’s Pride Canine Food Recalled",
+      "reason": "Contaminated with Salmonella",
+      "brand": "Oma’s Pride",
+      "company": "Miller Foods, Inc.",
+      "product": "Canine Food",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 71
+    },
+    {
+      "id": "FDA-2026-08-31-little-temptations-chocolatey-eyeballs-7-oz-10-oz-10-5-oz-11-oz-and-16",
+      "source": "FDA",
+      "category": "food",
+      "title": "Little Temptations Chocolatey Eyeballs, 7 oz., 10 oz., 10.5 oz., 11 oz., and 16 oz. Recalled",
+      "reason": "Undeclared milk",
+      "brand": "Little Temptations",
+      "company": "Crystal Temptations",
+      "product": "Chocolatey Eyeballs, 7 oz., 10 oz., 10.5 oz., 11 oz., and 16 oz.",
+      "date": "2026-08-31",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 70
+    },
+    {
       "id": "NHTSA-26V549000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1039,7 +1310,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V549000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V549000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V549000",
       "score": 68
     },
     {
@@ -1107,7 +1378,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E053000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E053000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26E053000",
       "score": 67
     },
     {
@@ -1124,7 +1395,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V513000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V513000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V513000",
       "score": 67
     },
     {
@@ -1141,7 +1412,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V508000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V508000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V508000",
       "score": 67
     },
     {
@@ -1158,7 +1429,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E050000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E050000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26E050000",
       "score": 67
     },
     {
@@ -1175,7 +1446,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E051000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E051000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26E051000",
       "score": 67
     },
     {
@@ -1264,6 +1535,22 @@
       "score": 65
     },
     {
+      "id": "FDA-2026-09-04-business-pill-branch-manager-for-men-dietary-supplements-marketed-for-",
+      "source": "FDA",
+      "category": "health",
+      "title": "Business Pill, Branch Manager for Men dietary supplements marketed for male sexual enhancement…",
+      "reason": "Products contain undeclared yohimbine",
+      "brand": "Business Pill, Branch Manager for Men",
+      "company": "SUPPLX.com",
+      "product": "dietary supplements marketed for male sexual enhancement",
+      "date": "2026-09-04",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 64
+    },
+    {
       "id": "CPSC-10932-modine-manufacturing-company-recalls-airedale-heating-and-cooling-vent",
       "source": "CPSC",
       "category": "consumer",
@@ -1294,7 +1581,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V568000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V568000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V568000",
       "score": 63
     },
     {
@@ -1315,6 +1602,54 @@
       "score": 63
     },
     {
+      "id": "FDA-2026-08-09-trader-joe-s-freshness-guaranteed-and-more-finished-products-e-g-dips-",
+      "source": "FDA",
+      "category": "food",
+      "title": "Trader Joe’s, Freshness Guaranteed and more Finished products (e.g. dips, salsa, guacamole and…",
+      "reason": "Possible Salmonella Contamination",
+      "brand": "Trader Joe’s, Freshness Guaranteed and more",
+      "company": "Taylor Fresh Foods",
+      "product": "Finished products (e.g. dips, salsa, guacamole and more) containing jalapeno",
+      "date": "2026-08-09",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 63
+    },
+    {
+      "id": "USDA-2026-08-08-city-foods-inc-recalls-ready-to-eat-pastrami-and-corned-beef-products-",
+      "source": "USDA",
+      "category": "food",
+      "title": "City Foods, Inc. Recalls Ready-To-Eat Pastrami and Corned Beef Products Due To Possible Listeria…",
+      "reason": "Product Contamination",
+      "brand": "",
+      "company": "City Foods, Inc./Bea&#039;s Best Corned Beef",
+      "product": "",
+      "date": "2026-08-08",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "http://www.fsis.usda.gov/recalls-alerts/city-foods-inc--recalls-ready-eat-pastrami-and-corned-beef-products-due-possible",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-07-food-to-live-green-powder-products-lexunder-inc-dba-food-to-live",
+      "source": "FDA",
+      "category": "food",
+      "title": "Food To Live Green Powder Products Recalled",
+      "reason": "Possible Salmonella Contamination",
+      "brand": "Food To Live",
+      "company": "Lexunder Inc. dba Food To Live",
+      "product": "Green Powder Products",
+      "date": "2026-08-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 63
+    },
+    {
       "id": "CPSC-10909-vanderhall-north-america-recalls-brawley-gts-electric-recreational-off",
       "source": "CPSC",
       "category": "consumer",
@@ -1329,6 +1664,38 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Vanderhall-North-America-Recalls-Brawley-GTS-Electric-Recreational-Off-Highway-Vehicles-ROVs-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-03-bettergoods-pistachio-nut-butter-boticelli-foods",
+      "source": "FDA",
+      "category": "food",
+      "title": "Bettergoods Pistachio Nut Butter Recalled",
+      "reason": "Possible Salmonella Contamination",
+      "brand": "Bettergoods",
+      "company": "Boticelli Foods",
+      "product": "Pistachio Nut Butter",
+      "date": "2026-08-03",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 63
+    },
+    {
+      "id": "USDA-2026-07-30-fsis-issues-public-health-alert-for-chicken-salad-product-that-may-be-",
+      "source": "USDA",
+      "category": "food",
+      "title": "FSIS Issues Public Health Alert for Chicken Salad Product that May Be Contaminated with Listeria",
+      "reason": "Product Contamination",
+      "brand": "",
+      "company": "Mary&#039;s Harvest Fresh Foods, Inc.",
+      "product": "",
+      "date": "2026-07-30",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "http://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-chicken-salad-product-may-be-contaminated-listeria",
       "score": 63
     },
     {
@@ -1464,7 +1831,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V530000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V530000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V530000",
       "score": 55
     },
     {
@@ -1481,7 +1848,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V532000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V532000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V532000",
       "score": 55
     },
     {
@@ -1498,7 +1865,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V529000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V529000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V529000",
       "score": 55
     },
     {
@@ -1515,7 +1882,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E054000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E054000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26E054000",
       "score": 55
     },
     {
@@ -1532,7 +1899,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V526000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V526000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V526000",
       "score": 55
     },
     {
@@ -1549,7 +1916,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V524000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V524000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V524000",
       "score": 55
     },
     {
@@ -1566,7 +1933,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V512000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V512000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V512000",
       "score": 55
     },
     {
@@ -1583,7 +1950,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V494000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V494000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V494000",
       "score": 55
     },
     {
@@ -1600,7 +1967,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V496000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V496000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V496000",
       "score": 55
     },
     {
@@ -1617,8 +1984,24 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V493000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V493000",
+      "url": "https://api.nhtsa.gov/recalls/campaignNumber?campaignNumber=26V493000",
       "score": 55
+    },
+    {
+      "id": "FDA-2026-08-22-everything-sprouts-calco-alfalfa-sprouts-everything-sprouts-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Everything Sprouts, Calco Alfalfa Sprouts Recalled",
+      "reason": "Potential to be contaminated with Salmonella and Shiga toxin-producing Escherichia coli (STEC)",
+      "brand": "Everything Sprouts, Calco",
+      "company": "Everything Sprouts, LLC",
+      "product": "Alfalfa Sprouts",
+      "date": "2026-08-22",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 53
     },
     {
       "id": "CPSC-10928-fastbuy-recalls-zimtown-portable-gas-and-fuel-cans-due-to-risk-of-seri",
@@ -1653,414 +2036,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/OCOOPA-Direct-Recalls-1-5-Million-Rechargeable-Hand-Warmers-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards-One-Death-Reported-Imported-by-Shenzhen-Street-Cat-Technology",
       "score": 53
-    },
-    {
-      "id": "CPSC-10879-cuddlecubs-creations-teething-toy-sets-recalled-due-to-risk-of-serious",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "CuddleCubs Creations Teething Toy Sets Recalled Due to Risk of Serious Injury or Death from Choking;…",
-      "reason": "The recalled teething toy sets contain a pull string teething toy that violates the mandatory standard for toys because the silicone strings are smaller and longer than permitted. The strings can reach the back of a…",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com from December 2024 through April 2026 for between $15 and $19.",
-      "product": "CuddleCubs Creations Baby Highchair Teething Toy Sets",
-      "date": "2026-07-23",
-      "units": 404,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/CuddleCubs-Creations-Teething-Toy-Sets-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Violate-Mandatory-Standard-for-Toys-Sold-on-Amazon-by-YouRfocus",
-      "score": 53
-    },
-    {
-      "id": "CPSC-10880-peony-design-recalls-personalized-baby-bibs-and-stroller-bags-due-to-r",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Peony Design Recalls Personalized Baby Bibs and Stroller Bags Due to Risk of Serious Injury or Death…",
-      "reason": "The snap can detach from the recalled bibs and stroller bags, posing a risk of serious injury or death from a choking hazard to young children.",
-      "brand": "Peony Design Co., of Howell, MI",
-      "company": "Peony Design Co., of Howell, MI",
-      "retailers": "Online at Etsy.com from October 2025 through July 2026 for between $15 and $45.",
-      "product": "Personalized Baby Bibs and Stroller Bags",
-      "date": "2026-07-23",
-      "units": 52,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Peony-Design-Recalls-Personalized-Baby-Bibs-and-Stroller-Bags-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Hazard",
-      "score": 53
-    },
-    {
-      "id": "NHTSA-26V564000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Light Boy GBX12SK Vehicles Recalled",
-      "reason": "Light Boy America, Inc (Light Boy) is recalling certain 2020 and 2023 Light Boy GBX12SK light towers. The trailer frame may bend at the tow bar, causing the light tower to detach. 12 vehicles or units may be affected.",
-      "brand": "Light Boy",
-      "company": "Light Boy America,Inc",
-      "product": "GBX12SK",
-      "date": "2026-09-01",
-      "units": 12,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V564000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V564000",
-      "score": 50
-    },
-    {
-      "id": "NHTSA-26V567000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "PETERBILT 548 Vehicles Recalled",
-      "reason": "PACCAR Incorporated (PACCAR) is recalling certain 2027 Peterbilt 548 trucks. The front brake valve and hoses may be the incorrect size, which can delay the rear service brake application and release, as well as the…",
-      "brand": "PETERBILT",
-      "company": "PACCAR Incorporated",
-      "product": "548",
-      "date": "2026-09-01",
-      "units": 58,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V567000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V567000",
-      "score": 50
-    },
-    {
-      "id": "NHTSA-26V565000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "FOREST RIVER BUS Vehicles Recalled",
-      "reason": "Forest River bus, LLC (Forest River) is recalling certain 2024 Mobility Trans Safetbus, Glaval Universal, 2025 Senator II, and Starcraft Allstar transit buses equipped with certain S-Series and K-Series wheelchair…",
-      "brand": "FOREST RIVER BUS",
-      "company": "Forest River Bus, LLC",
-      "product": "STARCRAFT ALLSTAR, GLAVAL UNIVERSAL, SAFETBUS, SENATOR II",
-      "date": "2026-09-01",
-      "units": 55,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V565000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V565000",
-      "score": 50
-    },
-    {
-      "id": "NHTSA-26V563000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "FOREST RIVER VIBE Vehicles Recalled",
-      "reason": "Forest River, Inc. (Forest River) is recalling certain 2027 Vibe recreational trailers. The furnace exhaust may not be correctly attached to the outside flue, allowing carbon monoxide to buildup inside the passenger…",
-      "brand": "FOREST RIVER",
-      "company": "Forest River, Inc.",
-      "product": "VIBE",
-      "date": "2026-09-01",
-      "units": 5,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V563000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V563000",
-      "score": 50
-    },
-    {
-      "id": "CPSC-10886-golden-link-recalls-fantastic-four-cups-and-captain-america-popcorn-he",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Golden Link Recalls Fantastic Four Cups and Captain America Popcorn Helmet Containers with LED Lights…",
-      "reason": "The cups and containers violate the mandatory standard for consumer products with button cell and coin batteries because they contain button cell batteries that can be accessed easily by children, posing an ingestion…",
-      "brand": "",
-      "company": "",
-      "retailers": "The Fantastic Four Cups were sold at AMC movie theaters nationwide from March 2025 through April 2025 for about $15. The Captain America Popcorn Helmet Containers were sold at AMC Theaters, Cobb Theaters, Drive in Group, El Capitan EVO Cinemas, Goldenlink, GQT Movies, Harkins, Independent Theatre, Maya Cinemas, Reading, West Wind, Escape and Zurich Group nationwide from February through August 2025 for about $30.",
-      "product": "Fantastic Four Drinking Cups and Captain America Popcorn Helmet Containers with LED Lights",
-      "date": "2026-07-30",
-      "units": 55350,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Golden-Link-Recalls-Fantastic-Four-Cups-and-Captain-America-Popcorn-Helmet-Containers-with-LED-Lights-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Hazard-Violate-Mandatory-Standard-for-Consumer-Products-with-Button-Cell",
-      "score": 50
-    },
-    {
-      "id": "CPSC-10881-trsmima-zipline-kits-and-zipline-spring-brakes-recalled-due-to-fall-an",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Trsmima Zipline Kits and Zipline Spring Brakes Recalled Due to Fall and Collision Hazards; Manufactured…",
-      "reason": "The zipline kit's steel cable, turnbuckle and seat can detach or break during use, posing a fall hazard. The zipline spring brakes are not stiff enough to safely slow a rider down and the kit design does not include an…",
-      "brand": "HuNanBoLuoDianZiShangWuYouXianGongSi D/B/A Trsmima or Hunan Pineapple Electronic Commerce Co., Ltd., of China",
-      "company": "HuNanBoLuoDianZiShangWuYouXianGongSi D/B/A Trsmima or Hunan Pineapple Electronic Commerce Co., Ltd., of China",
-      "retailers": "Amazon.com from March 2020 through May 2026 for between $45 and $285 for the zipline kits and for between $14 and $48 for the sold-separately spring brakes.",
-      "product": "TT Trsmima Zipline Kits and Zipline Spring Brakes",
-      "date": "2026-07-30",
-      "units": 60720,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Trsmima-Zipline-Kits-and-Zipline-Spring-Brakes-Recalled-Due-to-Fall-and-Collision-Hazards-Manufactured-by-Trsmima",
-      "score": 50
-    },
-    {
-      "id": "CPSC-10934-jinhezo-mini-waterproof-led-tea-lights-recalled-due-to-risk-of-serious",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "JINHEZO Mini Waterproof LED Tea Lights Recalled Due to Risk of Serious Injury or Death from Battery…",
-      "reason": "The LED Tea Lights violate the mandatory safety standard for consumer products with button cell and coin batteries because the button batteries can be accessed easily by children, posing an ingestion hazard.…",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com from March 2024 through July 2026 for between $16 to $20 per pack.",
-      "product": "JINHEZO Mini Waterproof LED Tea Lights",
-      "date": "2026-08-20",
-      "units": 2798,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/JINHEZO-Mini-Waterproof-LED-Tea-Lights-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Consumer-Products-with-Button-Cell-Batteries-Imported-by-Mystic-ZO",
-      "score": 48
-    },
-    {
-      "id": "NHTSA-26V540000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "LUCID AIR Vehicles Recalled",
-      "reason": "Lucid USA, Inc. (Lucid) is recalling certain 2022-2026 Air vehicles. The exterior lighting circuit may have insufficient overcurrent protection, allowing the circuit to overheat. 27,185 vehicles or units may be affected.",
-      "brand": "LUCID",
-      "company": "Lucid USA, Inc.",
-      "product": "AIR",
-      "date": "2026-08-20",
-      "units": 27185,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V540000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V540000",
-      "score": 48
-    },
-    {
-      "id": "CPSC-10918-dumos-nine-drawer-dressers-recalled-due-to-risk-of-serious-injury-or-d",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "DUMOS Nine-Drawer Dressers Recalled Due to Risk of Serious Injury or Death from Tip-Over and Entrapment…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "Jiangsu Jiayubo Furniture Co., Ltd., of China",
-      "company": "Jiangsu Jiayubo Furniture Co., Ltd., of China",
-      "retailers": "Online at Amazon.com from December 2025 through June 2026 for about $54.",
-      "product": "DUMOS Nine-Drawer Dressers",
-      "date": "2026-08-13",
-      "units": 8981,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/DUMOS-Nine-Drawer-Dressers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
-      "score": 48
-    },
-    {
-      "id": "CPSC-10908-kc-imports-and-exports-recalls-mini-laser-pointer-keychains-due-to-ris",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "KC Imports and Exports Recalls Mini Laser Pointer Keychains Due to Risk of Serious Injury or Death from…",
-      "reason": "The Mini Laser Pointer Keychains violate the mandatory safety standard for consumer products with button cell and coin batteries because the button batteries can be accessed easily by children, posing an ingestion…",
-      "brand": "",
-      "company": "",
-      "retailers": "Gas stations and discount stores nationwide and online at https://www.divaatheartsj.com/from June 2025 through June 2026 for about 42 cents per unit.",
-      "product": "Laser & LED Light Mini Laser Pointer Keychains",
-      "date": "2026-08-06",
-      "units": 9600,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/KC-Imports-and-Exports-Recalls-Mini-Laser-Pointer-Keychains-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Consumer-Products-with-Button-Cell-Batteries",
-      "score": 48
-    },
-    {
-      "id": "CPSC-10876-aojieni-silicone-recalls-sili-factory-pull-string-teething-toys-due-to",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Aojieni Silicone Recalls Sili Factory Pull String Teething Toys Due to Risk of Serious Injury or Death…",
-      "reason": "The recalled teething toys violate the mandatory standard for toys because the silicone strings are smaller and longer than permitted. The strings can reach the back of children's throat and become lodged, posing a…",
-      "brand": "Shenzhen Aojieni Silicone Technology Co., LTD., of China",
-      "company": "Shenzhen Aojieni Silicone Technology Co., LTD., of China",
-      "retailers": "Online at Amazon.com from May 2025 through April 2026 for between $11 to $15.",
-      "product": "Sili Factory Pull String Teething Toys",
-      "date": "2026-07-23",
-      "units": 5918,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Aojieni-Silicone-Recalls-Sili-Factory-Pull-String-Teething-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Violate-Mandatory-Standard-for-Toys",
-      "score": 48
-    },
-    {
-      "id": "NHTSA-26V557000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "TIFFIN WAYFARER Vehicles Recalled",
-      "reason": "Tiffin Motorhomes, Inc. (Tiffin) is recalling certain 2026-2027 Wayfarer recreational vehicles. The liquid propane (LP) tank may have been manufactured without the remote shut off and may be loose in the mounting…",
-      "brand": "TIFFIN",
-      "company": "Tiffin Motorhomes, Inc.",
-      "product": "WAYFARER",
-      "date": "2026-08-31",
-      "units": 88,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V557000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V557000",
-      "score": 42
-    },
-    {
-      "id": "NHTSA-26V555000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "JAYCO Vehicles Recalled",
-      "reason": "Jayco, Inc. (Jayco) is recalling certain 2027 Entegra Qwest and Jayco Melbourne Prestige recreational vehicles. The taillight harness may have been manufactured with an incorrect resistor. The defective harness may…",
-      "brand": "JAYCO",
-      "company": "Jayco, Inc.",
-      "product": "MELBOURNE PRESTIGE, QWEST",
-      "date": "2026-08-31",
-      "units": 11,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V555000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V555000",
-      "score": 42
-    },
-    {
-      "id": "NHTSA-26V554000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "JAYCO Vehicles Recalled",
-      "reason": "Jayco, Inc. (Jayco) is recalling certain 2026-2027 Entegra Accolade, Accolade XL, Jayco Seneca, and Seneca Prestige recreational vehicles. The tire size may be incorrect on the vehicle certification label. As such,…",
-      "brand": "JAYCO",
-      "company": "Jayco, Inc.",
-      "product": "SENECA, SENECA PRESTIGE, ACCOLADE XL, ACCOLADE",
-      "date": "2026-08-31",
-      "units": 149,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V554000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V554000",
-      "score": 42
-    },
-    {
-      "id": "NHTSA-26V556000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "BLUE BIRD VISION SCHOOL BUS Vehicles Recalled",
-      "reason": "Blue Bird Body Company (Blue Bird) is recalling certain 2025-2027 Vision school buses equipped with Ricon K-Series wheelchair platform lifts. The electrical contactor may fail, preventing the controls from stopping the…",
-      "brand": "BLUE BIRD",
-      "company": "Blue Bird Body Company",
-      "product": "VISION SCHOOL BUS",
-      "date": "2026-08-31",
-      "units": 82,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V556000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V556000",
-      "score": 42
-    },
-    {
-      "id": "NHTSA-26V553000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "MAGIC TILT ALUMINUM WATERCRAFT TRAILER Vehicles Recalled",
-      "reason": "Magic Tilt Trailers, Inc. (Magic Tilt) is recalling certain 2025-2026 aluminum personal watercraft boat trailers. The weld between the winch and base plate may fail, causing the winch to separate from the mount. 3,949…",
-      "brand": "MAGIC TILT",
-      "company": "Magic Tilt Trailers, Inc.",
-      "product": "ALUMINUM WATERCRAFT TRAILER",
-      "date": "2026-08-28",
-      "units": 3949,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V553000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V553000",
-      "score": 42
-    },
-    {
-      "id": "CPSC-10922-gigacloud-technology-usa-recalls-merax-murphy-beds-due-to-risk-of-seri",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "GigaCloud Technology USA Recalls Merax Murphy Beds Due to Risk of Serious Injury or Death from Impact…",
-      "reason": "During assembly or disassembly, the frame of the wall bed can fall onto consumers, posing deadly impact, crush and laceration hazards.",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com, HomeDepot.com, Wayfair.com, Walmart.com, Target.com, Overstock.com, Temu.com and other websites from May 2024 through February 2026 for between $900 and $1,100.",
-      "product": "Merax Full-Size and Twin-Size Murphy Beds",
-      "date": "2026-08-13",
-      "units": 1250,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/GigaCloud-Technology-USA-Recalls-Merax-Murphy-Beds-Due-to-Risk-of-Serious-Injury-or-Death-from-Impact-and-Crush-Hazards",
-      "score": 40
-    },
-    {
-      "id": "CPSC-10916-taleco-gear-recalls-baby-jumpers-baby-swings-and-2-in-1-baby-jumper-sw",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Taleco Gear Recalls Baby Jumpers, Baby Swings and 2-in-1 Baby Jumper & Swings Due to Risk of Serious…",
-      "reason": "The baby jumper, baby swing and 2-in-1 baby jumper & swing can become unstable, posing fall and impact hazards. Additionally, the hanging restraint straps and seat openings can pose strangulation hazards.",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com, Walmart.com and TalecoGear.com from April 2021 through July 2026 for between $65 and $120.",
-      "product": "G Taleco Gear Baby Jumpers, Baby Swings and 2-in-1 Baby Jumper & Swings",
-      "date": "2026-08-13",
-      "units": 41100,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Taleco-Gear-Recalls-Baby-Jumpers-Baby-Swings-and-2-in-1-Baby-Jumper-Swings-Due-to-Risk-of-Serious-Injury-or-Death-from-Fall-and-Strangulation-Hazards",
-      "score": 40
-    },
-    {
-      "id": "CPSC-10921-yamazuki-recalls-youth-all-terrain-vehicles-atvs-due-to-risk-of-seriou",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Yamazuki Recalls Youth All-Terrain Vehicles (ATVs) Due to Risk of Serious Injury or Death from Crash…",
-      "reason": "The recalled youth ATVs violate the mandatory safety standard for ATVs because the parking brakes fail to hold and the ATV's speed limiting device is not set to the restricted speed required for children ages six (6)…",
-      "brand": "Yongkang Dingchang Industry and Trade Co., Ltd, of China",
-      "company": "Yongkang Dingchang Industry and Trade Co., Ltd, of China",
-      "retailers": "Online at Amazon.com and Walmart.com from September 2025 through April 2026 for between $500 to $580.",
-      "product": "Youth All-Terrain Vehicles (ATVs), model XW-A19",
-      "date": "2026-08-13",
-      "units": 1050,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Yamazuki-Recalls-Youth-All-Terrain-Vehicles-ATVs-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard-Violates-Mandatory-Standard-for-ATVs",
-      "score": 40
-    },
-    {
-      "id": "CPSC-10905-a2batt-recalls-eemb-lithium-coin-battery-chargers-due-to-risk-of-serio",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "A2batt Recalls EEMB Lithium Coin Battery Chargers Due to Risk of Serious Injury or Death from Battery…",
-      "reason": "The recalled battery chargers violate the mandatory standard for consumer products containing button cell or coin batteries, because the charger has lithium coin batteries that can be accessed easily by children. In…",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com from August 2024 through March 2026 for about $14.",
-      "product": "EEMB Lithium-ion Coin Battery Chargers with Rechargeable 2032 Batteries",
-      "date": "2026-08-06",
-      "units": 4930,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/A2batt-Recalls-EEMB-Lithium-Coin-Battery-Chargers-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Consumer-Products-with-Coin-Batteries",
-      "score": 40
-    },
-    {
-      "id": "CPSC-10912-head-watersports-recalls-apeks-second-stage-scuba-regulators-recalled-",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Head Watersports Recalls Apeks Second Stage Scuba Regulators Recalled Due to Risk of Serious Injury or…",
-      "reason": "The recalled second stage regulators can restrict air flow to the user at depths exceeding 45 meters (approximately 147 feet), posing risk of serious injury or death from a drowning hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "Authorized Apeks, Aqualung, and HEAD Watersports retailers and online at apeksdiving.com, aqualung.com and head.com from April 2025 through June 2026 for between $260 to $1,140.",
-      "product": "Apeks Second Stage Scuba Regulators",
-      "date": "2026-08-06",
-      "units": 1105,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Head-Watersports-Recalls-Apeks-Second-Stage-Scuba-Regulators-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Drowning-Hazard",
-      "score": 40
-    },
-    {
-      "id": "CPSC-10900-magnetic-fidget-sliders-recalled-due-to-risk-of-serious-injury-or-deat",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Magnetic Fidget Sliders Recalled Due to Risk of Serious Injury or Death from Magnet Ingestion; Violate…",
-      "reason": "The magnetic fidget sliders violate the mandatory standard for toys because they can liberate loose magnets posing an ingestion hazard to children. When high-powered magnets are swallowed, the ingested magnets can…",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com from December 2025 through May 2026 for about $7.",
-      "product": "BUSOHA Magnetic Fidget Slider Toys",
-      "date": "2026-08-06",
-      "units": 2186,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Magnetic-Fidget-Sliders-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Magnet-Ingestion-Violate-Mandatory-Standard-for-Toys-Sold-on-Amazon-by-BUSOHA",
-      "score": 40
     }
   ]
 }
