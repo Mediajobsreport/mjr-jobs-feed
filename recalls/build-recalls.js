@@ -583,7 +583,7 @@ async function fetchBuffer(
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/1.6"
+            "MediaJobsReport-RecallFeed/1.7"
         }
       }
     );
@@ -608,7 +608,7 @@ async function fetchJSON(
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/1.6",
+            "MediaJobsReport-RecallFeed/1.7",
 
           "Accept":
             "application/json"
@@ -634,7 +634,7 @@ async function fetchText(
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/1.6",
+            "MediaJobsReport-RecallFeed/1.7",
 
           "Accept":
             "text/html,application/xhtml+xml"
@@ -1682,10 +1682,6 @@ async function loadUSDARecallLinks() {
   const found =
     [];
 
-  /*
-    Pull the official FSIS recall listings and read the real
-    /recalls-alerts/... links. This avoids inventing page slugs.
-  */
   const pages =
     Array.from(
       {
@@ -1941,12 +1937,21 @@ async function loadUSDA() {
             detailLinks
           );
 
+        /*
+          IMPORTANT v1.7 CHANGE:
+
+          Prefer the real individual USDA /recalls-alerts/
+          page found in the official listing.
+
+          Only fall back to the API-provided URL when an
+          individual listing page cannot be matched.
+        */
         const directUrl =
-          apiUrl ||
-          listedUrl;
+          listedUrl ||
+          apiUrl;
 
         if (
-          directUrl
+          listedUrl
         ) {
           matched++;
         }
@@ -2013,7 +2018,7 @@ async function loadUSDA() {
     );
 
   console.log(
-    `USDA exact detail URLs matched: ${matched}/${items.length}`
+    `USDA individual detail URLs matched from listing: ${matched}/${items.length}`
   );
 
   return items;
@@ -2163,17 +2168,6 @@ function parseDelimitedLine(
   return out;
 }
 
-/*
-  Convert all-cap NHTSA make/model data into readable display text.
-
-  Examples:
-  TOYOTA -> Toyota
-  CAMRY HYBRID -> Camry Hybrid
-  JEEP -> Jeep
-  RAM 1500 -> Ram 1500
-
-  Common acronyms remain uppercase.
-*/
 function vehicleDisplayName(v) {
   const special =
     new Map(
@@ -2354,9 +2348,6 @@ async function resolveNHTSADocument(
         []
       );
 
-    /*
-      First choice: the official Part 573 / Recall Report.
-    */
     const report =
       urls.find(
         url =>
@@ -2372,9 +2363,6 @@ async function resolveNHTSADocument(
       return report;
     }
 
-    /*
-      If RCLRPT isn't available, use another official recall PDF.
-    */
     const recallPdf =
       urls.find(
         url =>
@@ -2736,10 +2724,6 @@ async function loadNHTSA() {
       campaigns
     );
 
-  /*
-    Resolve readable NHTSA recall PDFs without hammering the API.
-    Six concurrent lookups is intentionally conservative.
-  */
   const documents =
     await mapLimit(
       campaignRows,
@@ -2889,12 +2873,6 @@ async function loadNHTSA() {
           campaign:
             g.campaign,
 
-          /*
-            Preferred destination:
-            readable official NHTSA recall PDF.
-
-            Only unresolved campaigns fall back to NHTSA's site.
-          */
           url:
             documentMap.get(
               g.campaign
@@ -3090,7 +3068,7 @@ function diversifyLead(
 
 async function run() {
   console.log(
-    "Building MJR recall feed v1.6..."
+    "Building MJR recall feed v1.7..."
   );
 
   const results =
@@ -3216,7 +3194,7 @@ async function run() {
         .toISOString(),
 
     version:
-      "1.6",
+      "1.7",
 
     newestDate,
 
