@@ -71,6 +71,54 @@ def strip_html(s):
     return clean(BeautifulSoup(s or "", "html.parser").get_text(" "))
 
 
+def format_description(s):
+    """Preserve useful source formatting while removing unsafe/noisy markup.
+
+    The resulting string is safe HTML intended for the XML description field.
+    Paragraphs, headings, line breaks, lists and basic emphasis are retained.
+    Scripts, styles, forms, buttons, images and all attributes are removed.
+    """
+    raw = html.unescape(str(s or "")).strip()
+    if not raw:
+        return ""
+
+    soup = BeautifulSoup(raw, "html.parser")
+
+    for bad in soup.find_all([
+        "script", "style", "noscript", "iframe", "form", "button",
+        "input", "select", "textarea", "svg", "canvas", "img",
+    ]):
+        bad.decompose()
+
+    allowed = {
+        "p", "br", "ul", "ol", "li",
+        "strong", "b", "em", "i",
+        "h2", "h3", "h4", "h5",
+    }
+
+    # Remove attributes and unwrap non-structural tags rather than deleting
+    # their text. This keeps employer wording while avoiding source CSS/classes.
+    for tag in list(soup.find_all(True)):
+        if tag.name in allowed:
+            tag.attrs = {}
+        else:
+            tag.unwrap()
+
+    out = str(soup).strip()
+
+    # If the source was plain text, preserve its line structure as HTML instead
+    # of collapsing it into one block.
+    if not re.search(r"<(?:p|br|ul|ol|li|h[2-5])\b", out, re.I):
+        text = BeautifulSoup(out, "html.parser").get_text("\n")
+        lines = [html.escape(x.strip()) for x in text.splitlines() if x.strip()]
+        if len(lines) > 1:
+            out = "".join(f"<p>{line}</p>" for line in lines)
+        else:
+            out = f"<p>{lines[0]}</p>" if lines else ""
+
+    return out
+
+
 def pdate(v):
     if not v:
         return None
@@ -173,7 +221,7 @@ class Job:
 
 def jobtype(title, text=""):
     t = clean(title).lower()
-    raw = clean(text or "")
+    raw = strip_html(text or "")
 
     # Internship must be indicated by the job title itself. Employer boilerplate
     # often mentions interns/internships and must not reclassify normal jobs.
@@ -234,24 +282,6 @@ def jobtype(title, text=""):
 
 
 def category(title, desc, industry, company):
-    # v83 strong Engineering overrides.
-    _v83_title = (title or "").lower()
-    _v83_engineering_title_patterns = (
-        "software tester", "software test", "software qa", "qa engineer",
-        "quality assurance engineer", "quality assurance tester", "test engineer",
-        "software engineer", "software developer", "application developer",
-        "web developer", "programmer", "devops", "site reliability engineer",
-        "systems engineer", "system engineer", "network engineer", "network administrator",
-        "systems administrator", "system administrator", "cybersecurity", "cyber security",
-        "information security", "security engineer", "it support", "technical support",
-        "help desk", "service desk", "desktop support", "it technician",
-        "information technology", "infrastructure engineer", "cloud engineer",
-        "building maintenance", "building maintenance technician",
-        "maintenance engineer", "facilities maintenance",
-    )
-    if any(p in _v83_title for p in _v83_engineering_title_patterns):
-        return "Engineering"
-
     """
     MJR job-category classifier.
 
@@ -264,7 +294,7 @@ def category(title, desc, industry, company):
     """
 
     t = clean(title).lower()
-    d = clean(desc).lower()
+    d = strip_html(desc).lower()
     c = clean(company).lower()
     ind = clean(industry).lower()
 
@@ -276,21 +306,12 @@ def category(title, desc, industry, company):
     # Employer/media context is used for platform-specific roles and the final
     # fallback only. Functional titles such as Sales, Engineering, HR, etc.
     # continue to override employer type.
-    # Some diversified media companies are radio-first for MJR job classification.
-    # Their generic media wording can mention television/video in boilerplate, so keep
-    # an explicit employer signal that wins for ambiguous station/on-air roles.
-    radio_first_employer = any(x in c for x in [
-        "iheartmedia", "iheart media", "iheart",
-        "urban one", "radio one",
-    ])
-
     radio_context = (
         ind == "radio"
-        or radio_first_employer
         or any(x in c for x in [
-            "audacy", "beasley", "bonneville", "cumulus",
+            "audacy", "beasley", "bonneville", "cumulus", "iheart",
             "lotus communications", "stingray", "pattison", "evanov",
-            "siriusxm", "sun broadcasting", "good karma"
+            "urban one", "siriusxm", "sun broadcasting", "good karma"
         ])
         or re.search(r"\b(radio station|radio group|fm station|am station|broadcast radio)\b", d_short)
     )
@@ -321,11 +342,6 @@ def category(title, desc, industry, company):
     if re.search(r"\bsales\b", t) and not re.search(r"\bsalesforce\b", t):
         return "Sales & Marketing"
 
-    # Integrated marketing is a revenue/advertising function. This must resolve
-    # before vague Specialist wording can be interpreted as technical/Engineering.
-    if re.search(r"\b(integrated marketing|integrated marketing specialist|marketing specialist)\b", t):
-        return "Sales & Marketing"
-
     if re.search(r"\b(morning show personality|radio personality|air personality|on[- ]air personality)\b", t):
         return "Radio"
 
@@ -345,21 +361,8 @@ def category(title, desc, industry, company):
             return "Radio"
         return "Television"
 
-    # All anchor roles follow the employer/platform: radio company => Radio;
-    # otherwise Television. This runs before generic Journalism anchor rules.
-    if re.search(r"\banchor\b", t):
-        if radio_first_employer or (radio_context and not television_context):
-            return "Radio"
-        return "Television"
-
-    # Promotions is a station/platform function for MJR. Explicit radio-first
-    # employers (notably iHeartMedia and Urban One/Radio One) must win before
-    # incidental television/video wording in descriptions.
+    # Promotions is a station/platform programming function for MJR.
     if re.search(r"\b(promotions?|promotion)\b", t):
-        if radio_first_employer:
-            return "Radio"
-        if radio_context and not television_context:
-            return "Radio"
         if television_context or re.search(r"\b(tv|television|newscast|television station)\b", td):
             return "Television"
         if radio_context or re.search(r"\b(radio|fm station|am station|radio station)\b", td):
@@ -967,11 +970,6 @@ def category(title, desc, industry, company):
     if ind == "digital":
         return "Digital"
 
-    # Radio-first employers should not be pushed into Television by generic
-    # description boilerplate after all specific functional categories have run.
-    if radio_first_employer:
-        return "Radio"
-
     if television_context or ind == "television":
         return "Television"
 
@@ -988,7 +986,7 @@ def infer_country(location, company="", description=""):
     well-known Canadian place names are mapped to CA.
     """
     loc = clean(location)
-    s = f" {loc.lower()} {clean(description)[:1200].lower()} "
+    s = f" {loc.lower()} {strip_html(description)[:1200].lower()} "
 
     canadian_abbr = re.search(
         r"(?:^|[, /-])(?:ab|bc|mb|nb|nl|ns|nt|nu|on|pe|qc|sk|yt)(?:$|[, /-])",
@@ -1043,7 +1041,7 @@ def normalize_work_arrangement(description, location):
     value itself is Remote. Hybrid only when THIS JOB is explicitly hybrid or
     requires a recurring office/remote mix. Otherwise default On-Site.
     """
-    desc = clean(description).lower()
+    desc = strip_html(description).lower()
     loc = clean(location).lower()
     s = f" {desc} "
 
@@ -1276,7 +1274,7 @@ def workday(src):
                 continue
 
             title = clean(info.get("title") or p.get("title"))
-            desc = strip_html(info.get("jobDescription"))
+            desc = format_description(info.get("jobDescription"))
             loc = clean(info.get("location") or p.get("locationsText"))
             url = info.get("externalUrl") or f"https://{host}/{site}{ext}"
 
@@ -1326,7 +1324,7 @@ def greenhouse(src):
             continue
 
         title = clean(p.get("title"))
-        desc = strip_html(p.get("content"))
+        desc = format_description(p.get("content"))
         loc = clean((p.get("location") or {}).get("name"))
         url = p.get("absolute_url")
 
@@ -1437,16 +1435,16 @@ def _adp_description(obj):
         "postingDescription", "externalDescription"
     }):
         if isinstance(v, str):
-            t = strip_html(v)
-            if len(t) > len(candidates[0]) if candidates else True:
-                candidates.insert(0, t)
+            t = format_description(v)
+            if t:
+                candidates.append(t)
         elif isinstance(v, dict):
             for k in ("longName", "shortName", "codeValue", "text", "value"):
                 if isinstance(v.get(k), str):
-                    t = strip_html(v[k])
+                    t = format_description(v[k])
                     if t:
                         candidates.append(t)
-    return max(candidates, key=len, default="")
+    return max(candidates, key=lambda x: len(strip_html(x)), default="")
 
 
 def _adp_apply_url(src_url, job_id, detail=None):
@@ -1846,10 +1844,10 @@ def paylocity(src):
         title = clean(str(p.get("title") or p.get("Title") or ""))
         if not jid or not title:
             continue
-        desc = strip_html(str(p.get("description") or p.get("Description") or ""))
-        requirements = strip_html(str(p.get("requirements") or p.get("Requirements") or ""))
-        if requirements and requirements.lower() not in desc.lower():
-            desc = clean(desc + " Requirements: " + requirements)
+        desc = format_description(str(p.get("description") or p.get("Description") or ""))
+        requirements = format_description(str(p.get("requirements") or p.get("Requirements") or ""))
+        if requirements and strip_html(requirements).lower() not in strip_html(desc).lower():
+            desc = (desc + "<h3>Requirements</h3>" + requirements).strip()
         if len(desc) < 200:
             continue
         jl = p.get("jobLocation") or p.get("JobLocation") or {}
@@ -2062,7 +2060,7 @@ def dayforce(src):
             continue
 
         desc_raw = str(_dayforce_get(item, "Description", "JobDescription", "PostingDescription"))
-        desc = strip_html(desc_raw)
+        desc = format_description(desc_raw)
         if len(desc) < 80:
             continue
 
@@ -2201,7 +2199,7 @@ def _job_from_detail(src, url, html_text):
         jp = json_jobs[0]
         title = clean(jp.get("title") or "")
         desc_html = jp.get("description") or ""
-        desc = strip_html(desc_html)
+        desc = format_description(desc_html)
         pd = pdate(jp.get("datePosted"))
         valid_through = pdate(jp.get("validThrough"))
         loc = _location_from_jsonld(jp)
@@ -5924,7 +5922,7 @@ def siriusxm_v17(src):
                 or pick_by_keys(data, [r"(?:^|\.)description$"])
                 or ""
             )
-            desc = strip_html(desc_html)
+            desc = format_description(desc_html)
 
             if not title or len(desc) < 150:
                 continue
@@ -6990,7 +6988,7 @@ def _v27_job_from_jsonld(src, page_url, obj):
     desc_html = obj.get("description") or ""
     if isinstance(desc_html, (dict, list)):
         desc_html = json.dumps(desc_html, ensure_ascii=False)
-    desc = strip_html(str(desc_html))
+    desc = format_description(str(desc_html))
     if not title or len(desc) < 40:
         return None
 
@@ -7360,6 +7358,15 @@ def stateful(jobs):
                 x.get("city", ""),
                 x.get("company", ""),
                 x.get("description", ""),
+            )
+            # v81: recalculate retained jobs too. Older state entries may carry
+            # a false Remote/Hybrid value from an earlier classifier.
+            retained_location = ", ".join(
+                part for part in [x.get("city", ""), x.get("state", "")] if part
+            )
+            x["work_arrangement"] = normalize_work_arrangement(
+                x.get("description", ""),
+                retained_location,
             )
             ret.append(Job(**x))
         except Exception:
