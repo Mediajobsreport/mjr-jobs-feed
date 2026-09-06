@@ -1,6 +1,6 @@
 {
-  "generated": "2026-09-06T13:39:06.949Z",
-  "version": "1.6",
+  "generated": "2026-09-06T13:45:51.306Z",
+  "version": "1.7",
   "newestDate": "2026-09-04",
   "stale": false,
   "sources": {
@@ -1630,7 +1630,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/city-foods-inc--recalls-ready-eat-pastrami-and-corned-beef-products-due-possible",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/city-foods-inc--recalls-ready-eat-pastrami-and-corned-beef-products-due-possible",
       "score": 63
     },
     {
@@ -1695,7 +1695,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-chicken-salad-product-may-be-contaminated-listeria",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-chicken-salad-product-may-be-contaminated-listeria",
       "score": 63
     },
     {
