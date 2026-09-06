@@ -5,6 +5,7 @@ const AdmZip = require("adm-zip");
 
 const OUTPUT_DIR = path.join(process.cwd(), "..", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "mjr-recalls.json");
+const TEMP_OUTPUT_FILE = OUTPUT_FILE + ".tmp";
 
 const FDA_XLSX =
   "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/datatables-data?_format=xlsx&page=";
@@ -35,6 +36,27 @@ const USDA_PAGE =
 
 const NHTSA_PAGE =
   "https://www.nhtsa.gov/recalls";
+
+/*
+  SAFETY FLOOR
+
+  These are intentionally far below the normal counts.
+
+  Normal recent runs:
+  FDA   ~1,000
+  CPSC  ~9,990
+  USDA  ~2,023
+  NHTSA ~100
+
+  If a source suddenly falls below these floors, the build stops
+  BEFORE overwriting the existing live JSON.
+*/
+const MIN_SOURCE_COUNTS = {
+  FDA: 500,
+  CPSC: 5000,
+  USDA: 500,
+  NHTSA: 50
+};
 
 const MAJOR_BRANDS = [
   "great value",
@@ -451,39 +473,212 @@ function extractUnits(v) {
   return 0;
 }
 
-async function fetchBuffer(url) {
+/* =========================================================
+   NETWORK RETRY / RELIABILITY
+   ========================================================= */
+
+function sleep(ms) {
+  return new Promise(
+    resolve =>
+      setTimeout(
+        resolve,
+        ms
+      )
+  );
+}
+
+function isRetryableStatus(status) {
+  return [
+    408,
+    425,
+    429,
+    500,
+    502,
+    503,
+    504
+  ].includes(status);
+}
+
+function isRetryableError(err) {
+  const code =
+    err &&
+    (
+      err.code ||
+      err.cause?.code
+    );
+
+  if (
+    [
+      "ECONNRESET",
+      "ETIMEDOUT",
+      "ECONNREFUSED",
+      "EAI_AGAIN",
+      "ENETUNREACH",
+      "EPIPE",
+      "UND_ERR_SOCKET",
+      "UND_ERR_CONNECT_TIMEOUT",
+      "UND_ERR_HEADERS_TIMEOUT",
+      "UND_ERR_BODY_TIMEOUT"
+    ].includes(code)
+  ) {
+    return true;
+  }
+
+  const message =
+    String(
+      err?.message ||
+      err ||
+      ""
+    ).toLowerCase();
+
+  return (
+    message.includes("terminated") ||
+    message.includes("fetch failed") ||
+    message.includes("socket") ||
+    message.includes("connection reset") ||
+    message.includes("network")
+  );
+}
+
+async function fetchWithRetry(
+  url,
+  options = {},
+  label = "",
+  maxAttempts = 4
+) {
+  let lastError = null;
+
+  for (
+    let attempt = 1;
+    attempt <= maxAttempts;
+    attempt++
+  ) {
+    try {
+      const response =
+        await fetch(
+          url,
+          options
+        );
+
+      if (response.ok) {
+        if (attempt > 1) {
+          console.log(
+            `${label || url} succeeded on retry ${attempt}/${maxAttempts}`
+          );
+        }
+
+        return response;
+      }
+
+      const error =
+        new Error(
+          `${url} returned HTTP ${response.status}`
+        );
+
+      error.status =
+        response.status;
+
+      if (
+        !isRetryableStatus(
+          response.status
+        ) ||
+        attempt === maxAttempts
+      ) {
+        throw error;
+      }
+
+      lastError =
+        error;
+
+      console.warn(
+        `${label || url} temporary HTTP ${response.status}; retry ${attempt}/${maxAttempts}`
+      );
+    } catch (err) {
+      lastError =
+        err;
+
+      const retryable =
+        isRetryableError(
+          err
+        ) ||
+        isRetryableStatus(
+          err?.status
+        );
+
+      if (
+        !retryable ||
+        attempt === maxAttempts
+      ) {
+        throw err;
+      }
+
+      console.warn(
+        `${label || url} temporary network failure; retry ${attempt}/${maxAttempts}:`,
+        err.message ||
+        err
+      );
+    }
+
+    /*
+      Short progressive delay:
+      1.5 sec
+      3 sec
+      6 sec
+    */
+    const delay =
+      1500 *
+      Math.pow(
+        2,
+        attempt - 1
+      );
+
+    await sleep(
+      delay
+    );
+  }
+
+  throw lastError ||
+    new Error(
+      `Unable to fetch ${url}`
+    );
+}
+
+async function fetchBuffer(
+  url,
+  label = ""
+) {
   const r =
-    await fetch(
+    await fetchWithRetry(
       url,
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/2.1"
+            "MediaJobsReport-RecallFeed/2.2"
         },
+
         redirect:
           "follow"
-      }
+      },
+      label ||
+      url
     );
-
-  if (!r.ok) {
-    throw new Error(
-      `${url} returned HTTP ${r.status}`
-    );
-  }
 
   return Buffer.from(
     await r.arrayBuffer()
   );
 }
 
-async function fetchJSON(url) {
+async function fetchJSON(
+  url,
+  label = ""
+) {
   const r =
-    await fetch(
+    await fetchWithRetry(
       url,
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/2.1",
+            "MediaJobsReport-RecallFeed/2.2",
 
           "Accept":
             "application/json"
@@ -491,26 +686,25 @@ async function fetchJSON(url) {
 
         redirect:
           "follow"
-      }
+      },
+      label ||
+      url
     );
-
-  if (!r.ok) {
-    throw new Error(
-      `${url} returned HTTP ${r.status}`
-    );
-  }
 
   return r.json();
 }
 
-async function fetchText(url) {
+async function fetchText(
+  url,
+  label = ""
+) {
   const r =
-    await fetch(
+    await fetchWithRetry(
       url,
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/2.1",
+            "MediaJobsReport-RecallFeed/2.2",
 
           "Accept":
             "text/html,application/xhtml+xml"
@@ -518,26 +712,25 @@ async function fetchText(url) {
 
         redirect:
           "follow"
-      }
+      },
+      label ||
+      url
     );
-
-  if (!r.ok) {
-    throw new Error(
-      `${url} returned HTTP ${r.status}`
-    );
-  }
 
   return r.text();
 }
 
-async function fetchXML(url) {
+async function fetchXML(
+  url,
+  label = ""
+) {
   const r =
-    await fetch(
+    await fetchWithRetry(
       url,
       {
         headers: {
           "User-Agent":
-            "MediaJobsReport-RecallFeed/2.1",
+            "MediaJobsReport-RecallFeed/2.2",
 
           "Accept":
             "application/xml,text/xml,text/plain,*/*"
@@ -545,14 +738,10 @@ async function fetchXML(url) {
 
         redirect:
           "follow"
-      }
+      },
+      label ||
+      url
     );
-
-  if (!r.ok) {
-    throw new Error(
-      `${url} returned HTTP ${r.status}`
-    );
-  }
 
   return r.text();
 }
@@ -563,15 +752,22 @@ async function mapLimit(
   worker
 ) {
   const results =
-    new Array(items.length);
+    new Array(
+      items.length
+    );
 
-  let next = 0;
+  let next =
+    0;
 
   async function runner() {
     while (true) {
-      const i = next++;
+      const i =
+        next++;
 
-      if (i >= items.length) {
+      if (
+        i >=
+        items.length
+      ) {
         return;
       }
 
@@ -745,7 +941,8 @@ function tokenSimilarity(
     return 0;
   }
 
-  let common = 0;
+  let common =
+    0;
 
   for (const x of aa) {
     if (bb.has(x)) {
@@ -768,7 +965,9 @@ function tokenCoverage(
 ) {
   const needed =
     new Set(
-      normalizeMatchText(needle)
+      normalizeMatchText(
+        needle
+      )
         .split(" ")
         .filter(
           x =>
@@ -778,7 +977,9 @@ function tokenCoverage(
 
   const available =
     new Set(
-      normalizeMatchText(haystack)
+      normalizeMatchText(
+        haystack
+      )
         .split(" ")
         .filter(
           x =>
@@ -793,7 +994,8 @@ function tokenCoverage(
     return 0;
   }
 
-  let common = 0;
+  let common =
+    0;
 
   for (const x of needed) {
     if (available.has(x)) {
@@ -843,7 +1045,9 @@ function makeFDAHeadline(
   company
 ) {
   const b =
-    clean(brand);
+    clean(
+      brand
+    );
 
   const p =
     cleanProductName(
@@ -926,9 +1130,14 @@ function fdaRowsFromSheet(sheet) {
       .sheet_to_json(
         sheet,
         {
-          header: 1,
-          defval: "",
-          raw: false
+          header:
+            1,
+
+          defval:
+            "",
+
+          raw:
+            false
         }
       );
 
@@ -947,13 +1156,23 @@ function fdaRowsFromSheet(sheet) {
     normalized
       .findIndex(
         row =>
-          row.includes("date") &&
-          row.includes("brandnames") &&
-          row.includes("productdescription") &&
-          row.includes("companyname")
+          row.includes(
+            "date"
+          ) &&
+          row.includes(
+            "brandnames"
+          ) &&
+          row.includes(
+            "productdescription"
+          ) &&
+          row.includes(
+            "companyname"
+          )
       );
 
-  if (headerIndex < 0) {
+  if (
+    headerIndex < 0
+  ) {
     console.log(
       "FDA first rows:",
       matrix.slice(
@@ -972,7 +1191,9 @@ function fdaRowsFromSheet(sheet) {
       headerIndex
     ].map(
       cell =>
-        clean(cell)
+        clean(
+          cell
+        )
     );
 
   console.log(
@@ -1001,7 +1222,9 @@ function fdaRowsFromSheet(sheet) {
       x =>
         x.row.some(
           cell =>
-            clean(cell)
+            clean(
+              cell
+            )
         )
     )
     .map(
@@ -1009,8 +1232,11 @@ function fdaRowsFromSheet(sheet) {
         row,
         sheetRow
       }) => {
-        const obj = {};
-        const directLinks = [];
+        const obj =
+          {};
+
+        const directLinks =
+          [];
 
         headers.forEach(
           (
@@ -1030,8 +1256,11 @@ function fdaRowsFromSheet(sheet) {
               XLSX.utils
                 .encode_cell(
                   {
-                    r: sheetRow,
-                    c: i
+                    r:
+                      sheetRow,
+
+                    c:
+                      i
                   }
                 );
 
@@ -1104,12 +1333,12 @@ function pickField(
 }
 
 /* =========================================================
-   EXISTING FDA HTML LINK DISCOVERY
-   Kept as fallback.
+   FDA HTML FALLBACK
    ========================================================= */
 
 function parseFDAListingRows(html) {
-  const found = [];
+  const found =
+    [];
 
   const rowRe =
     /<tr\b[^>]*>([\s\S]*?)<\/tr>/gi;
@@ -1127,7 +1356,8 @@ function parseFDAListingRows(html) {
     const rowHtml =
       rowMatch[1];
 
-    const cells = [];
+    const cells =
+      [];
 
     const cellRe =
       /<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi;
@@ -1176,7 +1406,9 @@ function parseFDAListingRows(html) {
               .test(
                 url
               ) &&
-            lower(url)
+            lower(
+              url
+            )
               .replace(
                 /\/$/,
                 ""
@@ -1241,12 +1473,14 @@ function parseFDAListingRows(html) {
 }
 
 async function loadFDADetailLinks() {
-  const found = [];
+  const found =
+    [];
 
   const pages =
     Array.from(
       {
-        length: 20
+        length:
+          20
       },
 
       (
@@ -1269,7 +1503,8 @@ async function loadFDADetailLinks() {
       try {
         const html =
           await fetchText(
-            pageUrl
+            pageUrl,
+            "FDA listing"
           );
 
         found.push(
@@ -1315,7 +1550,8 @@ function matchFDADetailUrl(
     links.filter(
       x =>
         !item.date ||
-        x.date === item.date
+        x.date ===
+          item.date
     );
 
   const pool =
@@ -1344,8 +1580,11 @@ function matchFDADetailUrl(
     return exact.url;
   }
 
-  let best = null;
-  let bestScore = 0;
+  let best =
+    null;
+
+  let bestScore =
+    0;
 
   for (const x of pool) {
     const brandScore =
@@ -1401,12 +1640,14 @@ function matchFDADetailUrl(
 }
 
 /* =========================================================
-   FDA 2026 OFFICIAL XML
+   FDA OFFICIAL 2026 XML
    ========================================================= */
 
 function decodeXml(v) {
   return String(
-    v == null ? "" : v
+    v == null
+      ? ""
+      : v
   )
     .replace(
       /<!\[CDATA\[([\s\S]*?)\]\]>/g,
@@ -1424,17 +1665,16 @@ function decodeXml(v) {
 
 function extractFDAUrlsFromXml(xml) {
   const raw =
-    decodeXml(xml);
+    decodeXml(
+      xml
+    );
 
-  const found = [];
-  const seen = new Set();
+  const found =
+    [];
 
-  /*
-    Handles BOTH:
-      https://www.fda.gov/safety/...
-    and:
-      /safety/recalls-market-withdrawals-safety-alerts/...
-  */
+  const seen =
+    new Set();
+
   const urlRegex =
     /(?:https?:\/\/(?:www\.)?fda\.gov)?\/safety\/recalls-market-withdrawals-safety-alerts\/[a-z0-9][a-z0-9-]*/gi;
 
@@ -1475,22 +1715,19 @@ function extractFDAUrlsFromXml(xml) {
       url
     );
 
-    /*
-      Preserve nearby XML text so the existing FDA
-      row can be compared against the announcement.
-    */
     const start =
       Math.max(
         0,
-        match.index - 3000
+        match.index -
+          3000
       );
 
     const end =
       Math.min(
         raw.length,
         match.index +
-        match[0].length +
-        3000
+          match[0].length +
+          3000
       );
 
     const context =
@@ -1516,7 +1753,8 @@ async function loadFDAOfficialXmlLinks() {
   try {
     const xml =
       await fetchXML(
-        FDA_2026_XML
+        FDA_2026_XML,
+        "FDA official XML"
       );
 
     console.log(
@@ -1541,8 +1779,10 @@ async function loadFDAOfficialXmlLinks() {
     );
 
     /*
-      Supplemental source only.
-      Never fail the whole FDA feed if XML has an issue.
+      XML is supplemental.
+
+      Failure here should not fail FDA because the XLSX
+      feed and existing HTML matcher still work.
     */
     return [];
   }
@@ -1574,8 +1814,11 @@ function fdaDateMatch(
     d.toLocaleString(
       "en-US",
       {
-        month: "long",
-        timeZone: "UTC"
+        month:
+          "long",
+
+        timeZone:
+          "UTC"
       }
     );
 
@@ -1583,8 +1826,11 @@ function fdaDateMatch(
     d.toLocaleString(
       "en-US",
       {
-        month: "short",
-        timeZone: "UTC"
+        month:
+          "short",
+
+        timeZone:
+          "UTC"
       }
     );
 
@@ -1649,18 +1895,17 @@ function fdaXmlMatchScore(
       item.company
     );
 
-  let score = 0;
+  let score =
+    0;
 
-  /*
-    Brand
-  */
   if (
     brand &&
     context.includes(
       brand
     )
   ) {
-    score += 45;
+    score +=
+      45;
   } else if (brand) {
     const coverage =
       tokenCoverage(
@@ -1671,24 +1916,24 @@ function fdaXmlMatchScore(
     if (
       coverage >= 0.80
     ) {
-      score += 35;
+      score +=
+        35;
     } else if (
       coverage >= 0.60
     ) {
-      score += 25;
+      score +=
+        25;
     }
   }
 
-  /*
-    Product
-  */
   if (
     product &&
     context.includes(
       product
     )
   ) {
-    score += 45;
+    score +=
+      45;
   } else if (product) {
     const coverage =
       tokenCoverage(
@@ -1699,32 +1944,34 @@ function fdaXmlMatchScore(
     if (
       coverage >= 0.85
     ) {
-      score += 40;
+      score +=
+        40;
     } else if (
       coverage >= 0.70
     ) {
-      score += 32;
+      score +=
+        32;
     } else if (
       coverage >= 0.55
     ) {
-      score += 22;
+      score +=
+        22;
     } else if (
       coverage >= 0.40
     ) {
-      score += 12;
+      score +=
+        12;
     }
   }
 
-  /*
-    Company
-  */
   if (
     company &&
     context.includes(
       company
     )
   ) {
-    score += 20;
+    score +=
+      20;
   } else if (company) {
     const coverage =
       tokenCoverage(
@@ -1735,47 +1982,47 @@ function fdaXmlMatchScore(
     if (
       coverage >= 0.80
     ) {
-      score += 15;
+      score +=
+        15;
     } else if (
       coverage >= 0.60
     ) {
-      score += 8;
+      score +=
+        8;
     }
   }
 
-  /*
-    Date
-  */
   if (
     fdaDateMatch(
       item.date,
       candidate.context
     )
   ) {
-    score += 15;
+    score +=
+      15;
   }
 
-  /*
-    Helpful product-word signals.
-    These do not create a match alone.
-  */
   const keyProductWords =
     normalizeMatchText(
       cleanProductName(
         item.product
       )
     )
-      .split(" ")
+      .split(
+        " "
+      )
       .filter(
         x =>
-          x.length >= 5
+          x.length >=
+          5
       )
       .slice(
         0,
         8
       );
 
-  let keyMatches = 0;
+  let keyMatches =
+    0;
 
   for (
     const word of
@@ -1791,13 +2038,17 @@ function fdaXmlMatchScore(
   }
 
   if (
-    keyMatches >= 4
+    keyMatches >=
+    4
   ) {
-    score += 10;
+    score +=
+      10;
   } else if (
-    keyMatches >= 2
+    keyMatches >=
+    2
   ) {
-    score += 5;
+    score +=
+      5;
   }
 
   return score;
@@ -1831,7 +2082,8 @@ function matchFDAOfficialXmlUrl(
       )
       .filter(
         x =>
-          x.score > 0
+          x.score >
+          0
       )
       .sort(
         (
@@ -1855,24 +2107,18 @@ function matchFDAOfficialXmlUrl(
     scored[1] ||
     null;
 
-  /*
-    Conservative threshold.
-    We want correct links, not merely more links.
-  */
   if (
-    best.score < 70
+    best.score <
+    70
   ) {
     return "";
   }
 
-  /*
-    Reject ambiguous matches where two FDA announcements
-    score nearly the same.
-  */
   if (
     second &&
     second.score >=
-      best.score - 5
+      best.score -
+        5
   ) {
     return "";
   }
@@ -1893,7 +2139,8 @@ async function loadFDA() {
     await Promise.all(
       [
         fetchBuffer(
-          FDA_XLSX
+          FDA_XLSX,
+          "FDA XLSX"
         ),
 
         loadFDADetailLinks(),
@@ -1906,7 +2153,8 @@ async function loadFDA() {
     XLSX.read(
       buffer,
       {
-        type: "buffer"
+        type:
+          "buffer"
       }
     );
 
@@ -1930,9 +2178,14 @@ async function loadFDA() {
     )
   );
 
-  let alreadyDirect = 0;
-  let matchedXml = 0;
-  let matchedListing = 0;
+  let alreadyDirect =
+    0;
+
+  let matchedXml =
+    0;
+
+  let matchedListing =
+    0;
 
   const items =
     rows
@@ -2061,17 +2314,6 @@ async function loadFDA() {
               ""
           };
 
-          /*
-            PRIORITY:
-
-            1. Existing direct URL embedded in FDA spreadsheet.
-            2. Official 2026 FDA recall XML.
-            3. Existing v1.9 FDA HTML matcher.
-            4. Generic FDA recall page.
-
-            We NEVER overwrite a working spreadsheet link.
-          */
-
           if (
             item.url
           ) {
@@ -2171,13 +2413,13 @@ async function loadFDA() {
 
 /* =========================================================
    CPSC
-   UNCHANGED FROM WORKING v1.9
    ========================================================= */
 
 async function loadCPSC() {
   const data =
     await fetchJSON(
-      CPSC_API
+      CPSC_API,
+      "CPSC API"
     );
 
   const rows =
@@ -2426,11 +2668,11 @@ async function loadCPSC() {
 
 /* =========================================================
    USDA
-   UNCHANGED FROM WORKING v1.9
    ========================================================= */
 
 function parseUSDAListingRows(html) {
-  const found = [];
+  const found =
+    [];
 
   const re =
     /<a\b[^>]*href=["']([^"']*\/recalls-alerts\/[^"'#?]+)["'][^>]*>([\s\S]*?)<\/a>/gi;
@@ -2474,12 +2716,14 @@ function parseUSDAListingRows(html) {
 }
 
 async function loadUSDARecallLinks() {
-  const found = [];
+  const found =
+    [];
 
   const pages =
     Array.from(
       {
-        length: 15
+        length:
+          15
       },
 
       (
@@ -2496,7 +2740,8 @@ async function loadUSDARecallLinks() {
       try {
         const html =
           await fetchText(
-            pageUrl
+            pageUrl,
+            "USDA recall listing"
           );
 
         found.push(
@@ -2518,9 +2763,7 @@ async function loadUSDARecallLinks() {
   const unique =
     new Map();
 
-  for (
-    const x of found
-  ) {
+  for (const x of found) {
     unique.set(
       x.url,
       x
@@ -2562,8 +2805,11 @@ function matchUSDARecallUrl(
     return exact.url;
   }
 
-  let best = null;
-  let bestScore = 0;
+  let best =
+    null;
+
+  let bestScore =
+    0;
 
   for (const x of links) {
     const score =
@@ -2600,7 +2846,8 @@ async function loadUSDA() {
     await Promise.all(
       [
         fetchJSON(
-          USDA_API
+          USDA_API,
+          "USDA API"
         ),
 
         loadUSDARecallLinks()
@@ -2621,7 +2868,8 @@ async function loadUSDA() {
             : []
         );
 
-  let matched = 0;
+  let matched =
+    0;
 
   const items =
     rows.map(
@@ -2681,7 +2929,9 @@ async function loadUSDA() {
             detailLinks
           );
 
-        if (listedUrl) {
+        if (
+          listedUrl
+        ) {
           matched++;
         }
 
@@ -2756,7 +3006,6 @@ async function loadUSDA() {
 
 /* =========================================================
    NHTSA
-   UNCHANGED FROM WORKING v1.9
    ========================================================= */
 
 const NHTSA_FIELDS = [
@@ -2834,7 +3083,8 @@ function parseDelimitedLine(
   delimiter
 ) {
   if (
-    delimiter !== ","
+    delimiter !==
+    ","
   ) {
     return line
       .split(
@@ -2845,10 +3095,14 @@ function parseDelimitedLine(
       );
   }
 
-  const out = [];
+  const out =
+    [];
 
-  let cur = "";
-  let quoted = false;
+  let cur =
+    "";
+
+  let quoted =
+    false;
 
   for (
     let i = 0;
@@ -2953,7 +3207,9 @@ function vehicleDisplayName(v) {
       ]
     );
 
-  return clean(v)
+  return clean(
+    v
+  )
     .split(
       /\s+/
     )
@@ -3073,7 +3329,8 @@ async function resolveNHTSADocument(
   try {
     const data =
       await fetchJSON(
-        endpoint
+        endpoint,
+        `NHTSA document ${campaign}`
       );
 
     const urls =
@@ -3091,7 +3348,9 @@ async function resolveNHTSADocument(
             )
       );
 
-    if (report) {
+    if (
+      report
+    ) {
       return report;
     }
 
@@ -3106,6 +3365,10 @@ async function resolveNHTSADocument(
       ""
     );
   } catch (err) {
+    /*
+      Individual PDF resolution failure does not kill NHTSA.
+      We still have the NHTSA recall search fallback.
+    */
     console.warn(
       `NHTSA document lookup failed for ${campaign}:`,
       err.message ||
@@ -3119,7 +3382,8 @@ async function resolveNHTSADocument(
 async function loadNHTSA() {
   const buffer =
     await fetchBuffer(
-      NHTSA_ZIP
+      NHTSA_ZIP,
+      "NHTSA recall ZIP"
     );
 
   const zip =
@@ -3252,7 +3516,8 @@ async function loadNHTSA() {
         )
       : lines;
 
-  const campaigns = {};
+  const campaigns =
+    {};
 
   for (
     const line of
@@ -3264,7 +3529,8 @@ async function loadNHTSA() {
         delimiter
       );
 
-    const row = {};
+    const row =
+      {};
 
     headers.forEach(
       (
@@ -3287,7 +3553,9 @@ async function loadNHTSA() {
       row.NHTSA_CAMPAIGN_NUMBER ||
       "";
 
-    if (!campaign) {
+    if (
+      !campaign
+    ) {
       continue;
     }
 
@@ -3303,7 +3571,8 @@ async function loadNHTSA() {
       date &&
       daysOld(
         date
-      ) > 45
+      ) >
+        45
     ) {
       continue;
     }
@@ -3505,7 +3774,8 @@ async function loadNHTSA() {
         const title =
           make
             ? (
-                displayModels.length === 1
+                displayModels.length ===
+                  1
                   ? `${make} ${displayModels[0]} Vehicles Recalled`
                   : `${make} Vehicles Recalled`
               )
@@ -3690,16 +3960,22 @@ function diversifyLead(
     ...items
   ];
 
-  const chosen = [];
-  const sourceCounts = {};
+  const chosen =
+    [];
+
+  const sourceCounts =
+    {};
 
   while (
     remaining.length &&
     chosen.length <
       leadCount
   ) {
-    let bestIndex = 0;
-    let bestAdjusted = -Infinity;
+    let bestIndex =
+      0;
+
+    let bestAdjusted =
+      -Infinity;
 
     for (
       let i = 0;
@@ -3716,10 +3992,12 @@ function diversifyLead(
         ] ||
         0;
 
-      let penalty = 0;
+      let penalty =
+        0;
 
       if (
-        count >= 4
+        count >=
+        4
       ) {
         penalty =
           28 *
@@ -3728,7 +4006,8 @@ function diversifyLead(
             3
           );
       } else if (
-        count >= 2
+        count >=
+        2
       ) {
         penalty =
           10 *
@@ -3783,11 +4062,117 @@ function diversifyLead(
   );
 }
 
-async function run() {
-  console.log(
-    "Building MJR recall feed v2.1..."
+function validateSources(
+  sourceResults
+) {
+  const problems =
+    [];
+
+  for (
+    const [
+      name,
+      result
+    ] of
+      Object.entries(
+        sourceResults
+      )
+  ) {
+    if (
+      !result.ok
+    ) {
+      problems.push(
+        `${name} failed completely`
+      );
+
+      continue;
+    }
+
+    const minimum =
+      MIN_SOURCE_COUNTS[
+        name
+      ];
+
+    if (
+      minimum != null &&
+      result.count <
+        minimum
+    ) {
+      problems.push(
+        `${name} returned only ${result.count} records; safety minimum is ${minimum}`
+      );
+    }
+  }
+
+  if (
+    problems.length
+  ) {
+    console.error(
+      "\n========================================"
+    );
+
+    console.error(
+      "BUILD SAFETY STOP"
+    );
+
+    console.error(
+      "The existing mjr-recalls.json WILL NOT be replaced."
+    );
+
+    console.error(
+      "Problems detected:"
+    );
+
+    for (
+      const problem of
+        problems
+    ) {
+      console.error(
+        `- ${problem}`
+      );
+    }
+
+    console.error(
+      "========================================\n"
+    );
+
+    throw new Error(
+      "Recall source safety validation failed"
+    );
+  }
+}
+
+function atomicWriteJSON(
+  filename,
+  tempFilename,
+  data
+) {
+  fs.writeFileSync(
+    tempFilename,
+    JSON.stringify(
+      data,
+      null,
+      2
+    ) +
+    "\n",
+    "utf8"
   );
 
+  fs.renameSync(
+    tempFilename,
+    filename
+  );
+}
+
+async function run() {
+  console.log(
+    "Building MJR recall feed v2.2..."
+  );
+
+  /*
+    We still run the sources concurrently.
+
+    Each network request now has automatic retry protection.
+  */
   const results =
     await Promise.allSettled(
       [
@@ -3805,9 +4190,11 @@ async function run() {
     "NHTSA"
   ];
 
-  const sources = {};
+  const sources =
+    {};
 
-  let combined = [];
+  let combined =
+    [];
 
   results.forEach(
     (
@@ -3857,12 +4244,22 @@ async function run() {
             )
         };
 
-        console.warn(
+        console.error(
           `${name} FAILED:`,
           result.reason
         );
       }
     }
+  );
+
+  /*
+    CRITICAL:
+
+    Stop here before generating or writing anything if
+    one of the main feeds failed or collapsed.
+  */
+  validateSources(
+    sources
   );
 
   combined =
@@ -3884,11 +4281,36 @@ async function run() {
     diversifyLead(
       combined,
       15
-    )
-      .slice(
-        0,
-        120
-      );
+    );
+
+  /*
+    Another final protection.
+
+    We expect enough valid records to publish 120.
+    If we don't have 120, keep the existing feed.
+  */
+  if (
+    combined.length <
+    120
+  ) {
+    console.error(
+      `BUILD SAFETY STOP: only ${combined.length} recent recalls available.`
+    );
+
+    console.error(
+      "Existing mjr-recalls.json will not be replaced."
+    );
+
+    throw new Error(
+      "Not enough recent recalls to publish safely"
+    );
+  }
+
+  combined =
+    combined.slice(
+      0,
+      120
+    );
 
   const newestDate =
     combined.reduce(
@@ -3910,7 +4332,7 @@ async function run() {
         .toISOString(),
 
     version:
-      "2.1",
+      "2.2",
 
     newestDate,
 
@@ -3939,15 +4361,15 @@ async function run() {
     }
   );
 
-  fs.writeFileSync(
+  /*
+    Atomic write:
+    first create .tmp, then rename only after the file
+    has been completely written.
+  */
+  atomicWriteJSON(
     OUTPUT_FILE,
-    JSON.stringify(
-      output,
-      null,
-      2
-    ) +
-    "\n",
-    "utf8"
+    TEMP_OUTPUT_FILE,
+    output
   );
 
   console.log(
@@ -3991,8 +4413,31 @@ async function run() {
 run()
   .catch(
     err => {
+      /*
+        Clean up any abandoned temp file.
+      */
+      try {
+        if (
+          fs.existsSync(
+            TEMP_OUTPUT_FILE
+          )
+        ) {
+          fs.unlinkSync(
+            TEMP_OUTPUT_FILE
+          );
+        }
+      } catch (_) {
+        // No action needed.
+      }
+
       console.error(
+        "\nBUILD FAILED:",
+        err.message ||
         err
+      );
+
+      console.error(
+        "Existing recall feed was preserved."
       );
 
       process.exit(
