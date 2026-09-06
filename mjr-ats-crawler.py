@@ -7404,6 +7404,12 @@ def write_xml(jobs):
             ("company_website", j.company_website),
             ("logo", j.logo),
             ("work_arrangement", j.work_arrangement),
+            # JBoard's Work Arrangement/Remote importer field is boolean.
+            # Never map the non-empty three-way work_arrangement value to it,
+            # because "On-Site" and "Hybrid" would also be treated as remote.
+            # Preserve work_arrangement above for MJR and expose a dedicated
+            # true-or-empty flag for JBoard's remote setting.
+            ("remote", "true" if j.work_arrangement == "Remote" else ""),
         ]
 
         for t, v in vals:
