@@ -1,6 +1,6 @@
 {
-  "generated": "2026-09-07T08:35:57.092Z",
-  "version": "2.3",
+  "generated": "2026-09-07T11:25:06.902Z",
+  "version": "2.4",
   "newestDate": "2026-09-06",
   "stale": false,
   "sources": {
@@ -87,7 +87,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/frutas-y-hortalizas-del-sur-sa-expands-recall-include-one-lot-great-value-frozen-organic-triple",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/saputo-usa-recalls-great-value-cottage-cheese-because-possible-health-risk",
       "score": 176
     },
     {
@@ -204,7 +204,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/b-braun-medical-inc-issues-voluntary-nationwide-recall-09-sodium-chloride-injection-usp-100-ml-150",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/b-braun-medical-inc-issues-voluntary-nationwide-recall-lactated-ringers-injection-1l-e7500-due",
       "score": 131
     },
     {
@@ -337,7 +337,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/publix-recalls-all-lots-greenwise-organic-frozen-blueberries-and-whole-mixed-berries-due-potential-e",
       "score": 118
     },
     {
@@ -370,7 +370,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-ready-eat-deli-style-salads-and-cream-cheese-because-possible-health",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-assorted-flavors-cream-cheese-because-possible-health-risk",
       "score": 115
     },
     {
@@ -708,7 +708,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V510000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V510-6120.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V510000",
       "score": 95
     },
     {
@@ -859,7 +859,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/baxter-issues-voluntary-nationwide-recall-cefazolin-dextrose-injection-usp-2g-100ml20mg-ml-single",
       "score": 91
     },
     {
@@ -875,7 +875,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/baxter-issues-voluntary-nationwide-recall-cefazolin-dextrose-injection-usp-2g-100ml20mg-ml-single",
       "score": 91
     },
     {
@@ -891,7 +891,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/baxter-issues-voluntary-nationwide-recall-cefazolin-dextrose-injection-usp-2g-100ml20mg-ml-single",
       "score": 91
     },
     {
@@ -932,7 +932,7 @@
       "id": "USDA-2026-09-06-prime-line-distributors-inc-and-ferrarini-usa-inc-recall-imported-read",
       "source": "USDA",
       "category": "food",
-      "title": "Prime Line Distributors, Inc. And Ferrarini USA, Inc. Recall Imported Ready-To-Eat Pork Guanciale…",
+      "title": "Prime Line Distributors, Inc. and Ferrarini USA, Inc. Recall Imported Ready-To-Eat Pork Guanciale…",
       "reason": "Product Contamination",
       "brand": "",
       "company": "",
@@ -1093,7 +1093,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/b-braun-medical-inc-issues-voluntary-nationwide-recall-lactated-ringers-injection-1l-e7500-due",
       "score": 81
     },
     {
@@ -1243,7 +1243,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/baxter-issues-voluntary-nationwide-recall-cefazolin-dextrose-injection-usp-2g-100ml20mg-ml-single",
       "score": 73
     },
     {
@@ -1309,7 +1309,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 71
     },
     {
@@ -1678,7 +1678,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/lexunder-inc-recalls-food-live-brand-green-powder-products-because-possible-health-risk",
       "score": 63
     },
     {
@@ -1711,7 +1711,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/boticelli-foods-recalls-bettergoods-pistachio-nut-butter-because-possible-health-risk",
       "score": 63
     },
     {
