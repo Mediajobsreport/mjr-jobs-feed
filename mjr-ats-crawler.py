@@ -7393,6 +7393,17 @@ def write_xml(jobs):
     ):
         e = ET.SubElement(root, "job")
 
+        # JBoard tag-import test. These are the exact tags manually created
+        # for Sinclair's KRCG Regional Sales Assistant listing. Keeping the
+        # rule this specific prevents unrelated jobs from receiving test tags.
+        tags = ""
+        if (
+            j.company.strip().lower() == "sinclair"
+            and j.title.strip().lower() == "regional sales assistant"
+            and re.search(r"\bKRCG\b", strip_html(j.description), re.I)
+        ):
+            tags = "Sales, KRCG, Television"
+
         vals = [
             ("id", j.id),
             ("title", j.title),
@@ -7420,6 +7431,11 @@ def write_xml(jobs):
 
         for t, v in vals:
             ET.SubElement(e, t).text = str(v or "")
+
+        # Omit the element entirely on non-test records so an importer cannot
+        # interpret an empty value as a request to clear existing tags.
+        if tags:
+            ET.SubElement(e, "tags").text = tags
 
         l = ET.SubElement(e, "location")
 
