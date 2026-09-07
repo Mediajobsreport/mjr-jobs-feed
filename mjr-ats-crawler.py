@@ -3032,7 +3032,9 @@ def _oracle_location(row):
 
 
 def _oracle_description(row):
+    """Return Oracle description HTML without flattening source structure."""
     parts = []
+    seen_text = set()
     for name in (
         "ExternalDescriptionStr",
         "externalDescriptionStr",
@@ -3052,10 +3054,12 @@ def _oracle_description(row):
             continue
         if isinstance(val, (dict, list)):
             val = json.dumps(val, ensure_ascii=False)
-        s = strip_html(str(val))
-        if s and s not in parts:
-            parts.append(s)
-    return clean(" ".join(parts))
+        formatted = format_description(str(val))
+        text_key = strip_html(formatted)
+        if text_key and text_key not in seen_text:
+            seen_text.add(text_key)
+            parts.append(formatted)
+    return "\n".join(parts).strip()
 
 
 def _oracle_detail_api(origin, site, rid):
