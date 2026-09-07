@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-07T04:33:35.519Z",
+  "generated": "2026-09-07T08:35:57.092Z",
   "version": "2.3",
   "newestDate": "2026-09-06",
   "stale": false,
@@ -14,7 +14,7 @@
     },
     "USDA": {
       "ok": true,
-      "count": 2023
+      "count": 2024
     },
     "NHTSA": {
       "ok": true,
@@ -148,7 +148,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Wrangler, Jeep Gladiator, Jeep Compass, Jeep Cherokee, Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Wagoneer, Jeep Grand Wagoneer L, Ram Promaster, Ram…",
       "brand": "Ram",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Promaster, 2500, 1500, Wrangler, Grand Wagoneer L, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
+      "product": "Promaster Bev, Pacifica, Grand Cherokee L, Promaster, Grand Wagoneer, 2500, 1500, Wrangler",
       "date": "2026-08-13",
       "units": 844027,
       "pet": false,
@@ -188,7 +188,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V511000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V511000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V511-8251.pdf",
       "score": 152
     },
     {
@@ -282,7 +282,7 @@
       "reason": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2020-2021 CLA, 2019-2022 A-Class, 2022-2023 C-Class, 2024 CLE, 2020-2026 GLA/GLB, and 2023-2024 GLC vehicles. Please refer to MBUSA's recall report for specific model…",
       "brand": "Mercedes-Benz",
       "company": "Mercedes-Benz USA, LLC",
-      "product": "A 220 4MATIC, Glc 300 4MATIC Coupe, Glc 300 4MATIC, Glc 300, Amg GLC43 4MATIC, Amg GLB35 4MATIC, Amg Gla 35, Amg A35",
+      "product": "Glc 300 4MATIC, Glc 300 4MATIC Coupe, A 220 4MATIC, C 300 4MATIC, C 300, Amg GLB35, Amg GLA45, Amg GLA35",
       "date": "2026-07-24",
       "units": 310667,
       "pet": false,
@@ -348,7 +348,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2025-2026 Chrysler Voyager, Chrysler Pacifica, and 2026 Chrysler Voyager Plug-In Hybrid Electric (PHEV) vehicles. The brake pedal position sensor capacitor may be cracked,…",
       "brand": "Chrysler",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Voyager, Pacifica Plug-In Hybrid, Pacifica",
+      "product": "Pacifica, Voyager, Pacifica Plug-In Hybrid",
       "date": "2026-09-01",
       "units": 2017,
       "pet": false,
@@ -370,7 +370,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-ready-eat-deli-style-salads-and-cream-cheese-because-possible-health",
       "score": 115
     },
     {
@@ -929,6 +929,22 @@
       "score": 90
     },
     {
+      "id": "USDA-2026-09-06-prime-line-distributors-inc-and-ferrarini-usa-inc-recall-imported-read",
+      "source": "USDA",
+      "category": "food",
+      "title": "Prime Line Distributors, Inc. And Ferrarini USA, Inc. Recall Imported Ready-To-Eat Pork Guanciale…",
+      "reason": "Product Contamination",
+      "brand": "",
+      "company": "",
+      "product": "",
+      "date": "2026-09-06",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "http://www.fsis.usda.gov/recalls-alerts/prime-line-distributors-inc--and-ferrarini-usa-inc--recall-imported-ready-eat-pork",
+      "score": 88
+    },
+    {
       "id": "CPSC-10944-branch-recalls-ergonomic-chairs-due-to-fall-hazard",
       "source": "CPSC",
       "category": "consumer",
@@ -987,7 +1003,7 @@
       "reason": "Britax Child Safety, Inc. (Britax) is recalling certain B-Safe Gen 2, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe 35, B-Safe Ultra, and Endeavours child seats. Please refer to Britax's recall report for the…",
       "brand": "Britax",
       "company": "Britax Child Safety, Inc.",
-      "product": "B-Safe Ultra, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2 Flexfit, B-Safe Gen 2, Endeavours, B-Safe 35",
+      "product": "B-Safe 35, B-Safe Ultra, Endeavours, B-Safe Gen 2, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2 Flexfit",
       "date": "2026-08-20",
       "units": 114660,
       "pet": false,
@@ -1004,7 +1020,7 @@
       "reason": "Tesla, Inc. (Tesla) is recalling certain 2017-2023 Model 3 and 2020-2023 Model Y vehicles. The headlight low beams may be too bright and exceed the maximum light output. As such, these vehicles fail to comply with the…",
       "brand": "Tesla",
       "company": "Tesla, Inc.",
-      "product": "Model 3, Model Y",
+      "product": "Model Y, Model 3",
       "date": "2026-08-04",
       "units": 20349,
       "pet": false,
@@ -1160,7 +1176,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/everything-sprouts-llc-expands-voluntarily-recall-include-robust-radish-mix-due-potential-e-coli-and",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 75
     },
     {
@@ -1188,7 +1204,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026 Maverick, F-150, and Bronco Sport vehicles. Certain vehicle joints may be improperly tightened. This can lead to detached parts, unsecured cargo, degraded crash…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "Maverick, Bronco Sport, F-150",
+      "product": "Maverick, F-150, Bronco Sport",
       "date": "2026-08-25",
       "units": 23,
       "pet": false,
@@ -1834,23 +1850,6 @@
       "score": 58
     },
     {
-      "id": "NHTSA-26V530000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Chevrolet Vehicles Recalled",
-      "reason": "General Motors, LLC (GM) is recalling certain 2024-2025 Chevrolet Silverado 2500 and GMC Sierra 2500 vehicles equipped with the enhanced towing option and 20-inch accessory tire/wheel package. The tire information…",
-      "brand": "Chevrolet",
-      "company": "General Motors, LLC",
-      "product": "Silverado 2500, Sierra 2500",
-      "date": "2026-08-13",
-      "units": 8,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V530000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V530-4213.pdf",
-      "score": 55
-    },
-    {
       "id": "NHTSA-26V532000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1865,6 +1864,23 @@
       "majorBrand": true,
       "campaign": "26V532000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V532-1166.pdf",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26V530000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "GMC Vehicles Recalled",
+      "reason": "General Motors, LLC (GM) is recalling certain 2024-2025 Chevrolet Silverado 2500 and GMC Sierra 2500 vehicles equipped with the enhanced towing option and 20-inch accessory tire/wheel package. The tire information…",
+      "brand": "GMC",
+      "company": "General Motors, LLC",
+      "product": "Sierra 2500, Silverado 2500",
+      "date": "2026-08-13",
+      "units": 8,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V530000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V530-4213.pdf",
       "score": 55
     },
     {
@@ -2017,23 +2033,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 53
-    },
-    {
-      "id": "CPSC-10928-fastbuy-recalls-zimtown-portable-gas-and-fuel-cans-due-to-risk-of-seri",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Fastbuy Recalls Zimtown Portable Gas and Fuel Cans Due to Risk of Serious Injury or Death from Burn…",
-      "reason": "The fuel containers violate the requirement for closures under the Children's Gasoline Burn Prevention Act because the closure is not child-resistant, posing a risk of burns and poisoning to children.",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Walmart.com and Zimtown.com from May 2026 through July 2026 for between $32 and $63.",
-      "product": "Zimtown Portable Gas and Fuel Cans",
-      "date": "2026-08-13",
-      "units": 200,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Fastbuy-Recalls-Zimtown-Portable-Gas-and-Fuel-Cans-Due-to-Risk-of-Serious-Injury-or-Death-from-Burn-Hazard-and-Child-Poisoning-Violate-Mandatory-Standard-for-Portable-Fuel-Containers",
       "score": 53
     }
   ]
