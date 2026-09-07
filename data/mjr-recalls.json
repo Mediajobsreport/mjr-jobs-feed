@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-07T00:43:36.256Z",
+  "generated": "2026-09-07T04:33:35.519Z",
   "version": "2.3",
-  "newestDate": "2026-09-04",
+  "newestDate": "2026-09-06",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1028
+      "count": 1046
     },
     "CPSC": {
       "ok": true,
@@ -188,7 +188,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V511000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V511-8251.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V511000",
       "score": 152
     },
     {
@@ -356,6 +356,22 @@
       "campaign": "26V561000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V561-7630.pdf",
       "score": 117
+    },
+    {
+      "id": "FDA-2026-09-06-made-fresh-salads-northside-ready-to-eat-deli-style-salads-and-cream-c",
+      "source": "FDA",
+      "category": "food",
+      "title": "Made Fresh Salads, Northside Ready to Eat Deli Style Salads and cream cheese Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Made Fresh Salads, Northside",
+      "company": "Made Fresh Salads Inc.",
+      "product": "Ready to Eat Deli Style Salads and cream cheese",
+      "date": "2026-09-06",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 115
     },
     {
       "id": "CPSC-10885-galanz-americas-recalls-retro-refrigerators-due-to-risk-of-serious-inj",
@@ -1249,22 +1265,6 @@
       "score": 71
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 71
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1278,6 +1278,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
+      "score": 71
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 71
     },
     {
@@ -2018,23 +2034,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Fastbuy-Recalls-Zimtown-Portable-Gas-and-Fuel-Cans-Due-to-Risk-of-Serious-Injury-or-Death-from-Burn-Hazard-and-Child-Poisoning-Violate-Mandatory-Standard-for-Portable-Fuel-Containers",
-      "score": 53
-    },
-    {
-      "id": "CPSC-10895-ocoopa-direct-recalls-1-5-million-rechargeable-hand-warmers-due-to-ris",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "OCOOPA Direct Recalls 1.5 Million Rechargeable Hand Warmers Due to Risk of Serious Injury or Death from…",
-      "reason": "The lithium-ion battery in the recalled hand warmers can overheat and ignite, posing a risk of serious injury or death from fire and burn hazards.",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com, Ocoopa.com, Ocoopa.net and Walmart.com from September 2018 through May 2026 for between $15 and $60.",
-      "product": "OCOOPA Rechargeable Hand Warmers",
-      "date": "2026-07-30",
-      "units": 1.5,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/OCOOPA-Direct-Recalls-1-5-Million-Rechargeable-Hand-Warmers-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards-One-Death-Reported-Imported-by-Shenzhen-Street-Cat-Technology",
       "score": 53
     }
   ]
