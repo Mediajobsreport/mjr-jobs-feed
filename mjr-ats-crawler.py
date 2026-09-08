@@ -7259,6 +7259,12 @@ def _v28_before_request(url):
     if host in {"careers.paramount.com", "www.careers.paramount.com"}:
         host_cap = max(host_cap, int(os.getenv("MJR_PARAMOUNT_REQUEST_CAP", "300")))
 
+    # Hearst Television and Hearst Newspapers use different Oracle sites on
+    # the same hostname. The domain counter is shared, so the normal per-source
+    # allowance can be exhausted by the first site before the second begins.
+    if host == "eevd.fa.us6.oraclecloud.com":
+        host_cap = max(host_cap, int(os.getenv("MJR_HEARST_ORACLE_REQUEST_CAP", "400")))
+
     if count >= host_cap:
         raise RuntimeError(f"v28 domain request cap reached for {host}: {host_cap}")
     _v28_domain_counts[host] = count + 1
