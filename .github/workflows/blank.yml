@@ -41,6 +41,7 @@ jobs:
             echo "MJR_OUTPUT=mjr-jboard-test.xml" >> "$GITHUB_ENV"
             echo "MJR_AUDIT=mjr-ats-audit-test.csv" >> "$GITHUB_ENV"
             echo "MJR_STATE=mjr-job-state-test.json" >> "$GITHUB_ENV"
+            echo "MJR_QUALITY_REPORT=mjr-job-quality-report-test.csv" >> "$GITHUB_ENV"
             echo "MJR_DIAGNOSTIC=mjr-salem-diagnostic.txt" >> "$GITHUB_ENV"
             echo "TARGETED TEST: $TEST"
           else
@@ -48,6 +49,7 @@ jobs:
             echo "MJR_OUTPUT=mjr-jboard-master.xml" >> "$GITHUB_ENV"
             echo "MJR_AUDIT=mjr-ats-audit.csv" >> "$GITHUB_ENV"
             echo "MJR_STATE=mjr-job-state.json" >> "$GITHUB_ENV"
+            echo "MJR_QUALITY_REPORT=mjr-job-quality-report.csv" >> "$GITHUB_ENV"
             echo "MJR_DIAGNOSTIC=mjr-salem-diagnostic.txt" >> "$GITHUB_ENV"
             echo "FULL PRODUCTION CRAWL"
           fi
@@ -137,6 +139,7 @@ jobs:
           path: |
             mjr-jboard-test.xml
             mjr-ats-audit-test.csv
+            mjr-job-quality-report-test.csv
             mjr-siriusxm-diagnostic-v68.txt
             mjr-paramount-diagnostic-v72.txt
             mjr-audacy-validation-v66.txt
@@ -161,6 +164,7 @@ jobs:
           path: |
             mjr-jboard-master.xml
             mjr-ats-audit.csv
+            mjr-job-quality-report.csv
             mjr-job-state.json
           if-no-files-found: warn
           retention-days: 14
@@ -171,7 +175,7 @@ jobs:
           git config user.name "MJR Jobs Bot"
           git config user.email "actions@users.noreply.github.com"
 
-          git add mjr-jboard-master.xml mjr-ats-audit.csv mjr-job-state.json
+          git add mjr-jboard-master.xml mjr-ats-audit.csv mjr-job-quality-report.csv mjr-job-state.json
 
           if git diff --cached --quiet; then
             echo "No feed changes to commit."
