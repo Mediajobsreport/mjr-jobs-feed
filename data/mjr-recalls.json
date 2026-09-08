@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-08T08:33:02.398Z",
+  "generated": "2026-09-08T12:37:44.063Z",
   "version": "2.4",
   "newestDate": "2026-09-06",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1046
+      "count": 1029
     },
     "CPSC": {
       "ok": true,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 96
+      "count": 92
     }
   },
   "count": 120,
@@ -138,7 +138,7 @@
       "pet": false,
       "majorBrand": true,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/northwest-naturals-voluntarily-recalls-two-raw-pet-food-products-because-possible-salmonella",
-      "score": 148
+      "score": 136
     },
     {
       "id": "NHTSA-26V531000",
@@ -275,23 +275,6 @@
       "score": 120
     },
     {
-      "id": "NHTSA-26V481000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Mercedes-Benz Vehicles Recalled",
-      "reason": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2020-2021 CLA, 2019-2022 A-Class, 2022-2023 C-Class, 2024 CLE, 2020-2026 GLA/GLB, and 2023-2024 GLC vehicles. Please refer to MBUSA's recall report for specific model…",
-      "brand": "Mercedes-Benz",
-      "company": "Mercedes-Benz USA, LLC",
-      "product": "Cla 250 4MATIC, Cla 250, Amg GLA35, Amg CLA45, Amg CLA35, A 220 4MATIC, A 220, Glc 300 4MATIC Coupe",
-      "date": "2026-07-24",
-      "units": 310667,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V481000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V481-9237.pdf",
-      "score": 142
-    },
-    {
       "id": "FDA-2026-08-12-whole-foods-market-finished-products-such-as-dips-salsa-guacamole-and-",
       "source": "FDA",
       "category": "food",
@@ -322,22 +305,6 @@
       "majorBrand": true,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/publix-recalls-all-lots-greenwise-organic-frozen-blueberries-and-whole-mixed-berries-due-potential-e",
       "score": 118
-    },
-    {
-      "id": "FDA-2026-09-06-made-fresh-salads-northside-ready-to-eat-deli-style-salads-and-cream-c",
-      "source": "FDA",
-      "category": "food",
-      "title": "Made Fresh Salads, Northside Ready to Eat Deli Style Salads and cream cheese Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes",
-      "brand": "Made Fresh Salads, Northside",
-      "company": "Made Fresh Salads Inc.",
-      "product": "Ready to Eat Deli Style Salads and cream cheese",
-      "date": "2026-09-06",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-assorted-flavors-cream-cheese-because-possible-health-risk",
-      "score": 115
     },
     {
       "id": "CPSC-10939-truststone-group-recalls-xo-poppy-power-trip-magnetic-wireless-power-b",
@@ -372,6 +339,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Galanz-Americas-Recalls-Retro-Refrigerators-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards-One-Death-Reported",
       "score": 115
+    },
+    {
+      "id": "FDA-2026-09-06-made-fresh-salads-northside-ready-to-eat-deli-style-salads-and-cream-c",
+      "source": "FDA",
+      "category": "food",
+      "title": "Made Fresh Salads, Northside Ready to Eat Deli Style Salads and cream cheese Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Made Fresh Salads, Northside",
+      "company": "Made Fresh Salads Inc.",
+      "product": "Ready to Eat Deli Style Salads and cream cheese",
+      "date": "2026-09-06",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-assorted-flavors-cream-cheese-because-possible-health-risk",
+      "score": 109
     },
     {
       "id": "NHTSA-26V561000",
@@ -423,22 +406,6 @@
       "campaign": "26V487000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V487-9835.pdf",
       "score": 105
-    },
-    {
-      "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Foods Alive Moringa Leaf Powder Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "Foods Alive",
-      "company": "Foods Alive Inc.",
-      "product": "Moringa Leaf Powder",
-      "date": "2026-09-04",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
-      "score": 103
     },
     {
       "id": "CPSC-10938-shein-distribution-corporation-recalls-spiral-toys-due-to-risk-of-seri",
@@ -559,23 +526,6 @@
       "score": 97
     },
     {
-      "id": "NHTSA-26V558000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Tesla Model Y Vehicles Recalled",
-      "reason": "Tesla, Inc. (Tesla) is recalling certain 2026 Model Y vehicles. One or more front suspension lateral link fasteners may not have been properly tightened, allowing the lateral link to loosen or separate from the…",
-      "brand": "Tesla",
-      "company": "Tesla, Inc.",
-      "product": "Model Y",
-      "date": "2026-08-31",
-      "units": 19,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V558000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V558-2943.pdf",
-      "score": 97
-    },
-    {
       "id": "CPSC-10913-cooluli-recalls-10-liter-and-15-liter-minifridges-due-to-fire-and-burn",
       "source": "CPSC",
       "category": "consumer",
@@ -591,6 +541,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Cooluli-Recalls-10-Liter-and-15-Liter-Minifridges-Due-to-Fire-and-Burn-Hazards",
       "score": 97
+    },
+    {
+      "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Foods Alive Moringa Leaf Powder Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "Foods Alive",
+      "company": "Foods Alive Inc.",
+      "product": "Moringa Leaf Powder",
+      "date": "2026-09-04",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
+      "score": 95
     },
     {
       "id": "CPSC-10945-gihnjsi-squeezy-dumplings-toys-recalled-due-to-serious-ingestion-choki",
@@ -844,22 +810,6 @@
       "score": 90
     },
     {
-      "id": "USDA-2026-09-06-prime-line-distributors-inc-and-ferrarini-usa-inc-recall-imported-read",
-      "source": "USDA",
-      "category": "food",
-      "title": "Prime Line Distributors, Inc. and Ferrarini USA, Inc. Recall Imported Ready-To-Eat Pork Guanciale…",
-      "reason": "Product Contamination",
-      "brand": "",
-      "company": "",
-      "product": "",
-      "date": "2026-09-06",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/prime-line-distributors-inc--and-ferrarini-usa-inc--recall-imported-ready-eat-pork",
-      "score": 88
-    },
-    {
       "id": "CPSC-10948-audio-partnership-recalls-cambridge-audio-yoyo-m-portable-bluetooth-sp",
       "source": "CPSC",
       "category": "consumer",
@@ -874,6 +824,23 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Audio-Partnership-Recalls-Cambridge-Audio-Yoyo-M-Portable-Bluetooth-Speakers-Due-to-Fire-Hazard",
+      "score": 85
+    },
+    {
+      "id": "NHTSA-26V558000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Tesla Model Y Vehicles Recalled",
+      "reason": "Tesla, Inc. (Tesla) is recalling certain 2026 Model Y vehicles. One or more front suspension lateral link fasteners may not have been properly tightened, allowing the lateral link to loosen or separate from the…",
+      "brand": "Tesla",
+      "company": "Tesla, Inc.",
+      "product": "Model Y",
+      "date": "2026-08-31",
+      "units": 19,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V558000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V558-2943.pdf",
       "score": 85
     },
     {
@@ -960,6 +927,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/TooyBing-Wooden-Bead-Stacking-Toys-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Violate-Small-Parts-Ban",
       "score": 83
+    },
+    {
+      "id": "USDA-2026-09-06-prime-line-distributors-inc-and-ferrarini-usa-inc-recall-imported-read",
+      "source": "USDA",
+      "category": "food",
+      "title": "Prime Line Distributors, Inc. and Ferrarini USA, Inc. Recall Imported Ready-To-Eat Pork Guanciale…",
+      "reason": "Product Contamination",
+      "brand": "",
+      "company": "",
+      "product": "",
+      "date": "2026-09-06",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "http://www.fsis.usda.gov/recalls-alerts/prime-line-distributors-inc--and-ferrarini-usa-inc--recall-imported-ready-eat-pork",
+      "score": 82
     },
     {
       "id": "CPSC-10955-audiolineout-recalls-studio-six-headphone-amplifiers-due-to-risk-of-se",
@@ -1164,22 +1147,6 @@
       "score": 73
     },
     {
-      "id": "FDA-2026-07-24-baxter-cefazolin-in-dextrose-injection-baxter-international-inc",
-      "source": "FDA",
-      "category": "health",
-      "title": "Baxter Cefazolin in Dextrose Injection Recalled",
-      "reason": "Particulate matter (cardboard) found in the solution.",
-      "brand": "Baxter",
-      "company": "Baxter International Inc.",
-      "product": "Cefazolin in Dextrose Injection",
-      "date": "2026-07-24",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/baxter-issues-voluntary-nationwide-recall-cefazolin-dextrose-injection-usp-2g-100ml20mg-ml-single",
-      "score": 73
-    },
-    {
       "id": "CPSC-10890-joyin-expands-recall-of-sloosh-dive-sticks-due-to-risk-of-serious-inju",
       "source": "CPSC",
       "category": "consumer",
@@ -1212,54 +1179,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Koorlian-Mattresses-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Mattress-Flammability-Sold-on-Amazon-by-Dream-Bedding-Technology",
       "score": 71
-    },
-    {
-      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Oma’s Pride Canine Food Recalled",
-      "reason": "Contaminated with Salmonella",
-      "brand": "Oma’s Pride",
-      "company": "Miller Foods, Inc.",
-      "product": "Canine Food",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": true,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
-      "score": 71
-    },
-    {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 71
-    },
-    {
-      "id": "FDA-2026-08-31-little-temptations-chocolatey-eyeballs-7-oz-10-oz-10-5-oz-11-oz-and-16",
-      "source": "FDA",
-      "category": "food",
-      "title": "Little Temptations Chocolatey Eyeballs, 7 oz., 10 oz., 10.5 oz., 11 oz., and 16 oz. Recalled",
-      "reason": "Undeclared milk",
-      "brand": "Little Temptations",
-      "company": "Crystal Temptations",
-      "product": "Chocolatey Eyeballs, 7 oz., 10 oz., 10.5 oz., 11 oz., and 16 oz.",
-      "date": "2026-08-31",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/crystal-temptations-issues-allergy-alert-undeclared-milk-chocolatey-eyeballs",
-      "score": 70
     },
     {
       "id": "FDA-2026-09-03-american-regent-inc-epinephrine-injection-usp-30-mg-30-ml-1-mg-ml-mult",
@@ -1584,6 +1503,38 @@
       "score": 63
     },
     {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Oma’s Pride Canine Food Recalled",
+      "reason": "Contaminated with Salmonella",
+      "brand": "Oma’s Pride",
+      "company": "Miller Foods, Inc.",
+      "product": "Canine Food",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
+      "score": 63
+    },
+    {
       "id": "CPSC-10923-mattresses-recalled-due-to-risk-of-serious-injury-or-death-from-fire-h",
       "source": "CPSC",
       "category": "consumer",
@@ -1698,19 +1649,19 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-09-04-business-pill-branch-manager-for-men-dietary-supplements-marketed-for-",
+      "id": "FDA-2026-08-31-little-temptations-chocolatey-eyeballs-7-oz-10-oz-10-5-oz-11-oz-and-16",
       "source": "FDA",
-      "category": "health",
-      "title": "Business Pill, Branch Manager for Men dietary supplements marketed for male sexual enhancement…",
-      "reason": "Products contain undeclared yohimbine",
-      "brand": "Business Pill, Branch Manager for Men",
-      "company": "SUPPLX.com",
-      "product": "dietary supplements marketed for male sexual enhancement",
-      "date": "2026-09-04",
+      "category": "food",
+      "title": "Little Temptations Chocolatey Eyeballs, 7 oz., 10 oz., 10.5 oz., 11 oz., and 16 oz. Recalled",
+      "reason": "Undeclared milk",
+      "brand": "Little Temptations",
+      "company": "Crystal Temptations",
+      "product": "Chocolatey Eyeballs, 7 oz., 10 oz., 10.5 oz., 11 oz., and 16 oz.",
+      "date": "2026-08-31",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/supplxcom-issues-voluntary-nationwide-recall-business-pill-and-branch-manager-men-due-undeclared",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/crystal-temptations-issues-allergy-alert-undeclared-milk-chocolatey-eyeballs",
       "score": 58
     },
     {
@@ -1968,6 +1919,22 @@
       "score": 53
     },
     {
+      "id": "FDA-2026-09-04-business-pill-branch-manager-for-men-dietary-supplements-marketed-for-",
+      "source": "FDA",
+      "category": "health",
+      "title": "Business Pill, Branch Manager for Men dietary supplements marketed for male sexual enhancement…",
+      "reason": "Products contain undeclared yohimbine",
+      "brand": "Business Pill, Branch Manager for Men",
+      "company": "SUPPLX.com",
+      "product": "dietary supplements marketed for male sexual enhancement",
+      "date": "2026-09-04",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/supplxcom-issues-voluntary-nationwide-recall-business-pill-and-branch-manager-men-due-undeclared",
+      "score": 50
+    },
+    {
       "id": "CPSC-10940-clorox-puerto-rico-recalls-6-million-scented-mistolin-and-lestoil-mult",
       "source": "CPSC",
       "category": "consumer",
@@ -2033,6 +2000,40 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/JINHEZO-Mini-Waterproof-LED-Tea-Lights-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Consumer-Products-with-Button-Cell-Batteries-Imported-by-Mystic-ZO",
+      "score": 48
+    },
+    {
+      "id": "NHTSA-26V540000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Lucid Air Vehicles Recalled",
+      "reason": "Lucid USA, Inc. (Lucid) is recalling certain 2022-2026 Air vehicles. The exterior lighting circuit may have insufficient overcurrent protection, allowing the circuit to overheat. 27,185 vehicles or units may be affected.",
+      "brand": "Lucid",
+      "company": "Lucid USA, Inc.",
+      "product": "Air",
+      "date": "2026-08-20",
+      "units": 27185,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V540000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V540-2255.pdf",
+      "score": 48
+    },
+    {
+      "id": "CPSC-10918-dumos-nine-drawer-dressers-recalled-due-to-risk-of-serious-injury-or-d",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "DUMOS Nine-Drawer Dressers Recalled Due to Risk of Serious Injury or Death from Tip-Over and Entrapment…",
+      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
+      "brand": "Jiangsu Jiayubo Furniture Co., Ltd., of China",
+      "company": "Jiangsu Jiayubo Furniture Co., Ltd., of China",
+      "retailers": "Online at Amazon.com from December 2025 through June 2026 for about $54.",
+      "product": "DUMOS Nine-Drawer Dressers",
+      "date": "2026-08-13",
+      "units": 8981,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/DUMOS-Nine-Drawer-Dressers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 48
     }
   ]
