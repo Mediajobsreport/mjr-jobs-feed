@@ -41,6 +41,7 @@ SOURCES_FILE = Path(os.getenv("MJR_SOURCES", "mjr-ats-sources.csv"))
 OUTFILE = Path(os.getenv("MJR_OUTPUT", "mjr-jboard-master.xml"))
 AUDITFILE = Path(os.getenv("MJR_AUDIT", "mjr-ats-audit.csv"))
 STATE_FILE = Path(os.getenv("MJR_STATE", "mjr-job-state.json"))
+QUALITY_FILE = Path(os.getenv("MJR_QUALITY_REPORT", "mjr-job-quality-report.csv"))
 
 SESSION = requests.Session()
 SESSION.headers.update(
@@ -432,6 +433,11 @@ def category(title, desc, industry, company):
 
     # Any engineer/engineering title is Engineering under MJR's category rules.
     if re.search(r"\bengineer(?:ing)?\b", t):
+        return "Engineering"
+
+    # MJR treats programming/development roles as Engineering. Internship and
+    # fellowship titles have already been handled above.
+    if re.search(r"\bdeveloper\b", t):
         return "Engineering"
 
     # Vague IT/technical titles can use a small amount of description context.
@@ -1033,7 +1039,7 @@ def infer_country(location, company="", description=""):
     return "US"
 
 
-def normalize_work_arrangement(description, location):
+def normalize_work_arrangement(description, location, title="", current=""):
     """
     Conservative MJR work-arrangement classifier.
 
@@ -1043,7 +1049,65 @@ def normalize_work_arrangement(description, location):
     """
     desc = strip_html(description).lower()
     loc = clean(location).lower()
+    title_low = clean(title).lower()
     s = f" {desc} "
+
+    # A work model stated in the title is the most specific signal available.
+    # This fixes titles such as "(Telework/Hybrid)" and "(On-site)" even when
+    # employer boilerplate elsewhere mentions other arrangements.
+    if re.search(r"\b(?:telework\s*/\s*hybrid|hybrid\s*/\s*telework|hybrid)\b", title_low):
+        return "Hybrid"
+    if re.search(r"\b(?:on[- ]site|onsite|in[- ]person)\b", title_low):
+        return "On-Site"
+    if re.search(r"\b(?:fully |100% )?remote\b", title_low):
+        return "Remote"
+
+    loc_compact = re.sub(r"\s+", " ", loc).strip()
+    if re.search(
+        r"^(?:remote|remote[- /](?:us|usa|united states)|us[- /]remote|"
+        r"united states[- /]remote|remote,?\s*(?:us|usa|united states))$",
+        loc_compact,
+        re.I,
+    ):
+        return "Remote"
+    if re.search(r"^(?:hybrid|hybrid[- /].+|.+[- /]hybrid)$", loc_compact, re.I):
+        return "Hybrid"
+
+    # Explicit labelled fields beat free-form prose. iCIMS commonly uses
+    # "Work Arrangement: Hybrid" near the beginning of the description.
+    labelled = re.search(
+        r"\bwork\s*(?:arrangement|model|configuration|location|type)\s*:?\s*"
+        r"(hybrid|remote|on[- ]?site|onsite|in[- ]person)\b",
+        desc[:2600],
+        re.I,
+    )
+    if labelled:
+        value = labelled.group(1).lower()
+        if "hybrid" in value:
+            return "Hybrid"
+        if "remote" in value:
+            return "Remote"
+        return "On-Site"
+
+    # Direct job-level hybrid statements must be evaluated before broader
+    # on-site phrases because a hybrid role necessarily mentions an office.
+    hybrid_patterns = [
+        r"\bthis (?:role|position|job) is hybrid\b",
+        r"\bthis is (?:a )?hybrid (?:role|position|job)\b",
+        r"\bhybrid (?:role|position|job|schedule|arrangement)\b",
+        r"\btelework\s*/\s*hybrid\b",
+        r"\bhybrid\s*/\s*telework\b",
+        r"\bhybrid work (?:model|schedule|arrangement)\b",
+        r"\b(?:work|working) (?:a )?hybrid in[- ]office schedule\b",
+        r"\bmix of in[- ]office and remote work\b",
+        r"\bcombining remote work and office presence\b",
+        r"\bcombination of remote work and office presence\b",
+        r"\bpartly remote\b",
+        r"\bpartially remote\b",
+        r"\b(?:\d+|two|three|four)\s+days? (?:per|a) week in (?:the )?office\b",
+    ]
+    if any(re.search(p, s) for p in hybrid_patterns):
+        return "Hybrid"
 
     negative_remote_patterns = [
         r"\bnot (?:a )?remote (?:role|position|job)\b",
@@ -1078,37 +1142,6 @@ def normalize_work_arrangement(description, location):
     if any(re.search(p, s) for p in onsite_patterns):
         return "On-Site"
 
-    loc_compact = re.sub(r"\s+", " ", loc).strip()
-    if re.search(
-        r"^(?:remote|remote[- /](?:us|usa|united states)|us[- /]remote|"
-        r"united states[- /]remote|remote,?\s*(?:us|usa|united states))$",
-        loc_compact,
-        re.I,
-    ):
-        return "Remote"
-
-    if re.search(r"^(?:hybrid|hybrid[- /].+|.+[- /]hybrid)$", loc_compact, re.I):
-        return "Hybrid"
-
-    hybrid_patterns = [
-        r"\bthis (?:role|position|job) is hybrid\b",
-        r"\bhybrid (?:role|position|job|schedule|arrangement)\b",
-        r"\btelework/hybrid\b",
-        r"\bhybrid/telework\b",
-        r"\bhybrid work (?:model|schedule|arrangement)\b",
-        r"\bmix of in[- ]office and remote work\b",
-        r"\bcombining remote work and office presence\b",
-        r"\bcombination of remote work and office presence\b",
-        r"\bpartly remote\b",
-        r"\bpartially remote\b",
-        r"\b\d+\s+days? per week in (?:the )?office\b",
-        r"\b\d+\s+days? a week in (?:the )?office\b",
-        r"\b(?:two|three|four)\s+days? per week in (?:the )?office\b",
-        r"\b(?:two|three|four)\s+days? a week in (?:the )?office\b",
-    ]
-    if any(re.search(p, s) for p in hybrid_patterns):
-        return "Hybrid"
-
     remote_patterns = [
         r"\bthis (?:role|position|job) is (?:fully |100% )?remote\b",
         r"\bthis is (?:a )?(?:fully |100% )?remote (?:role|position|job)\b",
@@ -1127,6 +1160,10 @@ def normalize_work_arrangement(description, location):
     if any(re.search(p, s) for p in remote_patterns):
         return "Remote"
 
+    # During final feed reconciliation, preserve a structured ATS result when
+    # the title/description supplies no stronger contradictory statement.
+    if current in {"Remote", "Hybrid", "On-Site"}:
+        return current
     return "On-Site"
 
 
@@ -4673,6 +4710,9 @@ def cox_successfactors(src):
         description_text = clean(BeautifulSoup(desc_html, "html.parser").get_text(" ", strip=True))
         if len(description_text) < 80:
             description_text = clean(soup.get_text(" ", strip=True))
+        description_html = format_description(desc_html)
+        if len(strip_html(description_html)) < 80:
+            description_html = format_description(description_text)
 
         location = get_location_from_jsonld(jld) if isinstance(jld, dict) else ""
 
@@ -4800,7 +4840,7 @@ def cox_successfactors(src):
             jid,
             title,
             src["Company"],
-            description_text,
+            description_html,
             pd,
             jt,
             cat,
@@ -5027,9 +5067,10 @@ def paramount_successfactors(src):
                 or soup.find("main")
                 or soup
             )
-            desc = clean(main.get_text(" ", strip=True))
-            if len(desc) < 200:
-                d(f"REJECT description_short {jid} len={len(desc)}")
+            desc = format_description(str(main))
+            desc_text = strip_html(desc)
+            if len(desc_text) < 200:
+                d(f"REJECT description_short {jid} len={len(desc_text)}")
                 continue
 
             # Header metadata is compact and appears before the main description:
@@ -5120,7 +5161,7 @@ def paramount_successfactors(src):
 
             cat = category(title, desc, src["Industry"], src["Company"])
             low = title.lower()
-            dlow = desc.lower()
+            dlow = desc_text.lower()
 
             if jt == "Internship":
                 cat = "Internships"
@@ -6444,8 +6485,8 @@ def _radio_recovery_job(src, url, raw):
     main=(soup.find("main") or soup.find("article")
           or soup.find(attrs={"class":re.compile(r"(job.?description|job.?detail|posting|entry-content|career)",re.I)})
           or soup)
-    desc=clean(main.get_text(" "))
-    if len(desc)<250:
+    desc=format_description(str(main))
+    if len(strip_html(desc))<250:
         return None
     loc=""
     for pat in (
@@ -7371,6 +7412,7 @@ def stateful(jobs):
             x["work_arrangement"] = normalize_work_arrangement(
                 x.get("description", ""),
                 retained_location,
+                x.get("title", ""),
             )
             ret.append(Job(**x))
         except Exception:
@@ -7378,6 +7420,247 @@ def stateful(jobs):
 
     STATE_FILE.write_text(json.dumps(st, indent=2, default=str))
     return ret
+
+
+def _recover_missing_location(j):
+    """Recover only clearly labelled city/state locations; never guess."""
+    if clean(j.city):
+        return False
+
+    text = strip_html(j.description)
+    us_codes = {
+        "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN",
+        "IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV",
+        "NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN",
+        "TX","UT","VT","VA","WA","WV","WI","WY","DC",
+    }
+    ca_codes = {"AB","BC","MB","NB","NL","NS","NT","NU","ON","PE","QC","SK","YT"}
+    region_names = {
+        "alabama":"AL", "alaska":"AK", "arizona":"AZ", "arkansas":"AR",
+        "california":"CA", "colorado":"CO", "connecticut":"CT", "delaware":"DE",
+        "florida":"FL", "georgia":"GA", "hawaii":"HI", "idaho":"ID",
+        "illinois":"IL", "indiana":"IN", "iowa":"IA", "kansas":"KS",
+        "kentucky":"KY", "louisiana":"LA", "maine":"ME", "maryland":"MD",
+        "massachusetts":"MA", "michigan":"MI", "minnesota":"MN", "mississippi":"MS",
+        "missouri":"MO", "montana":"MT", "nebraska":"NE", "nevada":"NV",
+        "new hampshire":"NH", "new jersey":"NJ", "new mexico":"NM", "new york":"NY",
+        "north carolina":"NC", "north dakota":"ND", "ohio":"OH", "oklahoma":"OK",
+        "oregon":"OR", "pennsylvania":"PA", "rhode island":"RI", "south carolina":"SC",
+        "south dakota":"SD", "tennessee":"TN", "texas":"TX", "utah":"UT",
+        "vermont":"VT", "virginia":"VA", "washington":"WA", "west virginia":"WV",
+        "wisconsin":"WI", "wyoming":"WY", "district of columbia":"DC",
+        "alberta":"AB", "british columbia":"BC", "manitoba":"MB", "new brunswick":"NB",
+        "newfoundland and labrador":"NL", "nova scotia":"NS", "ontario":"ON",
+        "prince edward island":"PE", "quebec":"QC", "saskatchewan":"SK", "yukon":"YT",
+    }
+
+    def assign(city, region=""):
+        city = clean(city).strip(" -–—,.")
+        region = clean(region).strip(" ()").upper()
+        if not city or len(city) > 60:
+            return False
+        if region and region not in us_codes | ca_codes:
+            mapped = region_names.get(region.lower())
+            if not mapped:
+                return False
+            region = mapped
+        j.city = city
+        j.state = region
+        j.country = "CA" if region in ca_codes or "canada" in city.lower() else "US"
+        return True
+
+    # Stingray exposes a clean Department/Location header without punctuation.
+    if clean(j.company).lower() == "stingray":
+        m = re.search(
+            r"\bLocation\s+(.{2,60}?)(?=\s+(?:At Stingray|Stingray is)\b)",
+            text,
+            re.I,
+        )
+        if m:
+            value = clean(m.group(1))
+            mm = re.match(r"(.+?)\s*\(([A-Z]{2})\)$", value)
+            if mm and assign(mm.group(1), mm.group(2)):
+                return True
+            if value.lower() in {"montreal", "montréal", "western canada"}:
+                if assign(value, "QC" if "montreal" in value.lower() else ""):
+                    j.country = "CA"
+                    return True
+            if value.lower() == "new york" and assign(value, "NY"):
+                return True
+
+    candidates = [clean(j.title), text[:3200]]
+    patterns = [
+        r"(?:Job\s+)?Location(?:\(s\))?\s*[:\-]\s*"
+        r"([A-Z][A-Za-zÀ-ÿ .'-]{1,60}),\s*([A-Z]{2})(?:\b|,)",
+        r"(?:Job\s+)?Location(?:\(s\))?\s*[:\-]\s*"
+        r"([A-Z][A-Za-zÀ-ÿ .'-]{1,60}),\s*([A-Z][A-Za-z ]{3,30}?)"
+        r"(?=\s+(?:Position|Department|Job Type|Employment|Responsibilities)\b|$)",
+        r"(?:based|located|work(?:ing)?|position)\s+in\s+"
+        r"([A-Z][A-Za-zÀ-ÿ .'-]{1,60}),\s*([A-Z]{2})\b",
+        r"[-–—]\s*([A-Z][A-Za-zÀ-ÿ .'-]{1,60}),?\s+([A-Z]{2})\s*$",
+        r"[-–—]\s*([A-Z][A-Za-zÀ-ÿ .'-]{1,60}),\s*([A-Z][A-Za-z ]{3,30})\s*$",
+        r"\|\s*([A-Z][A-Za-zÀ-ÿ .'-]{1,60}),\s*([A-Z][A-Za-z ]{3,30}?)"
+        r"(?=\s+(?:Part[- ]Time|Full[- ]Time|Temporary|Contract)\b)",
+    ]
+    for source in candidates:
+        for pat in patterns:
+            m = re.search(pat, source, re.I)
+            if not m:
+                continue
+            if assign(m.group(1), m.group(2)):
+                return True
+    return False
+
+
+def _canonical_requisition_key(j):
+    """Collapse alternate slugs that point to the same underlying requisition."""
+    company = clean(j.company).lower()
+    url = clean(j.url).rstrip("/")
+    if company in {"espn", "disney / abc"}:
+        m = re.search(r"/(\d{8,})(?:[/?#]|$)", url)
+        if m:
+            return f"disney:{m.group(1)}"
+    return f"url:{url.lower()}"
+
+
+def finalize_jobs(jobs):
+    """Apply feed-wide corrections after fresh and retained jobs are combined."""
+    recovered = set()
+    arrangement_corrections = []
+    for j in jobs:
+        j.description = format_description(j.description)
+        if _recover_missing_location(j):
+            recovered.add(j.url)
+        location = ", ".join(x for x in [j.city, j.state, j.country] if clean(x))
+        old_arrangement = j.work_arrangement
+        j.work_arrangement = normalize_work_arrangement(
+            j.description,
+            location,
+            j.title,
+            j.work_arrangement,
+        )
+        if j.work_arrangement != old_arrangement:
+            arrangement_corrections.append((j, old_arrangement, j.work_arrangement))
+
+    chosen = {}
+    duplicate_warnings = []
+    for j in jobs:
+        key = _canonical_requisition_key(j)
+        old = chosen.get(key)
+        if old is None:
+            chosen[key] = j
+            continue
+        # Prefer the clearer/longer source title when one requisition appears
+        # under multiple Disney/ESPN slugs.
+        keep, drop = (j, old) if len(j.title) > len(old.title) else (old, j)
+        chosen[key] = keep
+        duplicate_warnings.append((drop, keep, key))
+
+    kept_urls = {j.url for j in chosen.values()}
+    arrangement_corrections = [
+        item for item in arrangement_corrections if item[0].url in kept_urls
+    ]
+    return list(chosen.values()), recovered, duplicate_warnings, arrangement_corrections
+
+
+def write_quality_report(
+    jobs,
+    recovered_locations,
+    duplicate_warnings,
+    arrangement_corrections,
+):
+    rows = []
+
+    def add(kind, severity, j, detail):
+        rows.append([
+            kind,
+            severity,
+            j.company,
+            j.title,
+            j.id,
+            j.work_arrangement,
+            j.city,
+            j.state,
+            j.url,
+            detail,
+        ])
+
+    for dropped, kept, key in duplicate_warnings:
+        add(
+            "duplicate_requisition_removed",
+            "info",
+            dropped,
+            f"Kept '{kept.title}' using key {key}",
+        )
+
+    for j, old, new in arrangement_corrections:
+        add(
+            "work_arrangement_corrected",
+            "info",
+            j,
+            f"Changed from {old} to {new} using explicit job-level wording",
+        )
+
+    generic_paths = {
+        "", "/", "/jobs", "/jobs/", "/careers", "/careers/",
+        "/job-openings", "/job-openings/",
+    }
+    for j in jobs:
+        desc = j.description or ""
+        plain = strip_html(desc)
+        structural = len(re.findall(r"<(?:p|li|ul|ol|h[2-5]|br)\b", desc, re.I))
+        if not clean(j.city):
+            add("missing_location", "warning", j, "No reliable city was found")
+        elif j.url in recovered_locations:
+            add("location_recovered", "info", j, "Recovered from a labelled title/description location")
+        if len(plain) > 700 and structural < 2:
+            add("block_description", "warning", j, f"Only {structural} structural HTML elements")
+        parsed = urlparse(j.url)
+        if parsed.path.lower() in generic_paths and not parsed.query:
+            add("generic_apply_link", "warning", j, "URL appears to be a general jobs/careers page")
+        if not clean(j.url):
+            add("missing_apply_link", "error", j, "No application URL")
+
+        title_low = clean(j.title).lower()
+        if j.jobtype == "Internship" and j.category != "Internships":
+            add("category_conflict", "warning", j, "Internship job is not in Internships")
+        elif re.search(r"\bmaster control\b", title_low) and j.category != "Television":
+            add("category_conflict", "warning", j, "Master Control should be Television")
+        elif (
+            (
+                re.search(r"\b(?:software|infrastructure|cybersecurity|developer|engineer)\b", title_low)
+                or re.search(
+                    r"\b(?:systems?|network)\s+(?:engineer|administrator|analyst|developer|specialist)\b",
+                    title_low,
+                )
+            )
+            and not re.search(r"\b(?:sales|account executive)\b", title_low)
+            and j.category != "Internships"
+            and j.category != "Engineering"
+        ):
+            add("category_conflict", "warning", j, "Technical title may belong in Engineering")
+        elif (
+            re.search(r"\b(?:account executive|sales manager|director of sales|sales director)\b", title_low)
+            and j.jobtype != "Internship"
+            and j.category != "Sales & Marketing"
+        ):
+            add("category_conflict", "warning", j, "Sales title may belong in Sales & Marketing")
+
+    rows.sort(key=lambda x: (x[1], x[0], x[2].lower(), x[3].lower()))
+    with QUALITY_FILE.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow([
+            "issue", "severity", "company", "title", "job_id",
+            "work_arrangement", "city", "state", "url", "detail",
+        ])
+        w.writerows(rows)
+
+    counts = {}
+    for row in rows:
+        counts[row[0]] = counts.get(row[0], 0) + 1
+    print(f"Quality report: {len(rows)} flags -> {QUALITY_FILE}")
+    for kind, count in sorted(counts.items()):
+        print(f"  {kind}: {count}")
 
 
 def write_xml(jobs):
@@ -9725,8 +10008,15 @@ def main():
     }
 
     jobs = list(ded.values())
+    jobs, recovered_locations, duplicate_warnings, arrangement_corrections = finalize_jobs(jobs)
 
     write_xml(jobs)
+    write_quality_report(
+        jobs,
+        recovered_locations,
+        duplicate_warnings,
+        arrangement_corrections,
+    )
 
     with AUDITFILE.open(
         "w",
