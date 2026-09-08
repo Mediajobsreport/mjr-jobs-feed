@@ -117,6 +117,45 @@ def format_description(s):
         else:
             out = f"<p>{lines[0]}</p>" if lines else ""
 
+    # Some ATS endpoints return an entire multi-section posting inside one
+    # paragraph. Restore section boundaries without changing employer text.
+    # This is intentionally limited to long, sparsely structured descriptions.
+    structural = len(re.findall(r"<(?:p|li|ul|ol|h[2-5]|br)\b", out, re.I))
+    if len(strip_html(out)) > 700 and structural < 2:
+        text = BeautifulSoup(out, "html.parser").get_text(" ")
+        headings = [
+            "About Suno", "About the Role", "About the Job", "About Us",
+            "Position Summary", "Position Overview", "Job Summary",
+            "Overview", "Responsibilities", "Major Responsibilities",
+            "Key Responsibilities", "Primary Responsibilities",
+            "Duties and Responsibilities", "What You'll Do", "What You’ll Do",
+            "Your day-to-day", "Your Day-to-Day", "Qualifications",
+            "Required Qualifications", "Preferred Qualifications",
+            "Required Skills", "Required Skills/Knowledge",
+            "Skills and Qualifications", "What You'll Need", "What You’ll Need",
+            "Education", "Experience", "Benefits", "Additional Notes",
+            "Work Option", "Work Location", "Physical Requirements",
+            "Equal Opportunity Employer",
+        ]
+        marker = re.compile(
+            r"(?<![A-Za-z])(" +
+            "|".join(re.escape(x) for x in sorted(headings, key=len, reverse=True)) +
+            r")(?:\s*:)?(?=\s)",
+            re.I,
+        )
+        matches = list(marker.finditer(text))
+        if len(matches) >= 2:
+            pieces = []
+            if clean(text[:matches[0].start()]):
+                pieces.append(f"<p>{html.escape(clean(text[:matches[0].start()]))}</p>")
+            for index, match in enumerate(matches):
+                end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+                body = clean(text[match.end():end])
+                pieces.append(f"<h3>{html.escape(clean(match.group(1)))}</h3>")
+                if body:
+                    pieces.append(f"<p>{html.escape(body)}</p>")
+            out = "".join(pieces)
+
     return out
 
 
@@ -7635,6 +7674,7 @@ def write_quality_report(
                 )
             )
             and not re.search(r"\b(?:sales|account executive)\b", title_low)
+            and not re.search(r"\b(?:facilities systems?|space planner)\b", title_low)
             and j.category != "Internships"
             and j.category != "Engineering"
         ):
