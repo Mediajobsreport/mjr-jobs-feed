@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse, unquote, quote
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 from dateutil import parser as dtparser
 
 try:
@@ -64,8 +64,29 @@ APPROVED = {
 }
 
 
+def _repair_mojibake(s):
+    """Repair common UTF-8-as-Windows-1252 artifacts without rewriting prose."""
+    text = str(s or "")
+    replacements = {
+        "\u00c2\u00a0": " ", "\u00c2 ": " ",
+        "\u00e2\u0080\u0098": "‘", "\u00e2\u0080\u0099": "’",
+        "\u00e2\u0080\u009c": "“", "\u00e2\u0080\u009d": "”",
+        "\u00e2\u0080\u0093": "–", "\u00e2\u0080\u0094": "—",
+        "\u00e2\u0080\u00a6": "…",
+        "\u00e2\u0084\u00a2": "™", "\u00c2\u00a9": "©", "\u00c2\u00ae": "®",
+        "\u00c3\u00a1": "á", "\u00c3\u00a9": "é", "\u00c3\u00ad": "í",
+        "\u00c3\u00b3": "ó", "\u00c3\u00ba": "ú", "\u00c3\u00b1": "ñ",
+        "\u00c3\u00bc": "ü", "\u00c3\u00a8": "è", "\u00c3\u00a0": "à",
+        "\u00c3\u0081": "Á", "\u00c3\u0089": "É", "\u00c3\u008d": "Í",
+        "\u00c3\u0093": "Ó", "\u00c3\u009a": "Ú", "\u00c3\u0091": "Ñ",
+    }
+    for broken, fixed in replacements.items():
+        text = text.replace(broken, fixed)
+    return text
+
+
 def clean(s):
-    return re.sub(r"\s+", " ", html.unescape(s or "")).strip()
+    return re.sub(r"\s+", " ", _repair_mojibake(html.unescape(s or ""))).strip()
 
 
 def strip_html(s):
@@ -79,11 +100,14 @@ def format_description(s):
     Paragraphs, headings, line breaks, lists and basic emphasis are retained.
     Scripts, styles, forms, buttons, images and all attributes are removed.
     """
-    raw = html.unescape(str(s or "")).strip()
+    raw = _repair_mojibake(html.unescape(str(s or ""))).strip()
     if not raw:
         return ""
 
     soup = BeautifulSoup(raw, "html.parser")
+
+    for comment in soup.find_all(string=lambda value: isinstance(value, Comment)):
+        comment.extract()
 
     for bad in soup.find_all([
         "script", "style", "noscript", "iframe", "form", "button",
@@ -6521,7 +6545,12 @@ def _radio_recovery_job(src, url, raw):
                 break
     if not title:
         return None
-    main=(soup.find("main") or soup.find("article")
+    # Lotus/OneCMS pages have a clean WordPress article body but substantial
+    # navigation and footer content outside it.
+    lotus_main = None
+    if clean(src.get("Company", "")).lower() == "lotus":
+        lotus_main = soup.select_one(".entry-content, .post-content, article .entry-content")
+    main=(lotus_main or soup.find("main") or soup.find("article")
           or soup.find(attrs={"class":re.compile(r"(job.?description|job.?detail|posting|entry-content|career)",re.I)})
           or soup)
     desc=format_description(str(main))
