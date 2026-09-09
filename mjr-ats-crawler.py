@@ -7597,12 +7597,41 @@ def _canonical_requisition_key(j):
     return f"url:{url.lower()}"
 
 
+def _clean_lotus_description(title, description):
+    """Keep the Lotus/OneCMS article while removing duplicated site chrome."""
+    soup = BeautifulSoup(description or "", "html.parser")
+    wanted = clean(title).lower()
+    start = None
+    for node in soup.find_all(["h1", "h2", "h3"]):
+        label = clean(node.get_text(" ")).lower()
+        if label == wanted or (wanted and wanted in label and label != "blog"):
+            start = node
+            break
+    if start is None:
+        return description
+
+    pieces = []
+    for node in [start, *list(start.next_siblings)]:
+        label = clean(node.get_text(" ") if hasattr(node, "get_text") else str(node)).lower()
+        if any(marker in label for marker in (
+            "terms of use privacy policy fcc applications",
+            "powered by onecms",
+            "served by intertech media",
+        )):
+            break
+        pieces.append(str(node))
+    cleaned = format_description("".join(pieces))
+    return cleaned if len(strip_html(cleaned)) >= 200 else description
+
+
 def finalize_jobs(jobs):
     """Apply feed-wide corrections after fresh and retained jobs are combined."""
     recovered = set()
     arrangement_corrections = []
     for j in jobs:
         j.description = format_description(j.description)
+        if clean(j.company).lower() == "lotus":
+            j.description = _clean_lotus_description(j.title, j.description)
         if _recover_missing_location(j):
             recovered.add(j.url)
         location = ", ".join(x for x in [j.city, j.state, j.country] if clean(x))
