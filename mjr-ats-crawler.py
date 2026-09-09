@@ -42,6 +42,9 @@ OUTFILE = Path(os.getenv("MJR_OUTPUT", "mjr-jboard-master.xml"))
 AUDITFILE = Path(os.getenv("MJR_AUDIT", "mjr-ats-audit.csv"))
 STATE_FILE = Path(os.getenv("MJR_STATE", "mjr-job-state.json"))
 QUALITY_FILE = Path(os.getenv("MJR_QUALITY_REPORT", "mjr-job-quality-report.csv"))
+CAREERONESTOP_DIAGNOSTIC = Path(os.getenv("MJR_CAREERONESTOP_DIAGNOSTIC", "mjr-careeronestop-diagnostic.json"))
+CAREERONESTOP_SOURCE = "https://www.careeronestop.org/"
+CAREERONESTOP_LOGO = "https://raw.githubusercontent.com/mediajobsreport/mjr-jobs-feed/main/images/careeronestop-logo.jpg"
 
 SESSION = requests.Session()
 SESSION.headers.update(
@@ -7780,11 +7783,22 @@ def write_xml(jobs):
     ):
         e = ET.SubElement(root, "job")
 
+        description = j.description
+        if j.source == CAREERONESTOP_SOURCE:
+            description += (
+                '<hr><p><a href="https://www.careeronestop.org/">'
+                f'<img src="{CAREERONESTOP_LOGO}" alt="CareerOneStop"></a></p>'
+                '<p>Job data provided by CareerOneStop, sponsored by the '
+                'U.S. Department of Labor Employment and Training Administration '
+                'and produced by the Minnesota Department of Employment and '
+                'Economic Development.</p>'
+            )
+
         vals = [
             ("id", j.id),
             ("title", j.title),
             ("company", j.company),
-            ("description", j.description),
+            ("description", description),
             ("date", j.date.isoformat()),
             ("expiration", str(j.expiration)),
             ("jobtype", j.jobtype),
@@ -9901,6 +9915,157 @@ def salem_render_diagnostics_v31(src):
 
     return str(diag_path)
 
+
+def careeronestop_townsquare_test():
+    """Controlled CareerOneStop job-search test for Townsquare Media.
+
+    CareerOneStop fields are retained as supplied. MJR category, job type and
+    work arrangement are separate feed metadata. The employer page is consulted
+    only when the API listing does not include a usable job description.
+    """
+    user_id = clean(os.getenv("CAREERONESTOP_USER_ID", ""))
+    token = clean(os.getenv("CAREERONESTOP_API_TOKEN", ""))
+    if not user_id or not token:
+        raise RuntimeError(
+            "CareerOneStop test requested but CAREERONESTOP_USER_ID or "
+            "CAREERONESTOP_API_TOKEN is missing"
+        )
+
+    segments = [
+        user_id, "Townsquare Media", "US", "0", "0", "0", "0", "100",
+    ]
+    endpoint = "https://api.careeronestop.org/v1/jobsearch/" + "/".join(
+        quote(str(value), safe="") for value in segments
+    )
+    response = req(
+        "GET",
+        endpoint,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/json",
+        },
+    )
+    payload = response.json()
+
+    # Save a credential-free diagnostic so the first test is easy to verify.
+    diagnostic = payload
+    if isinstance(payload, dict):
+        diagnostic = dict(payload)
+        for key in list(diagnostic):
+            if str(key).lower() in {"token", "authorization", "userid", "user_id"}:
+                diagnostic[key] = "[redacted]"
+    CAREERONESTOP_DIAGNOSTIC.write_text(
+        json.dumps(diagnostic, indent=2, ensure_ascii=False, default=str),
+        encoding="utf-8",
+    )
+
+    rows = []
+    if isinstance(payload, dict):
+        for key in ("Jobs", "jobs", "Results", "results", "JobResults", "jobResults"):
+            if isinstance(payload.get(key), list):
+                rows = payload[key]
+                break
+        if not rows:
+            for value in payload.values():
+                if isinstance(value, dict):
+                    for key in ("Jobs", "jobs", "Results", "results"):
+                        if isinstance(value.get(key), list):
+                            rows = value[key]
+                            break
+                if rows:
+                    break
+    elif isinstance(payload, list):
+        rows = payload
+
+    def value(row, *names):
+        if not isinstance(row, dict):
+            return ""
+        lowered = {str(k).lower(): v for k, v in row.items()}
+        for name in names:
+            found = row.get(name, lowered.get(name.lower(), ""))
+            if found not in (None, "", [], {}):
+                return found
+        return ""
+
+    out = []
+    seen = set()
+    for row in rows:
+        company = clean(str(value(row, "Company", "CompanyName", "Employer") or ""))
+        if "townsquare" not in company.lower():
+            continue
+
+        title = clean(str(value(row, "JobTitle", "Title", "PositionTitle") or ""))
+        url = clean(str(value(row, "URL", "JobUrl", "JobURL", "ApplyURL") or ""))
+        jid = clean(str(value(row, "JvId", "JobId", "JobID", "Id") or ""))
+        location = clean(str(value(row, "Location", "JobLocation") or ""))
+        desc_raw = value(row, "JobDescription", "Description", "JobDesc")
+        description = format_description(str(desc_raw or ""))
+
+        if not title or not url:
+            continue
+
+        # Some List Jobs responses are summaries. Use the linked employer page
+        # for the description while leaving CareerOneStop-supplied fields intact.
+        if len(strip_html(description)) < 200:
+            try:
+                detail_response = req("GET", url)
+                detail_source = {
+                    "Company": company,
+                    "Industry": "Radio",
+                    "URL": url,
+                }
+                detail_job = _job_from_detail(
+                    detail_source,
+                    str(getattr(detail_response, "url", "") or url),
+                    detail_response.text,
+                )
+                if detail_job:
+                    description = detail_job.description
+            except Exception:
+                pass
+
+        if len(strip_html(description)) < 200:
+            continue
+
+        posted = pdate(str(value(
+            row, "Date", "PostedDate", "DatePosted", "AcquisitionDate",
+        ) or "")) or TODAY
+        if posted < CUTOFF:
+            continue
+
+        city = location
+        state = ""
+        match = re.match(r"^(.+?),\s*([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$", location)
+        if match:
+            city, state = clean(match.group(1)), match.group(2)
+
+        jid = jid or hashlib.sha1(url.encode()).hexdigest()[:16]
+        key = (jid, url.lower())
+        if key in seen:
+            continue
+        seen.add(key)
+
+        out.append(Job(
+            f"cos-{jid}",
+            title,
+            company,
+            description,
+            posted,
+            jobtype(title, description),
+            category(title, description, "Radio", company),
+            url,
+            CAREERONESTOP_SOURCE,
+            CAREERONESTOP_SOURCE,
+            "",
+            normalize_work_arrangement(description, location, title),
+            city,
+            state,
+            "US",
+        ))
+
+    print(f"CareerOneStop Townsquare Media test: {len(rows)} API rows, {len(out)} qualifying jobs")
+    return out
+
 def main():
     with SOURCES_FILE.open(
         newline="",
@@ -9927,6 +10092,12 @@ def main():
     if "cox radio" in MJR_TEST_COMPANIES:
         MJR_TEST_COMPANIES.discard("cox radio")
         MJR_TEST_COMPANIES.add("cox media group")
+
+    careeronestop_test = "careeronestop" in MJR_TEST_COMPANIES
+    careeronestop_enabled = (
+        os.getenv("CAREERONESTOP_ENABLED", "false").lower() in {"1", "true", "yes"}
+        or careeronestop_test
+    )
 
     if MJR_TEST_COMPANIES:
         sources = [s for s in sources if _v28_source_enabled(s)]
@@ -10094,6 +10265,28 @@ def main():
                     repr(e),
                 ]
             )
+
+    if careeronestop_enabled:
+        try:
+            cos_jobs = careeronestop_townsquare_test()
+            jobs += cos_jobs
+            audit.append([
+                "Townsquare Media",
+                "CareerOneStop Web API",
+                CAREERONESTOP_SOURCE,
+                "ok" if cos_jobs else "zero_or_not_enumerable",
+                len(cos_jobs),
+                "Controlled CareerOneStop test",
+            ])
+        except Exception as e:
+            audit.append([
+                "Townsquare Media",
+                "CareerOneStop Web API",
+                CAREERONESTOP_SOURCE,
+                "error",
+                0,
+                repr(e),
+            ])
 
     ded = {
         j.url.rstrip("/").lower(): j
