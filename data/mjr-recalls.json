@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-08T20:30:22.559Z",
+  "generated": "2026-09-09T00:40:26.048Z",
   "version": "2.4",
   "newestDate": "2026-09-08",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1031
+      "count": 1049
     },
     "CPSC": {
       "ok": true,
@@ -1213,6 +1213,22 @@
       "score": 70
     },
     {
+      "id": "FDA-2026-09-08-created-fresh-cranberry-chicken-salad-wedge-sandwich-freshpoint-centra",
+      "source": "FDA",
+      "category": "food",
+      "title": "Created Fresh! Cranberry Chicken Salad Wedge Sandwich Recalled",
+      "reason": "Improperly declared egg allergen",
+      "brand": "Created Fresh!",
+      "company": "FreshPoint Central Florida, Inc.",
+      "product": "Cranberry Chicken Salad Wedge Sandwich",
+      "date": "2026-09-08",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/freshpoint-issues-recall-due-improperly-declared-allergen-egg-chicken-salad-wedge-sandwiches",
+      "score": 70
+    },
+    {
       "id": "FDA-2026-09-03-american-regent-inc-epinephrine-injection-usp-30-mg-30-ml-1-mg-ml-mult",
       "source": "FDA",
       "category": "health",
@@ -1535,22 +1551,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1564,6 +1564,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -2016,23 +2032,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Trsmima-Zipline-Kits-and-Zipline-Spring-Brakes-Recalled-Due-to-Fall-and-Collision-Hazards-Manufactured-by-Trsmima",
       "score": 50
-    },
-    {
-      "id": "CPSC-10934-jinhezo-mini-waterproof-led-tea-lights-recalled-due-to-risk-of-serious",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "JINHEZO Mini Waterproof LED Tea Lights Recalled Due to Risk of Serious Injury or Death from Battery…",
-      "reason": "The LED Tea Lights violate the mandatory safety standard for consumer products with button cell and coin batteries because the button batteries can be accessed easily by children, posing an ingestion hazard.…",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com from March 2024 through July 2026 for between $16 to $20 per pack.",
-      "product": "JINHEZO Mini Waterproof LED Tea Lights",
-      "date": "2026-08-20",
-      "units": 2798,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/JINHEZO-Mini-Waterproof-LED-Tea-Lights-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Consumer-Products-with-Button-Cell-Batteries-Imported-by-Mystic-ZO",
-      "score": 48
     }
   ]
 }
