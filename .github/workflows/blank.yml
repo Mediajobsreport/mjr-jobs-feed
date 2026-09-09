@@ -56,6 +56,8 @@ jobs:
 
       - name: Crawl ATS sources
         env:
+          CAREERONESTOP_USER_ID: "${{ secrets.CAREERONESTOP_USER_ID }}"
+          CAREERONESTOP_API_TOKEN: "${{ secrets.CAREERONESTOP_API_TOKEN }}"
           MJR_WINDOW_DAYS: "30"
           MJR_SOURCES: "mjr-ats-sources.csv"
           MJR_TEST_COMPANIES: "${{ github.event.inputs.test_companies }}"
@@ -68,6 +70,26 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '' }}
         shell: bash
         run: |
+          echo ""
+          echo "----- CAREERONESTOP DIAGNOSTIC -----"
+          if [[ -f "mjr-careeronestop-diagnostic.json" ]]; then
+            python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("mjr-careeronestop-diagnostic.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          if isinstance(data, dict):
+              print("Top-level fields:", ", ".join(sorted(map(str, data.keys()))))
+              for key in ("Jobcount", "jobcount", "Total", "total", "Count", "count"):
+                  if key in data:
+                      print(f"{key}: {data[key]}")
+          else:
+              print("Response type:", type(data).__name__)
+          PY
+          else
+            echo "No CareerOneStop diagnostic file generated."
+          fi
           echo ""
           echo "----- SIRIUSXM DIAGNOSTIC -----"
           if [[ -f "mjr-siriusxm-diagnostic-v68.txt" ]]; then
@@ -149,6 +171,7 @@ jobs:
             mjr-audacy-search-page-v43.html
             mjr-audacy-detail-diagnostic-v45.txt
             mjr-audacy-detail-*-v45.html
+            mjr-careeronestop-diagnostic.json
             mjr-audacy-frames/
             mjr-salem-v77-diagnostic.txt
             mjr-salem-diagnostic.txt
