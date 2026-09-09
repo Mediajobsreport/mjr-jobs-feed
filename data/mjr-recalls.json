@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-09T00:40:26.048Z",
+  "generated": "2026-09-09T04:31:04.852Z",
   "version": "2.4",
   "newestDate": "2026-09-08",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1049
+      "count": 1032
     },
     "CPSC": {
       "ok": true,
@@ -1551,22 +1551,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Oma’s Pride Canine Food Recalled",
-      "reason": "Contaminated with Salmonella",
-      "brand": "Oma’s Pride",
-      "company": "Miller Foods, Inc.",
-      "product": "Canine Food",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": true,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
       "source": "FDA",
       "category": "food",
@@ -1580,6 +1564,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Oma’s Pride Canine Food Recalled",
+      "reason": "Contaminated with Salmonella",
+      "brand": "Oma’s Pride",
+      "company": "Miller Foods, Inc.",
+      "product": "Canine Food",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
       "score": 63
     },
     {
