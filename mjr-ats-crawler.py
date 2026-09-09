@@ -9932,7 +9932,15 @@ def careeronestop_townsquare_test():
         )
 
     segments = [
-        user_id, "Townsquare Media", "US", "0", "0", "0", "0", "100",
+        user_id,
+        "Townsquare Media",  # required nationwide keyword
+        "US",                # nationwide search
+        "0",                 # radius is ignored for US searches
+        "0",                 # relevance sort
+        "0",                 # default sort order
+        "0",                 # first record
+        "250",               # documented maximum page size
+        "30",                # postings acquired during the last 30 days
     ]
     endpoint = "https://api.careeronestop.org/v1/jobsearch/" + "/".join(
         quote(str(value), safe="") for value in segments
@@ -9942,13 +9950,23 @@ def careeronestop_townsquare_test():
         "Accept": "application/json",
     }
     try:
-        response = req("GET", endpoint, headers=api_headers)
+        response = req(
+            "GET",
+            endpoint,
+            params={"companyName": "Townsquare Media", "showFilters": "false"},
+            headers=api_headers,
+        )
     except requests.HTTPError as exc:
         # CareerOneStop has used both IIS route forms. Retry the documented
         # trailing-slash variant only for a route-level 404.
         if getattr(exc.response, "status_code", None) != 404:
             raise
-        response = req("GET", endpoint + "/", headers=api_headers)
+        response = req(
+            "GET",
+            endpoint + "/",
+            params={"companyName": "Townsquare Media", "showFilters": "false"},
+            headers=api_headers,
+        )
     payload = response.json()
 
     # Save a credential-free diagnostic so the first test is easy to verify.
