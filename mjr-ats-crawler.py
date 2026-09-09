@@ -9937,14 +9937,18 @@ def careeronestop_townsquare_test():
     endpoint = "https://api.careeronestop.org/v1/jobsearch/" + "/".join(
         quote(str(value), safe="") for value in segments
     )
-    response = req(
-        "GET",
-        endpoint,
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Accept": "application/json",
-        },
-    )
+    api_headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json",
+    }
+    try:
+        response = req("GET", endpoint, headers=api_headers)
+    except requests.HTTPError as exc:
+        # CareerOneStop has used both IIS route forms. Retry the documented
+        # trailing-slash variant only for a route-level 404.
+        if getattr(exc.response, "status_code", None) != 404:
+            raise
+        response = req("GET", endpoint + "/", headers=api_headers)
     payload = response.json()
 
     # Save a credential-free diagnostic so the first test is easy to verify.
@@ -10279,13 +10283,24 @@ def main():
                 "Controlled CareerOneStop test",
             ])
         except Exception as e:
+            error_text = repr(e)
+            # requests includes the requested URL in HTTP errors. CareerOneStop
+            # places the API user ID in that path, so redact both credentials
+            # before the audit is printed or uploaded.
+            for secret in (
+                os.getenv("CAREERONESTOP_USER_ID", ""),
+                os.getenv("CAREERONESTOP_API_TOKEN", ""),
+            ):
+                if secret:
+                    error_text = error_text.replace(secret, "[redacted]")
+                    error_text = error_text.replace(quote(secret, safe=""), "[redacted]")
             audit.append([
                 "Townsquare Media",
                 "CareerOneStop Web API",
                 CAREERONESTOP_SOURCE,
                 "error",
                 0,
-                repr(e),
+                error_text,
             ])
 
     ded = {
