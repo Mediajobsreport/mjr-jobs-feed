@@ -1,7 +1,7 @@
 {
-  "generated": "2026-09-10T04:30:56.255Z",
+  "generated": "2026-09-10T08:32:55.002Z",
   "version": "2.4",
-  "newestDate": "2026-09-08",
+  "newestDate": "2026-09-09",
   "stale": false,
   "sources": {
     "FDA": {
@@ -14,11 +14,11 @@
     },
     "USDA": {
       "ok": true,
-      "count": 2024
+      "count": 2025
     },
     "NHTSA": {
       "ok": true,
-      "count": 95
+      "count": 97
     }
   },
   "count": 120,
@@ -31,7 +31,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2021-2023 Jeep Grand Cherokee L, 2022-2023 Jeep Grand Cherokee, and Jeep Grand Cherokee 4XE vehicles. The rear coil springs may be incorrectly installed and detach from the…",
       "brand": "Jeep",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee 4XE, Grand Cherokee L, Grand Cherokee",
+      "product": "Grand Cherokee, Grand Cherokee 4XE, Grand Cherokee L",
       "date": "2026-09-01",
       "units": 328381,
       "pet": false,
@@ -75,20 +75,20 @@
       "score": 163
     },
     {
-      "id": "NHTSA-26V559000",
+      "id": "NHTSA-26V560000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Jeep Vehicles Recalled",
-      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
-      "brand": "Jeep",
+      "title": "Ram 1500 Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2025-2026 Ram 1500 vehicles. A radio software error may cause the rearview camera image not to display. As such, these vehicles fail to comply with the requirements of…",
+      "brand": "Ram",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee, Cherokee, Grand Cherokee L, Grand Wagoneer, Grand Wagoneer L, Wagoneer, Wagoneer L, Grand Cherokee 4XE",
+      "product": "1500",
       "date": "2026-09-01",
-      "units": 201976,
+      "units": 239131,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26V559000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
+      "campaign": "26V560000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V560-9456.pdf",
       "score": 162
     },
     {
@@ -108,20 +108,20 @@
       "score": 160
     },
     {
-      "id": "NHTSA-26V560000",
+      "id": "NHTSA-26V559000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Ram 1500 Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2025-2026 Ram 1500 vehicles. A radio software error may cause the rearview camera image not to display. As such, these vehicles fail to comply with the requirements of…",
-      "brand": "Ram",
+      "title": "Jeep Vehicles Recalled",
+      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
+      "brand": "Jeep",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "1500",
+      "product": "Grand Wagoneer L PHEV, Grand Cherokee 4XE, Grand Wagoneer L, Wagoneer L, Wagoneer, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
       "date": "2026-09-01",
-      "units": 239131,
+      "units": 201976,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26V560000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V560-9456.pdf",
+      "campaign": "26V559000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 162
     },
     {
@@ -165,7 +165,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Wrangler, Jeep Gladiator, Jeep Compass, Jeep Cherokee, Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Wagoneer, Jeep Grand Wagoneer L, Ram Promaster, Ram…",
       "brand": "Ram",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Promaster, 2500, 1500, Wrangler, Grand Wagoneer L, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
+      "product": "Promaster Bev, Pacifica, Pacifica Plug-In Hybrid, Voyager, Charger, Cherokee, Compass, Gladiator",
       "date": "2026-08-13",
       "units": 844027,
       "pet": false,
@@ -306,6 +306,23 @@
       "majorBrand": true,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/publix-recalls-all-lots-greenwise-organic-frozen-blueberries-and-whole-mixed-berries-due-potential-e",
       "score": 118
+    },
+    {
+      "id": "NHTSA-26V570000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Toyota C-Hr Vehicles Recalled",
+      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2026 C-HR battery electric vehicles. A software programming error may cause the electric drive system battery to become overcharged under certain…",
+      "brand": "Toyota",
+      "company": "Toyota Motor Engineering & Manufacturing",
+      "product": "C-Hr",
+      "date": "2026-09-02",
+      "units": 8521,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V570000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V570-8322.pdf",
+      "score": 117
     },
     {
       "id": "FDA-2026-09-08-fi-supplements-vet-plus-inc",
@@ -561,11 +578,11 @@
       "id": "NHTSA-26V510000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Alfa Romeo Vehicles Recalled",
+      "title": "Dodge Vehicles Recalled",
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2023-2025 Dodge Hornet and 2023-2026 Alfa Romeo Tonale vehicles. The rear outboard seat belts may become twisted and fail to retract properly. 48,777 vehicles or units may be…",
-      "brand": "Alfa Romeo",
+      "brand": "Dodge",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Tonale, Hornet",
+      "product": "Hornet, Tonale",
       "date": "2026-08-06",
       "units": 48777,
       "pet": false,
@@ -785,7 +802,7 @@
       "reason": "Britax Child Safety, Inc. (Britax) is recalling certain B-Safe Gen 2, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe 35, B-Safe Ultra, and Endeavours child seats. Please refer to Britax's recall report for the…",
       "brand": "Britax",
       "company": "Britax Child Safety, Inc.",
-      "product": "Endeavours, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2, B-Safe Ultra, B-Safe 35",
+      "product": "B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2, Endeavours, B-Safe Ultra, B-Safe 35",
       "date": "2026-08-20",
       "units": 114660,
       "pet": false,
@@ -1147,6 +1164,22 @@
       "score": 71
     },
     {
+      "id": "USDA-2026-09-09-el-eden-import-distributor-corp-recalls-ineligible-pork-cracklings-pro",
+      "source": "USDA",
+      "category": "food",
+      "title": "El Eden Import Distributor Corp Recalls Ineligible Pork Cracklings Products Imported from The Republic…",
+      "reason": "Import Violation",
+      "brand": "",
+      "company": "",
+      "product": "",
+      "date": "2026-09-09",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "http://www.fsis.usda.gov/recalls-alerts/el-eden-import-distributor-corp-recalls-ineligible-pork-cracklings-products-imported",
+      "score": 70
+    },
+    {
       "id": "FDA-2026-09-08-bmc-luna-g3-apap-model-lg3600-bmc-medical-co-ltd",
       "source": "FDA",
       "category": "health",
@@ -1281,23 +1314,6 @@
       "score": 68
     },
     {
-      "id": "NHTSA-26E053000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Mopar Seat Belt Assembly Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain Mopar seat belt assemblies with part number 7SU27DX9AA, 7SU10DX9AA, 7SV41DX9AA, 7SV42DX9AA, 7ZK68DX9AA, 7ZK69DX9AA, 8AR89DX9AA, or 8BM60DX9AA. The rear outboard seat belts…",
-      "brand": "Mopar",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "Seat Belt Assembly",
-      "date": "2026-08-06",
-      "units": 1458,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E053000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E053-6920.pdf",
-      "score": 67
-    },
-    {
       "id": "NHTSA-26V513000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1312,6 +1328,23 @@
       "majorBrand": true,
       "campaign": "26V513000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V513-2145.pdf",
+      "score": 67
+    },
+    {
+      "id": "NHTSA-26E053000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Mopar Seat Belt Assembly Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain Mopar seat belt assemblies with part number 7SU27DX9AA, 7SU10DX9AA, 7SV41DX9AA, 7SV42DX9AA, 7ZK68DX9AA, 7ZK69DX9AA, 8AR89DX9AA, or 8BM60DX9AA. The rear outboard seat belts…",
+      "brand": "Mopar",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "Seat Belt Assembly",
+      "date": "2026-08-06",
+      "units": 1458,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26E053000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E053-6920.pdf",
       "score": 67
     },
     {
@@ -1491,7 +1524,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026 Maverick, F-150, and Bronco Sport vehicles. Certain vehicle joints may be improperly tightened. This can lead to detached parts, unsecured cargo, degraded crash…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "Maverick, F-150, Bronco Sport",
+      "product": "Bronco Sport, Maverick, F-150",
       "date": "2026-08-25",
       "units": 23,
       "pet": false,
@@ -1771,7 +1804,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Grand Cherokee and Grand Cherokee L vehicles. Due to a software issue in the body control module (BCM), the windshield wipers may fail. 81 vehicles or units may be…",
       "brand": "Jeep",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee, Grand Cherokee L",
+      "product": "Grand Cherokee L, Grand Cherokee",
       "date": "2026-08-13",
       "units": 81,
       "pet": false,
@@ -1784,11 +1817,11 @@
       "id": "NHTSA-26V530000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "GMC Vehicles Recalled",
+      "title": "Chevrolet Vehicles Recalled",
       "reason": "General Motors, LLC (GM) is recalling certain 2024-2025 Chevrolet Silverado 2500 and GMC Sierra 2500 vehicles equipped with the enhanced towing option and 20-inch accessory tire/wheel package. The tire information…",
-      "brand": "GMC",
+      "brand": "Chevrolet",
       "company": "General Motors, LLC",
-      "product": "Sierra 2500, Silverado 2500",
+      "product": "Silverado 2500, Sierra 2500",
       "date": "2026-08-13",
       "units": 8,
       "pet": false,
@@ -1812,23 +1845,6 @@
       "majorBrand": true,
       "campaign": "26V532000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V532-1166.pdf",
-      "score": 55
-    },
-    {
-      "id": "NHTSA-26E054000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Grote Clearance/Marker Lamp Vehicles Recalled",
-      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain Grote replacement marker lights with part number 78513681. The center roof marker lights may fail to illuminate. As such, this equipment fails to comply…",
-      "brand": "Grote",
-      "company": "Volvo Trucks North America",
-      "product": "Clearance/Marker Lamp",
-      "date": "2026-08-12",
-      "units": 844,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E054000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E054-0627.pdf",
       "score": 55
     },
     {
@@ -1866,6 +1882,23 @@
       "score": 55
     },
     {
+      "id": "NHTSA-26E054000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Grote Clearance/Marker Lamp Vehicles Recalled",
+      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain Grote replacement marker lights with part number 78513681. The center roof marker lights may fail to illuminate. As such, this equipment fails to comply…",
+      "brand": "Grote",
+      "company": "Volvo Trucks North America",
+      "product": "Clearance/Marker Lamp",
+      "date": "2026-08-12",
+      "units": 844,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26E054000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E054-0627.pdf",
+      "score": 55
+    },
+    {
       "id": "NHTSA-26V512000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1883,23 +1916,6 @@
       "score": 55
     },
     {
-      "id": "NHTSA-26V494000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Cadillac Vehicles Recalled",
-      "reason": "General Motors, LLC is recalling certain 2026 Cadillac Escalade IQ, Escalade IQL, GMC Sierra EV, and Chevrolet Silverado EV vehicles. The high voltage battery may have an improperly secured internal module component.…",
-      "brand": "Cadillac",
-      "company": "General Motors, LLC",
-      "product": "Escalade Iq, Escalade Iql, Silverado EV, Sierra EV",
-      "date": "2026-07-30",
-      "units": 10,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V494000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V494-0988.pdf",
-      "score": 55
-    },
-    {
       "id": "NHTSA-26V496000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1914,6 +1930,23 @@
       "majorBrand": true,
       "campaign": "26V496000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V496-1031.pdf",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26V494000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Chevrolet Vehicles Recalled",
+      "reason": "General Motors, LLC is recalling certain 2026 Cadillac Escalade IQ, Escalade IQL, GMC Sierra EV, and Chevrolet Silverado EV vehicles. The high voltage battery may have an improperly secured internal module component.…",
+      "brand": "Chevrolet",
+      "company": "General Motors, LLC",
+      "product": "Silverado EV, Escalade Iq, Escalade Iql, Sierra EV",
+      "date": "2026-07-30",
+      "units": 10,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V494000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V494-0988.pdf",
       "score": 55
     },
     {
@@ -1997,40 +2030,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/supplxcom-issues-voluntary-nationwide-recall-business-pill-and-branch-manager-men-due-undeclared",
-      "score": 50
-    },
-    {
-      "id": "NHTSA-26V574000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Renegade Vehicles Recalled",
-      "reason": "Kibbi, LLC (Kibbi) is recalling certain 2026-2027 Renegade Valencia, Verona, Vera Cruz, Vienna, Villagio, Verona LE, XL, Garage, Totter, Explorer TS, Explorer, and Classic recreational vehicles equipped with MaxxAir…",
-      "brand": "Renegade",
-      "company": "Kibbi, LLC",
-      "product": "Verona Le, Explorer Ts, Explorer, Totter, Garage, Xl, Villagio, Vienna",
-      "date": "2026-09-04",
-      "units": 505,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V574000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V574-6214.pdf",
-      "score": 50
-    },
-    {
-      "id": "CPSC-10886-golden-link-recalls-fantastic-four-cups-and-captain-america-popcorn-he",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Golden Link Recalls Fantastic Four Cups and Captain America Popcorn Helmet Containers with LED Lights…",
-      "reason": "The cups and containers violate the mandatory standard for consumer products with button cell and coin batteries because they contain button cell batteries that can be accessed easily by children, posing an ingestion…",
-      "brand": "",
-      "company": "",
-      "retailers": "The Fantastic Four Cups were sold at AMC movie theaters nationwide from March 2025 through April 2025 for about $15. The Captain America Popcorn Helmet Containers were sold at AMC Theaters, Cobb Theaters, Drive in Group, El Capitan EVO Cinemas, Goldenlink, GQT Movies, Harkins, Independent Theatre, Maya Cinemas, Reading, West Wind, Escape and Zurich Group nationwide from February through August 2025 for about $30.",
-      "product": "Fantastic Four Drinking Cups and Captain America Popcorn Helmet Containers with LED Lights",
-      "date": "2026-07-30",
-      "units": 55350,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Golden-Link-Recalls-Fantastic-Four-Cups-and-Captain-America-Popcorn-Helmet-Containers-with-LED-Lights-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Hazard-Violate-Mandatory-Standard-for-Consumer-Products-with-Button-Cell",
       "score": 50
     }
   ]
