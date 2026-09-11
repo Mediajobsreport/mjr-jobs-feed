@@ -64,6 +64,7 @@ APPROVED = {
     "Radio",
     "Sales & Marketing",
     "Television",
+    "Voiceover",
 }
 
 
@@ -397,6 +398,17 @@ def category(title, desc, industry, company):
     # ------------------------------------------------------------------
     if re.search(r"\b(intern|internship|fellow|fellowship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
         return "Internships"
+
+    # Voice performance belongs in MJR's Voiceover category. Keep the match
+    # title-first so ordinary audio engineering, speech testing and AI data
+    # validation jobs are not mislabeled as voice talent opportunities.
+    if re.search(
+        r"\b(voice[ -]?over artist|voice actor|voice actress|voice talent|"
+        r"audiobook narrator|audio book narrator|dubbing artist|dubbing actor|"
+        r"narration artist|professional narrator)\b",
+        t,
+    ):
+        return "Voiceover"
 
     # ------------------------------------------------------------------
     # 1A) DEFINITIVE TITLE-FIRST OVERRIDES
@@ -9916,6 +9928,204 @@ def salem_render_diagnostics_v31(src):
     return str(diag_path)
 
 
+def voiceover_sources_test():
+    """Targeted test of public, direct voiceover job sources.
+
+    Only genuine voice-performance titles in the United States or Canada are
+    accepted. Speech testing, transcription, validation and generic AI data
+    collection roles are intentionally excluded. Source wording is retained.
+    """
+    collected = []
+    audit_rows = []
+    title_pattern = re.compile(
+        r"\b(voice[ -]?over artist|voice actor|voice actress|voice talent|"
+        r"audiobook narrator|audio book narrator|dubbing artist|dubbing actor|"
+        r"narration artist|professional narrator)\b",
+        re.I,
+    )
+
+    def allowed_country(location, description=""):
+        country = infer_country(location, "", description)
+        low = clean(location).lower()
+        explicitly_foreign = any(
+            marker in low
+            for marker in (
+                "australia", "united kingdom", " uk", "new zealand", "singapore",
+                "south africa", "portugal", "belgium", "switzerland", "germany",
+                "france", "italy", "spain", "indonesia", "vietnam", "qatar",
+                "saudi arabia", "united arab emirates", "laos", "taiwan",
+            )
+        )
+        return country in {"US", "CA"} and not explicitly_foreign
+
+    # TSMG exposes a public Lever feed. Query its audio team first to avoid
+    # downloading its very large unrelated global board.
+    try:
+        endpoint = "https://api.lever.co/v0/postings/tsmg"
+        r = req(
+            "GET",
+            endpoint,
+            params={
+                "mode": "json",
+                "team": "Audio Data Collection",
+                "limit": "100",
+            },
+        )
+        rows = r.json()
+        if not isinstance(rows, list):
+            rows = []
+        matched = 0
+        stale = 0
+        for row in rows:
+            title = clean(row.get("text", ""))
+            if not title_pattern.search(title):
+                continue
+            categories = row.get("categories") or {}
+            location = clean(categories.get("location", ""))
+            plain = clean(row.get("descriptionPlain", ""))
+            if not allowed_country(location, plain):
+                continue
+            created_ms = row.get("createdAt")
+            try:
+                posted = datetime.fromtimestamp(
+                    float(created_ms) / 1000.0,
+                    tz=ZoneInfo("UTC"),
+                ).date()
+            except Exception:
+                posted = None
+            if not posted or posted < CUTOFF:
+                stale += 1
+                continue
+
+            parts = []
+            if row.get("description"):
+                parts.append(str(row.get("description")))
+            elif plain:
+                parts.append(f"<p>{html.escape(plain)}</p>")
+            for block in row.get("lists") or []:
+                heading = clean(block.get("text", ""))
+                content = str(block.get("content") or "")
+                if heading:
+                    parts.append(f"<h3>{html.escape(heading)}</h3>")
+                if content:
+                    parts.append(f"<ul>{content}</ul>" if "<li" in content.lower() else content)
+            if row.get("additional"):
+                parts.append(str(row.get("additional")))
+            description = format_description("".join(parts))
+            if len(strip_html(description)) < 200:
+                continue
+
+            apply_url = clean(row.get("hostedUrl") or row.get("applyUrl") or "")
+            if not apply_url:
+                continue
+            commitment = clean(categories.get("commitment", ""))
+            role_type = "Contract" if re.search(r"\b(project|contract)\b", f"{commitment} {plain}", re.I) else jobtype(title, commitment)
+            collected.append(
+                Job(
+                    clean(row.get("id", "")) or hashlib.sha1(apply_url.encode()).hexdigest()[:16],
+                    title,
+                    "TSMG",
+                    description,
+                    posted,
+                    role_type,
+                    "Voiceover",
+                    apply_url,
+                    "https://jobs.lever.co/tsmg",
+                    "https://thesocialmediagroup.com/",
+                    "",
+                    "Remote" if re.search(r"\bremote\b", location, re.I) else normalize_work_arrangement(description, location),
+                    location,
+                    "",
+                    infer_country(location, "TSMG", description),
+                    None,
+                )
+            )
+            matched += 1
+        audit_rows.append([
+            "TSMG",
+            "Lever",
+            "https://jobs.lever.co/tsmg",
+            "ok" if matched else "zero_or_no_fresh_voiceover_jobs",
+            matched,
+            f"voiceover_matches={matched}; stale_matches={stale}; rows_checked={len(rows)}",
+        ])
+    except Exception as e:
+        audit_rows.append(["TSMG", "Lever", "https://jobs.lever.co/tsmg", "error", 0, repr(e)])
+
+    # Filmless has a genuine direct voiceover posting on SmartRecruiters. Its
+    # released date is honored, so an old evergreen ad is audited but does not
+    # enter MJR's time-limited feed.
+    try:
+        endpoint = "https://api.smartrecruiters.com/v1/companies/Filmless/postings"
+        r = req("GET", endpoint, params={"limit": "100"})
+        payload = r.json()
+        rows = payload.get("content", []) if isinstance(payload, dict) else []
+        matched = 0
+        stale = 0
+        for summary in rows:
+            title = clean(summary.get("name", ""))
+            if not title_pattern.search(title):
+                continue
+            detail_url = clean(summary.get("ref", ""))
+            detail = req("GET", detail_url).json() if detail_url else summary
+            location_obj = detail.get("location") or {}
+            location = clean(location_obj.get("fullLocation") or ", ".join(
+                x for x in [location_obj.get("city"), location_obj.get("region")] if x
+            ))
+            if not allowed_country(location):
+                continue
+            posted = pdate(detail.get("releasedDate"))
+            if not posted or posted < CUTOFF:
+                stale += 1
+                continue
+            sections = ((detail.get("jobAd") or {}).get("sections") or {})
+            description = format_description("".join(
+                str(section.get("text") or "")
+                for section in sections.values()
+                if isinstance(section, dict)
+            ))
+            apply_url = clean(detail.get("applyUrl") or "")
+            if len(strip_html(description)) < 200 or not apply_url:
+                continue
+            employment = clean((detail.get("typeOfEmployment") or {}).get("label", ""))
+            collected.append(Job(
+                clean(detail.get("id", "")) or hashlib.sha1(apply_url.encode()).hexdigest()[:16],
+                title, "Filmless", description, posted, jobtype(title, employment),
+                "Voiceover", apply_url, "https://jobs.smartrecruiters.com/Filmless",
+                "https://www.filmless.com/", "", "Remote" if location_obj.get("remote") else "On-Site",
+                location, clean(location_obj.get("region", "")), "US", None,
+            ))
+            matched += 1
+        audit_rows.append([
+            "Filmless", "SmartRecruiters", "https://jobs.smartrecruiters.com/Filmless",
+            "ok" if matched else "zero_or_no_fresh_voiceover_jobs", matched,
+            f"voiceover_matches={matched}; stale_matches={stale}; rows_checked={len(rows)}",
+        ])
+    except Exception as e:
+        audit_rows.append(["Filmless", "SmartRecruiters", "https://jobs.smartrecruiters.com/Filmless", "error", 0, repr(e)])
+
+    # Appen's board is checked because it carries speech/recording projects,
+    # but only genuine voice-performance titles may pass this category gate.
+    try:
+        endpoint = "https://api.lever.co/v0/postings/appen"
+        r = req("GET", endpoint, params={"mode": "json"})
+        rows = r.json()
+        if not isinstance(rows, list):
+            rows = []
+        candidates = [row for row in rows if title_pattern.search(clean(row.get("text", "")))]
+        audit_rows.append([
+            "CrowdGen/Appen", "Lever", "https://jobs.lever.co/appen",
+            "candidate_titles_found" if candidates else "no_qualifying_voiceover_titles",
+            0,
+            f"genuine_voiceover_titles={len(candidates)}; rows_checked={len(rows)}; speech testing and validation excluded",
+        ])
+    except Exception as e:
+        audit_rows.append(["CrowdGen/Appen", "Lever", "https://jobs.lever.co/appen", "error", 0, repr(e)])
+
+    print(f"Voiceover source test: {len(collected)} fresh qualifying jobs")
+    return collected, audit_rows
+
+
 def careeronestop_townsquare_test():
     """Controlled CareerOneStop job-search test for Townsquare Media.
 
@@ -10116,6 +10326,7 @@ def main():
         MJR_TEST_COMPANIES.add("cox media group")
 
     careeronestop_test = "careeronestop" in MJR_TEST_COMPANIES
+    voiceover_test = "voiceover" in MJR_TEST_COMPANIES
     careeronestop_enabled = (
         os.getenv("CAREERONESTOP_ENABLED", "false").lower() in {"1", "true", "yes"}
         or careeronestop_test
@@ -10320,6 +10531,11 @@ def main():
                 0,
                 error_text,
             ])
+
+    if voiceover_test:
+        voiceover_jobs, voiceover_audit = voiceover_sources_test()
+        jobs += voiceover_jobs
+        audit.extend(voiceover_audit)
 
     ded = {
         j.url.rstrip("/").lower(): j
