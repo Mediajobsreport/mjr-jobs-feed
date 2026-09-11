@@ -5375,6 +5375,103 @@ def paramount_successfactors(src):
     return out
 
 
+def company_scope_rejection_reason(job_or_dict):
+    """Return a reason when a conglomerate job is outside MJR's media scope."""
+    get = (
+        (lambda key, default="": getattr(job_or_dict, key, default))
+        if isinstance(job_or_dict, Job)
+        else (lambda key, default="": job_or_dict.get(key, default))
+    )
+    company = clean(get("company", "")).lower()
+    title = clean(get("title", "")).lower()
+    description = strip_html(get("description", "")).lower()[:7000]
+    text = f" {title} {description} "
+
+    if company in {"disney / abc", "espn"}:
+        # Clear hospitality, parks, cruise, retail and physical-trade titles.
+        # These occasionally leak into Disney's ABC/ESPN search surfaces.
+        hard_nonmedia_title = re.search(
+            r"\b(chef(?: de partie| de rang)?|demi chef|cook|culinary|"
+            r"food\s*(?:&|and)\s*beverage|food service|restaurant server|"
+            r"banquet server|cocktail server|bartender|busser|dishwasher|"
+            r"housekeep(?:er|ing)|custodial|custodian|lifeguard|"
+            r"supply and distribution worker|warehouse worker|"
+            r"hotel utility|hotel operations|front desk|bellperson|concierge|"
+            r"spa attendant|massage therapist|cosmetologist|"
+            r"ride operator|attractions? operator|parking attendant|"
+            r"cast member|senior cast member|assistant store manager|store manager|"
+            r"merchandise|retail associate|product designer.*apparel|apparel designer|"
+            r"horticulturist|gardener|"
+            r"plumber|carpenter|electrician|hvac|maintenance mechanic|"
+            r"construction manager|construction superintendent|construction estimator|"
+            r"sculptor|figure finisher|mold maker|scenic painter|artisan|"
+            r"animal keeper|ecommerce specialist\s*-\s*video chat)\b",
+            title,
+        )
+        if hard_nonmedia_title:
+            return "Disney parks/resort/cruise or hospitality title outside media scope"
+
+        nonmedia_operation_context = re.search(
+            r"\b(walt disney world|disneyland resort|disney cruise line|"
+            r"disney vacation club|theme park|parks and resorts|parks, resorts|"
+            r"resort hotel|guest vacation|disney live entertainment|"
+            r"walt disney imagineering|corporate real estate|building systems|"
+            r"grounds and hardscapes|facilities maintenance|food and beverage)\b",
+            description,
+        )
+        nonmedia_function_title = re.search(
+            r"\b(manager,? operations|operations manager|infrastructure services|"
+            r"facilities|building maintenance|maintenance manager|"
+            r"creative & advanced development|creative and advanced development|"
+            r"guest services|vacation planner|resort|cruise|"
+            r"sculpt|statue|figure finishing|mold making|fabrication)\b",
+            title,
+        )
+        if nonmedia_operation_context and nonmedia_function_title:
+            return "Disney non-media operations role outside ABC/ESPN scope"
+
+    if company == "meruelo media":
+        construction_title = re.search(
+            r"\b(construction (?:project )?manager|construction manager|"
+            r"construction superintendent|superintendent|estimator|"
+            r"project engineer|field engineer|site manager|jobsite manager|"
+            r"general contractor|foreman|carpenter|concrete|drywall|"
+            r"electrician|plumber|hvac|heavy equipment|construction laborer|"
+            r"safety manager|preconstruction|land development)\b",
+            title,
+        )
+        construction_context = re.search(
+            r"\b(construction company|construction project|general contractor|"
+            r"commercial construction|residential construction|jobsite|job site|"
+            r"preconstruction|real estate development|land development|"
+            r"concrete|drywall|building contractor|meruelo builders|"
+            r"meruelo enterprises)\b",
+            description,
+        )
+        generic_project_title = re.search(
+            r"\b(project manager|project coordinator|project engineer|"
+            r"operations manager|estimator|superintendent|field engineer|"
+            r"safety manager|accounting manager)\b",
+            title,
+        )
+        if construction_title or (construction_context and generic_project_title):
+            return "Meruelo construction-business role outside media scope"
+
+    return ""
+
+
+def apply_company_scope_filters(jobs):
+    kept = []
+    rejected = []
+    for job in jobs:
+        reason = company_scope_rejection_reason(job)
+        if reason:
+            rejected.append((job, reason))
+        else:
+            kept.append(job)
+    return kept, rejected
+
+
 def disney_public(src):
     """Disney/ABC/ESPN public search collector.
 
@@ -7443,13 +7540,21 @@ def stateful(jobs):
         if k in now:
             continue
 
+        # Purge previously retained conglomerate jobs as soon as a new scope
+        # filter identifies them. Do not let the normal one-run miss grace
+        # period reintroduce rejected Disney/ESPN or Meruelo positions.
+        stored_job = r.get("job", {})
+        if company_scope_rejection_reason(stored_job):
+            del st[k]
+            continue
+
         r["misses"] = int(r.get("misses", 0)) + 1
 
         if r["misses"] >= 2:
             del st[k]
             continue
 
-        x = r.get("job", {})
+        x = stored_job
 
         try:
             pd = date.fromisoformat(x["date"])
@@ -10463,6 +10568,17 @@ def main():
             if not got and company_key in RADIO_RECOVERY_COMPANIES:
                 got = radio_recovery(s)
 
+            scope_rejected = []
+            if company_key in {"disney / abc", "espn", "meruelo media"}:
+                got, scope_rejected = apply_company_scope_filters(got)
+                if scope_rejected:
+                    print(
+                        f"{s['Company']} scope filter rejected "
+                        f"{len(scope_rejected)} non-media jobs"
+                    )
+                    for rejected_job, reason in scope_rejected[:20]:
+                        print(f"  REJECTED: {rejected_job.title} — {reason}")
+
             jobs += got
 
             audit.append(
@@ -10478,14 +10594,17 @@ def main():
                         else "zero_or_not_enumerable"
                     ),
                     len(got),
-                    (
-                        (
-                            f"enumerated_jobs={icims_enumerated}"
-                            if company_key == "audacy"
-                            else f"enumerated_detail_urls={icims_enumerated}"
-                        )
-                        if icims_enumerated
-                        else ""
+                    "; ".join(
+                        part for part in [
+                            (
+                                f"enumerated_jobs={icims_enumerated}"
+                                if company_key == "audacy"
+                                else f"enumerated_detail_urls={icims_enumerated}"
+                            ) if icims_enumerated else "",
+                            f"non_media_scope_rejected={len(scope_rejected)}"
+                            if scope_rejected else "",
+                        ]
+                        if part
                     ),
                 ]
             )
@@ -10550,6 +10669,12 @@ def main():
     }
 
     jobs = stateful(list(ded.values()))
+
+    # Final defense after state reconciliation: no previously cached or newly
+    # collected out-of-scope conglomerate job may reach the XML.
+    jobs, final_scope_rejected = apply_company_scope_filters(jobs)
+    if final_scope_rejected:
+        print(f"Final scope filter rejected {len(final_scope_rejected)} non-media jobs")
 
     ded = {
         j.url.rstrip("/").lower(): j
