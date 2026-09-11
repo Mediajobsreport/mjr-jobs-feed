@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-11T04:31:34.193Z",
+  "generated": "2026-09-11T08:32:03.993Z",
   "version": "2.4",
   "newestDate": "2026-09-10",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1033
+      "count": 1050
     },
     "CPSC": {
       "ok": true,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 97
+      "count": 102
     }
   },
   "count": 120,
@@ -31,7 +31,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2021-2023 Jeep Grand Cherokee L, 2022-2023 Jeep Grand Cherokee, and Jeep Grand Cherokee 4XE vehicles. The rear coil springs may be incorrectly installed and detach from the…",
       "brand": "Jeep",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee, Grand Cherokee 4XE, Grand Cherokee L",
+      "product": "Grand Cherokee 4XE, Grand Cherokee L, Grand Cherokee",
       "date": "2026-09-01",
       "units": 328381,
       "pet": false,
@@ -75,20 +75,20 @@
       "score": 163
     },
     {
-      "id": "NHTSA-26V560000",
+      "id": "NHTSA-26V559000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Ram 1500 Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2025-2026 Ram 1500 vehicles. A radio software error may cause the rearview camera image not to display. As such, these vehicles fail to comply with the requirements of…",
-      "brand": "Ram",
+      "title": "Jeep Vehicles Recalled",
+      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
+      "brand": "Jeep",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "1500",
+      "product": "Grand Cherokee, Cherokee, Grand Cherokee L, Grand Wagoneer, Grand Wagoneer L, Wagoneer, Wagoneer L, Grand Cherokee 4XE",
       "date": "2026-09-01",
-      "units": 239131,
+      "units": 201976,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26V560000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V560-9456.pdf",
+      "campaign": "26V559000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 162
     },
     {
@@ -125,20 +125,20 @@
       "score": 163
     },
     {
-      "id": "NHTSA-26V559000",
+      "id": "NHTSA-26V560000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Jeep Vehicles Recalled",
-      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
-      "brand": "Jeep",
+      "title": "Ram 1500 Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2025-2026 Ram 1500 vehicles. A radio software error may cause the rearview camera image not to display. As such, these vehicles fail to comply with the requirements of…",
+      "brand": "Ram",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Wagoneer L PHEV, Grand Cherokee 4XE, Grand Wagoneer L, Wagoneer L, Wagoneer, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
+      "product": "1500",
       "date": "2026-09-01",
-      "units": 201976,
+      "units": 239131,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26V559000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
+      "campaign": "26V560000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V560-9456.pdf",
       "score": 162
     },
     {
@@ -146,7 +146,7 @@
       "source": "NHTSA",
       "category": "consumer",
       "title": "Ram 1500 Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2019-2026 Ram 1500 vehicles. The second-row seat belt buckle anchors may have been improperly installed. As such, these vehicles fail to comply with the requirements of…",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2019-2026 Ram 1500 vehicles. The second-row center and left-side seat belt buckle anchors may have been improperly installed. As such, these vehicles fail to comply with the…",
       "brand": "Ram",
       "company": "Chrysler (FCA US, LLC)",
       "product": "1500",
@@ -358,6 +358,23 @@
       "campaign": "26V547000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V547-3184.pdf",
       "score": 140
+    },
+    {
+      "id": "NHTSA-26V576000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford F-150 Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles. Incorrect rear axle tail bearings may have been installed, which can result in rear wheel lock-up or driveshaft separation. 37 vehicles or units may…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "F-150",
+      "date": "2026-09-09",
+      "units": 37,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V576000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V576-1003.pdf",
+      "score": 125
     },
     {
       "id": "CPSC-10943-skip-hop-recalls-baby-sesame-street-elmo-silicone-teethers-due-to-risk",
@@ -702,7 +719,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2025-2026 Chrysler Voyager, Chrysler Pacifica, and 2026 Chrysler Voyager Plug-In Hybrid Electric (PHEV) vehicles. The brake pedal position sensor capacitor may be cracked,…",
       "brand": "Chrysler",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Voyager, Pacifica Plug-In Hybrid, Pacifica",
+      "product": "Pacifica, Pacifica Plug-In Hybrid, Voyager",
       "date": "2026-09-01",
       "units": 2017,
       "pet": false,
@@ -769,30 +786,13 @@
       "reason": "BMW of North America, LLC (BMW) is recalling certain 2022-2026 840i, 840i xDrive, 2021-2023 540i, 540i xDrive, M550i xDrive, and 2024-2026 750e xDrive vehicles. The connection between the driveshaft and the rear…",
       "brand": "BMW",
       "company": "BMW of North America, LLC",
-      "product": "M550I, 540I Xdrive, 840I Xdrive, 540I, 840I, 750E Xdrive",
+      "product": "750E Xdrive, 840I, 840I Xdrive, 540I, 540I Xdrive, M550I",
       "date": "2026-08-12",
       "units": 27720,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V525000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V525-9403.pdf",
-      "score": 95
-    },
-    {
-      "id": "NHTSA-26V510000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Dodge Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2023-2025 Dodge Hornet and 2023-2026 Alfa Romeo Tonale vehicles. The rear outboard seat belts may become twisted and fail to retract properly. 48,777 vehicles or units may be…",
-      "brand": "Dodge",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "Hornet, Tonale",
-      "date": "2026-08-06",
-      "units": 48777,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V510000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V510-6120.pdf",
       "score": 95
     },
     {
@@ -813,6 +813,23 @@
       "score": 95
     },
     {
+      "id": "NHTSA-26V510000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Alfa Romeo Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2023-2025 Dodge Hornet and 2023-2026 Alfa Romeo Tonale vehicles. The rear outboard seat belts may become twisted and fail to retract properly. 48,777 vehicles or units may be…",
+      "brand": "Alfa Romeo",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "Tonale, Hornet",
+      "date": "2026-08-06",
+      "units": 48777,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V510000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V510-6120.pdf",
+      "score": 95
+    },
+    {
       "id": "NHTSA-26V500000",
       "source": "NHTSA",
       "category": "consumer",
@@ -820,7 +837,7 @@
       "reason": "Honda (American Honda Motor Co.) is recalling certain 2017-2023, 2025 CMX500, 2017-2023, 2025-2026 CMX300, and 2025 Honda SCL500 motorcycles. The handlebar lock screw may loosen and detach. 43,913 vehicles or units may…",
       "brand": "Honda",
       "company": "Honda (American Honda Motor Co.)",
-      "product": "SCL500, CMX500, CMX300",
+      "product": "CMX500, CMX300, SCL500",
       "date": "2026-07-30",
       "units": 43913,
       "pet": false,
@@ -854,7 +871,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026 Explorer, Bronco, Bronco Sport, Mustang, and Ranger vehicles. The engine piston domes may have been manufactured incorrectly, which can result in piston dome failure…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "Explorer, Bronco Sport, Bronco, Ranger, Mustang",
+      "product": "Mustang, Ranger, Bronco, Bronco Sport, Explorer",
       "date": "2026-08-25",
       "units": 10001,
       "pet": false,
@@ -949,6 +966,23 @@
       "score": 89
     },
     {
+      "id": "NHTSA-26V575000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Can-Am Vehicles Recalled",
+      "reason": "Bombardier Recreational Products, Inc. (BRP) is recalling certain 2025-2026 Can-Am Origin, Can-Am Pulse, 2025-2027 Can-Am Canyon, 2024-2027 Can-Am Spyder RT, and Can-Am Spyder F3 motorcycles equipped with a touchscreen…",
+      "brand": "Can-Am",
+      "company": "Bombardier Recreational Products, Inc.",
+      "product": "Canyon, Spyder F3, Spyder Rt, Pulse, Origin",
+      "date": "2026-09-07",
+      "units": 14014,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V575000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V575-4054.pdf",
+      "score": 88
+    },
+    {
       "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
       "source": "FDA",
       "category": "food",
@@ -982,6 +1016,23 @@
       "score": 87
     },
     {
+      "id": "NHTSA-26V571000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Toyota Vehicles Recalled",
+      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2024 Toyota Tacoma Hybrid, 2025 Tundra Hybrid, Tundra, 2026 RAV4 Hybrid, 4Runner i-Force Max Hybrid, and 4Runner vehicles. The load carrying…",
+      "brand": "Toyota",
+      "company": "Toyota Motor Engineering & Manufacturing",
+      "product": "Tundra Hybrid, Tundra, Tacoma Hybrid, RAV4 Hybrid, 4RUNNER I-Force Max Hybrid, 4RUNNER",
+      "date": "2026-09-02",
+      "units": 135,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V571000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V571-0598.pdf",
+      "score": 85
+    },
+    {
       "id": "NHTSA-26V558000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1006,7 +1057,7 @@
       "reason": "Britax Child Safety, Inc. (Britax) is recalling certain B-Safe Gen 2, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe 35, B-Safe Ultra, and Endeavours child seats. Please refer to Britax's recall report for the…",
       "brand": "Britax",
       "company": "Britax Child Safety, Inc.",
-      "product": "B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2, Endeavours, B-Safe Ultra, B-Safe 35",
+      "product": "Endeavours, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2 Flexfit, B-Safe 35, B-Safe Ultra, B-Safe Gen 2",
       "date": "2026-08-20",
       "units": 114660,
       "pet": false,
@@ -1689,22 +1740,6 @@
       "score": 65
     },
     {
-      "id": "FDA-2026-09-08-bmc-luna-g3-apap-model-lg3600-bmc-medical-co-ltd",
-      "source": "FDA",
-      "category": "health",
-      "title": "BMC Luna G3 APAP (Model LG3600) Recalled",
-      "reason": "The firmware version, G3-2.00.76 installed on the Luna G3 APAP (Model LG3600) devices contained a firmware defect",
-      "brand": "BMC",
-      "company": "BMC Medical Co., Ltd.",
-      "product": "Luna G3 APAP (Model LG3600)",
-      "date": "2026-09-08",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/bmc-medical-co-ltd-recalls-luna-g3-apap-model-lg3600-firmware-g3-20076-due-firmware-defect",
-      "score": 64
-    },
-    {
       "id": "FDA-2026-09-08-created-fresh-cranberry-chicken-salad-wedge-sandwich-freshpoint-centra",
       "source": "FDA",
       "category": "food",
@@ -1718,6 +1753,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/freshpoint-issues-recall-due-improperly-declared-allergen-egg-chicken-salad-wedge-sandwiches",
+      "score": 64
+    },
+    {
+      "id": "FDA-2026-09-08-bmc-luna-g3-apap-model-lg3600-bmc-medical-co-ltd",
+      "source": "FDA",
+      "category": "health",
+      "title": "BMC Luna G3 APAP (Model LG3600) Recalled",
+      "reason": "The firmware version, G3-2.00.76 installed on the Luna G3 APAP (Model LG3600) devices contained a firmware defect",
+      "brand": "BMC",
+      "company": "BMC Medical Co., Ltd.",
+      "product": "Luna G3 APAP (Model LG3600)",
+      "date": "2026-09-08",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/bmc-medical-co-ltd-recalls-luna-g3-apap-model-lg3600-firmware-g3-20076-due-firmware-defect",
       "score": 64
     },
     {
@@ -1744,7 +1795,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026 Maverick, F-150, and Bronco Sport vehicles. Certain vehicle joints may be improperly tightened. This can lead to detached parts, unsecured cargo, degraded crash…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "Bronco Sport, Maverick, F-150",
+      "product": "Maverick, F-150, Bronco Sport",
       "date": "2026-08-25",
       "units": 23,
       "pet": false,
@@ -1788,22 +1839,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1817,6 +1852,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -1981,57 +2032,6 @@
       "campaign": "26V549000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V549-3979.pdf",
       "score": 58
-    },
-    {
-      "id": "CPSC-10903-liuqibax-adult-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Liuqibax Adult Bed Rails Recalled Due to Risk of Serious Injury or Death from Entrapment and…",
-      "reason": "The recalled bed rails violate the mandatory standard for adult portable bed rails because users can become entrapped within the bed rail or between the bed rail and the side of the mattress, posing a serious…",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com from July 2024 through May 2026 for about $60.",
-      "product": "Liuqibax Adult Bed Rails",
-      "date": "2026-08-06",
-      "units": 12000,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Liuqibax-Adult-Bed-Rails-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Sold-on-Amazon-by-Luqiba",
-      "score": 58
-    },
-    {
-      "id": "CPSC-10882-15-drawer-dressers-recalled-due-to-risk-of-serious-injury-or-death-fro",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "15-Drawer Dressers Recalled Due to Risk of Serious Injury or Death from Tip-Over and Entrapment…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "Changzhou Jiaxuan Intelligence Furniture Co., Ltd., of China",
-      "company": "Changzhou Jiaxuan Intelligence Furniture Co., Ltd., of China",
-      "retailers": "Online at Amazon.com from August 2024 through April 2026 for about $140.",
-      "product": "EnHomee 15-Drawer 51\" Dressers",
-      "date": "2026-07-30",
-      "units": 12800,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/15-Drawer-Dressers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units-Sold-on-Amazon-by-Enhomee-Direct",
-      "score": 58
-    },
-    {
-      "id": "NHTSA-26V529000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Jeep Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Grand Cherokee and Grand Cherokee L vehicles. Due to a software issue in the body control module (BCM), the windshield wipers may fail. 81 vehicles or units may be…",
-      "brand": "Jeep",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee L, Grand Cherokee",
-      "date": "2026-08-13",
-      "units": 81,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V529000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V529-9405.pdf",
-      "score": 55
     }
   ]
 }
