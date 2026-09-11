@@ -10327,6 +10327,9 @@ def main():
 
     careeronestop_test = "careeronestop" in MJR_TEST_COMPANIES
     voiceover_test = "voiceover" in MJR_TEST_COMPANIES
+    # Include verified Voiceover sources in every normal full crawl. Keep them
+    # out of unrelated targeted company tests so those reports remain isolated.
+    voiceover_enabled = voiceover_test or not MJR_TEST_COMPANIES
     careeronestop_enabled = (
         os.getenv("CAREERONESTOP_ENABLED", "false").lower() in {"1", "true", "yes"}
         or careeronestop_test
@@ -10532,7 +10535,7 @@ def main():
                 error_text,
             ])
 
-    if voiceover_test:
+    if voiceover_enabled:
         voiceover_jobs, voiceover_audit = voiceover_sources_test()
         jobs += voiceover_jobs
         audit.extend(voiceover_audit)
