@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-12T04:29:35.357Z",
+  "generated": "2026-09-12T08:29:42.431Z",
   "version": "2.4",
   "newestDate": "2026-09-11",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1051
+      "count": 1034
     },
     "CPSC": {
       "ok": true,
@@ -18,11 +18,28 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 98
+      "count": 101
     }
   },
   "count": 120,
   "items": [
+    {
+      "id": "NHTSA-26V578000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford F-150 Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2023-2027 F-150 vehicles. The fuel tank may be improperly secured and leak fuel, or detach from the vehicle while driving. 223,472 vehicles or units may be affected.",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "F-150",
+      "date": "2026-09-09",
+      "units": 223472,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V578000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V578-3276.pdf",
+      "score": 196
+    },
     {
       "id": "NHTSA-26V562000",
       "source": "NHTSA",
@@ -56,23 +73,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Prepared-Hero-Recalls-Fire-Spray-Canisters-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
       "score": 163
-    },
-    {
-      "id": "NHTSA-26V559000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Jeep Vehicles Recalled",
-      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
-      "brand": "Jeep",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee, Cherokee, Grand Cherokee L, Grand Wagoneer, Grand Wagoneer L, Wagoneer, Wagoneer L, Grand Cherokee 4XE",
-      "date": "2026-09-01",
-      "units": 201976,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V559000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
-      "score": 162
     },
     {
       "id": "CPSC-10967-cade-california-electronic-recalls-finger-light-toys-due-to-risk-of-se",
@@ -158,20 +158,20 @@
       "score": 148
     },
     {
-      "id": "NHTSA-26V495000",
+      "id": "NHTSA-26V559000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Ram 1500 Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2019-2026 Ram 1500 vehicles. The second-row center and left-side seat belt buckle anchors may have been improperly installed. As such, these vehicles fail to comply with the…",
-      "brand": "Ram",
+      "title": "Jeep Vehicles Recalled",
+      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
+      "brand": "Jeep",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "1500",
-      "date": "2026-07-30",
-      "units": 1271294,
+      "product": "Grand Wagoneer L PHEV, Grand Cherokee 4XE, Grand Wagoneer L, Wagoneer L, Wagoneer, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
+      "date": "2026-09-01",
+      "units": 201976,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26V495000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V495-1973.pdf",
+      "campaign": "26V559000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 162
     },
     {
@@ -190,6 +190,23 @@
       "majorBrand": true,
       "url": "https://www.cpsc.gov/Recalls/2026/Conair-Expands-Recall-of-Cuisinart-Grill-Brushes-Due-to-Ingestion-Hazard-Over-3-6-Million-Brushes-Now-Recalled",
       "score": 155
+    },
+    {
+      "id": "NHTSA-26V495000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ram 1500 Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2019-2026 Ram 1500 vehicles. The second-row center and left-side seat belt buckle anchors may have been improperly installed. As such, these vehicles fail to comply with the…",
+      "brand": "Ram",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "1500",
+      "date": "2026-07-30",
+      "units": 1271294,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V495000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V495-1973.pdf",
+      "score": 162
     },
     {
       "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
@@ -225,23 +242,6 @@
       "score": 153
     },
     {
-      "id": "NHTSA-26V531000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ram Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Wrangler, Jeep Gladiator, Jeep Compass, Jeep Cherokee, Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Wagoneer, Jeep Grand Wagoneer L, Ram Promaster, Ram…",
-      "brand": "Ram",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "Promaster Bev, Pacifica, Pacifica Plug-In Hybrid, Voyager, Charger, Cherokee, Compass, Gladiator",
-      "date": "2026-08-13",
-      "units": 844027,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V531000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V531-6260.pdf",
-      "score": 152
-    },
-    {
       "id": "FDA-2026-08-14-naturebest-heb-finished-products-such-as-pico-de-gallo-stuffed-mushroo",
       "source": "FDA",
       "category": "food",
@@ -273,6 +273,23 @@
       "majorBrand": true,
       "url": "https://www.cpsc.gov/Recalls/2026/Walmart-Reannounces-Recall-of-Mainstays-Nine-Drawer-Fabric-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Walmart-Distributed-Recalled-Dressers-Post-Recall-Sold-to-Consumers-Through-Liquidators",
       "score": 153
+    },
+    {
+      "id": "NHTSA-26V531000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ram Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Wrangler, Jeep Gladiator, Jeep Compass, Jeep Cherokee, Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Wagoneer, Jeep Grand Wagoneer L, Ram Promaster, Ram…",
+      "brand": "Ram",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "Promaster Bev, Pacifica, Pacifica Plug-In Hybrid, Voyager, Charger, Cherokee, Compass, Gladiator",
+      "date": "2026-08-13",
+      "units": 844027,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V531000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V531-6260.pdf",
+      "score": 152
     },
     {
       "id": "NHTSA-26V511000",
@@ -360,6 +377,23 @@
       "score": 140
     },
     {
+      "id": "NHTSA-26V579000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford Transit Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 Transit vehicles. The wireless seat belt reminder system (SBR) within the rear seat belt buckles may malfunction and fail to show a change in buckle status.…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "Transit",
+      "date": "2026-09-09",
+      "units": 1945,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V579000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V579-7717.pdf",
+      "score": 131
+    },
+    {
       "id": "CPSC-10965-ricky-joy-recalls-more-than-2-3-million-sour-crush-candy-bottles-due-t",
       "source": "CPSC",
       "category": "consumer",
@@ -409,6 +443,23 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Louisville-Ladder-Recalls-Over-One-Million-Attic-Stairway-Ladders-Due-to-Risk-of-Serious-Injury-or-Death-from-Fall-Hazard",
       "score": 120
+    },
+    {
+      "id": "NHTSA-26V577000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford F-150 Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles.The stabilizer rod fasteners may not have been tightened properly during manufacturing, which can allow the rod to shift out of position. 17 vehicles…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "F-150",
+      "date": "2026-09-09",
+      "units": 17,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V577000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V577-7489.pdf",
+      "score": 119
     },
     {
       "id": "NHTSA-26V576000",
@@ -591,7 +642,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V528000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V528000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V528-0755.pdf",
       "score": 105
     },
     {
@@ -684,7 +735,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2025-2026 Chrysler Voyager, Chrysler Pacifica, and 2026 Chrysler Voyager Plug-In Hybrid Electric (PHEV) vehicles. The brake pedal position sensor capacitor may be cracked,…",
       "brand": "Chrysler",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Pacifica, Pacifica Plug-In Hybrid, Voyager",
+      "product": "Voyager, Pacifica Plug-In Hybrid, Pacifica",
       "date": "2026-09-01",
       "units": 2017,
       "pet": false,
@@ -751,13 +802,13 @@
       "reason": "BMW of North America, LLC (BMW) is recalling certain 2022-2026 840i, 840i xDrive, 2021-2023 540i, 540i xDrive, M550i xDrive, and 2024-2026 750e xDrive vehicles. The connection between the driveshaft and the rear…",
       "brand": "BMW",
       "company": "BMW of North America, LLC",
-      "product": "750E Xdrive, 840I, 840I Xdrive, 540I, 540I Xdrive, M550I",
+      "product": "M550I, 540I Xdrive, 840I Xdrive, 540I, 840I, 750E Xdrive",
       "date": "2026-08-12",
       "units": 27720,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V525000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V525-9403.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V525000",
       "score": 95
     },
     {
@@ -781,11 +832,11 @@
       "id": "NHTSA-26V510000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Alfa Romeo Vehicles Recalled",
+      "title": "Dodge Vehicles Recalled",
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2023-2025 Dodge Hornet and 2023-2026 Alfa Romeo Tonale vehicles. The rear outboard seat belts may become twisted and fail to retract properly. 48,777 vehicles or units may be…",
-      "brand": "Alfa Romeo",
+      "brand": "Dodge",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Tonale, Hornet",
+      "product": "Hornet, Tonale",
       "date": "2026-08-06",
       "units": 48777,
       "pet": false,
@@ -802,7 +853,7 @@
       "reason": "Honda (American Honda Motor Co.) is recalling certain 2017-2023, 2025 CMX500, 2017-2023, 2025-2026 CMX300, and 2025 Honda SCL500 motorcycles. The handlebar lock screw may loosen and detach. 43,913 vehicles or units may…",
       "brand": "Honda",
       "company": "Honda (American Honda Motor Co.)",
-      "product": "CMX500, CMX300, SCL500",
+      "product": "SCL500, CMX500, CMX300",
       "date": "2026-07-30",
       "units": 43913,
       "pet": false,
@@ -819,7 +870,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2021-2023 F-150 and 2023-2026 F-250 SD vehicles equipped with 8-inch SYNC infotainment screens. A software error may cause the rearview camera image to be obstructed by…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "F-150, F-250 Sd",
+      "product": "F-250 Sd, F-150",
       "date": "2026-07-28",
       "units": 47587,
       "pet": false,
@@ -836,7 +887,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026 Explorer, Bronco, Bronco Sport, Mustang, and Ranger vehicles. The engine piston domes may have been manufactured incorrectly, which can result in piston dome failure…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "Mustang, Ranger, Bronco, Bronco Sport, Explorer",
+      "product": "Explorer, Bronco Sport, Bronco, Ranger, Mustang",
       "date": "2026-08-25",
       "units": 10001,
       "pet": false,
@@ -1086,7 +1137,7 @@
       "reason": "Bombardier Recreational Products, Inc. (BRP) is recalling certain 2025-2026 Can-Am Origin, Can-Am Pulse, 2025-2027 Can-Am Canyon, 2024-2027 Can-Am Spyder RT, and Can-Am Spyder F3 motorcycles equipped with a touchscreen…",
       "brand": "Can-Am",
       "company": "Bombardier Recreational Products, Inc.",
-      "product": "Canyon, Spyder F3, Spyder Rt, Pulse, Origin",
+      "product": "Spyder F3, Canyon, Spyder Rt, Pulse, Origin",
       "date": "2026-09-07",
       "units": 14014,
       "pet": false,
@@ -1154,7 +1205,7 @@
       "reason": "Britax Child Safety, Inc. (Britax) is recalling certain B-Safe Gen 2, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe 35, B-Safe Ultra, and Endeavours child seats. Please refer to Britax's recall report for the…",
       "brand": "Britax",
       "company": "Britax Child Safety, Inc.",
-      "product": "Endeavours, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2 Flexfit, B-Safe 35, B-Safe Ultra, B-Safe Gen 2",
+      "product": "B-Safe 35, B-Safe Ultra, Endeavours, B-Safe Gen 2, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2 Flexfit",
       "date": "2026-08-20",
       "units": 114660,
       "pet": false,
@@ -1162,6 +1213,23 @@
       "campaign": "26C006000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26C006-9245.pdf",
       "score": 77
+    },
+    {
+      "id": "NHTSA-26V583000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Freightliner Vehicles Recalled",
+      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain 2020-2023 Freightliner Cascadia and 2022 Western Star 49X vehicles previously repaired incorrectly under recall numbers 23V073 or 22V817. The brake…",
+      "brand": "Freightliner",
+      "company": "Daimler Trucks North America, LLC",
+      "product": "Cascadia, 49X",
+      "date": "2026-09-09",
+      "units": 2404,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V583000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V583-2664.pdf",
+      "score": 76
     },
     {
       "id": "CPSC-10945-gihnjsi-squeezy-dumplings-toys-recalled-due-to-serious-ingestion-choki",
@@ -1434,23 +1502,6 @@
       "score": 68
     },
     {
-      "id": "NHTSA-26V513000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Volvo Vehicles Recalled",
-      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain 2026-2027 VNL (4) and VNR (4) vehicles. The center roof marker lights may fail to illuminate. As such, these vehicles fail to comply with the requirements…",
-      "brand": "Volvo",
-      "company": "Volvo Trucks North America",
-      "product": "Vnl (4), Vnr (4)",
-      "date": "2026-08-06",
-      "units": 2071,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V513000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V513-2145.pdf",
-      "score": 67
-    },
-    {
       "id": "NHTSA-26E053000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1465,6 +1516,23 @@
       "majorBrand": true,
       "campaign": "26E053000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E053-6920.pdf",
+      "score": 67
+    },
+    {
+      "id": "NHTSA-26V513000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Volvo Vehicles Recalled",
+      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain 2026-2027 VNL (4) and VNR (4) vehicles. The center roof marker lights may fail to illuminate. As such, these vehicles fail to comply with the requirements…",
+      "brand": "Volvo",
+      "company": "Volvo Trucks North America",
+      "product": "Vnl (4), Vnr (4)",
+      "date": "2026-08-06",
+      "units": 2071,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V513000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V513-2145.pdf",
       "score": 67
     },
     {
@@ -1485,23 +1553,6 @@
       "score": 67
     },
     {
-      "id": "NHTSA-26E051000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Joyson Safety Systems Curtain Shield Air Bag Vehicles Recalled",
-      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain side curtain air bag (CSA) assemblies sold as replacement parts for 2014-2021 Toyota Tundra Double Cab and CrewMax vehicles. The side curtain air…",
-      "brand": "Joyson Safety Systems",
-      "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Curtain Shield Air Bag",
-      "date": "2026-07-29",
-      "units": 1737,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E051000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E051-5250.pdf",
-      "score": 67
-    },
-    {
       "id": "NHTSA-26E050000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1516,6 +1567,23 @@
       "majorBrand": true,
       "campaign": "26E050000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E050-7856.pdf",
+      "score": 67
+    },
+    {
+      "id": "NHTSA-26E051000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Joyson Safety Systems Curtain Shield Air Bag Vehicles Recalled",
+      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain side curtain air bag (CSA) assemblies sold as replacement parts for 2014-2021 Toyota Tundra Double Cab and CrewMax vehicles. The side curtain air…",
+      "brand": "Joyson Safety Systems",
+      "company": "Toyota Motor Engineering & Manufacturing",
+      "product": "Curtain Shield Air Bag",
+      "date": "2026-07-29",
+      "units": 1737,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26E051000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E051-5250.pdf",
       "score": 67
     },
     {
@@ -1704,22 +1772,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Oma’s Pride Canine Food Recalled",
-      "reason": "Contaminated with Salmonella",
-      "brand": "Oma’s Pride",
-      "company": "Miller Foods, Inc.",
-      "product": "Canine Food",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": true,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
       "source": "FDA",
       "category": "food",
@@ -1733,6 +1785,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Oma’s Pride Canine Food Recalled",
+      "reason": "Contaminated with Salmonella",
+      "brand": "Oma’s Pride",
+      "company": "Miller Foods, Inc.",
+      "product": "Canine Food",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
       "score": 63
     },
     {
@@ -1867,22 +1935,6 @@
       "score": 60
     },
     {
-      "id": "FDA-2026-09-08-created-fresh-cranberry-chicken-salad-wedge-sandwich-freshpoint-centra",
-      "source": "FDA",
-      "category": "food",
-      "title": "Created Fresh! Cranberry Chicken Salad Wedge Sandwich Recalled",
-      "reason": "Improperly declared egg allergen",
-      "brand": "Created Fresh!",
-      "company": "FreshPoint Central Florida, Inc.",
-      "product": "Cranberry Chicken Salad Wedge Sandwich",
-      "date": "2026-09-08",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/freshpoint-issues-recall-due-improperly-declared-allergen-egg-chicken-salad-wedge-sandwiches",
-      "score": 58
-    },
-    {
       "id": "FDA-2026-09-08-bmc-luna-g3-apap-model-lg3600-bmc-medical-co-ltd",
       "source": "FDA",
       "category": "health",
@@ -1896,6 +1948,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/bmc-medical-co-ltd-recalls-luna-g3-apap-model-lg3600-firmware-g3-20076-due-firmware-defect",
+      "score": 58
+    },
+    {
+      "id": "FDA-2026-09-08-created-fresh-cranberry-chicken-salad-wedge-sandwich-freshpoint-centra",
+      "source": "FDA",
+      "category": "food",
+      "title": "Created Fresh! Cranberry Chicken Salad Wedge Sandwich Recalled",
+      "reason": "Improperly declared egg allergen",
+      "brand": "Created Fresh!",
+      "company": "FreshPoint Central Florida, Inc.",
+      "product": "Cranberry Chicken Salad Wedge Sandwich",
+      "date": "2026-09-08",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/freshpoint-issues-recall-due-improperly-declared-allergen-egg-chicken-salad-wedge-sandwiches",
       "score": 58
     },
     {
@@ -1963,76 +2031,8 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V549000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V549-3979.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V549000",
       "score": 58
-    },
-    {
-      "id": "CPSC-10903-liuqibax-adult-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Liuqibax Adult Bed Rails Recalled Due to Risk of Serious Injury or Death from Entrapment and…",
-      "reason": "The recalled bed rails violate the mandatory standard for adult portable bed rails because users can become entrapped within the bed rail or between the bed rail and the side of the mattress, posing a serious…",
-      "brand": "",
-      "company": "",
-      "retailers": "Online at Amazon.com from July 2024 through May 2026 for about $60.",
-      "product": "Liuqibax Adult Bed Rails",
-      "date": "2026-08-06",
-      "units": 12000,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Liuqibax-Adult-Bed-Rails-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Sold-on-Amazon-by-Luqiba",
-      "score": 58
-    },
-    {
-      "id": "CPSC-10882-15-drawer-dressers-recalled-due-to-risk-of-serious-injury-or-death-fro",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "15-Drawer Dressers Recalled Due to Risk of Serious Injury or Death from Tip-Over and Entrapment…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "Changzhou Jiaxuan Intelligence Furniture Co., Ltd., of China",
-      "company": "Changzhou Jiaxuan Intelligence Furniture Co., Ltd., of China",
-      "retailers": "Online at Amazon.com from August 2024 through April 2026 for about $140.",
-      "product": "EnHomee 15-Drawer 51\" Dressers",
-      "date": "2026-07-30",
-      "units": 12800,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/15-Drawer-Dressers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units-Sold-on-Amazon-by-Enhomee-Direct",
-      "score": 58
-    },
-    {
-      "id": "CPSC-10952-excel-industries-recalls-accessory-led-light-kits-due-to-risk-of-serio",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Excel Industries Recalls Accessory LED Light Kits Due to Risk of Serious Injury from Fire Hazard",
-      "reason": "The light bars can overheat or produce flames, posing a risk of serious injury from a fire hazard.",
-      "brand": "Excel Industries LLC, of Hesston, Kansas",
-      "company": "Excel Industries LLC, of Hesston, Kansas",
-      "retailers": "Sold At: Hustler and BigDog dealerships nationwide or online at www.hustlerturf.com/law-mower-accessories or www.bigdogmower.com/accessories from April 2020 through July 2026 for between $180 and $330.",
-      "product": "Accessory LED Light Kits used with certain ride-on mowers",
-      "date": "2026-08-27",
-      "units": 1800,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Excel-Industries-Recalls-Accessory-LED-Light-Kits-Due-to-Risk-of-Serious-Injury-from-Fire-Hazard",
-      "score": 55
-    },
-    {
-      "id": "CPSC-10932-modine-manufacturing-company-recalls-airedale-heating-and-cooling-vent",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Modine Manufacturing Company Recalls Airedale Heating and Cooling Ventilation Fans Due to Fire Hazard",
-      "reason": "The ventilation fan motor in the heat pumps can short circuit if water gets on the circuit board, causing the units to overheat and posing a fire hazard.",
-      "brand": "Modine Manufacturing Company, of Racine, Wisconsin",
-      "company": "Modine Manufacturing Company, of Racine, Wisconsin",
-      "retailers": "Independent dealers nationwide from August 2013 through January 2026 for between $15,000 and $25,000. The ventilation fans are also sold separately through independent dealers for between $250 and $450.",
-      "product": "Ventilation Fans in ClassMate® DX Cooling and Air Source Heat Pumps and SchoolMate® Water/Ground Source Heat Pumps",
-      "date": "2026-08-20",
-      "units": 6061,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Modine-Manufacturing-Company-Recalls-Airedale-Heating-and-Cooling-Ventilation-Fans-Due-to-Fire-Hazard",
-      "score": 55
     }
   ]
 }
