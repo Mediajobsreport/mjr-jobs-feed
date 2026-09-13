@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-13T16:29:44.253Z",
+  "generated": "2026-09-13T20:29:36.285Z",
   "version": "2.4",
-  "newestDate": "2026-09-11",
+  "newestDate": "2026-09-13",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1034
+      "count": 1052
     },
     "CPSC": {
       "ok": true,
@@ -1350,6 +1350,22 @@
       "score": 71
     },
     {
+      "id": "FDA-2026-09-13-centric-compounding-compounded-glutathione-200-mg-ml-30-ml-multidose-v",
+      "source": "FDA",
+      "category": "health",
+      "title": "Centric Compounding Compounded Glutathione 200 mg/mL 30 mL multidose vial; Myer’s Cocktail 30 mL……",
+      "reason": "Elevated Endotoxin level",
+      "brand": "Centric Compounding",
+      "company": "Centric Compounding LLC",
+      "product": "Compounded Glutathione 200 mg/mL 30 mL multidose vial; Myer’s Cocktail 30 mL multidose vial; Tri-Immune Boost 30 mL multidose vial",
+      "date": "2026-09-13",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/centric-compounding-issues-nationwide-recall-glutathione-myers-cocktail-and-tri-immune-boost-due",
+      "score": 70
+    },
+    {
       "id": "CPSC-10949-adult-portable-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
       "source": "CPSC",
       "category": "consumer",
@@ -1639,22 +1655,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1668,6 +1668,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -2019,23 +2035,6 @@
       "majorBrand": true,
       "campaign": "26V529000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V529-9405.pdf",
-      "score": 55
-    },
-    {
-      "id": "NHTSA-26V532000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford Explorer Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026 Explorer vehicles equipped with a 2.3L engine. The engine connecting rod bearings may seize, which can result in engine failure. 6 vehicles or units may be affected.",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "Explorer",
-      "date": "2026-08-13",
-      "units": 6,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V532000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V532-1166.pdf",
       "score": 55
     }
   ]
