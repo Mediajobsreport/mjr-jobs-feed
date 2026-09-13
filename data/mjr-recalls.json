@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-13T08:29:47.814Z",
+  "generated": "2026-09-13T12:33:47.145Z",
   "version": "2.4",
   "newestDate": "2026-09-11",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1051
+      "count": 1034
     },
     "CPSC": {
       "ok": true,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 95
+      "count": 92
     }
   },
   "count": 120,
@@ -38,7 +38,7 @@
       "majorBrand": true,
       "campaign": "26V578000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V578-3276.pdf",
-      "score": 190
+      "score": 182
     },
     {
       "id": "NHTSA-26V495000",
@@ -58,23 +58,6 @@
       "score": 162
     },
     {
-      "id": "CPSC-10966-prepared-hero-recalls-fire-spray-canisters-due-to-risk-of-serious-inju",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Prepared Hero Recalls Fire Spray Canisters Due to Risk of Serious Injury or Death from Fire and Burn…",
-      "reason": "The recalled fire spray canister can deteriorate overtime, causing it to rupture and fail to operate during a fire, posing the risk of serious injury or death from fire and burn hazards.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: PreparedHero.com and Amazon.com from October 2024 through January 2026 for between $18 to $30.",
-      "product": "Hero Fire Spray Canisters",
-      "date": "2026-09-10",
-      "units": 31000,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Prepared-Hero-Recalls-Fire-Spray-Canisters-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
-      "score": 157
-    },
-    {
       "id": "CPSC-10953-conair-expands-recall-of-cuisinart-grill-brushes-due-to-ingestion-haza",
       "source": "CPSC",
       "category": "consumer",
@@ -92,19 +75,20 @@
       "score": 155
     },
     {
-      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
-      "source": "FDA",
-      "category": "food",
-      "title": "Whole Foods Market Cheese Recalled",
-      "reason": "Undeclared Egg",
-      "brand": "Whole Foods Market",
-      "company": "Whole Foods Market",
-      "product": "Cheese",
-      "date": "2026-09-11",
-      "units": 0,
+      "id": "CPSC-10957-walmart-reannounces-recall-of-mainstays-nine-drawer-fabric-dressers-du",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Walmart Reannounces Recall of Mainstays Nine-Drawer Fabric Dressers Due to Risk of Serious Injury or…",
+      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risk of serious injuries or death to children. The dressers violate the mandatory…",
+      "brand": "Hop Thang Interior Wood Co. Ltd., of Vietnam",
+      "company": "Hop Thang Interior Wood Co. Ltd., of Vietnam",
+      "retailers": "Walmart Inc., of Bentonville, Arkansas, Sold At: Walmart stores nationwide and online at Walmart.com from September 2023 through March 2026 for about $80. Recalled dressers were sold to consumers post-recall through the following liquidators: OMG California Community, of Riverside, California; Threads of Fenton of Fenton, Michigan, Golden Cone Electronic, Inc., of Elkhart, Indiana; and ReturnPro, of Miami, Florida. This reannouncement is intended to alert consumers who purchased the dressers from the above liquidators that the dressers have been recalled because they pose tip-over and entrapment hazards.",
+      "product": "Mainstays 9-Drawer Fabric Dressers",
+      "date": "2026-08-27",
+      "units": 165250,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/la-ceiba-foods-latin-market-inc-recalls-cottage-cheese-products-because-possible-health-risk",
+      "url": "https://www.cpsc.gov/Recalls/2026/Walmart-Reannounces-Recall-of-Mainstays-Nine-Drawer-Fabric-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Walmart-Distributed-Recalled-Dressers-Post-Recall-Sold-to-Consumers-Through-Liquidators",
       "score": 153
     },
     {
@@ -141,38 +125,37 @@
       "score": 148
     },
     {
-      "id": "CPSC-10967-cade-california-electronic-recalls-finger-light-toys-due-to-risk-of-se",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Cade California Electronic Recalls Finger Light Toys Due to Risk of Serious Injury or Death from…",
-      "reason": "The recalled finger lights violate the mandatory safety standard for toys because the toys contain button cell batteries that can be easily accessed by children. If button cell or coin batteries are swallowed, the…",
-      "brand": "",
-      "company": "",
-      "retailers": "California Cade Electronic, LLC, of Hacienda Heights, California, Sold At: Amazon.com from March 2015 through July 2026 for between $5 and $16.",
-      "product": "Cade California Electronic Projecting Finger Light Toys",
-      "date": "2026-09-10",
-      "units": 179739,
+      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
+      "source": "FDA",
+      "category": "food",
+      "title": "Whole Foods Market Cheese Recalled",
+      "reason": "Undeclared Egg",
+      "brand": "Whole Foods Market",
+      "company": "Whole Foods Market",
+      "product": "Cheese",
+      "date": "2026-09-11",
+      "units": 0,
       "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Cade-California-Electronic-Recalls-Finger-Light-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
-      "score": 154
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/la-ceiba-foods-latin-market-inc-recalls-cottage-cheese-products-because-possible-health-risk",
+      "score": 147
     },
     {
-      "id": "CPSC-10973-zmc-group-expands-recall-of-light-up-children-s-toys-due-to-risk-of-se",
+      "id": "CPSC-10966-prepared-hero-recalls-fire-spray-canisters-due-to-risk-of-serious-inju",
       "source": "CPSC",
       "category": "consumer",
-      "title": "ZMC Group Expands Recall of Light-Up Children’s Toys Due to Risk of Serious Injury or Death from…",
-      "reason": "The recalled light-up toys violate the mandatory safety standard for children’s toys because the toys contain button cell batteries that can be easily accessed by children. If button cell or coin batteries are…",
+      "title": "Prepared Hero Recalls Fire Spray Canisters Due to Risk of Serious Injury or Death from Fire and Burn…",
+      "reason": "The recalled fire spray canister can deteriorate overtime, causing it to rupture and fail to operate during a fire, posing the risk of serious injury or death from fire and burn hazards.",
       "brand": "",
       "company": "",
-      "retailers": "Sold At: Diva at Heart, primarily in California, Texas, Oregon, Mississippi, and Arizona, and various distributors and retail stores and online at https://www.divaatheartsj.com/ from October 2018 through July 2026.",
-      "product": "Light-Up Children’s Toys",
+      "retailers": "Sold Online At: PreparedHero.com and Amazon.com from October 2024 through January 2026 for between $18 to $30.",
+      "product": "Hero Fire Spray Canisters",
       "date": "2026-09-10",
-      "units": 245124,
+      "units": 31000,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/ZMC-Group-Expands-Recall-of-Light-Up-Childrens-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
-      "score": 154
+      "url": "https://www.cpsc.gov/Recalls/2026/Prepared-Hero-Recalls-Fire-Spray-Canisters-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
+      "score": 151
     },
     {
       "id": "NHTSA-26V531000",
@@ -192,21 +175,21 @@
       "score": 152
     },
     {
-      "id": "CPSC-10957-walmart-reannounces-recall-of-mainstays-nine-drawer-fabric-dressers-du",
+      "id": "CPSC-10967-cade-california-electronic-recalls-finger-light-toys-due-to-risk-of-se",
       "source": "CPSC",
       "category": "consumer",
-      "title": "Walmart Reannounces Recall of Mainstays Nine-Drawer Fabric Dressers Due to Risk of Serious Injury or…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risk of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "Hop Thang Interior Wood Co. Ltd., of Vietnam",
-      "company": "Hop Thang Interior Wood Co. Ltd., of Vietnam",
-      "retailers": "Walmart Inc., of Bentonville, Arkansas, Sold At: Walmart stores nationwide and online at Walmart.com from September 2023 through March 2026 for about $80. Recalled dressers were sold to consumers post-recall through the following liquidators: OMG California Community, of Riverside, California; Threads of Fenton of Fenton, Michigan, Golden Cone Electronic, Inc., of Elkhart, Indiana; and ReturnPro, of Miami, Florida. This reannouncement is intended to alert consumers who purchased the dressers from the above liquidators that the dressers have been recalled because they pose tip-over and entrapment hazards.",
-      "product": "Mainstays 9-Drawer Fabric Dressers",
-      "date": "2026-08-27",
-      "units": 165250,
+      "title": "Cade California Electronic Recalls Finger Light Toys Due to Risk of Serious Injury or Death from…",
+      "reason": "The recalled finger lights violate the mandatory safety standard for toys because the toys contain button cell batteries that can be easily accessed by children. If button cell or coin batteries are swallowed, the…",
+      "brand": "",
+      "company": "",
+      "retailers": "California Cade Electronic, LLC, of Hacienda Heights, California, Sold At: Amazon.com from March 2015 through July 2026 for between $5 and $16.",
+      "product": "Cade California Electronic Projecting Finger Light Toys",
+      "date": "2026-09-10",
+      "units": 179739,
       "pet": false,
-      "majorBrand": true,
-      "url": "https://www.cpsc.gov/Recalls/2026/Walmart-Reannounces-Recall-of-Mainstays-Nine-Drawer-Fabric-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Walmart-Distributed-Recalled-Dressers-Post-Recall-Sold-to-Consumers-Through-Liquidators",
-      "score": 153
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/Cade-California-Electronic-Recalls-Finger-Light-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
+      "score": 148
     },
     {
       "id": "NHTSA-26V511000",
@@ -224,6 +207,23 @@
       "campaign": "26V511000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V511-8251.pdf",
       "score": 152
+    },
+    {
+      "id": "CPSC-10973-zmc-group-expands-recall-of-light-up-children-s-toys-due-to-risk-of-se",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "ZMC Group Expands Recall of Light-Up Children’s Toys Due to Risk of Serious Injury or Death from…",
+      "reason": "The recalled light-up toys violate the mandatory safety standard for children’s toys because the toys contain button cell batteries that can be easily accessed by children. If button cell or coin batteries are…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold At: Diva at Heart, primarily in California, Texas, Oregon, Mississippi, and Arizona, and various distributors and retail stores and online at https://www.divaatheartsj.com/ from October 2018 through July 2026.",
+      "product": "Light-Up Children’s Toys",
+      "date": "2026-09-10",
+      "units": 245124,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/ZMC-Group-Expands-Recall-of-Light-Up-Childrens-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
+      "score": 148
     },
     {
       "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
@@ -306,7 +306,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Sweet-Cubby-Recalls-Childrens-Loungewear-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Burn-Hazard-Violate-Mandatory-Standard-for-Childrens-Sleepwear",
-      "score": 147
+      "score": 141
     },
     {
       "id": "NHTSA-26V547000",
@@ -340,7 +340,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Dual-Fuel-Ranges-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-or-Explosion-Hazards-Manufactured-by-AGA-Rangemaster",
-      "score": 139
+      "score": 133
     },
     {
       "id": "CPSC-10974-junkins-recalls-dhasuwt-hair-dryer-brushes-due-to-risk-of-serious-inju",
@@ -357,7 +357,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Junkins-Recalls-DHASUWT-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-and-Shock-Hazards-Violate-Federal-Regulations-Smoking-and-Fire-Hazards",
-      "score": 139
+      "score": 133
     },
     {
       "id": "CPSC-10969-triumph-motorcycles-recalls-closed-course-competition-motorcycles-due-",
@@ -374,24 +374,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Triumph-Motorcycles-Recalls-Closed-Course-Competition-Motorcycles-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard",
-      "score": 139
-    },
-    {
-      "id": "NHTSA-26V579000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford Transit Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 Transit vehicles. The wireless seat belt reminder system (SBR) within the rear seat belt buckles may malfunction and fail to show a change in buckle status.…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "Transit",
-      "date": "2026-09-09",
-      "units": 1945,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V579000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V579-7717.pdf",
-      "score": 125
+      "score": 133
     },
     {
       "id": "CPSC-10889-jake-s-fireworks-recalls-world-class-fireworks-skull-strobe-rockets-du",
@@ -460,20 +443,20 @@
       "score": 118
     },
     {
-      "id": "CPSC-10965-ricky-joy-recalls-more-than-2-3-million-sour-crush-candy-bottles-due-t",
-      "source": "CPSC",
+      "id": "NHTSA-26V579000",
+      "source": "NHTSA",
       "category": "consumer",
-      "title": "Ricky Joy Recalls More Than 2.3 Million Sour Crush Candy Bottles Due to Risk of Serious Injury or Death…",
-      "reason": "The rolling ball on the recalled candy bottles can detach, posing a risk of serious injury or death from choking hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "H-E-B, Forman Mill and other candy stores nationwide and online at Walmart.com, CandyFunHouse.com, RickyJoy.com and other online retailers from January 2023 through May 2026 for about $3 for the bottle and for between $13 and $32 for the pack.",
-      "product": "Ricky Joy Sour Crush Rolling Liquid Candy Bottles",
-      "date": "2026-09-10",
-      "units": 2.3,
+      "title": "Ford Transit Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 Transit vehicles. The wireless seat belt reminder system (SBR) within the rear seat belt buckles may malfunction and fail to show a change in buckle status.…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "Transit",
+      "date": "2026-09-09",
+      "units": 1945,
       "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Ricky-Joy-Recalls-More-Than-2-3-Million-Sour-Crush-Candy-Bottles-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Hazard",
+      "majorBrand": true,
+      "campaign": "26V579000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V579-7717.pdf",
       "score": 117
     },
     {
@@ -494,40 +477,6 @@
       "score": 115
     },
     {
-      "id": "NHTSA-26V577000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford F-150 Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles.The stabilizer rod fasteners may not have been tightened properly during manufacturing, which can allow the rod to shift out of position. 17 vehicles…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "F-150",
-      "date": "2026-09-09",
-      "units": 17,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V577000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V577-7489.pdf",
-      "score": 113
-    },
-    {
-      "id": "NHTSA-26V576000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford F-150 Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles. Incorrect rear axle tail bearings may have been installed, which can result in rear wheel lock-up or driveshaft separation. 37 vehicles or units may…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "F-150",
-      "date": "2026-09-09",
-      "units": 37,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V576000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V576-1003.pdf",
-      "score": 113
-    },
-    {
       "id": "CPSC-10943-skip-hop-recalls-baby-sesame-street-elmo-silicone-teethers-due-to-risk",
       "source": "CPSC",
       "category": "consumer",
@@ -545,6 +494,23 @@
       "score": 113
     },
     {
+      "id": "CPSC-10965-ricky-joy-recalls-more-than-2-3-million-sour-crush-candy-bottles-due-t",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Ricky Joy Recalls More Than 2.3 Million Sour Crush Candy Bottles Due to Risk of Serious Injury or Death…",
+      "reason": "The rolling ball on the recalled candy bottles can detach, posing a risk of serious injury or death from choking hazard.",
+      "brand": "",
+      "company": "",
+      "retailers": "H-E-B, Forman Mill and other candy stores nationwide and online at Walmart.com, CandyFunHouse.com, RickyJoy.com and other online retailers from January 2023 through May 2026 for about $3 for the bottle and for between $13 and $32 for the pack.",
+      "product": "Ricky Joy Sour Crush Rolling Liquid Candy Bottles",
+      "date": "2026-09-10",
+      "units": 2.3,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/Ricky-Joy-Recalls-More-Than-2-3-Million-Sour-Crush-Candy-Bottles-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Hazard",
+      "score": 111
+    },
+    {
       "id": "CPSC-10976-https-www-cpsc-gov-recalls-2026-fjtjbsi-recalls-six-drawer-dressers-du",
       "source": "CPSC",
       "category": "consumer",
@@ -559,39 +525,40 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/FJTJBSI-Recalls-Six-Drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
-      "score": 112
+      "score": 106
     },
     {
-      "id": "FDA-2026-09-10-no-brand-name-broccoli-sprouts-evergreen-fresh-sprouts-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "No Brand Name Broccoli Sprouts Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "No Brand Name",
-      "company": "Evergreen Fresh Sprouts, LLC.",
-      "product": "Broccoli Sprouts",
-      "date": "2026-09-10",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/evergreen-fresh-sprouts-llc-recalls-broccoli-sprouts-because-possible-health-risk",
-      "score": 109
-    },
-    {
-      "id": "NHTSA-26V570000",
+      "id": "NHTSA-26V577000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Toyota C-Hr Vehicles Recalled",
-      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2026 C-HR battery electric vehicles. A software programming error may cause the electric drive system battery to become overcharged under certain…",
-      "brand": "Toyota",
-      "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "C-Hr",
-      "date": "2026-09-02",
-      "units": 8521,
+      "title": "Ford F-150 Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles.The stabilizer rod fasteners may not have been tightened properly during manufacturing, which can allow the rod to shift out of position. 17 vehicles…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "F-150",
+      "date": "2026-09-09",
+      "units": 17,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26V570000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V570-8322.pdf",
+      "campaign": "26V577000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V577-7489.pdf",
+      "score": 105
+    },
+    {
+      "id": "NHTSA-26V576000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford F-150 Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles. Incorrect rear axle tail bearings may have been installed, which can result in rear wheel lock-up or driveshaft separation. 37 vehicles or units may…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "F-150",
+      "date": "2026-09-09",
+      "units": 37,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V576000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V576-1003.pdf",
       "score": 105
     },
     {
@@ -612,21 +579,20 @@
       "score": 105
     },
     {
-      "id": "CPSC-10970-guang-zhou-recalls-wantefully-hair-dryer-brushes-due-to-risk-of-seriou",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Guang Zhou Recalls Wantefully Hair Dryer Brushes Due to Risk of Serious Injury or Death from…",
-      "reason": "The recalled hair dryer brushes are in violation of federal regulations for hair dryers as they lack an integrated immersion protection device, which presents a substantial product hazard to consumers and the risk of…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from February 2026 through March 2026 for about $30.",
-      "product": "Wantefully Hair Dryer Brushes",
+      "id": "FDA-2026-09-10-no-brand-name-broccoli-sprouts-evergreen-fresh-sprouts-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "No Brand Name Broccoli Sprouts Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "No Brand Name",
+      "company": "Evergreen Fresh Sprouts, LLC.",
+      "product": "Broccoli Sprouts",
       "date": "2026-09-10",
-      "units": 2295,
+      "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
-      "score": 104
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/evergreen-fresh-sprouts-llc-recalls-broccoli-sprouts-because-possible-health-risk",
+      "score": 103
     },
     {
       "id": "FDA-2026-09-03-b-braun-0-9-sodium-chloride-injection-usp-100-ml-in-a-150-ml-pab-conta",
@@ -645,21 +611,21 @@
       "score": 103
     },
     {
-      "id": "CPSC-10968-sqt-recalls-lontcs-busy-boards-due-to-risk-of-serious-injury-from-lead",
+      "id": "CPSC-10970-guang-zhou-recalls-wantefully-hair-dryer-brushes-due-to-risk-of-seriou",
       "source": "CPSC",
       "category": "consumer",
-      "title": "SQT Recalls Lontcs Busy Boards Due to Risk of Serious Injury from Lead Poisoning; Violate Federal Lead…",
-      "reason": "The toys’ zipper contains levels of lead that exceed the standard set in the federal lead paint ban. Lead is toxic if ingested by young children and can cause adverse health issues.",
-      "brand": "Xianyouxianlichengshaungqiaotouqichemeirongdian (Xianyou County Licheng Shuangqiaotou Auto Beauty Shop), dba SQT LLC, of China",
-      "company": "Xianyouxianlichengshaungqiaotouqichemeirongdian (Xianyou County Licheng Shuangqiaotou Auto Beauty Shop), dba SQT LLC, of China",
-      "retailers": "Sold Online At: Amazon.com from May 2024 through July 2026 for about $31.",
-      "product": "Lontcs Busy Board",
+      "title": "Guang Zhou Recalls Wantefully Hair Dryer Brushes Due to Risk of Serious Injury or Death from…",
+      "reason": "The recalled hair dryer brushes are in violation of federal regulations for hair dryers as they lack an integrated immersion protection device, which presents a substantial product hazard to consumers and the risk of…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Amazon.com from February 2026 through March 2026 for about $30.",
+      "product": "Wantefully Hair Dryer Brushes",
       "date": "2026-09-10",
-      "units": 1835,
+      "units": 2295,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/SQT-Recalls-Lontcs-Busy-Boards-Due-to-Risk-of-Serious-Injury-from-Lead-Poisoning-Violate-Federal-Lead-Paint-Ban",
-      "score": 101
+      "url": "https://www.cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
+      "score": 98
     },
     {
       "id": "CPSC-10913-cooluli-recalls-10-liter-and-15-liter-minifridges-due-to-fire-and-burn",
@@ -677,6 +643,23 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Cooluli-Recalls-10-Liter-and-15-Liter-Minifridges-Due-to-Fire-and-Burn-Hazards",
       "score": 97
+    },
+    {
+      "id": "CPSC-10968-sqt-recalls-lontcs-busy-boards-due-to-risk-of-serious-injury-from-lead",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "SQT Recalls Lontcs Busy Boards Due to Risk of Serious Injury from Lead Poisoning; Violate Federal Lead…",
+      "reason": "The toys’ zipper contains levels of lead that exceed the standard set in the federal lead paint ban. Lead is toxic if ingested by young children and can cause adverse health issues.",
+      "brand": "Xianyouxianlichengshaungqiaotouqichemeirongdian (Xianyou County Licheng Shuangqiaotou Auto Beauty Shop), dba SQT LLC, of China",
+      "company": "Xianyouxianlichengshaungqiaotouqichemeirongdian (Xianyou County Licheng Shuangqiaotou Auto Beauty Shop), dba SQT LLC, of China",
+      "retailers": "Sold Online At: Amazon.com from May 2024 through July 2026 for about $31.",
+      "product": "Lontcs Busy Board",
+      "date": "2026-09-10",
+      "units": 1835,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/SQT-Recalls-Lontcs-Busy-Boards-Due-to-Risk-of-Serious-Injury-from-Lead-Poisoning-Violate-Federal-Lead-Paint-Ban",
+      "score": 95
     },
     {
       "id": "FDA-2026-09-08-fi-supplements-vet-plus-inc",
@@ -780,6 +763,23 @@
       "score": 95
     },
     {
+      "id": "NHTSA-26V570000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Toyota C-Hr Vehicles Recalled",
+      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2026 C-HR battery electric vehicles. A software programming error may cause the electric drive system battery to become overcharged under certain…",
+      "brand": "Toyota",
+      "company": "Toyota Motor Engineering & Manufacturing",
+      "product": "C-Hr",
+      "date": "2026-09-02",
+      "units": 8521,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V570000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V570-8322.pdf",
+      "score": 93
+    },
+    {
       "id": "NHTSA-26V548000",
       "source": "NHTSA",
       "category": "consumer",
@@ -812,23 +812,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/KTM-North-America-Recalls-Off-Road-Motorcycles-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard",
       "score": 93
-    },
-    {
-      "id": "CPSC-10972-victgoal-recalls-bicycle-helmets-due-to-risk-of-serious-injury-or-deat",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Victgoal Recalls Bicycle Helmets Due to Risk of Serious Injury or Death from Head Injury; Violate…",
-      "reason": "The recalled helmets violate the mandatory safety standard for bicycle helmets because the helmets do not comply with the retention system, positional stability and certification requirements. The helmets can fail to…",
-      "brand": "Dongguan Hongtu Sports Goods Co. Ltd., of China",
-      "company": "Dongguan Hongtu Sports Goods Co. Ltd., of China",
-      "retailers": "Sold Online At: Walmart.com from March 2026 through June 2026 for between $22 and $36.",
-      "product": "Victgoal Children’s Bike Helmets",
-      "date": "2026-09-10",
-      "units": 40,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Victgoal-Recalls-Bicycle-Helmets-Due-to-Risk-of-Serious-Injury-or-Death-from-Head-Injury-Violate-Mandatory-Standard-for-Bicycle-Helmets",
-      "score": 92
     },
     {
       "id": "CPSC-10963-montessori-baby-toy-sets-recalled-due-to-risk-of-serious-injury-or-dea",
@@ -914,21 +897,21 @@
       "score": 87
     },
     {
-      "id": "NHTSA-26V571000",
-      "source": "NHTSA",
+      "id": "CPSC-10972-victgoal-recalls-bicycle-helmets-due-to-risk-of-serious-injury-or-deat",
+      "source": "CPSC",
       "category": "consumer",
-      "title": "Toyota Vehicles Recalled",
-      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2024 Toyota Tacoma Hybrid, 2025 Tundra Hybrid, Tundra, 2026 RAV4 Hybrid, 4Runner i-Force Max Hybrid, and 4Runner vehicles. The load carrying…",
-      "brand": "Toyota",
-      "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Tundra Hybrid, Tundra, Tacoma Hybrid, RAV4 Hybrid, 4RUNNER I-Force Max Hybrid, 4RUNNER",
-      "date": "2026-09-02",
-      "units": 135,
+      "title": "Victgoal Recalls Bicycle Helmets Due to Risk of Serious Injury or Death from Head Injury; Violate…",
+      "reason": "The recalled helmets violate the mandatory safety standard for bicycle helmets because the helmets do not comply with the retention system, positional stability and certification requirements. The helmets can fail to…",
+      "brand": "Dongguan Hongtu Sports Goods Co. Ltd., of China",
+      "company": "Dongguan Hongtu Sports Goods Co. Ltd., of China",
+      "retailers": "Sold Online At: Walmart.com from March 2026 through June 2026 for between $22 and $36.",
+      "product": "Victgoal Children’s Bike Helmets",
+      "date": "2026-09-10",
+      "units": 40,
       "pet": false,
-      "majorBrand": true,
-      "campaign": "26V571000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V571-0598.pdf",
-      "score": 85
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/Victgoal-Recalls-Bicycle-Helmets-Due-to-Risk-of-Serious-Injury-or-Death-from-Head-Injury-Violate-Mandatory-Standard-for-Bicycle-Helmets",
+      "score": 86
     },
     {
       "id": "NHTSA-26V561000",
@@ -1016,22 +999,6 @@
       "score": 83
     },
     {
-      "id": "FDA-2026-08-29-martina-mangoes-panorama-produce",
-      "source": "FDA",
-      "category": "food",
-      "title": "Martina Mangoes Recalled",
-      "reason": "Potential contamination with Salmonella",
-      "brand": "Martina",
-      "company": "Panorama Produce",
-      "product": "Mangoes",
-      "date": "2026-08-29",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 81
-    },
-    {
       "id": "FDA-2026-08-26-baxter-0-9-sodium-chloride-injection-usp-500-ml-viaflex-plastic-contai",
       "source": "FDA",
       "category": "health",
@@ -1078,23 +1045,6 @@
       "majorBrand": true,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/baxter-issues-voluntary-nationwide-recall-cefazolin-dextrose-injection-usp-2g-100ml20mg-ml-single",
       "score": 81
-    },
-    {
-      "id": "NHTSA-26V575000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Can-Am Vehicles Recalled",
-      "reason": "Bombardier Recreational Products, Inc. (BRP) is recalling certain 2025-2026 Can-Am Origin, Can-Am Pulse, 2025-2027 Can-Am Canyon, 2024-2027 Can-Am Spyder RT, and Can-Am Spyder F3 motorcycles equipped with a touchscreen…",
-      "brand": "Can-Am",
-      "company": "Bombardier Recreational Products, Inc.",
-      "product": "Pulse, Canyon, Origin, Spyder F3, Spyder Rt",
-      "date": "2026-09-07",
-      "units": 14014,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V575000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V575-4054.pdf",
-      "score": 80
     },
     {
       "id": "CPSC-10950-okk-trading-recalls-rainbow-mystery-squishy-bun-toys-due-to-risk-of-se",
@@ -1232,6 +1182,23 @@
       "score": 75
     },
     {
+      "id": "NHTSA-26V571000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Toyota Vehicles Recalled",
+      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2024 Toyota Tacoma Hybrid, 2025 Tundra Hybrid, Tundra, 2026 RAV4 Hybrid, 4Runner i-Force Max Hybrid, and 4Runner vehicles. The load carrying…",
+      "brand": "Toyota",
+      "company": "Toyota Motor Engineering & Manufacturing",
+      "product": "Tundra Hybrid, Tundra, Tacoma Hybrid, RAV4 Hybrid, 4RUNNER I-Force Max Hybrid, 4RUNNER",
+      "date": "2026-09-02",
+      "units": 135,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V571000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V571-0598.pdf",
+      "score": 73
+    },
+    {
       "id": "NHTSA-26V558000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1282,6 +1249,23 @@
       "score": 73
     },
     {
+      "id": "NHTSA-26V575000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Can-Am Vehicles Recalled",
+      "reason": "Bombardier Recreational Products, Inc. (BRP) is recalling certain 2025-2026 Can-Am Origin, Can-Am Pulse, 2025-2027 Can-Am Canyon, 2024-2027 Can-Am Spyder RT, and Can-Am Spyder F3 motorcycles equipped with a touchscreen…",
+      "brand": "Can-Am",
+      "company": "Bombardier Recreational Products, Inc.",
+      "product": "Pulse, Canyon, Origin, Spyder F3, Spyder Rt",
+      "date": "2026-09-07",
+      "units": 14014,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V575000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V575-4054.pdf",
+      "score": 72
+    },
+    {
       "id": "CPSC-10890-joyin-expands-recall-of-sloosh-dive-sticks-due-to-risk-of-serious-inju",
       "source": "CPSC",
       "category": "consumer",
@@ -1297,6 +1281,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Joyin-Expands-Recall-of-Sloosh-Dive-Sticks-Due-to-Risk-of-Serious-Injury-from-Impalement-Violate-Federal-Dive-Sticks-Ban",
       "score": 72
+    },
+    {
+      "id": "FDA-2026-08-29-martina-mangoes-panorama-produce",
+      "source": "FDA",
+      "category": "food",
+      "title": "Martina Mangoes Recalled",
+      "reason": "Potential contamination with Salmonella",
+      "brand": "Martina",
+      "company": "Panorama Produce",
+      "product": "Mangoes",
+      "date": "2026-08-29",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 71
     },
     {
       "id": "CPSC-10955-audiolineout-recalls-studio-six-headphone-amplifiers-due-to-risk-of-se",
@@ -1348,23 +1348,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Steelite-Pressure-Washers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Shock-and-Electrocution-Hazards-Sold-on-Amazon-by-Longer-3D",
       "score": 71
-    },
-    {
-      "id": "NHTSA-26V583000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Freightliner Vehicles Recalled",
-      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain 2020-2023 Freightliner Cascadia and 2022 Western Star 49X vehicles previously repaired incorrectly under recall numbers 23V073 or 22V817. The brake…",
-      "brand": "Freightliner",
-      "company": "Daimler Trucks North America, LLC",
-      "product": "Cascadia, 49X",
-      "date": "2026-09-09",
-      "units": 2404,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V583000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V583-2664.pdf",
-      "score": 70
     },
     {
       "id": "CPSC-10949-adult-portable-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
@@ -1503,40 +1486,6 @@
       "score": 67
     },
     {
-      "id": "NHTSA-26E051000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Joyson Safety Systems Curtain Shield Air Bag Vehicles Recalled",
-      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain side curtain air bag (CSA) assemblies sold as replacement parts for 2014-2021 Toyota Tundra Double Cab and CrewMax vehicles. The side curtain air…",
-      "brand": "Joyson Safety Systems",
-      "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Curtain Shield Air Bag",
-      "date": "2026-07-29",
-      "units": 1737,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E051000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E051-5250.pdf",
-      "score": 67
-    },
-    {
-      "id": "NHTSA-26E050000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Joyson Safety Systems Curtain Shield Air Bag Vehicles Recalled",
-      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain side curtain air bag (CSA) assemblies sold as replacement parts for 2016-2023 Toyota Tacoma vehicles. The side curtain air bag may have been…",
-      "brand": "Joyson Safety Systems",
-      "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Curtain Shield Air Bag",
-      "date": "2026-07-29",
-      "units": 2381,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E050000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E050-7856.pdf",
-      "score": 67
-    },
-    {
       "id": "CPSC-10948-audio-partnership-recalls-cambridge-audio-yoyo-m-portable-bluetooth-sp",
       "source": "CPSC",
       "category": "consumer",
@@ -1656,22 +1605,6 @@
       "score": 65
     },
     {
-      "id": "FDA-2026-08-29-everything-sprouts-robust-radish-mix-5oz-cups-everything-sprouts-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Everything Sprouts Robust Radish Mix, 5oz Cups Recalled",
-      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (STEC) or Salmonella.",
-      "brand": "Everything Sprouts",
-      "company": "Everything Sprouts, LLC",
-      "product": "Robust Radish Mix, 5oz Cups",
-      "date": "2026-08-29",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 63
-    },
-    {
       "id": "NHTSA-26V550000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1706,22 +1639,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Oma’s Pride Canine Food Recalled",
-      "reason": "Contaminated with Salmonella",
-      "brand": "Oma’s Pride",
-      "company": "Miller Foods, Inc.",
-      "product": "Canine Food",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": true,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
       "source": "FDA",
       "category": "food",
@@ -1735,6 +1652,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Oma’s Pride Canine Food Recalled",
+      "reason": "Contaminated with Salmonella",
+      "brand": "Oma’s Pride",
+      "company": "Miller Foods, Inc.",
+      "product": "Canine Food",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
       "score": 63
     },
     {
@@ -1852,6 +1785,23 @@
       "score": 63
     },
     {
+      "id": "NHTSA-26V583000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Freightliner Vehicles Recalled",
+      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain 2020-2023 Freightliner Cascadia and 2022 Western Star 49X vehicles previously repaired incorrectly under recall numbers 23V073 or 22V817. The brake…",
+      "brand": "Freightliner",
+      "company": "Daimler Trucks North America, LLC",
+      "product": "Cascadia, 49X",
+      "date": "2026-09-09",
+      "units": 2404,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V583000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V583-2664.pdf",
+      "score": 62
+    },
+    {
       "id": "USDA-2026-09-06-prime-line-distributors-inc-and-ferrarini-usa-inc-recall-imported-read",
       "source": "USDA",
       "category": "food",
@@ -1883,22 +1833,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Branch-Recalls-Ergonomic-Chairs-Due-to-Fall-Hazard",
       "score": 60
-    },
-    {
-      "id": "USDA-2026-09-09-el-eden-import-distributor-corp-recalls-ineligible-pork-cracklings-pro",
-      "source": "USDA",
-      "category": "food",
-      "title": "El Eden Import Distributor Corp Recalls Ineligible Pork Cracklings Products Imported from The Republic…",
-      "reason": "Import Violation",
-      "brand": "",
-      "company": "",
-      "product": "",
-      "date": "2026-09-09",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/el-eden-import-distributor-corp-recalls-ineligible-pork-cracklings-products-imported",
-      "score": 58
     },
     {
       "id": "CPSC-10946-mondraker-usa-recalls-mountain-bicycles-equipped-with-onoff-s9-carbon-",
@@ -2034,6 +1968,74 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Modine-Manufacturing-Company-Recalls-Airedale-Heating-and-Cooling-Ventilation-Fans-Due-to-Fire-Hazard",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26V568000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford F-650 Sd Vehicles Recalled",
+      "reason": "Marathon Industries Inc. (Marathon Industries) is recalling one 2025 Ford F-650 SD vehicle. The deck pins may break, resulting in the liftgate platform falling. 1 vehicles or units may be affected.",
+      "brand": "Ford",
+      "company": "Marathon Industries Inc.",
+      "product": "F-650 Sd",
+      "date": "2026-08-20",
+      "units": 1,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V568000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V568-7097.pdf",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26V530000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "GMC Vehicles Recalled",
+      "reason": "General Motors, LLC (GM) is recalling certain 2024-2025 Chevrolet Silverado 2500 and GMC Sierra 2500 vehicles equipped with the enhanced towing option and 20-inch accessory tire/wheel package. The tire information…",
+      "brand": "GMC",
+      "company": "General Motors, LLC",
+      "product": "Sierra 2500, Silverado 2500",
+      "date": "2026-08-13",
+      "units": 8,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V530000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V530-4213.pdf",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26V529000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Jeep Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Grand Cherokee and Grand Cherokee L vehicles. Due to a software issue in the body control module (BCM), the windshield wipers may fail. 81 vehicles or units may be…",
+      "brand": "Jeep",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "Grand Cherokee, Grand Cherokee L",
+      "date": "2026-08-13",
+      "units": 81,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V529000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V529-9405.pdf",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26V532000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford Explorer Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026 Explorer vehicles equipped with a 2.3L engine. The engine connecting rod bearings may seize, which can result in engine failure. 6 vehicles or units may be affected.",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "Explorer",
+      "date": "2026-08-13",
+      "units": 6,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V532000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V532-1166.pdf",
       "score": 55
     }
   ]
