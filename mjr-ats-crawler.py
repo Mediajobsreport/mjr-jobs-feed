@@ -379,7 +379,7 @@ def category(title, desc, industry, company):
         or any(x in c for x in [
             "audacy", "beasley", "bonneville", "cumulus", "iheart",
             "lotus communications", "stingray", "pattison", "evanov",
-            "urban one", "siriusxm", "sun broadcasting", "good karma"
+            "urban one", "siriusxm", "sun broadcasting", "good karma", "hope media group"
         ])
         or re.search(r"\b(radio station|radio group|fm station|am station|broadcast radio)\b", d_short)
     )
@@ -398,6 +398,17 @@ def category(title, desc, industry, company):
     # ------------------------------------------------------------------
     if re.search(r"\b(intern|internship|fellow|fellowship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
         return "Internships"
+
+    # Hope Media Group is fundamentally a radio broadcaster (KSBJ, WayFM,
+    # Vida Unida, Worship 24/7, NGEN, etc.). Keep its ordinary media/platform
+    # roles in Radio unless the title explicitly identifies television/video
+    # production. Functional departments such as Sales, Engineering and
+    # Business Office still use the normal title-first MJR overrides below.
+    if c == "hope media group" and re.search(
+        r"\b(television|tv|video production|video producer|video editor|videographer|video coordinator)\b",
+        t,
+    ):
+        return "Television"
 
     # Voice performance belongs in MJR's Voiceover category. Keep the match
     # title-first so ordinary audio engineering, speech testing and AI data
@@ -6411,7 +6422,13 @@ def hope_media_paylocity(src):
     For Hope only, membership on the employer-maintained current board is the
     freshness signal; jobs discovered from that board receive the crawl date.
     """
-    starts = [src["URL"]]
+    # Start with Hope's own careers page as the stable discovery point.
+    # Keep the configured URL as a secondary seed for backwards compatibility.
+    starts = [
+        "https://hopemediagroup.com/careers",
+        src["URL"],
+    ]
+    starts = list(dict.fromkeys(x for x in starts if x))
     queue = starts[:]
     seen_pages = set()
     details = set()
@@ -6435,19 +6452,36 @@ def hope_media_paylocity(src):
         for a in soup.find_all("a", href=True):
             h = urljoin(final, a["href"])
             hp = urlparse(h)
-            if "recruiting.paylocity.com" not in hp.netloc.lower():
-                continue
+            host = hp.netloc.lower()
             path = hp.path.lower()
-            if re.search(r"/recruiting/jobs/details/\d+", path, re.I):
-                details.add(h.split("#", 1)[0])
-            elif re.search(r"/recruiting/jobs/(?:all|list)/", path, re.I):
-                live_board_found = True
-                if h.split("#", 1)[0].rstrip("/") not in seen_pages:
+            label = clean(a.get_text(" ")).lower()
+
+            if "recruiting.paylocity.com" in host:
+                if re.search(r"/recruiting/jobs/details/\d+", path, re.I):
+                    details.add(h.split("#", 1)[0])
+                    # A detail link exposed by Hope's own current careers page
+                    # is itself proof that we reached the live job inventory.
+                    live_board_found = True
+                elif re.search(r"/recruiting/jobs/(?:all|list)/", path, re.I):
+                    live_board_found = True
+                    k = h.split("#", 1)[0].rstrip("/")
+                    if k not in seen_pages:
+                        queue.append(h.split("#", 1)[0])
+                elif re.search(r"\b(next|more|view more|load more|all jobs|careers)\b", label):
+                    if h.rstrip("/") not in seen_pages:
+                        queue.append(h)
+                continue
+
+            # Follow only careers/job links on Hope's own site. This lets the
+            # collector reach redirects/buttons that lead into Paylocity without
+            # wandering through the rest of the corporate website.
+            if host.endswith("hopemediagroup.com") and (
+                "career" in path or "job" in path or
+                re.search(r"\b(careers?|jobs?|openings?|opportunities|view positions)\b", label)
+            ):
+                k = h.split("#", 1)[0].rstrip("/")
+                if k not in seen_pages:
                     queue.append(h.split("#", 1)[0])
-            else:
-                label = clean(a.get_text(" ")).lower()
-                if re.search(r"\b(next|more|view more|load more)\b", label) and h.rstrip("/") not in seen_pages:
-                    queue.append(h)
 
         for m in re.finditer(
             r'https?://recruiting\.paylocity\.com/[^"\'< >\\s]*?/jobs/details/\d+[^"\'< >\\s]*',
@@ -6455,6 +6489,11 @@ def hope_media_paylocity(src):
             re.I,
         ):
             details.add(m.group(0).rstrip(".,);"))
+        # Hope's careers page may embed/escape Paylocity links in script data.
+        # Seeing those links on the official careers page counts as live-board
+        # discovery just like seeing normal anchor tags.
+        if "hopemediagroup.com" in urlparse(final).netloc.lower() and details:
+            live_board_found = True
         for m in re.finditer(r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']', raw, re.I):
             details.add(urljoin(final, m.group(1)).split("#", 1)[0])
 
