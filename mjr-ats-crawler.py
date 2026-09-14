@@ -6628,47 +6628,63 @@ def hope_media_paylocity(src):
 
 
 def nrg_media_paylocity(src):
-    """Dedicated NRG Media Paylocity collector using window.pageData.
+    """Dedicated NRG Media collector using Paylocity's public Job Feed V2.
 
-    Current Paylocity All-board pages render the public jobs from a
-    `window.pageData` JSON object rather than ordinary server-rendered anchors.
-    This collector reads that same public data, then fetches each canonical
-    Paylocity detail page so MJR keeps the employer's full posting text.
+    Paylocity documents a public recruiting feed at:
+      /Recruiting/v2/api/feed/jobs/{guid}
+
+    NRG's board GUID is already present in the configured All-board URL.  This
+    collector uses that GUID directly, then builds MJR records from the returned
+    published-job feed.  A pageData fallback remains for compatibility.
     """
+    board_guid = "76da5c58-0cdb-4886-86b6-41d72879e541"
     board_url = (
         "https://recruiting.paylocity.com/recruiting/jobs/All/"
-        "76da5c58-0cdb-4886-86b6-41d72879e541/NRG-MEDIA-LLC"
+        f"{board_guid}/NRG-MEDIA-LLC"
+    )
+    feed_url = (
+        "https://recruiting.paylocity.com/recruiting/v2/api/feed/jobs/"
+        f"{board_guid}"
     )
 
-    r = req("GET", board_url)
-    raw = r.text or ""
+    rows = []
 
-    # Paylocity currently emits:
-    #   window.pageData = {...};
-    # Keep the expression deliberately narrow so unrelated scripts are ignored.
-    m = re.search(
-        r"window\.pageData\s*=\s*({.*?})\s*;\s*</script>",
-        raw,
-        re.I | re.S,
-    )
-    if not m:
-        # Some deployments omit the script close immediately after the object.
+    # Primary: documented public Recruiting Job Feed V2.
+    try:
+        fr = req("GET", feed_url, headers={"Accept": "application/json"})
+        if getattr(fr, "status_code", 200) == 200:
+            payload = fr.json()
+            if isinstance(payload, dict):
+                rows = payload.get("jobs") or payload.get("Jobs") or []
+            elif isinstance(payload, list):
+                rows = payload
+    except Exception:
+        rows = []
+
+    # Fallback: current All-board embedded pageData.
+    if not rows:
+        r = req("GET", board_url)
+        raw = r.text or ""
         m = re.search(
-            r"window\.pageData\s*=\s*({.*?})\s*;",
+            r"window\.pageData\s*=\s*({.*?})\s*;\s*</script>",
             raw,
             re.I | re.S,
         )
-    if not m:
-        raise RuntimeError("NRG Paylocity window.pageData not found")
+        if not m:
+            m = re.search(
+                r"window\.pageData\s*=\s*({.*?})\s*;",
+                raw,
+                re.I | re.S,
+            )
+        if m:
+            try:
+                page_data = json.loads(m.group(1))
+                rows = page_data.get("Jobs") or page_data.get("jobs") or []
+            except Exception:
+                rows = []
 
-    try:
-        page_data = json.loads(m.group(1))
-    except Exception as e:
-        raise RuntimeError(f"NRG Paylocity pageData JSON parse failed: {e}")
-
-    rows = page_data.get("Jobs") or page_data.get("jobs") or []
     if not isinstance(rows, list):
-        raise RuntimeError("NRG Paylocity pageData Jobs is not a list")
+        rows = []
 
     out_jobs = []
     seen = set()
@@ -6678,81 +6694,102 @@ def nrg_media_paylocity(src):
             continue
 
         jid = clean(str(
-            row.get("JobId")
+            row.get("jobId")
+            or row.get("JobId")
             or row.get("JobID")
-            or row.get("jobId")
-            or row.get("Id")
             or row.get("id")
+            or row.get("Id")
             or ""
         ))
         if not jid or jid in seen:
             continue
         seen.add(jid)
 
-        detail_url = (
-            "https://recruiting.paylocity.com/Recruiting/Jobs/Details/"
-            + quote(jid, safe="")
-        )
-
-        # Prefer the detail page because it normally carries JSON-LD with the
-        # complete description, canonical date and structured location.
-        try:
-            rr = req("GET", detail_url)
-            j = _job_from_detail(src, detail_url, rr.text)
-            if j:
-                out_jobs.append(j)
-                continue
-        except Exception:
-            pass
-
-        # Fallback to public pageData fields if a detail request is temporarily
-        # unavailable. Do not materially rewrite employer content.
         title = clean(str(
-            row.get("JobTitle")
-            or row.get("PublishedJobTitle")
+            row.get("title")
             or row.get("Title")
+            or row.get("jobTitle")
+            or row.get("JobTitle")
             or ""
         ))
+        if not title:
+            continue
+
         pd = pdate(
-            row.get("PublishedDate")
+            row.get("publishedDate")
+            or row.get("PublishedDate")
+            or row.get("datePosted")
             or row.get("DatePosted")
+            or row.get("postingDate")
             or row.get("PostingDate")
-            or row.get("PublishedOn")
+            or row.get("createdUtc")
+            or row.get("CreatedUtc")
         )
-        if not pd or pd < CUTOFF or not title:
+        if not pd or pd < CUTOFF:
             continue
 
         desc_raw = (
-            row.get("Description")
+            row.get("description")
+            or row.get("Description")
+            or row.get("jobDescription")
             or row.get("JobDescription")
-            or row.get("DescriptionHtml")
             or ""
         )
-        desc = format_description(desc_raw)
-        if len(strip_html(desc)) < 180:
+        req_raw = row.get("requirements") or row.get("Requirements") or ""
+        desc = format_description(
+            (str(desc_raw) if desc_raw else "")
+            + ("\n" + str(req_raw) if req_raw else "")
+        )
+        if len(strip_html(desc)) < 120:
             continue
 
-        loc_obj = row.get("JobLocation") or row.get("Location") or {}
-        city = state = ""
+        loc_obj = (
+            row.get("jobLocation")
+            or row.get("JobLocation")
+            or row.get("location")
+            or row.get("Location")
+            or {}
+        )
+        city = state = loc_name = ""
         if isinstance(loc_obj, dict):
-            city = clean(str(
-                loc_obj.get("City")
-                or loc_obj.get("city")
-                or loc_obj.get("CityName")
+            city = clean(str(loc_obj.get("city") or loc_obj.get("City") or ""))
+            state = clean(str(loc_obj.get("state") or loc_obj.get("State") or ""))
+            loc_name = clean(str(
+                loc_obj.get("locationDisplayName")
+                or loc_obj.get("LocationDisplayName")
+                or loc_obj.get("name")
+                or loc_obj.get("Name")
                 or ""
             ))
-            state = clean(str(
-                loc_obj.get("State")
-                or loc_obj.get("state")
-                or loc_obj.get("StateCode")
-                or ""
-            ))
-        loc_name = clean(str(row.get("LocationName") or ""))
-        loc_text = ", ".join(x for x in (city, state) if x) or loc_name
+
+        display_url = clean(str(
+            row.get("displayUrl")
+            or row.get("DisplayUrl")
+            or ""
+        ))
+        apply_url = clean(str(
+            row.get("applyUrl")
+            or row.get("ApplyUrl")
+            or ""
+        ))
+        canonical = display_url or apply_url or (
+            "https://recruiting.paylocity.com/recruiting/jobs/Details/"
+            + quote(jid, safe="")
+        )
+
+        department = clean(str(
+            row.get("hiringDepartment")
+            or row.get("HiringDepartment")
+            or ""
+        ))
+        job_types = row.get("jobTypesArray") or row.get("JobTypesArray") or row.get("jobTypes") or ""
         context = clean(" ".join([
             strip_html(desc),
-            loc_text,
-            str(row.get("HiringDepartment") or row.get("Department") or ""),
+            department,
+            str(job_types),
+            city,
+            state,
+            loc_name,
         ]))
 
         out_jobs.append(
@@ -6764,14 +6801,14 @@ def nrg_media_paylocity(src):
                 pd,
                 jobtype(title, context),
                 category(title, desc, src["Industry"], src["Company"]),
-                detail_url,
+                canonical,
                 board_url,
                 "https://nrgmedia.com/",
                 "",
                 normalize_work_arrangement(desc, context),
                 city or loc_name,
                 state,
-                infer_country(loc_text, src["Company"], desc),
+                infer_country(", ".join(x for x in (city, state, loc_name) if x), src["Company"], desc),
             )
         )
 
