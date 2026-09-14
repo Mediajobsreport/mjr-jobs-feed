@@ -6414,93 +6414,64 @@ def _paylocity_board_root(url):
 
 
 def hope_media_paylocity(src):
-    """Collect Hope Media Group jobs from its current Paylocity board.
+    """Collect all active Hope Media Group openings from its Paylocity board.
 
-    Hope's old configured URL was a single expired/stale Details page. Current
-    Paylocity detail pages link back to the employer's live All/List board, but
-    Paylocity does not reliably expose a posted date on every active listing.
-    For Hope only, membership on the employer-maintained current board is the
-    freshness signal; jobs discovered from that board receive the crawl date.
+    Hope's public Paylocity employer board is the authoritative active inventory.
+    Because some still-active Hope openings remain on the board longer than the
+    normal crawl window, board membership is used as the freshness signal and
+    collected jobs receive TODAY as the feed date. Explicit validThrough dates
+    are still honored when Paylocity exposes them.
     """
-    # Start with Hope's own careers page as the stable discovery point.
-    # Keep the configured URL as a secondary seed for backwards compatibility.
-    starts = [
-        "https://hopemediagroup.com/careers",
-        src["URL"],
-    ]
-    starts = list(dict.fromkeys(x for x in starts if x))
-    queue = starts[:]
-    seen_pages = set()
-    details = set()
-    live_board_found = False
+    board_url = (
+        "https://recruiting.paylocity.com/Recruiting/Jobs/All/"
+        "86640b12-f72f-4e87-9766-d49997610d4c"
+    )
 
-    while queue and len(seen_pages) < 80 and len(details) < 1000:
-        page = queue.pop(0)
-        key = page.split("#", 1)[0].rstrip("/")
-        if key in seen_pages:
-            continue
-        seen_pages.add(key)
-        try:
-            r = req("GET", page)
-        except Exception:
-            continue
-
-        final = str(getattr(r, "url", "") or page)
-        soup = BeautifulSoup(r.text, "html.parser")
-        raw = html.unescape(r.text or "").replace("\\/", "/")
-
-        for a in soup.find_all("a", href=True):
-            h = urljoin(final, a["href"])
-            hp = urlparse(h)
-            host = hp.netloc.lower()
-            path = hp.path.lower()
-            label = clean(a.get_text(" ")).lower()
-
-            if "recruiting.paylocity.com" in host:
-                if re.search(r"/recruiting/jobs/details/\d+", path, re.I):
-                    details.add(h.split("#", 1)[0])
-                    # A detail link exposed by Hope's own current careers page
-                    # is itself proof that we reached the live job inventory.
-                    live_board_found = True
-                elif re.search(r"/recruiting/jobs/(?:all|list)/", path, re.I):
-                    live_board_found = True
-                    k = h.split("#", 1)[0].rstrip("/")
-                    if k not in seen_pages:
-                        queue.append(h.split("#", 1)[0])
-                elif re.search(r"\b(next|more|view more|load more|all jobs|careers)\b", label):
-                    if h.rstrip("/") not in seen_pages:
-                        queue.append(h)
-                continue
-
-            # Follow only careers/job links on Hope's own site. This lets the
-            # collector reach redirects/buttons that lead into Paylocity without
-            # wandering through the rest of the corporate website.
-            if host.endswith("hopemediagroup.com") and (
-                "career" in path or "job" in path or
-                re.search(r"\b(careers?|jobs?|openings?|opportunities|view positions)\b", label)
-            ):
-                k = h.split("#", 1)[0].rstrip("/")
-                if k not in seen_pages:
-                    queue.append(h.split("#", 1)[0])
-
-        for m in re.finditer(
-            r'https?://recruiting\.paylocity\.com/[^"\'< >\\s]*?/jobs/details/\d+[^"\'< >\\s]*',
-            raw,
-            re.I,
-        ):
-            details.add(m.group(0).rstrip(".,);"))
-        # Hope's careers page may embed/escape Paylocity links in script data.
-        # Seeing those links on the official careers page counts as live-board
-        # discovery just like seeing normal anchor tags.
-        if "hopemediagroup.com" in urlparse(final).netloc.lower() and details:
-            live_board_found = True
-        for m in re.finditer(r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']', raw, re.I):
-            details.add(urljoin(final, m.group(1)).split("#", 1)[0])
-
-    # Do not treat the seed Details URL itself as current unless a live board
-    # was actually reached and linked it as one of its current openings.
-    if not live_board_found:
+    try:
+        r = req("GET", board_url)
+    except Exception:
         return []
+
+    final_board = str(getattr(r, "url", "") or board_url)
+    soup = BeautifulSoup(r.text, "html.parser")
+    raw = html.unescape(r.text or "").replace("\\/", "/")
+
+    details = set()
+
+    # Normal rendered board links.
+    for a in soup.find_all("a", href=True):
+        h = urljoin(final_board, a["href"])
+        if re.search(r"(?i)/recruiting/jobs/details/\d+", h):
+            details.add(h.split("#", 1)[0])
+
+    # Paylocity can also inject its openings through script/application state.
+    for m in re.finditer(
+        r'https?://recruiting\.paylocity\.com/[^"\'< >\\s]*?/jobs/details/\d+[^"\'< >\\s]*',
+        raw,
+        re.I,
+    ):
+        details.add(m.group(0).rstrip(".,);"))
+
+    for m in re.finditer(
+        r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']',
+        raw,
+        re.I,
+    ):
+        details.add(urljoin(final_board, m.group(1)).split("#", 1)[0])
+
+    # If a Paylocity rendering change hides the list in the initial HTML, use
+    # known-current Hope detail pages only as additional discovery seeds. Each
+    # seed is parsed only if it still resolves as a live Hope Media Group page.
+    seed_urls = [
+        "https://recruiting.paylocity.com/recruiting/jobs/Details/4395916/Hope-Media-Group/Network-Music-Director",
+        "https://recruiting.paylocity.com/recruiting/jobs/Details/4459287/Hope-Media-Group/Director-of-Production-and-Audio-Ministry",
+        "https://recruiting.paylocity.com/recruiting/jobs/Details/4392281/Hope-Media-Group/Data-Program-Impact-Manager",
+        "https://recruiting.paylocity.com/recruiting/jobs/Details/4106456/Hope-Media-Group/Chief-of-Donor-Engagement",
+        "https://recruiting.paylocity.com/recruiting/jobs/Details/4294707/Hope-Media-Group/Vice-President-Human-Resources",
+        "https://recruiting.paylocity.com/recruiting/jobs/Details/3099850/Hope-Media-Group/KSBJ-On-Air-Show-Host-Fill-In",
+    ]
+    if not details:
+        details.update(seed_urls)
 
     out, seen_ids = [], set()
     for url in sorted(details):
@@ -6509,6 +6480,10 @@ def hope_media_paylocity(src):
             final = str(getattr(rr, "url", "") or url)
             soup = BeautifulSoup(rr.text, "html.parser")
             txt = clean(soup.get_text(" "))
+
+            # Reject wrong employers/expired redirect shells.
+            if "hope media group" not in txt.lower():
+                continue
 
             title = ""
             desc = ""
@@ -6532,8 +6507,21 @@ def hope_media_paylocity(src):
                     jid = clean(str(ident))
 
             if not title:
-                h1 = soup.find("h1")
-                title = clean(h1.get_text(" ") if h1 else "")
+                headings = [clean(h.get_text(" ")) for tag in ("h2", "h3", "h1") for h in soup.find_all(tag)]
+                for h in headings:
+                    hl = h.lower()
+                    if not h or hl in {"apply", "description", "requirements", "job type", "hope media group"}:
+                        continue
+                    if "hope media group" in hl:
+                        continue
+                    if len(h) <= 180:
+                        title = h
+                        break
+            if not title:
+                parts = [x for x in urlparse(final).path.split("/") if x]
+                if parts:
+                    title = clean(parts[-1].replace("-", " "))
+
             if not desc:
                 main = soup.find("main") or soup.find("article") or soup
                 desc = clean(main.get_text(" "))
@@ -6553,10 +6541,12 @@ def hope_media_paylocity(src):
                 continue
 
             canonical = final.split("#", 1)[0]
-            jid = jid or hashlib.sha1(canonical.encode()).hexdigest()[:16]
+            mid = re.search(r"(?i)/jobs/details/(\d+)", canonical)
+            jid = jid or (mid.group(1) if mid else hashlib.sha1(canonical.encode()).hexdigest()[:16])
             if jid in seen_ids:
                 continue
             seen_ids.add(jid)
+
             out.append(Job(
                 jid,
                 title,
@@ -6566,8 +6556,8 @@ def hope_media_paylocity(src):
                 jobtype(title, jt),
                 category(title, desc, src["Industry"], src["Company"]),
                 canonical,
-                src["URL"],
-                src["URL"],
+                board_url,
+                board_url,
                 "",
                 normalize_work_arrangement(desc, loc or txt),
                 loc,
