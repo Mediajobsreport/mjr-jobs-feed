@@ -5385,9 +5385,31 @@ def company_scope_rejection_reason(job_or_dict):
     company = clean(get("company", "")).lower()
     title = clean(get("title", "")).lower()
     description = strip_html(get("description", "")).lower()[:7000]
+    location = clean(" ".join(
+        str(get(field, "") or "") for field in ("city", "state")
+    )).lower()
     text = f" {title} {description} "
 
     if company in {"disney / abc", "espn"}:
+        # MJR carries U.S. and Canadian jobs only. Disney's keyword search can
+        # silently mix in international openings even when the source is the
+        # ESPN or ABC surface.
+        foreign_location = re.search(
+            r"\b(united kingdom|england|scotland|wales|ireland|france|germany|"
+            r"spain|italy|portugal|belgium|switzerland|austria|netherlands|"
+            r"sweden|norway|denmark|finland|poland|czechia|romania|greece|"
+            r"israel|india|china|japan|singapore|australia|new zealand|"
+            r"south africa|argentina|brazil|chile|colombia|mexico|"
+            r"hong kong|taiwan|philippines|indonesia|malaysia|thailand|"
+            r"united arab emirates|saudi arabia|qatar)\b|"
+            r"(?:^|[, /-])(?:hk|gb|uk|fr|de|es|it|pt|be|ch|at|nl|se|no|dk|"
+            r"fi|pl|cz|ro|gr|il|in|cn|jp|sg|au|nz|za|ar|br|cl|co|mx|tw|ph|"
+            r"id|my|th|ae|sa|qa)(?:$|[, /-])",
+            location,
+        )
+        if foreign_location:
+            return "Disney/ESPN job outside the United States and Canada"
+
         # Clear hospitality, parks, cruise, retail and physical-trade titles.
         # These occasionally leak into Disney's ABC/ESPN search surfaces.
         hard_nonmedia_title = re.search(
@@ -5401,6 +5423,9 @@ def company_scope_rejection_reason(job_or_dict):
             r"ride operator|attractions? operator|parking attendant|"
             r"cast member|senior cast member|assistant store manager|store manager|"
             r"merchandise|retail associate|product designer.*apparel|apparel designer|"
+            r"entertainment technician|garment technician|parade float driver|"
+            r"quality assurance inspector.*mechanical|senior artist.*figure|"
+            r"server assistant|claims examiner|"
             r"horticulturist|gardener|"
             r"plumber|carpenter|electrician|hvac|maintenance mechanic|"
             r"construction manager|construction superintendent|construction estimator|"
@@ -10232,7 +10257,7 @@ def voiceover_sources_test():
 
 
 def careeronestop_townsquare_test():
-    """Controlled CareerOneStop job-search test for Townsquare Media.
+    """Controlled CareerOneStop V2 job-search test for Townsquare Media.
 
     CareerOneStop fields are retained as supplied. MJR category, job type and
     work arrangement are separate feed metadata. The employer page is consulted
@@ -10257,7 +10282,7 @@ def careeronestop_townsquare_test():
         "250",               # documented maximum page size
         "30",                # postings acquired during the last 30 days
     ]
-    endpoint = "https://api.careeronestop.org/v1/jobsearch/" + "/".join(
+    endpoint = "https://api.careeronestop.org/v2/jobsearch/" + "/".join(
         quote(str(value), safe="") for value in segments
     )
     api_headers = {
@@ -10268,7 +10293,12 @@ def careeronestop_townsquare_test():
         response = req(
             "GET",
             endpoint,
-            params={"companyName": "Townsquare Media", "showFilters": "false"},
+            params={
+                "companyName": "Townsquare Media",
+                "showFilters": "false",
+                "enableJobDescriptionSnippet": "true",
+                "enableMetaData": "false",
+            },
             headers=api_headers,
         )
     except requests.HTTPError as exc:
@@ -10279,7 +10309,12 @@ def careeronestop_townsquare_test():
         response = req(
             "GET",
             endpoint + "/",
-            params={"companyName": "Townsquare Media", "showFilters": "false"},
+            params={
+                "companyName": "Townsquare Media",
+                "showFilters": "false",
+                "enableJobDescriptionSnippet": "true",
+                "enableMetaData": "false",
+            },
             headers=api_headers,
         )
     payload = response.json()
@@ -10335,14 +10370,56 @@ def careeronestop_townsquare_test():
         url = clean(str(value(row, "URL", "JobUrl", "JobURL", "ApplyURL") or ""))
         jid = clean(str(value(row, "JvId", "JobId", "JobID", "Id") or ""))
         location = clean(str(value(row, "Location", "JobLocation") or ""))
-        desc_raw = value(row, "JobDescription", "Description", "JobDesc")
+        desc_raw = value(row, "JobDescription", "Description", "DescriptionSnippet", "JobDesc")
         description = format_description(str(desc_raw or ""))
 
         if not title or not url:
             continue
 
-        # Some List Jobs responses are summaries. Use the linked employer page
-        # for the description while leaving CareerOneStop-supplied fields intact.
+        # List Jobs may return only a short snippet. When a JvId is available,
+        # ask CareerOneStop V2 for the full job record first. Only fall back to
+        # the employer page if CareerOneStop still does not provide enough text.
+        if len(strip_html(description)) < 200 and jid:
+            try:
+                detail_endpoint = (
+                    "https://api.careeronestop.org/v2/jobsearch/"
+                    + quote(user_id, safe="")
+                    + "/"
+                    + quote(jid, safe="")
+                )
+                detail_api_response = req(
+                    "GET",
+                    detail_endpoint,
+                    params={"isHtml": "true", "enableMetaData": "false"},
+                    headers=api_headers,
+                )
+                detail_payload = detail_api_response.json()
+                if isinstance(detail_payload, dict):
+                    description = format_description(str(
+                        detail_payload.get("Description")
+                        or detail_payload.get("description")
+                        or description
+                        or ""
+                    ))
+                    url = clean(str(
+                        detail_payload.get("URL")
+                        or detail_payload.get("Url")
+                        or detail_payload.get("url")
+                        or url
+                    ))
+                    company = clean(str(
+                        detail_payload.get("Company")
+                        or detail_payload.get("company")
+                        or company
+                    ))
+                    location = clean(str(
+                        detail_payload.get("Location")
+                        or detail_payload.get("location")
+                        or location
+                    ))
+            except Exception:
+                pass
+
         if len(strip_html(description)) < 200:
             try:
                 detail_response = req("GET", url)
