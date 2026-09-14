@@ -6702,6 +6702,22 @@ def paylocity_v18(src):
         for m in re.finditer(r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']', raw, re.I):
             add(m.group(1))
 
+        # Paylocity's current All-board can expose posting IDs in application
+        # state without rendering normal detail anchors.  Build the canonical
+        # public detail URL from those IDs so NRG and other current Paylocity
+        # boards remain enumerable when the HTML shell changes.
+        if "/recruiting/jobs/all/" in final.lower():
+            for pat in (
+                r'["\'](?:jobId|jobID|jobPostingId|jobPostingID|id)["\']\s*:\s*["\']?(\d{5,})',
+                r'/Recruiting/Jobs/Details/(\d{5,})',
+                r'/recruiting/jobs/details/(\d{5,})',
+            ):
+                for m in re.finditer(pat, raw, re.I):
+                    add(
+                        "https://recruiting.paylocity.com/recruiting/jobs/Details/"
+                        + m.group(1)
+                    )
+
     # If the source itself is a single detail page (Hope), include it.
     if re.search(r"/recruiting/jobs/details/\d+", src["URL"], re.I):
         details.add(src["URL"])
