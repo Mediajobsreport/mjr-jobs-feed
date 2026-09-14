@@ -410,6 +410,18 @@ def category(title, desc, industry, company):
     ):
         return "Television"
 
+    # Hope Media Group corporate/support roles override the Radio employer
+    # default. Donor/fundraising/development work and program-impact/data
+    # administration are business functions rather than programming/content.
+    if c == "hope media group" and re.search(
+        r"\b(donor|donor engagement|fundraising|fundraiser|fund development|"
+        r"development officer|development director|development manager|"
+        r"data program|program impact|impact manager|impact director|"
+        r"program & impact|program and impact)\b",
+        t,
+    ):
+        return "Business Office"
+
     # Voice performance belongs in MJR's Voiceover category. Keep the match
     # title-first so ordinary audio engineering, speech testing and AI data
     # validation jobs are not mislabeled as voice talent opportunities.
