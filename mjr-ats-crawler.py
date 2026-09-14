@@ -7068,40 +7068,212 @@ def townsquare_v23(src):
 
 
 def hubbard_v23(src):
-    """Recover Hubbard's newer ADP CX job-detail links from the public board."""
-    roots = [
-        src["URL"],
-        "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing",
-    ]
-    details = set()
-    for root in roots:
-        try:
-            r = req("GET", root)
-        except Exception:
+    """Enumerate Hubbard Broadcasting's public ADP MyJobs board.
+
+    Hubbard uses ADP Recruitment Management / MyJobs (myjobs.adp.com), which is
+    a different public surface from ADP Workforce Now.  The MyJobs SPA first
+    exposes a short-lived public board token and org OID for the tenant slug;
+    those values authorize the anonymous listing/detail endpoints used by the
+    public career site itself.
+    """
+    slug = "hubbardbroadcasting"
+    career_cfg_url = f"https://myjobs.adp.com/public/staffing/v1/career-site/{slug}"
+    listing_url = (
+        "https://my.adp.com/myadp_prefix/mycareer/public/staffing/v1/"
+        "job-requisitions/apply-custom-filters"
+    )
+    detail_prefix = (
+        "https://my.adp.com/myadp_prefix/mycareer/public/staffing/v1/"
+        "job-requisitions/search-meta/"
+    )
+
+    # 1) Establish the anonymous public-board session.
+    cfg_r = req("GET", career_cfg_url, headers={"Accept": "application/json"})
+    if getattr(cfg_r, "status_code", 200) != 200:
+        raise RuntimeError(f"Hubbard ADP career-site HTTP {cfg_r.status_code}")
+    cfg = cfg_r.json()
+    token = clean(str(cfg.get("myJobsToken") or ""))
+    orgoid = clean(str(cfg.get("orgoid") or cfg.get("orgOID") or ""))
+    if not token:
+        raise RuntimeError("Hubbard ADP public myJobsToken missing")
+
+    headers = {
+        "Accept": "application/json",
+        "Accept-Language": "en-US",
+        "Origin": "https://myjobs.adp.com",
+        "Referer": "https://myjobs.adp.com/",
+        "myjobstoken": token,
+        "rolecode": "manager",
+    }
+    if orgoid:
+        headers["orgoid"] = orgoid
+
+    select = (
+        "reqId,jobTitle,publishedJobTitle,type,jobDescription,"
+        "jobQualifications,workLevelCode,clientRequisitionID,"
+        "postingDate,requisitionLocations"
+    )
+
+    # 2) Fully paginate the employer board.  Keep pages modest; very large
+    # MyJobs pages can fail upstream even though normal pagination succeeds.
+    rows = []
+    seen_req = set()
+    skip = 0
+    top = 100
+    total = None
+    while skip < 5000:
+        lr = req(
+            "GET",
+            listing_url,
+            headers=headers,
+            params={
+                "$orderby": "postingDate desc",
+                "$select": select,
+                "$top": top,
+                "$skip": skip,
+                "tz": "America/New_York",
+            },
+        )
+        if getattr(lr, "status_code", 200) != 200:
+            raise RuntimeError(f"Hubbard ADP listing HTTP {lr.status_code}")
+        payload = lr.json()
+        page = payload.get("jobRequisitions") or []
+        if total is None:
+            try:
+                total = int(payload.get("count"))
+            except Exception:
+                total = None
+        if not page:
+            break
+
+        added = 0
+        for p in page:
+            if not isinstance(p, dict):
+                continue
+            rid = clean(str(p.get("reqId") or p.get("clientRequisitionID") or ""))
+            if not rid or rid in seen_req:
+                continue
+            seen_req.add(rid)
+            rows.append(p)
+            added += 1
+
+        if not added:
+            break
+        skip += len(page)
+        if total is not None and len(rows) >= total:
+            break
+
+    # 3) Build MJR jobs.  Fetch search-meta when the list payload is thin so we
+    # retain the employer's complete public description/qualification text.
+    out = []
+    for p in rows:
+        rid = clean(str(p.get("reqId") or p.get("clientRequisitionID") or ""))
+        detail = p
+        raw_desc = clean(str(p.get("jobDescription") or ""))
+        raw_qual = clean(str(p.get("jobQualifications") or ""))
+        if len(strip_html(raw_desc + " " + raw_qual)) < 250:
+            try:
+                dr = req("GET", detail_prefix + quote(rid, safe=""), headers=headers)
+                if getattr(dr, "status_code", 200) == 200:
+                    dp = dr.json()
+                    drows = dp.get("jobRequisitions") or []
+                    if drows and isinstance(drows[0], dict):
+                        # search-meta sometimes nests the useful fields, so
+                        # merge without discarding list fields.
+                        detail = dict(p)
+                        detail.update(drows[0])
+            except Exception:
+                pass
+
+        title = clean(str(
+            detail.get("publishedJobTitle")
+            or detail.get("jobTitle")
+            or p.get("publishedJobTitle")
+            or p.get("jobTitle")
+            or ""
+        ))
+        if not title:
             continue
-        final = str(getattr(r, "url", "") or root)
-        details.update(_v23_detail_candidates(final, r.text))
-        # Capture ADP CX detail URLs and requisition IDs embedded in JS.
-        for m in re.finditer(
-            r'https?://myjobs\.adp\.com/hubbardbroadcasting/cx/job-details\?[^"\'<>\s]+',
-            r.text, re.I
-        ):
-            details.add(m.group(0).replace("\\/", "/").replace("&amp;", "&"))
-        for m in re.finditer(r'jobId["\']?\s*[:=]\s*["\']([^"\']+)["\']', r.text, re.I):
-            jid = m.group(1)
-            details.add(
-                "https://myjobs.adp.com/hubbardbroadcasting/cx/job-details"
-                f"?reqId={jid}"
+
+        pd = pdate(
+            detail.get("postingDate")
+            or p.get("postingDate")
+            or detail.get("datePosted")
+            or p.get("datePosted")
+        )
+        if pd and pd < CUTOFF:
+            continue
+        # Presence on the live ADP board is authoritative if ADP omits a
+        # parseable posting date.
+        if not pd:
+            pd = TODAY
+
+        desc_bits = []
+        for key in ("jobDescription", "jobQualifications"):
+            val = detail.get(key)
+            if val:
+                desc_bits.append(str(val))
+        desc = format_description("\n".join(desc_bits))
+        if len(strip_html(desc)) < 120:
+            # Do not emit shell/empty records.
+            continue
+
+        city = ""
+        state = ""
+        country = "US"
+        locations = detail.get("requisitionLocations") or p.get("requisitionLocations") or []
+        if isinstance(locations, list) and locations:
+            loc = next(
+                (x for x in locations if isinstance(x, dict) and x.get("primaryIndicator")),
+                locations[0],
             )
-    out, ids = [], set()
-    for url in sorted(details):
-        try:
-            rr = req("GET", url)
-            j = _radio_recovery_job(src, str(getattr(rr, "url", "") or url), rr.text)
-            if j and j.id not in ids:
-                ids.add(j.id); out.append(j)
-        except Exception:
-            continue
+            if isinstance(loc, dict):
+                addr = loc.get("address") or {}
+                if isinstance(addr, dict):
+                    city = clean(str(addr.get("cityName") or ""))
+                    st = addr.get("countrySubdivisionLevel1") or {}
+                    if isinstance(st, dict):
+                        state = clean(str(
+                            st.get("shortName") or st.get("codeValue") or st.get("longName") or ""
+                        ))
+                    co = addr.get("country") or {}
+                    if isinstance(co, dict):
+                        cv = clean(str(co.get("codeValue") or co.get("shortName") or ""))
+                        if cv:
+                            country = "CA" if cv.upper() in ("CA", "CAN", "CANADA") else "US"
+                if not city:
+                    nc = loc.get("nameCode") or {}
+                    if isinstance(nc, dict):
+                        city = clean(str(nc.get("shortName") or nc.get("longName") or ""))
+
+        loc_text = ", ".join(x for x in (city, state) if x)
+        detail_url = f"https://myjobs.adp.com/{slug}/cx/job-details?reqId={quote(rid, safe='')}"
+        context = clean(" ".join([
+            strip_html(desc),
+            loc_text,
+            str(detail.get("type") or ""),
+            str(detail.get("workLevelCode") or ""),
+        ]))
+
+        out.append(
+            Job(
+                hashlib.sha1((slug + ":" + rid).encode()).hexdigest()[:16],
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, context),
+                category(title, desc, src["Industry"], src["Company"]),
+                detail_url,
+                src["URL"],
+                "https://hubbardbroadcasting.com/",
+                "",
+                normalize_work_arrangement(desc, context),
+                city,
+                state,
+                country,
+            )
+        )
     return out
 
 
