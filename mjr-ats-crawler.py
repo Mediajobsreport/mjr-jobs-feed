@@ -6626,6 +6626,158 @@ def hope_media_paylocity(src):
     return out
 
 
+
+def nrg_media_paylocity(src):
+    """Dedicated NRG Media Paylocity collector using window.pageData.
+
+    Current Paylocity All-board pages render the public jobs from a
+    `window.pageData` JSON object rather than ordinary server-rendered anchors.
+    This collector reads that same public data, then fetches each canonical
+    Paylocity detail page so MJR keeps the employer's full posting text.
+    """
+    board_url = (
+        "https://recruiting.paylocity.com/recruiting/jobs/All/"
+        "76da5c58-0cdb-4886-86b6-41d72879e541/NRG-MEDIA-LLC"
+    )
+
+    r = req("GET", board_url)
+    raw = r.text or ""
+
+    # Paylocity currently emits:
+    #   window.pageData = {...};
+    # Keep the expression deliberately narrow so unrelated scripts are ignored.
+    m = re.search(
+        r"window\.pageData\s*=\s*({.*?})\s*;\s*</script>",
+        raw,
+        re.I | re.S,
+    )
+    if not m:
+        # Some deployments omit the script close immediately after the object.
+        m = re.search(
+            r"window\.pageData\s*=\s*({.*?})\s*;",
+            raw,
+            re.I | re.S,
+        )
+    if not m:
+        raise RuntimeError("NRG Paylocity window.pageData not found")
+
+    try:
+        page_data = json.loads(m.group(1))
+    except Exception as e:
+        raise RuntimeError(f"NRG Paylocity pageData JSON parse failed: {e}")
+
+    rows = page_data.get("Jobs") or page_data.get("jobs") or []
+    if not isinstance(rows, list):
+        raise RuntimeError("NRG Paylocity pageData Jobs is not a list")
+
+    out_jobs = []
+    seen = set()
+
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+
+        jid = clean(str(
+            row.get("JobId")
+            or row.get("JobID")
+            or row.get("jobId")
+            or row.get("Id")
+            or row.get("id")
+            or ""
+        ))
+        if not jid or jid in seen:
+            continue
+        seen.add(jid)
+
+        detail_url = (
+            "https://recruiting.paylocity.com/Recruiting/Jobs/Details/"
+            + quote(jid, safe="")
+        )
+
+        # Prefer the detail page because it normally carries JSON-LD with the
+        # complete description, canonical date and structured location.
+        try:
+            rr = req("GET", detail_url)
+            j = _job_from_detail(src, detail_url, rr.text)
+            if j:
+                out_jobs.append(j)
+                continue
+        except Exception:
+            pass
+
+        # Fallback to public pageData fields if a detail request is temporarily
+        # unavailable. Do not materially rewrite employer content.
+        title = clean(str(
+            row.get("JobTitle")
+            or row.get("PublishedJobTitle")
+            or row.get("Title")
+            or ""
+        ))
+        pd = pdate(
+            row.get("PublishedDate")
+            or row.get("DatePosted")
+            or row.get("PostingDate")
+            or row.get("PublishedOn")
+        )
+        if not pd or pd < CUTOFF or not title:
+            continue
+
+        desc_raw = (
+            row.get("Description")
+            or row.get("JobDescription")
+            or row.get("DescriptionHtml")
+            or ""
+        )
+        desc = format_description(desc_raw)
+        if len(strip_html(desc)) < 180:
+            continue
+
+        loc_obj = row.get("JobLocation") or row.get("Location") or {}
+        city = state = ""
+        if isinstance(loc_obj, dict):
+            city = clean(str(
+                loc_obj.get("City")
+                or loc_obj.get("city")
+                or loc_obj.get("CityName")
+                or ""
+            ))
+            state = clean(str(
+                loc_obj.get("State")
+                or loc_obj.get("state")
+                or loc_obj.get("StateCode")
+                or ""
+            ))
+        loc_name = clean(str(row.get("LocationName") or ""))
+        loc_text = ", ".join(x for x in (city, state) if x) or loc_name
+        context = clean(" ".join([
+            strip_html(desc),
+            loc_text,
+            str(row.get("HiringDepartment") or row.get("Department") or ""),
+        ]))
+
+        out_jobs.append(
+            Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, context),
+                category(title, desc, src["Industry"], src["Company"]),
+                detail_url,
+                board_url,
+                "https://nrgmedia.com/",
+                "",
+                normalize_work_arrangement(desc, context),
+                city or loc_name,
+                state,
+                infer_country(loc_text, src["Company"], desc),
+            )
+        )
+
+    return out_jobs
+
+
 def paylocity_v18(src):
     """Targeted Paylocity public-board crawler.
 
@@ -6701,22 +6853,6 @@ def paylocity_v18(src):
 
         for m in re.finditer(r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']', raw, re.I):
             add(m.group(1))
-
-        # Paylocity's current All-board can expose posting IDs in application
-        # state without rendering normal detail anchors.  Build the canonical
-        # public detail URL from those IDs so NRG and other current Paylocity
-        # boards remain enumerable when the HTML shell changes.
-        if "/recruiting/jobs/all/" in final.lower():
-            for pat in (
-                r'["\'](?:jobId|jobID|jobPostingId|jobPostingID|id)["\']\s*:\s*["\']?(\d{5,})',
-                r'/Recruiting/Jobs/Details/(\d{5,})',
-                r'/recruiting/jobs/details/(\d{5,})',
-            ):
-                for m in re.finditer(pat, raw, re.I):
-                    add(
-                        "https://recruiting.paylocity.com/recruiting/jobs/Details/"
-                        + m.group(1)
-                    )
 
     # If the source itself is a single detail page (Hope), include it.
     if re.search(r"/recruiting/jobs/details/\d+", src["URL"], re.I):
@@ -10958,10 +11094,11 @@ def main():
                 if company_key == "audacy"
                 else hope_media_paylocity(s)
                 if company_key == "hope media group"
+                else nrg_media_paylocity(s)
+                if company_key == "nrg media"
                 else paylocity_v18(s)
                 if company_key in {
                     "dick broadcasting company",
-                    "nrg media",
                     "weigel",
                 }
                 else siriusxm_v17(s)
