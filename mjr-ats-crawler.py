@@ -3985,8 +3985,13 @@ def connoisseur_media(src):
                             pd = d
                             break
 
-            if not pd or pd < CUTOFF:
-                continue
+            # Connoisseur maintains /career-opportunity/ as its authoritative
+            # CURRENT openings archive. A WordPress post may have been created
+            # months ago and remain actively open, so its original publish date
+            # is not a reliable freshness signal. Presence on the live archive
+            # is the freshness signal; stamp the feed record with TODAY so JBoard
+            # keeps the opening active while the employer continues listing it.
+            pd = TODAY
 
             # Prefer the central content area and strip application boilerplate
             # only by choosing the article/main container, not by truncating text.
