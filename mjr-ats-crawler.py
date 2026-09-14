@@ -422,6 +422,49 @@ def category(title, desc, industry, company):
     ):
         return "Business Office"
 
+    # Hubbard Broadcasting operates radio, television (including REELZ),
+    # news/audio brands such as WTOP/Federal News Network, and digital sales.
+    # Use title + posting context for the mixed-platform cases that a simple
+    # employer default cannot resolve reliably.
+    if c == "hubbard broadcasting":
+        # WTOP traffic is an on-air radio/news-audio function even when the
+        # description mentions cameras, web or social media.
+        if re.search(r"\bwtop\b", td) and re.search(
+            r"\b(traffic reporter|traffic anchor|traffic producer|traffic reporter/producer)\b",
+            t,
+        ):
+            return "Radio"
+
+        # REELZ is Hubbard's television/cable/streaming network. Production,
+        # writing and editing roles supporting REELZ belong in Television.
+        if re.search(r"\breelz\b", td) and re.search(
+            r"\b(content producer|producer|writer|editor|writer/producer/editor|production)\b",
+            t,
+        ):
+            return "Television"
+
+        # Live-newscast directing is a television production function in MJR,
+        # not Engineering, even when the posting discusses switching,
+        # transmission or production-automation systems.
+        if re.search(r"\b(technical director|director)\b", t) and re.search(
+            r"\b(newscast|live broadcast|television systems|vizrt|tricaster|newscaster)\b",
+            d_short,
+        ):
+            return "Television"
+
+        # Hubbard's 2060 Digital strategist/development jobs are revenue and
+        # client-development functions rather than Radio programming roles.
+        if re.search(
+            r"\b(client development strategist|digital brand strategist)\b",
+            t,
+        ):
+            return "Sales & Marketing"
+
+        # Drivers supporting mobile broadcast units are operational/logistics
+        # support rather than programming/on-air positions.
+        if re.search(r"\b(staff driver|mobile unit driver|cdl driver)\b", t):
+            return "Business Office"
+
     # Voice performance belongs in MJR's Voiceover category. Keep the match
     # title-first so ordinary audio engineering, speech testing and AI data
     # validation jobs are not mislabeled as voice talent opportunities.
