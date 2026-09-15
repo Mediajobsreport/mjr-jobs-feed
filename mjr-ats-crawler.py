@@ -11532,6 +11532,68 @@ def dow_jones_direct(src):
     except Exception:
         pass
 
+    def rendered_detail(url):
+        """Render a Dow Jones detail page and capture job-related network text."""
+        if sync_playwright is None:
+            return "", []
+        captures, rendered = [], ""
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True, args=["--disable-dev-shm-usage", "--no-sandbox"])
+                context = browser.new_context(user_agent=SESSION.headers.get("User-Agent", "Mozilla/5.0"), viewport={"width":1440,"height":1200})
+                page = context.new_page(); page.set_default_timeout(8000)
+                def capture(resp):
+                    try:
+                        ct=(resp.headers or {}).get("content-type", "").lower(); ru=resp.url or ""
+                        if any(x in ct for x in ("json","javascript","html","text")) and any(x in ru.lower() for x in ("job","career","position","requisition","search")):
+                            body=resp.text()
+                            if body and len(body) < 2000000: captures.append((ru,body))
+                    except Exception: pass
+                page.on("response", capture); _v28_before_request(url)
+                page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                try: page.wait_for_load_state("networkidle", timeout=10000)
+                except Exception: pass
+                page.wait_for_timeout(1000); rendered=page.content(); browser.close()
+        except Exception: pass
+        return rendered, captures
+
+    def dowjones_posted_date(raw):
+        """Extract a posting/publication date; never substitute an application deadline."""
+        text=html.unescape(str(raw or "")).replace("\\/", "/")
+        patterns=[
+            r'''["'](?:datePosted|date_posted|postedDate|postingDate|publishDate|publishedDate|publicationDate|createdDate)["']\s*:\s*["']([^"']+)["']''',
+            r'''(?:Date\s+Posted|Posted\s+Date|Posting\s+Date|Published|Posted)\s*:?\s*([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|20\d{2}-\d{2}-\d{2})'''
+        ]
+        for pat in patterns:
+            m=re.search(pat,text,re.I)
+            if m:
+                d=pdate(m.group(1))
+                if d: return d
+        return None
+
+    def dowjones_job_from_html(url, raw, posted):
+        soup=BeautifulSoup(raw or "", "html.parser"); txt=clean(soup.get_text(" "))
+        h1=soup.find("h1"); title=clean(h1.get_text(" ") if h1 else "")
+        if not title:
+            for pat in (r'''["']jobTitle["']\s*:\s*["']([^"']+)["']''', r'''["']title["']\s*:\s*["']([^"']+)["']'''):
+                m=re.search(pat,raw or "",re.I)
+                if m: title=clean(m.group(1)); break
+        if not posted or posted < CUTOFF or not title: return None
+        main=soup.find("main") or soup.find("article") or soup; desc=format_description(str(main))
+        if len(clean(BeautifulSoup(desc,"html.parser").get_text(" "))) < 200: return None
+        loc=""; m=re.search(r'''(?:Location|Job\s+Location)\s*:?\s*([^|]{2,100}?)(?=\s+(?:Job\s+ID|Req(?:uisition)?|Category|Business\s+Area|$))''',txt,re.I)
+        if m: loc=clean(m.group(1))
+        if not loc:
+            slug=urlparse(url).path.strip("/").split("/")[0]
+            mm=re.match(r'''(.+)-([a-z]{2})$''',slug,re.I)
+            if mm: loc=clean(mm.group(1).replace("-"," ").title()+", "+mm.group(2).upper())
+        m=re.search(r'''/([A-F0-9]{20,})/job/?''',url,re.I); jid=m.group(1) if m else ""
+        valid=None
+        for pat in (r'''(?:Application\s+Deadline|Apply\s+By|Closing\s+Date)\s*:?\s*([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|20\d{2}-\d{2}-\d{2})''', r'''["'](?:validThrough|applicationDeadline|closingDate)["']\s*:\s*["']([^"']+)["']'''):
+            mm=re.search(pat,raw or txt,re.I)
+            if mm: valid=pdate(mm.group(1)); break
+        return Job(jid or hashlib.sha1(url.encode()).hexdigest()[:16],title,src["Company"],desc,posted,jobtype(title,txt),category(title,txt,src["Industry"],src["Company"]),url,src["URL"],src["URL"],"",normalize_work_arrangement(txt,loc,title),loc,"",infer_country(loc,src["Company"],txt),valid)
+
     # Detail-loop diagnostics are surfaced through the audit CSV because the
     # current GitHub workflow does not upload the standalone Dow Jones diagnostic.
     detail_ok = detail_error = jsonld_count = date_found = 0
@@ -11558,16 +11620,24 @@ def dow_jones_direct(src):
 
         pd = pdate(jps[0].get("datePosted")) if jps else None
         if not pd:
-            date_regexes = [
-                r"(?:datePosted|date_posted|postedDate|postingDate|createdDate)[^0-9]{0,20}(20[0-9]{2}-[0-9]{2}-[0-9]{2})",
-                r"(?:date posted|posted date|posting date|published)[^A-Za-z0-9]{0,10}([A-Za-z]+ [0-9]{1,2}, 20[0-9]{2})",
-                r"(?:date posted|posted date|posting date|published)[^0-9]{0,10}([0-9]{1,2}/[0-9]{1,2}/20[0-9]{2})",
-            ]
-            for pat in date_regexes:
-                m = re.search(pat, raw, re.I)
-                if m:
-                    pd = pdate(m.group(1))
+            pd = dowjones_posted_date(raw)
+        captures = []
+        if not pd:
+            rendered, captures = rendered_detail(final)
+            if rendered:
+                raw = rendered
+                soup = BeautifulSoup(raw, "html.parser")
+                rjps = _jsonld_jobs(soup)
+                if rjps:
+                    jps = rjps; jsonld_count += 1
+                    pd = pdate(jps[0].get("datePosted"))
+                if not pd:
+                    pd = dowjones_posted_date(rendered)
+            if not pd:
+                for _, body in captures:
+                    pd = dowjones_posted_date(body)
                     if pd:
+                        raw += "\n" + body
                         break
         if pd:
             date_found += 1
@@ -11582,6 +11652,11 @@ def dow_jones_direct(src):
             j = _job_from_detail(src, final, raw)
         except Exception:
             j = None
+        if not j and pd:
+            try:
+                j = dowjones_job_from_html(final, raw, pd)
+            except Exception:
+                j = None
         if j and j.id not in seen_ids:
             seen_ids.add(j.id)
             out.append(j)
