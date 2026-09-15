@@ -11402,54 +11402,143 @@ def careeronestop_townsquare_test():
     return out
 
 def dow_jones_direct(src):
-    """Enumerate Dow Jones' official career site and parse JobPosting details.
-
-    dowjones.jobs exposes individual jobs as /<location>/<slug>/<token>/job/.
-    We crawl bounded listing pages, collect those canonical detail URLs, then
-    use the shared schema.org JobPosting parser so datePosted/validThrough and
-    locations come from the employer page rather than inferred dates.
-    """
-    root = "https://dowjones.jobs/"
-    queue = [root]
-    seen_pages = set()
+    # Enumerate Dow Jones from its official dynamic careers site.
+    root = "https://dowjones.jobs/jobs/"
     details = set()
+    network_log = []
 
-    while queue and len(seen_pages) < 30 and len(details) < 1000:
-        page = queue.pop(0)
-        key = page.split("#", 1)[0].rstrip("/")
-        if key in seen_pages:
-            continue
-        seen_pages.add(key)
+    def add_url(raw, base=root):
+        if not raw:
+            return
+        u = html.unescape(str(raw)).replace("\\/", "/")
+        u = urljoin(base, u).split("#", 1)[0]
+        up = urlparse(u)
+        if up.netloc.lower().replace("www.", "") != "dowjones.jobs":
+            return
+        if re.search(r"/[A-F0-9]{20,}/job/?$", up.path, re.I):
+            details.add(urlunparse((up.scheme or "https", up.netloc, up.path, "", up.query, "")))
+
+    def mine_text(raw, base=root):
+        raw = html.unescape(str(raw or "")).replace("\\/", "/")
+        pattern = r'''(?:https?://(?:www\.)?dowjones\.jobs)?/[^"'<>\s]+/[A-F0-9]{20,}/job/?(?:\?[^"'<>\s]*)?'''
+        for m in re.finditer(pattern, raw, re.I):
+            add_url(m.group(0), base)
+        field_pattern = r'''["'](?:url|jobUrl|job_url|detailUrl|detail_url)["']\s*:\s*["']([^"']+/[A-F0-9]{20,}/job/?[^"']*)["']'''
+        for m in re.finditer(field_pattern, raw, re.I):
+            add_url(m.group(1), base)
+
+    for start in ("https://dowjones.jobs/", root):
         try:
-            r = req("GET", page)
+            r = req("GET", start)
+            mine_text(r.text, str(getattr(r, "url", "") or start))
         except Exception:
-            continue
-        final = str(getattr(r, "url", "") or page)
-        soup = BeautifulSoup(r.text, "html.parser")
+            pass
 
-        for a in soup.find_all("a", href=True):
-            h = urljoin(final, a["href"]).split("#", 1)[0]
-            hp = urlparse(h)
-            if hp.netloc.lower().replace("www.", "") != "dowjones.jobs":
-                continue
-            if re.search(r"/[A-F0-9]{20,}/job/?$", hp.path, re.I):
-                details.add(h)
-                continue
-            label = clean(a.get_text(" ")).lower()
-            if (label in {"more", "next", "next page", "view more", "view all jobs"}
-                    or re.search(r"[?&](page|start|offset)=\\d+", h, re.I)):
-                if h.rstrip("/") not in seen_pages:
-                    queue.append(h)
+    if sync_playwright is not None:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True, args=["--disable-dev-shm-usage", "--no-sandbox"])
+                context = browser.new_context(
+                    user_agent=SESSION.headers.get("User-Agent", "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)"),
+                    viewport={"width": 1440, "height": 1200},
+                )
+                page = context.new_page()
+                page.set_default_timeout(8000)
 
-        raw = html.unescape(r.text or "").replace("\\/", "/")
-        for m in re.finditer(r"https?://(?:www\.)?dowjones\.jobs/[^\"'<>\s]+/[A-F0-9]{20,}/job/?", raw, re.I):
-            details.add(m.group(0).rstrip('.,);'))
+                def on_response(resp):
+                    try:
+                        ru = resp.url or ""
+                        host = urlparse(ru).netloc.lower().replace("www.", "")
+                        ct = (resp.headers or {}).get("content-type", "").lower()
+                        if any(k in ru.lower() for k in ("job", "search", "career", "position", "requisition")):
+                            network_log.append(f"{resp.status} {ru}")
+                        if host == "dowjones.jobs" and any(x in ct for x in ("json", "text", "html", "javascript")):
+                            try:
+                                mine_text(resp.text(), ru)
+                            except Exception:
+                                pass
+                    except Exception:
+                        pass
+
+                page.on("response", on_response)
+                _v28_before_request(root)
+                page.goto(root, wait_until="domcontentloaded", timeout=30000)
+                try:
+                    page.wait_for_load_state("networkidle", timeout=12000)
+                except Exception:
+                    pass
+                page.wait_for_timeout(1800)
+
+                unchanged = 0
+                previous = -1
+                for _ in range(80):
+                    try:
+                        for href in page.eval_on_selector_all("a[href]", "els => els.map(e => e.href)"):
+                            add_url(href, page.url)
+                        mine_text(page.content(), page.url)
+                    except Exception:
+                        pass
+
+                    if len(details) == previous:
+                        unchanged += 1
+                    else:
+                        unchanged = 0
+                        previous = len(details)
+
+                    clicked = False
+                    for sel in (
+                        "button:has-text('More')", "a:has-text('More')",
+                        "button:has-text('Load More')", "a:has-text('Load More')",
+                        "button:has-text('Next')", "a:has-text('Next')",
+                    ):
+                        try:
+                            loc = page.locator(sel).first
+                            if loc.count() and loc.is_visible() and loc.is_enabled():
+                                loc.click(timeout=2500)
+                                clicked = True
+                                page.wait_for_timeout(900)
+                                break
+                        except Exception:
+                            pass
+                    if not clicked:
+                        try:
+                            page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                        except Exception:
+                            pass
+                        page.wait_for_timeout(700)
+                    if unchanged >= 5 and not clicked:
+                        break
+
+                try:
+                    for href in page.eval_on_selector_all("a[href]", "els => els.map(e => e.href)"):
+                        add_url(href, page.url)
+                    mine_text(page.content(), page.url)
+                except Exception:
+                    pass
+                browser.close()
+        except Exception as exc:
+            network_log.append(f"browser_error={type(exc).__name__}: {exc}")
 
     _LAST_ENUMERATED["dow jones"] = len(details)
+    try:
+        Path("mjr-dowjones-diagnostic.txt").write_text(
+            "Dow Jones official careers diagnostic\n"
+            f"enumerated_detail_urls={len(details)}\n"
+            + "\n".join(sorted(details)[:100])
+            + "\n\nLikely network calls:\n"
+            + "\n".join(network_log[-100:]),
+            encoding="utf-8",
+        )
+    except Exception:
+        pass
+
     out = []
     seen_ids = set()
     for url in sorted(details):
-        j = _recent_detail_job(src, url)
+        try:
+            j = _recent_detail_job(src, url)
+        except Exception:
+            j = None
         if j and j.id not in seen_ids:
             seen_ids.add(j.id)
             out.append(j)
