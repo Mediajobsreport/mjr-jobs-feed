@@ -8314,6 +8314,13 @@ _TARGET_COMPANY_ALIASES = {
         "wall street journal",
         "the wall street journal",
     },
+    "lee enterprises": {
+        "lee enterprises",
+        "lee enterprises inc",
+        "lee enterprises, inc.",
+        "lee enterprises incorporated",
+        "lee enterprises, incorporated",
+    },
 }
 
 def _canonical_target_company(name):
@@ -11833,6 +11840,28 @@ def main():
             "Industry": "Newspaper / Digital Media",
             "ATS": "Official Direct",
             "URL": "https://dowjones.jobs/",
+            "Active": "True",
+        })
+
+    # Lee Enterprises: official recruiting is hosted by Dayforce. Normalize
+    # legal-name variants and make the verified board available before the
+    # targeted-test source gate, just as we do for other newly added employers.
+    for row in sources:
+        if _canonical_target_company(row.get("Company", "")) == "lee enterprises":
+            row["Company"] = "Lee Enterprises"
+            row["Industry"] = row.get("Industry") or "Newspaper / Digital Media"
+            row["ATS"] = "Dayforce"
+            row["URL"] = "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs"
+            row["Active"] = "True"
+
+    if "lee enterprises" in MJR_TEST_COMPANIES and not any(
+        _canonical_target_company(r.get("Company", "")) == "lee enterprises" for r in sources
+    ):
+        sources.append({
+            "Company": "Lee Enterprises",
+            "Industry": "Newspaper / Digital Media",
+            "ATS": "Dayforce",
+            "URL": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs",
             "Active": "True",
         })
 
