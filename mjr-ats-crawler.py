@@ -11295,8 +11295,25 @@ def main():
     ) as f:
         sources = list(csv.DictReader(f))
 
-    # Curtis Media Group: ensure the verified official career surface is
-    # available even before the shared source CSV is updated.
+    # Curtis Media Group: normalize legacy/source-list aliases before targeted
+    # filtering so Curtis Media, Curtis Media Company, and Curtis Media Group
+    # all route through the dedicated official collector.
+    curtis_aliases = {"curtis media", "curtis media company", "curtis media group"}
+    for row in sources:
+        if clean(row.get("Company", "")).lower() in curtis_aliases:
+            row["Company"] = "Curtis Media Group"
+            row["Industry"] = row.get("Industry") or "Radio"
+            row["ATS"] = "Official Direct"
+            row["URL"] = "https://curtismediagroup.applytojob.com/"
+            row["Active"] = "True"
+
+    # Normalize targeted-test aliases to the canonical company name too.
+    if MJR_TEST_COMPANIES & curtis_aliases:
+        MJR_TEST_COMPANIES.difference_update(curtis_aliases)
+        MJR_TEST_COMPANIES.add("curtis media group")
+
+    # Ensure the verified official career surface is available even before the
+    # shared source CSV is updated.
     if not any(clean(r.get("Company", "")).lower() == "curtis media group" for r in sources):
         sources.append({
             "Company": "Curtis Media Group",
