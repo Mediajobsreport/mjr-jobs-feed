@@ -4672,25 +4672,6 @@ def _crawl_rendered_job_board(src, starts, allow_hosts=None, max_pages=40, max_j
     seen_ids = set()
     for url in sorted(detail_urls):
         j = _recent_detail_job(src, url)
-        if j:
-            # Dow Jones detail data does not consistently populate structured
-            # location fields, but the canonical URL does.  Fill only missing
-            # fields from that official URL; never overwrite richer source data.
-            dj_city, dj_state, dj_country = dj_url_location(final)
-            if not j.city and dj_city:
-                j.city = dj_city
-            if not j.state and dj_state:
-                j.state = dj_state
-            if (not j.country or j.country not in ("US", "CA")) and dj_country:
-                j.country = dj_country
-
-            # Title-first sales correction.  Descriptions for subscription and
-            # advertising account roles contain technical/product terminology
-            # that can otherwise overpower the actual sales function.
-            tl = clean(j.title).lower()
-            if any(x in tl for x in ("account manager", "account executive", "client partner", "sales manager", "sales executive")):
-                j.category = "Sales & Marketing"
-
         if j and j.id not in seen_ids:
             seen_ids.add(j.id)
             out.append(j)
@@ -11660,7 +11641,10 @@ def dow_jones_direct(src):
     samples = []
     out = []
     seen_ids = set()
-    for url in sorted(details):
+    for url in sorted(eligible_details):
+        # This is the only Dow Jones detail loop. Foreign/global URLs were
+        # deliberately removed above and cannot enter the output downstream.
+        dj_city, dj_state, dj_country = dj_url_location(url)
         try:
             r = req("GET", url)
             detail_ok += 1
@@ -11716,6 +11700,30 @@ def dow_jones_direct(src):
                 j = dowjones_job_from_html(final, raw, pd)
             except Exception:
                 j = None
+        if j:
+            # Canonical Dow Jones URLs carry a reliable North American city and
+            # state/province slug. Populate structured location before XML/state.
+            if dj_city:
+                j.city = dj_city
+            if dj_state:
+                j.state = dj_state
+            if dj_country:
+                j.country = dj_country
+
+            # Enforce the geographic gate again at the object boundary so no
+            # alternate/legacy detail path can leak a foreign Dow Jones job.
+            if j.country not in ("US", "CA"):
+                j = None
+
+        if j:
+            tl = clean(j.title).lower()
+            if any(x in tl for x in (
+                "account manager", "account executive", "client partner",
+                "sales manager", "sales executive", "corporate subscriptions",
+                "advertising sales", "subscription sales"
+            )):
+                j.category = "Sales & Marketing"
+
         if j and j.id not in seen_ids:
             seen_ids.add(j.id)
             out.append(j)
