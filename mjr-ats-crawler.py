@@ -8222,9 +8222,31 @@ _WASHINGTON_POST_ALIASES = {
     "washington post company",
     "the washington post company",
 }
-if MJR_TEST_COMPANIES & _WASHINGTON_POST_ALIASES:
-    MJR_TEST_COMPANIES.difference_update(_WASHINGTON_POST_ALIASES)
-    MJR_TEST_COMPANIES.add("washington post")
+
+# v83: Canonical company aliases used at the FIRST targeted-test gate.
+# This prevents a valid requested employer from disappearing simply because
+# the shared source CSV uses a legal/corporate variant of the crawler name.
+_TARGET_COMPANY_ALIASES = {
+    "washington post": _WASHINGTON_POST_ALIASES,
+    "curtis media group": {"curtis media", "curtis media company", "curtis media group"},
+    "gray media": {"gray media", "gray television", "gray television inc", "gray television, inc."},
+    "weigel": {
+        "weigel",
+        "weigel broadcasting",
+        "weigel broadcasting co",
+        "weigel broadcasting company",
+        "weigel broadcasting co.",
+    },
+}
+
+def _canonical_target_company(name):
+    key = clean(name).lower()
+    for canonical, aliases in _TARGET_COMPANY_ALIASES.items():
+        if key in aliases:
+            return canonical
+    return key
+
+MJR_TEST_COMPANIES = {_canonical_target_company(x) for x in MJR_TEST_COMPANIES}
 
 MJR_REQUEST_DELAY_MIN = float(os.getenv("MJR_REQUEST_DELAY_MIN", "0.20"))
 MJR_REQUEST_DELAY_MAX = float(os.getenv("MJR_REQUEST_DELAY_MAX", "0.65"))
@@ -8233,7 +8255,7 @@ _v28_domain_counts = {}
 
 def _v28_source_enabled(src):
     return (not MJR_TEST_COMPANIES or
-            clean(src.get("Company", "")).lower() in MJR_TEST_COMPANIES)
+            _canonical_target_company(src.get("Company", "")) in MJR_TEST_COMPANIES)
 
 def _v28_before_request(url):
     host = urlparse(url).netloc.lower()
@@ -11308,6 +11330,33 @@ def main():
         encoding="utf-8-sig",
     ) as f:
         sources = list(csv.DictReader(f))
+
+    # v83: Normalize known company aliases in the loaded source inventory
+    # before the first targeted-test filter.  Weigel's source has appeared as
+    # Weigel, Weigel Broadcasting, and Weigel Broadcasting Co.; all must route
+    # to the same Paylocity v18 collector.
+    for row in sources:
+        raw_company = clean(row.get("Company", "")).lower()
+        canonical = _canonical_target_company(raw_company)
+        if canonical == "weigel":
+            row["Company"] = "Weigel"
+            row["Industry"] = row.get("Industry") or "Television"
+            row["ATS"] = "Paylocity"
+            row["URL"] = "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co"
+            row["Active"] = "True"
+
+    # A targeted Weigel test must be runnable even when the shared CSV branch
+    # does not yet contain the row.  Inject the verified board before filtering.
+    if "weigel" in MJR_TEST_COMPANIES and not any(
+        _canonical_target_company(r.get("Company", "")) == "weigel" for r in sources
+    ):
+        sources.append({
+            "Company": "Weigel",
+            "Industry": "Television",
+            "ATS": "Paylocity",
+            "URL": "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
+            "Active": "True",
+        })
 
     # v82: Washington Post must exist in the source list BEFORE targeted-test
     # filtering.  Normalize any existing aliases, then inject the verified
