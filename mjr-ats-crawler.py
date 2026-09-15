@@ -295,7 +295,7 @@ def jobtype(title, text=""):
     # often mentions interns/internships and must not reclassify normal jobs.
     if re.search(
         r"\b(intern|internship|internships|student intern|summer intern|"
-        r"fall intern|spring intern|co-op intern|gray media (?:sales )?training program)\b",
+        r"fall intern|spring intern|co-op intern|gray media .*?training program)\b",
         t,
         re.I,
     ):
@@ -5802,7 +5802,7 @@ def _gray_finalize_job(j, row=None):
     title = clean(j.title)
     desc_text = strip_html(j.description)
 
-    if re.search(r"\bGRAY MEDIA (?:SALES )?TRAINING PROGRAM\b", title, re.I):
+    if re.search(r"\bGRAY MEDIA\b.*\bTRAINING PROGRAM\b", title, re.I):
         j.jobtype = "Internship"
         j.category = "Internships"
     else:
