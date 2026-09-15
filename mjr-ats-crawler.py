@@ -11412,6 +11412,126 @@ def careeronestop_townsquare_test():
     print(f"CareerOneStop Townsquare Media test: {len(rows)} API rows, {len(out)} qualifying jobs")
     return out
 
+
+def lee_enterprises_direct(src):
+    """Lee Enterprises collector for its current Dayforce candidate portal."""
+    board = "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL"
+    if sync_playwright is None:
+        return dayforce(src)
+    found = {}
+    network_log = []
+
+    def add_anchor(href, text=""):
+        if not href:
+            return
+        u = urljoin(board + "/", html.unescape(str(href)).replace("\\/", "/"))
+        if "jobs.dayforcehcm.com" not in urlparse(u).netloc.lower():
+            return
+        m = re.search(r"/jobs/(\d+)(?:[/?#]|$)", u, re.I)
+        if not m:
+            return
+        url = f"https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/{m.group(1)}"
+        text = clean(text)
+        pd = None
+        for pat in (
+            r"Posted\s+(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+            r"Posted\s+([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+            r"Posted\s+(\d{1,2}/\d{1,2}/20\d{2})",
+            r"Posted\s+(20\d{2}-\d{2}-\d{2})",
+        ):
+            mm = re.search(pat, text, re.I)
+            if mm:
+                pd = pdate(mm.group(1))
+                if pd:
+                    break
+        rec = found.setdefault(url, {"posted": None, "text": ""})
+        if pd:
+            rec["posted"] = pd
+        if len(text) > len(rec.get("text", "")):
+            rec["text"] = text
+
+    out = []
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True, args=["--disable-dev-shm-usage", "--no-sandbox"])
+            context = browser.new_context(user_agent=SESSION.headers.get("User-Agent", "Mozilla/5.0"), viewport={"width":1440,"height":1200})
+            page = context.new_page(); page.set_default_timeout(8000)
+            def on_response(resp):
+                try:
+                    ru = resp.url or ""
+                    if any(k in ru.lower() for k in ("job", "posting", "search", "candidateportal")):
+                        network_log.append(f"{resp.status} {ru}")
+                except Exception:
+                    pass
+            page.on("response", on_response)
+            _v28_before_request(board)
+            page.goto(board, wait_until="domcontentloaded", timeout=30000)
+            try: page.wait_for_load_state("networkidle", timeout=12000)
+            except Exception: pass
+            page.wait_for_timeout(1200)
+            previous = -1; unchanged = 0
+            for _ in range(80):
+                try:
+                    items = page.eval_on_selector_all("a[href*='/jobs/']", "els => els.map(a => ({href:a.href, text:(a.closest('li,article,[role=row],[class*=job],[class*=card]')||a.parentElement||a).innerText||a.innerText||''}))")
+                    for it in items: add_anchor(it.get("href"), it.get("text", ""))
+                except Exception: pass
+                if len(found) == previous: unchanged += 1
+                else: previous = len(found); unchanged = 0
+                clicked = False
+                for sel in ("button:has-text('Load More')", "button:has-text('Show More')", "button:has-text('Next')", "a:has-text('Next')"):
+                    try:
+                        q=page.locator(sel).first
+                        if q.count() and q.is_visible() and q.is_enabled():
+                            q.click(timeout=2500); page.wait_for_timeout(700); clicked=True; break
+                    except Exception: pass
+                if not clicked:
+                    try: page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                    except Exception: pass
+                    page.wait_for_timeout(500)
+                if unchanged >= 5 and not clicked: break
+
+            _LAST_ENUMERATED["lee enterprises"] = len(found)
+            candidates=[(u,r) for u,r in found.items() if not r.get("posted") or r["posted"] >= CUTOFF]
+            seen=set()
+            for url, meta in candidates:
+                try:
+                    _v28_before_request(url); page.goto(url, wait_until="domcontentloaded", timeout=20000)
+                    try: page.wait_for_load_state("networkidle", timeout=5000)
+                    except Exception: pass
+                    page.wait_for_timeout(250); raw=page.content()
+                except Exception: continue
+                soup=BeautifulSoup(raw,"html.parser"); text=clean(soup.get_text(" "))
+                h1=soup.find("h1"); title=clean(h1.get_text(" ") if h1 else "")
+                if not title or title.lower() in {"job details","search jobs"}: continue
+                pd=meta.get("posted")
+                if not pd:
+                    for pat in (r"Posted\s+(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+([A-Za-z]+\s+\d{1,2},\s+20\d{2})", r"Posted\s+([A-Za-z]+\s+\d{1,2},\s+20\d{2})"):
+                        mm=re.search(pat,text,re.I)
+                        if mm:
+                            pd=pdate(mm.group(1))
+                            if pd: break
+                if not pd or pd < CUTOFF: continue
+                main=soup.find("main") or soup.find("article") or soup; desc=format_description(str(main))
+                if len(clean(BeautifulSoup(desc,"html.parser").get_text(" "))) < 100: continue
+                loc=""
+                mm=re.search(r"([A-Za-z .'-]+,\s*[A-Z]{2})(?:\s|$)", text)
+                if mm: loc=clean(mm.group(1))
+                city=state=""
+                lm=re.match(r"^(.+?),\s*([A-Z]{2})(?:\b|,)",loc) if loc else None
+                if lm: city,state=clean(lm.group(1)),lm.group(2).upper()
+                jm=re.search(r"/jobs/(\d+)",url); jid=jm.group(1) if jm else hashlib.sha1(url.encode()).hexdigest()[:16]
+                if jid in seen: continue
+                seen.add(jid)
+                out.append(Job(jid,title,src["Company"],desc,pd,jobtype(title,text),category(title,text,src["Industry"],src["Company"]),url,board,board,"",normalize_work_arrangement(text,loc,title),city or loc,state,infer_country(loc,src["Company"],text)))
+            browser.close()
+    except Exception as exc:
+        network_log.append(f"browser_error={type(exc).__name__}: {exc}")
+
+    try:
+        Path("mjr-lee-diagnostic.txt").write_text("Lee Enterprises Dayforce diagnostic\n" + f"enumerated_detail_urls={len(found)}\n" + f"fresh_or_undated_candidates={sum(1 for r in found.values() if not r.get('posted') or r['posted'] >= CUTOFF)}\n" + f"jobs_collected={len(out)}\n\n" + "\n".join(network_log[-120:]), encoding="utf-8")
+    except Exception: pass
+    return out
+
 def dow_jones_direct(src):
     # Enumerate Dow Jones from its official dynamic careers site.
     root = "https://dowjones.jobs/jobs/"
@@ -11996,6 +12116,8 @@ def main():
                 if company_key == "cnn"
                 else dow_jones_direct(s)
                 if company_key == "dow jones"
+                else lee_enterprises_direct(s)
+                if company_key == "lee enterprises"
                 else curtis_media_direct(s)
                 if company_key == "curtis media group"
                 else gray_direct(s)
