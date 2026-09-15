@@ -11532,16 +11532,85 @@ def dow_jones_direct(src):
     except Exception:
         pass
 
+    # Detail-loop diagnostics are surfaced through the audit CSV because the
+    # current GitHub workflow does not upload the standalone Dow Jones diagnostic.
+    detail_ok = detail_error = jsonld_count = date_found = 0
+    fresh_dates = stale_dates = undated = parse_rejected = 0
+    samples = []
     out = []
     seen_ids = set()
     for url in sorted(details):
         try:
-            j = _recent_detail_job(src, url)
+            r = req("GET", url)
+            detail_ok += 1
+        except Exception as exc:
+            detail_error += 1
+            if len(samples) < 6:
+                samples.append(f"HTTP_ERROR {type(exc).__name__} {url}")
+            continue
+
+        final = str(getattr(r, "url", "") or url)
+        raw = r.text or ""
+        soup = BeautifulSoup(raw, "html.parser")
+        jps = _jsonld_jobs(soup)
+        if jps:
+            jsonld_count += 1
+
+        pd = pdate(jps[0].get("datePosted")) if jps else None
+        if not pd:
+            date_regexes = [
+                r"(?:datePosted|date_posted|postedDate|postingDate|createdDate)[^0-9]{0,20}(20[0-9]{2}-[0-9]{2}-[0-9]{2})",
+                r"(?:date posted|posted date|posting date|published)[^A-Za-z0-9]{0,10}([A-Za-z]+ [0-9]{1,2}, 20[0-9]{2})",
+                r"(?:date posted|posted date|posting date|published)[^0-9]{0,10}([0-9]{1,2}/[0-9]{1,2}/20[0-9]{2})",
+            ]
+            for pat in date_regexes:
+                m = re.search(pat, raw, re.I)
+                if m:
+                    pd = pdate(m.group(1))
+                    if pd:
+                        break
+        if pd:
+            date_found += 1
+            if pd >= CUTOFF:
+                fresh_dates += 1
+            else:
+                stale_dates += 1
+        else:
+            undated += 1
+
+        try:
+            j = _job_from_detail(src, final, raw)
         except Exception:
             j = None
         if j and j.id not in seen_ids:
             seen_ids.add(j.id)
             out.append(j)
+        elif not j:
+            parse_rejected += 1
+
+        if len(samples) < 6:
+            h1 = soup.find("h1")
+            title = clean((jps[0].get("title") if jps else "") or (h1.get_text(" ") if h1 else ""))
+            samples.append(
+                f"status={getattr(r, 'status_code', '')} bytes={len(raw)} "
+                f"jsonld={bool(jps)} date={pd or ''} title={title[:70]}"
+            )
+
+    diag = (
+        f"enumerated_detail_urls={len(details)}; detail_http_ok={detail_ok}; "
+        f"detail_http_error={detail_error}; jsonld_jobposting={jsonld_count}; "
+        f"date_found={date_found}; fresh_dates={fresh_dates}; stale_dates={stale_dates}; "
+        f"undated={undated}; parse_rejected={parse_rejected}"
+    )
+    _LAST_ENUMERATED["dow jones"] = {"count": len(details), "diag": diag}
+    try:
+        Path("mjr-dowjones-diagnostic.txt").write_text(
+            "Dow Jones official careers diagnostic\n" + diag + "\n\n" +
+            "\n".join(samples) + "\n\nLikely network calls:\n" +
+            "\n".join(network_log[-100:]), encoding="utf-8"
+        )
+    except Exception:
+        pass
     return out
 
 
@@ -11769,7 +11838,13 @@ def main():
                 else generic(s)
             )
 
-            icims_enumerated = _LAST_ENUMERATED.pop(company_key, 0)
+            _enum_info = _LAST_ENUMERATED.pop(company_key, 0)
+            if isinstance(_enum_info, dict):
+                icims_enumerated = int(_enum_info.get("count", 0) or 0)
+                enumeration_diagnostic = clean(_enum_info.get("diag", ""))
+            else:
+                icims_enumerated = int(_enum_info or 0)
+                enumeration_diagnostic = ""
 
             # v40: Audacy uses direct iCIMS enumeration with strict
             # ID/title/apply-link validation. Do not use the old wrapper path.
@@ -11850,6 +11925,7 @@ def main():
                             ) if icims_enumerated else "",
                             f"non_media_scope_rejected={len(scope_rejected)}"
                             if scope_rejected else "",
+                            enumeration_diagnostic,
                         ]
                         if part
                     ),
