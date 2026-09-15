@@ -3741,7 +3741,7 @@ def paycom(src):
 
     out = []
     seen_ids = set()
-    for url in sorted(details):
+    for url in eligible_details:
         try:
             rr = req("GET", url)
             j = _paycom_detail(src, url, rr.text)
@@ -4672,6 +4672,25 @@ def _crawl_rendered_job_board(src, starts, allow_hosts=None, max_pages=40, max_j
     seen_ids = set()
     for url in sorted(detail_urls):
         j = _recent_detail_job(src, url)
+        if j:
+            # Dow Jones detail data does not consistently populate structured
+            # location fields, but the canonical URL does.  Fill only missing
+            # fields from that official URL; never overwrite richer source data.
+            dj_city, dj_state, dj_country = dj_url_location(final)
+            if not j.city and dj_city:
+                j.city = dj_city
+            if not j.state and dj_state:
+                j.state = dj_state
+            if (not j.country or j.country not in ("US", "CA")) and dj_country:
+                j.country = dj_country
+
+            # Title-first sales correction.  Descriptions for subscription and
+            # advertising account roles contain technical/product terminology
+            # that can otherwise overpower the actual sales function.
+            tl = clean(j.title).lower()
+            if any(x in tl for x in ("account manager", "account executive", "client partner", "sales manager", "sales executive")):
+                j.category = "Sales & Marketing"
+
         if j and j.id not in seen_ids:
             seen_ids.add(j.id)
             out.append(j)
@@ -11594,6 +11613,46 @@ def dow_jones_direct(src):
             if mm: valid=pdate(mm.group(1)); break
         return Job(jid or hashlib.sha1(url.encode()).hexdigest()[:16],title,src["Company"],desc,posted,jobtype(title,txt),category(title,txt,src["Industry"],src["Company"]),url,src["URL"],src["URL"],"",normalize_work_arrangement(txt,loc,title),loc,"",infer_country(loc,src["Company"],txt),valid)
 
+    # Production optimization: Dow Jones publishes a global board, while MJR
+    # carries U.S. and Canadian jobs.  The first URL path segment is the
+    # location slug (for example new-york-ny, chicago-il, toronto-on,
+    # barcelona-esp).  Filter foreign postings BEFORE detail requests.  This
+    # avoids spending minutes fetching/rendering jobs that can never enter MJR.
+    _us_states = {
+        "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA",
+        "ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR",
+        "PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC"
+    }
+    _ca_provinces = {"AB","BC","MB","NB","NL","NS","NT","NU","ON","PE","QC","SK","YT"}
+
+    def dj_url_location(url):
+        try:
+            slug = urlparse(url).path.strip("/").split("/")[0]
+        except Exception:
+            return "", "", ""
+        low = slug.lower()
+        if low in {"remote-us", "remote-usa", "united-states", "usa", "us"}:
+            return "Remote", "", "US"
+        m = re.match(r"^(.+)-([a-z]{2})$", slug, re.I)
+        if not m:
+            return "", "", ""
+        city = clean(m.group(1).replace("-", " ").title())
+        region = m.group(2).upper()
+        if region in _us_states:
+            return city, region, "US"
+        if region in _ca_provinces:
+            return city, region, "CA"
+        return "", "", ""
+
+    eligible_details = []
+    foreign_skipped = 0
+    for u in sorted(details):
+        city, region, country = dj_url_location(u)
+        if country:
+            eligible_details.append(u)
+        else:
+            foreign_skipped += 1
+
     # Detail-loop diagnostics are surfaced through the audit CSV because the
     # current GitHub workflow does not upload the standalone Dow Jones diagnostic.
     detail_ok = detail_error = jsonld_count = date_found = 0
@@ -11672,7 +11731,8 @@ def dow_jones_direct(src):
             )
 
     diag = (
-        f"enumerated_detail_urls={len(details)}; detail_http_ok={detail_ok}; "
+        f"enumerated_detail_urls={len(details)}; north_america_detail_urls={len(eligible_details)}; "
+        f"foreign_urls_skipped={foreign_skipped}; detail_http_ok={detail_ok}; "
         f"detail_http_error={detail_error}; jsonld_jobposting={jsonld_count}; "
         f"date_found={date_found}; fresh_dates={fresh_dates}; stale_dates={stale_dates}; "
         f"undated={undated}; parse_rejected={parse_rejected}"
