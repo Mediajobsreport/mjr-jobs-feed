@@ -295,7 +295,7 @@ def jobtype(title, text=""):
     # often mentions interns/internships and must not reclassify normal jobs.
     if re.search(
         r"\b(intern|internship|internships|student intern|summer intern|"
-        r"fall intern|spring intern|co-op intern)\b",
+        r"fall intern|spring intern|co-op intern|gray media (?:sales )?training program)\b",
         t,
         re.I,
     ):
@@ -388,7 +388,7 @@ def category(title, desc, industry, company):
         or any(x in c for x in [
             "paramount", "cbs", "fox television", "fox entertainment", "fox tv stations",
             "nexstar", "sinclair", "televisaunivision", "qvc", "hearst television",
-            "gray television", "weigel", "telemundo", "disney", "abc"
+            "gray television", "gray media", "weigel", "telemundo", "disney", "abc"
         ])
         or re.search(r"\b(television station|tv station|newscast|television studio|local television|broadcast television)\b", d_short)
     )
@@ -5683,6 +5683,150 @@ def wbd_phenom(src):
     )
 
 
+GRAY_STATION_LOCATIONS = {
+    # Gray Media's public careers page identifies these station/market pairs.
+    "WALB": ("Albany", "GA"), "KALB": ("Alexandria", "LA"),
+    "KFDA": ("Amarillo", "TX"), "KTUU": ("Anchorage", "AK"),
+    "WANF": ("Atlanta", "GA"), "WKTB": ("Atlanta", "GA"),
+    "WRDW": ("Augusta", "GA"), "WAGT": ("Augusta", "GA"),
+    "WABI": ("Bangor", "ME"), "WAFB": ("Baton Rouge", "LA"),
+    "WLOX": ("Biloxi", "MS"), "WBNG": ("Binghamton", "NY"),
+    "WBRC": ("Birmingham", "AL"), "KFYR": ("Bismarck", "ND"),
+    "WVVA": ("Bluefield", "WV"), "WBKO": ("Bowling Green", "KY"),
+    "WDTV": ("Bridgeport", "WV"), "KBTX": ("Bryan", "TX"),
+    "WCAX": ("Burlington", "VT"), "KFVS": ("Cape Girardeau", "MO"),
+    "KCRG": ("Cedar Rapids", "IA"), "WCSC": ("Charleston", "SC"),
+    "WBTV": ("Charlotte", "NC"), "WVIR": ("Charlottesville", "VA"),
+    "WXIX": ("Cincinnati", "OH"), "WOIO": ("Cleveland", "OH"),
+    "WUAB": ("Cleveland", "OH"), "WIS": ("Columbia", "SC"),
+    "WTVM": ("Columbus", "GA"), "KWQC": ("Davenport", "IA"),
+    "WAND": ("Decatur", "IL"), "KQCD": ("Dickinson", "ND"),
+    "WTVY": ("Dothan", "AL"), "KBJR": ("Duluth", "MN"),
+    "WEAU": ("Eau Claire", "WI"), "KTVF": ("Fairbanks", "AK"),
+    "WNEM": ("Flint", "MI"), "WPTA": ("Fort Wayne", "IN"),
+    "WCJB": ("Gainesville", "FL"), "WBAY": ("Green Bay", "WI"),
+    "WITN": ("Greenville", "NC"), "WHNS": ("Greenville", "SC"),
+    "WSIL": ("Harrisburg", "IL"), "WHSV": ("Harrisonburg", "VA"),
+    "WFSB": ("Hartford", "CT"), "KSNB": ("Hastings", "NE"),
+    "WDAM": ("Hattiesburg", "MS"), "WYMT": ("Hazard", "KY"),
+    "KHNL": ("Honolulu", "HI"), "KGMB": ("Honolulu", "HI"),
+    "WSAZ": ("Huntington", "WV"), "WAFF": ("Huntsville", "AL"),
+    "WLBT": ("Jackson", "MS"), "WBBJ": ("Jackson", "TN"),
+    "KAIT": ("Jonesboro", "AR"), "KCTV": ("Kansas City", "KS"),
+    "WVLT": ("Knoxville", "TN"), "KATC": ("Lafayette", "LA"),
+    "KADN": ("Lafayette", "LA"), "KPLC": ("Lake Charles", "LA"),
+    "WILX": ("Lansing", "MI"), "KGNS": ("Laredo", "TX"),
+    "KVVU": ("Las Vegas", "NV"), "WKYT": ("Lexington", "KY"),
+    "KOLN": ("Lincoln", "NE"), "KGIN": ("Lincoln", "NE"),
+    "WAVE": ("Louisville", "KY"), "KCBD": ("Lubbock", "TX"),
+    "WPGA": ("Macon", "GA"), "WMTV": ("Madison", "WI"),
+    "KEYC": ("Mankato", "MN"), "WLUC": ("Marquette", "MI"),
+    "WMC": ("Memphis", "TN"), "WTOK": ("Meridian", "MS"),
+    "KMOT": ("Minot", "ND"), "WALA": ("Mobile", "AL"),
+    "KNOE": ("Monroe", "LA"), "WSFA": ("Montgomery", "AL"),
+    "WCOV": ("Montgomery", "AL"), "WMBF": ("Myrtle Beach", "SC"),
+    "WSMV": ("Nashville", "TN"), "WVUE": ("New Orleans", "LA"),
+    "KNOP": ("North Platte", "NE"), "KOSA": ("Odessa", "TX"),
+    "WOWT": ("Omaha", "NE"), "KYOU": ("Ottumwa", "IA"),
+    "WJHG": ("Panama City", "FL"), "WTAP": ("Parkersburg", "WV"),
+    "WEEK": ("Peoria", "IL"), "KPHO": ("Phoenix", "AZ"),
+    "KTVK": ("Phoenix", "AZ"), "KPTV": ("Portland", "OR"),
+    "WAGM": ("Presque Isle", "ME"), "WGEM": ("Quincy", "IL"),
+    "KOTA": ("Rapid City", "SD"), "KEVN": ("Rapid City", "SD"),
+    "KOLO": ("Reno", "NV"), "KXNV": ("Reno", "NV"),
+    "WWBT": ("Richmond", "VA"), "WDBJ": ("Roanoke", "VA"),
+    "KTTC": ("Rochester", "MN"), "WIFR": ("Rockford", "IL"),
+    "WWSB": ("Sarasota", "FL"), "WTOC": ("Savannah", "GA"),
+    "KXII": ("Sherman", "TX"), "KSLA": ("Shreveport", "LA"),
+    "KTIV": ("Sioux City", "IA"), "KSFY": ("Sioux Falls", "SD"),
+    "KDLT": ("Sioux Falls", "SD"), "WNDU": ("South Bend", "IN"),
+    "KYTV": ("Springfield", "MO"), "KSPR": ("Springfield", "MO"),
+    "KMOV": ("St. Louis", "MO"), "WCTV": ("Tallahassee", "FL"),
+    "WTHI": ("Terre Haute", "IN"), "WLIO": ("Lima", "OH"),
+    "WOHL": ("Lima", "OH"), "WIBW": ("Topeka", "KS"),
+    "KOLD": ("Tucson", "AZ"), "WTVA": ("Tupelo", "MS"),
+    "KLTV": ("Tyler", "TX"), "KWTX": ("Waco", "TX"),
+    "WWNY": ("Watertown", "NY"), "WSAW": ("Wausau", "WI"),
+    "WLFI": ("West Lafayette", "IN"), "WFLX": ("West Palm Beach", "FL"),
+    "KSWO": ("Lawton", "OK"), "KWCH": ("Wichita", "KS"),
+    "KUMV": ("Williston", "ND"), "WECT": ("Wilmington", "NC"),
+    "POWERNATION STUDIOS": ("Franklin", "TN"),
+    "RAYCOM SPORTS": ("Charlotte", "NC"),
+}
+
+
+def _gray_location_from_row(row):
+    """Recover a concrete UKG location from nested public-listing metadata."""
+    values = []
+    def walk(obj, key=""):
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                lk = str(k).lower()
+                if any(x in lk for x in ("location", "city", "state", "address")):
+                    if isinstance(v, (str, int, float)):
+                        values.append(clean(str(v)))
+                walk(v, lk)
+        elif isinstance(obj, list):
+            for v in obj:
+                walk(v, key)
+    walk(row)
+    joined = " | ".join(v for v in values if v)
+    m = re.search(r"\b([A-Z][A-Za-z .'-]{1,60}),\s*([A-Z]{2})\b", joined)
+    if m:
+        return clean(m.group(1)), m.group(2).upper()
+    return "", ""
+
+
+def _gray_station_location(title):
+    """Use Gray's published station/market directory when UKG omits location."""
+    upper = clean(title).upper()
+    # Remote jobs name their actual territory in the title; honor that first.
+    for pat, value in [
+        (r"REMOTE\s+CHICAGO", ("Chicago", "IL")),
+        (r"REMOTE[/ ]+DES MOINES", ("Des Moines", "IA")),
+        (r"ASHEVILLE\s*-\s*REMOTE", ("Asheville", "NC")),
+    ]:
+        if re.search(pat, upper):
+            return value
+    # Prefer the longest station token to avoid partial matches.
+    for station in sorted(GRAY_STATION_LOCATIONS, key=len, reverse=True):
+        if re.search(r"(?<![A-Z0-9])" + re.escape(station) + r"(?![A-Z0-9])", upper):
+            return GRAY_STATION_LOCATIONS[station]
+    return "", ""
+
+
+def _gray_finalize_job(j, row=None):
+    """Apply MJR's Gray-specific internship, category and location rules."""
+    if not j:
+        return j
+    title = clean(j.title)
+    desc_text = strip_html(j.description)
+
+    if re.search(r"\bGRAY MEDIA (?:SALES )?TRAINING PROGRAM\b", title, re.I):
+        j.jobtype = "Internship"
+        j.category = "Internships"
+    else:
+        # Gray is a television-first employer. Its local newsroom reporters,
+        # anchors, MMJs and photo/video journalists belong in Television.
+        if j.category == "Journalism":
+            if re.search(r"\b(digital content|digital mmj|digital news|digital producer)\b", title, re.I):
+                j.category = "Digital"
+            elif re.search(r"\b(graphic artist|graphic designer|visual designer)\b", title, re.I):
+                j.category = "Digital"
+            else:
+                j.category = "Television"
+
+    if not clean(j.city):
+        city = state = ""
+        if row:
+            city, state = _gray_location_from_row(row)
+        if not city:
+            city, state = _gray_station_location(title)
+        if city:
+            j.city, j.state, j.country = city, state, "US"
+    return j
+
+
 def gray_direct(src):
     """Gray Media: enumerate the public UKG Pro board through its JSON endpoint.
 
@@ -5832,6 +5976,7 @@ def gray_direct(src):
                         infer_country(loc, src["Company"], desc),
                     )
 
+        j = _gray_finalize_job(j, row)
         if j and j.id not in out_ids:
             # _ukg_detail uses the broad discovery CUTOFF. Enforce MJR's actual
             # 14-day regular / 30-day internship retention here as well.
