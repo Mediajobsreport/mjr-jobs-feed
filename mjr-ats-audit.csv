@@ -53,19 +53,19 @@ NPG,Company Career Site,https://www.npgco.com/careers/,zero_or_not_enumerable,0,
 PGA,Workday,https://pgahq.wd1.myworkdayjobs.com/PGAHQ,ok,6,
 QVC,Workday,https://qvc.wd5.myworkdayjobs.com/QRG,ok,40,
 Scripps,Workday,https://scripps.wd115.myworkdayjobs.com/Scripps_Careers,ok,40,
-Sinclair,Oracle Recruiting Cloud,https://edyy.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2002/requisitions?mode=location,ok,68,
+Sinclair,Oracle Recruiting Cloud,https://edyy.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2002/requisitions?mode=location,ok,64,
 TelevisaUnivision,Workday,https://univision.wd1.myworkdayjobs.com/External,ok,40,
 Weather Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=20c3677e-ce5f-400f-9d8d-173f5a852a5d&ccId=19000101_000001&type=JS&lang=en_US,ok,8,
 Weigel,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co,zero_or_not_enumerable,0,
 WWE,Workday,https://wwecorp.wd5.myworkdayjobs.com/wwecorp,ok,19,
 CNN,Company Career Site,https://careers.wbd.com/global/en/cnn-jobs,zero_or_not_enumerable,0,
 Disney / ABC,Company Career Site,https://jobs.disneycareers.com/search-jobs?k=ABC,ok,4,non_media_scope_rejected=3
-ESPN,Company Career Site,https://www.disneycareers.com/en/search-jobs/ESPN/391/1,ok,17,non_media_scope_rejected=1
+ESPN,Company Career Site,https://www.disneycareers.com/en/search-jobs/ESPN/391/1,ok,15,non_media_scope_rejected=2
 FOX,Company Career Site,https://www.foxcareers.com/Search/SearchResults,zero_or_not_enumerable,0,
 Mission Broadcasting,Company Career Site,https://missionbroadcastinginc.com/careers/,zero_or_not_enumerable,0,
 NBA,Company Career Site,https://careers.nba.com/c/media-production-development-jobs,ok,8,
 NBCUniversal,Company Career Site,https://www.nbcunicareers.com/find-a-job?aoi=2237#jobs_search-react-main-wrapper,zero_or_not_enumerable,0,
-Paramount,Company Career Site,https://careers.paramount.com/go/All-Current-Job-Opportunities/8710000/,ok,292,
+Paramount,Company Career Site,https://careers.paramount.com/go/All-Current-Job-Opportunities/8710000/,ok,290,
 TBN,Company Career Site,https://www.tbn.org/about/careers,zero_or_not_enumerable,0,
 TEGNA,Greenhouse,https://job-boards.greenhouse.io/tegnainc,zero_or_not_enumerable,0,
 American Public Media Group,UKG Pro,https://recruiting2.ultipro.com/AME1098APMG/JobBoard/4b7ae4eb-a67b-4318-80fc-6d9467f9c542/?q=&o=postedDateDesc&w=&wc=&we=&wpst=,zero_or_not_enumerable,0,
@@ -75,7 +75,7 @@ Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hc
 Lee Enterprises,Dayforce,https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL,zero_or_not_enumerable,0,
 McClatchy,Company Career Site,https://mcclatchy.com/careers,zero_or_not_enumerable,0,
 New York Post,Workday,https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers,ok,47,
-NPR,Greenhouse,https://job-boards.greenhouse.io/nationalpublicradioinc,ok,7,
+NPR,Greenhouse,https://job-boards.greenhouse.io/nationalpublicradioinc,ok,6,
 Tampa Bay Times Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=8c64d493-1027-445e-9378-39c4e859f2b6&ccId=19000101_000001&lang=en_US,ok,2,
 Tribune,Workday,https://myworkdaycenter.wd5.myworkdayjobs.com/TPCO,zero_or_not_enumerable,0,
 Woodward Communications,Paycom,https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=41E82EC60AAD792EC7018E3AB22DE8D2,zero_or_not_enumerable,0,
@@ -88,8 +88,8 @@ ASCAP,JobScore,https://careers.jobscore.com/careers/ascap,ok,2,
 Big Machine,BMG Career Portal,https://jobsearch.createyourowncareer.com/BMG/search/,zero_or_not_enumerable,0,
 Cook Media Global,Paycom,https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=B59CEE098263BB5FD7A7C223F0B3B11A&jpt=,zero_or_not_enumerable,0,
 ONErpm,Rippling ATS,https://onerpm.rippling-ats.com/,ok,5,
-SESAC,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=7fbf632a-2131-43fc-9a6b-03efa4b54e87&ccId=19000101_000001&type=JS&lang=en_US,ok,3,
-Sony Music Entertainment,Greenhouse,https://job-boards.greenhouse.io/sonymusicentertainment,ok,156,
+SESAC,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=7fbf632a-2131-43fc-9a6b-03efa4b54e87&ccId=19000101_000001&type=JS&lang=en_US,ok,4,
+Sony Music Entertainment,Greenhouse,https://job-boards.greenhouse.io/sonymusicentertainment,ok,154,
 Universal Music Group,Workday,https://umusic.wd5.myworkdayjobs.com/UMGUS/,ok,82,
 Warner Music Group,Workday,https://wmg.wd1.myworkdayjobs.com/WMGUS/jobs,ok,40,
 Amazon Music,Company Career Site,https://www.amazon.jobs/content/en/teams/amazon-entertainment/music,zero_or_not_enumerable,0,
@@ -122,4 +122,4 @@ Associated Press,Generic Structured,https://careers.ap.org/,zero_or_not_enumerab
 Wall Street Journal,Generic Structured,https://dowjones.jobs/,zero_or_not_enumerable,0,
 TSMG,Lever,https://jobs.lever.co/tsmg,ok,1,voiceover_matches=1; stale_matches=0; rows_checked=98
 Filmless,SmartRecruiters,https://jobs.smartrecruiters.com/Filmless,zero_or_no_fresh_voiceover_jobs,0,voiceover_matches=0; stale_matches=1; rows_checked=6
-CrowdGen/Appen,Lever,https://jobs.lever.co/appen,no_qualifying_voiceover_titles,0,genuine_voiceover_titles=0; rows_checked=19; speech testing and validation excluded
+CrowdGen/Appen,Lever,https://jobs.lever.co/appen,no_qualifying_voiceover_titles,0,genuine_voiceover_titles=0; rows_checked=29; speech testing and validation excluded
