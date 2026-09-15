@@ -8276,9 +8276,13 @@ def structured_jobs_v27(src):
 # ============================================================
 # v28 SAFE TEST / PRODUCTION CONTROLS
 # ============================================================
+# Preserve the raw GitHub workflow input separately from the normalized set.
+# This makes targeted-test routing deterministic and gives the run log an
+# unambiguous record of exactly what GitHub passed to the crawler.
+MJR_TEST_COMPANIES_RAW = os.getenv("MJR_TEST_COMPANIES", "")
 MJR_TEST_COMPANIES = {
     clean(x).lower()
-    for x in os.getenv("MJR_TEST_COMPANIES", "").split(",")
+    for x in MJR_TEST_COMPANIES_RAW.split(",")
     if clean(x)
 }
 
@@ -11924,9 +11928,28 @@ def main():
     )
 
     if MJR_TEST_COMPANIES:
-        sources = [s for s in sources if _v28_source_enabled(s)]
-        print("TEST MODE companies:", ", ".join(sorted(MJR_TEST_COMPANIES)))
-        print(f"TEST MODE source rows: {len(sources)}")
+        # Hard targeted-test gate. Nothing outside the canonical requested set
+        # is allowed into dispatch. This is deliberately repeated here even
+        # though _v28_source_enabled() already applies the same rule: it makes
+        # accidental source injection impossible and exposes the exact routing
+        # decision in the GitHub Actions log.
+        requested = set(MJR_TEST_COMPANIES)
+        sources = [
+            src for src in sources
+            if _canonical_target_company(src.get("Company", "")) in requested
+        ]
+        print("MJR_TEST_COMPANIES raw:", repr(MJR_TEST_COMPANIES_RAW))
+        print("TEST MODE canonical companies:", ", ".join(sorted(requested)))
+        print("TEST MODE source rows:", len(sources))
+        for _src in sources:
+            print(
+                "TEST MODE source:",
+                _src.get("Company", ""),
+                "|", _src.get("ATS", ""),
+                "|", _src.get("URL", ""),
+            )
+        if not sources:
+            print("TEST MODE WARNING: no source rows matched the requested company set")
 
     jobs = []
     audit = []
