@@ -7033,17 +7033,21 @@ def hope_media_paylocity(src):
     return out
 
 
+_LAST_ENUMERATED = {}
+
 def paylocity_v18(src):
     """Targeted Paylocity public-board crawler.
 
-    Supports both All/{board-guid}/{company} boards and individual Details
-    URLs. It enumerates only actual Paylocity detail pages and requires a
-    recent explicit posting date before import.
+    v84: Paylocity's current public boards can return an unsupported-browser
+    shell to ordinary HTTP requests even though the jobs are visible in a real
+    browser.  Enumerate detail links with normal HTTP first, then use a single
+    Playwright-rendered board pass when necessary.  Only explicit employer
+    posting dates are accepted; stale jobs are enumerated for audit purposes
+    but never emitted into the MJR feed.
     """
-    starts = [src["URL"]]
     company = clean(src.get("Company", "")).lower()
+    starts = [src["URL"]]
 
-    # Known current public board roots from the source inventory.
     known = {
         "dick broadcasting company": [
             "https://recruiting.paylocity.com/recruiting/jobs/All/da27c45a-0c7a-4cbe-a575-3444d884e49b/Dick-Broadcasting-Company-Inc",
@@ -7054,64 +7058,120 @@ def paylocity_v18(src):
         "weigel": [
             "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
         ],
+        "weigel broadcasting": [
+            "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
+        ],
+        "weigel broadcasting co": [
+            "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
+        ],
     }
     starts.extend(known.get(company, []))
     starts = list(dict.fromkeys(starts))
 
-    queue = starts[:]
-    seen_pages = set()
     details = set()
 
-    while queue and len(seen_pages) < 160 and len(details) < 5000:
-        page = queue.pop(0)
-        if page.rstrip("/") in seen_pages:
-            continue
-        seen_pages.add(page.rstrip("/"))
+    def add_detail(h, base):
+        if not h:
+            return
+        h = urljoin(base, h).split("#", 1)[0]
+        hp = urlparse(h)
+        if "recruiting.paylocity.com" not in hp.netloc.lower():
+            return
+        if re.search(r"/recruiting/jobs/details/\d+", hp.path, re.I):
+            details.add(h)
 
+    # Cheap server-rendered discovery first.  This still works for some older
+    # Paylocity tenants and avoids launching a browser unnecessarily.
+    for page in starts:
         try:
             r = req("GET", page)
         except Exception:
             continue
-
         final = str(getattr(r, "url", "") or page)
         soup = BeautifulSoup(r.text, "html.parser")
         raw = html.unescape(r.text or "").replace("\\/", "/")
-
-        def add(h):
-            h = urljoin(final, h)
-            hp = urlparse(h)
-            if "recruiting.paylocity.com" not in hp.netloc.lower():
-                return
-            if re.search(r"/recruiting/jobs/details/\d+", hp.path, re.I):
-                details.add(h.split("#", 1)[0])
-
         for a in soup.find_all("a", href=True):
-            add(a["href"])
-            h = urljoin(final, a["href"])
-            hp = urlparse(h)
-            if "recruiting.paylocity.com" not in hp.netloc.lower():
-                continue
-            label = clean(a.get_text(" ")).lower()
-            if (
-                re.search(r"\b(next|more|view more|load more)\b", label)
-                or re.search(r"[?&](page|pageindex|start|offset)=\d+", h, re.I)
-            ):
-                if h.rstrip("/") not in seen_pages:
-                    queue.append(h)
-
+            add_detail(a["href"], final)
         for m in re.finditer(
             r'https?://recruiting\.paylocity\.com/[^"\'<>\s]*?/jobs/details/\d+[^"\'<>\s]*',
-            raw,
-            re.I,
+            raw, re.I,
         ):
-            add(m.group(0).rstrip(".,);"))
+            add_detail(m.group(0).rstrip(".,);"), final)
+        for m in re.finditer(
+            r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']',
+            raw, re.I,
+        ):
+            add_detail(m.group(1), final)
 
-        for m in re.finditer(r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']', raw, re.I):
-            add(m.group(1))
+    # Modern Paylocity fallback.  The Weigel board currently renders its job
+    # cards client-side and returns an unsupported-browser shell to requests.
+    if not details and sync_playwright is not None:
+        for board in starts:
+            try:
+                with sync_playwright() as p:
+                    browser = p.chromium.launch(
+                        headless=True,
+                        args=["--disable-dev-shm-usage", "--no-sandbox"],
+                    )
+                    context = browser.new_context(
+                        user_agent=(
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                            "AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/152.0.0.0 Safari/537.36"
+                        ),
+                        viewport={"width": 1440, "height": 1100},
+                    )
+                    page = context.new_page()
+                    page.set_default_timeout(20000)
+                    page.goto(board, wait_until="domcontentloaded", timeout=45000)
+                    try:
+                        page.wait_for_load_state("networkidle", timeout=15000)
+                    except Exception:
+                        page.wait_for_timeout(4000)
 
-    # If the source itself is a single detail page (Hope), include it.
+                    # Scroll a few times in case the tenant lazily renders rows.
+                    last = -1
+                    stable = 0
+                    for _ in range(12):
+                        hrefs = page.eval_on_selector_all(
+                            "a[href]", "els => els.map(e => e.href)"
+                        )
+                        for href in hrefs:
+                            add_detail(href, page.url)
+
+                        # Paylocity sometimes stores the URLs only in the
+                        # rendered markup / framework state.
+                        try:
+                            rendered = page.content()
+                        except Exception:
+                            rendered = ""
+                        rendered = html.unescape(rendered).replace("\\/", "/")
+                        for m in re.finditer(
+                            r'(?:https?://recruiting\.paylocity\.com)?/Recruiting/Jobs/Details/\d+(?:/[^"\'<>\s]*)?',
+                            rendered, re.I,
+                        ):
+                            add_detail(m.group(0), page.url)
+
+                        if len(details) == last:
+                            stable += 1
+                        else:
+                            stable = 0
+                        last = len(details)
+                        if stable >= 2:
+                            break
+                        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                        page.wait_for_timeout(1000)
+                    browser.close()
+            except Exception as e:
+                print(f"Paylocity rendered discovery failed for {src.get('Company')}: {e}")
+            if details:
+                break
+
     if re.search(r"/recruiting/jobs/details/\d+", src["URL"], re.I):
         details.add(src["URL"])
+
+    _LAST_ENUMERATED[company] = len(details)
+    print(f"Paylocity v84 {src.get('Company')}: enumerated {len(details)} detail URLs")
 
     out, seen_ids = [], set()
     for url in sorted(details):
@@ -7121,14 +7181,23 @@ def paylocity_v18(src):
             j = _job_from_detail(src, final, rr.text)
             if not j:
                 j = _direct_board_job(src, final, rr.text)
-            if j and j.id not in seen_ids:
+            if not j:
+                continue
+
+            # Never turn an old still-open Paylocity posting into a new MJR job.
+            pd = getattr(j, "date", None) or _direct_board_date(rr.text)
+            if not pd or pd < CUTOFF:
+                continue
+            j.date = pd
+
+            if j.id not in seen_ids:
                 seen_ids.add(j.id)
                 out.append(j)
         except Exception:
             continue
 
+    print(f"Paylocity v84 {src.get('Company')}: {len(out)} fresh jobs")
     return out
-
 
 def _ashby_board_name(url):
     p = urlparse(url)
@@ -11524,7 +11593,7 @@ def main():
                 else generic(s)
             )
 
-            icims_enumerated = 0
+            icims_enumerated = _LAST_ENUMERATED.pop(company_key, 0)
 
             # v40: Audacy uses direct iCIMS enumeration with strict
             # ID/title/apply-link validation. Do not use the old wrapper path.
