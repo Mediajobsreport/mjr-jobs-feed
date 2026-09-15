@@ -8306,6 +8306,14 @@ _TARGET_COMPANY_ALIASES = {
         "weigel broadcasting company",
         "weigel broadcasting co.",
     },
+    "dow jones": {
+        "dow jones",
+        "dow jones & company",
+        "dow jones & company, inc.",
+        "dow jones and company",
+        "wall street journal",
+        "the wall street journal",
+    },
 }
 
 def _canonical_target_company(name):
@@ -11393,6 +11401,61 @@ def careeronestop_townsquare_test():
     print(f"CareerOneStop Townsquare Media test: {len(rows)} API rows, {len(out)} qualifying jobs")
     return out
 
+def dow_jones_direct(src):
+    """Enumerate Dow Jones' official career site and parse JobPosting details.
+
+    dowjones.jobs exposes individual jobs as /<location>/<slug>/<token>/job/.
+    We crawl bounded listing pages, collect those canonical detail URLs, then
+    use the shared schema.org JobPosting parser so datePosted/validThrough and
+    locations come from the employer page rather than inferred dates.
+    """
+    root = "https://dowjones.jobs/"
+    queue = [root]
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < 30 and len(details) < 1000:
+        page = queue.pop(0)
+        key = page.split("#", 1)[0].rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        for a in soup.find_all("a", href=True):
+            h = urljoin(final, a["href"]).split("#", 1)[0]
+            hp = urlparse(h)
+            if hp.netloc.lower().replace("www.", "") != "dowjones.jobs":
+                continue
+            if re.search(r"/[A-F0-9]{20,}/job/?$", hp.path, re.I):
+                details.add(h)
+                continue
+            label = clean(a.get_text(" ")).lower()
+            if (label in {"more", "next", "next page", "view more", "view all jobs"}
+                    or re.search(r"[?&](page|start|offset)=\\d+", h, re.I)):
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        for m in re.finditer(r"https?://(?:www\.)?dowjones\.jobs/[^\"'<>\s]+/[A-F0-9]{20,}/job/?", raw, re.I):
+            details.add(m.group(0).rstrip('.,);'))
+
+    _LAST_ENUMERATED["dow jones"] = len(details)
+    out = []
+    seen_ids = set()
+    for url in sorted(details):
+        j = _recent_detail_job(src, url)
+        if j and j.id not in seen_ids:
+            seen_ids.add(j.id)
+            out.append(j)
+    return out
+
+
 def main():
     with SOURCES_FILE.open(
         newline="",
@@ -11447,6 +11510,28 @@ def main():
             "Industry": "Newspaper / Digital Media",
             "ATS": "Official Direct",
             "URL": "https://company.washingtonpost.com/careers?category_name=careercenter",
+            "Active": "True",
+        })
+
+    # Dow Jones / Wall Street Journal: canonicalize before targeted filtering.
+    # Dow Jones is the employer source; WSJ-branded roles remain identifiable
+    # in their titles/descriptions without creating a duplicate employer feed.
+    for row in sources:
+        if _canonical_target_company(row.get("Company", "")) == "dow jones":
+            row["Company"] = "Dow Jones"
+            row["Industry"] = row.get("Industry") or "Newspaper / Digital Media"
+            row["ATS"] = "Official Direct"
+            row["URL"] = "https://dowjones.jobs/"
+            row["Active"] = "True"
+
+    if "dow jones" in MJR_TEST_COMPANIES and not any(
+        _canonical_target_company(r.get("Company", "")) == "dow jones" for r in sources
+    ):
+        sources.append({
+            "Company": "Dow Jones",
+            "Industry": "Newspaper / Digital Media",
+            "ATS": "Official Direct",
+            "URL": "https://dowjones.jobs/",
             "Active": "True",
         })
 
@@ -11556,6 +11641,8 @@ def main():
                 if company_key in {"disney / abc", "espn"}
                 else wbd_phenom(s)
                 if company_key == "cnn"
+                else dow_jones_direct(s)
+                if company_key == "dow jones"
                 else curtis_media_direct(s)
                 if company_key == "curtis media group"
                 else gray_direct(s)
