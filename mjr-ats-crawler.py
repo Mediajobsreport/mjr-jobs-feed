@@ -5741,6 +5741,7 @@ GRAY_STATION_LOCATIONS = {
     "KTIV": ("Sioux City", "IA"), "KSFY": ("Sioux Falls", "SD"),
     "KDLT": ("Sioux Falls", "SD"), "WNDU": ("South Bend", "IN"),
     "KYTV": ("Springfield", "MO"), "KSPR": ("Springfield", "MO"),
+    "WGGB": ("Springfield", "MA"), "WTVG": ("Toledo", "OH"),
     "KMOV": ("St. Louis", "MO"), "WCTV": ("Tallahassee", "FL"),
     "WTHI": ("Terre Haute", "IN"), "WLIO": ("Lima", "OH"),
     "WOHL": ("Lima", "OH"), "WIBW": ("Topeka", "KS"),
@@ -5802,7 +5803,9 @@ def _gray_finalize_job(j, row=None):
     title = clean(j.title)
     desc_text = strip_html(j.description)
 
-    if re.search(r"\bGRAY MEDIA\b.*\bTRAINING PROGRAM\b", title, re.I):
+    # Every Gray Media Training Program posting is an internship, regardless
+    # of department, season, station suffix, or sales/news/weather wording.
+    if re.search(r"\bTRAINING PROGRAM\b", title, re.I):
         j.jobtype = "Internship"
         j.category = "Internships"
     else:
@@ -5824,6 +5827,12 @@ def _gray_finalize_job(j, row=None):
             city, state = _gray_station_location(title)
         if city:
             j.city, j.state, j.country = city, state, "US"
+
+    # A stationless Gray training-program listing cannot be assigned a market
+    # safely. Keep station-specific programs, but exclude a truly locationless
+    # generic program rather than sending Google an invalid location.
+    if re.search(r"\bTRAINING PROGRAM\b", title, re.I) and not clean(j.city):
+        return None
     return j
 
 
