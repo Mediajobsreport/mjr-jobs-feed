@@ -5684,38 +5684,167 @@ def wbd_phenom(src):
 
 
 def gray_direct(src):
-    """Gray Media direct career-center fallback.
+    """Gray Media: enumerate its UKG Pro board with a real browser.
 
-    Gray's corporate careers page currently exposes hundreds of openings and
-    filters publicly. Prefer those canonical employer pages over relying solely
-    on the legacy UKG board.
+    Gray's UKG listing returns an "unsupported browser" shell to plain HTTP
+    clients, so anchor crawling sees zero opportunities.  A Chromium session
+    is used only to enumerate opportunity UUIDs from the rendered board and
+    its JSON/XHR traffic.  Each discovered opportunity is then fetched through
+    the normal request/detail parser so dates, descriptions, locations and
+    canonical apply links continue to use the project's shared rules.
     """
-    starts = [
-        "https://graymedia.com/careers/",
-        src["URL"],
-    ]
+    tenant = "GRA1017GRYT"
+    board = "ae441110-89bd-444d-8ad2-b76c7b9db7a9"
+    base = "https://recruiting.ultipro.com"
+    board_root = f"{base}/{tenant}/JobBoard/{board}"
+    start = board_root + "/?o=postedDateDesc&q=&w=&wc=&we=&wpst="
 
-    # First crawl Gray's own careers surface.
-    jobs = _crawl_rendered_job_board(
-        src,
-        starts,
-        allow_hosts={
-            "graymedia.com",
-            "www.graymedia.com",
-            "recruiting.ultipro.com",
-        },
-        max_pages=100,
-        max_jobs=3500,
-    )
-    if jobs:
-        return jobs
+    # If the source row already contains the current Gray UKG board, preserve
+    # it; otherwise use the verified public board above.  Never follow gray.com
+    # (the unrelated construction company).
+    parts = _ukg_parts(src.get("URL", ""))
+    if parts and parts[1].lower() == tenant.lower():
+        base, tenant, board = parts
+        board_root = f"{base}/{tenant}/JobBoard/{board}"
+        start = board_root + "/?o=postedDateDesc&q=&w=&wc=&we=&wpst="
 
-    # If the corporate page links only to UKG opportunity details, use the
-    # existing UKG collector as a final fallback; it already fails safely.
-    try:
-        return ukg(src)
-    except Exception:
-        return []
+    opportunity_ids = set()
+    uuid_re = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.I)
+
+    def harvest_text(text):
+        raw = html.unescape(str(text or "")).replace("\\/", "/")
+        # Strong signal: UUID appears as an opportunityId value or inside an
+        # OpportunityDetail URL.  This avoids treating unrelated telemetry IDs
+        # as jobs.
+        for m in re.finditer(
+            r"(?:opportunityId|OpportunityId)(?:%3D|=|[\\\"']\\s*:\\s*[\\\"'])+([0-9a-f-]{36})",
+            raw,
+            re.I,
+        ):
+            oid = m.group(1)
+            if uuid_re.fullmatch(oid):
+                opportunity_ids.add(oid.lower())
+        for m in re.finditer(
+            r"OpportunityDetail[^\\\"'<>\\s]{0,500}?opportunityId(?:%3D|=)([0-9a-f-]{36})",
+            raw,
+            re.I,
+        ):
+            oid = m.group(1)
+            if uuid_re.fullmatch(oid):
+                opportunity_ids.add(oid.lower())
+
+    # Gray's listing is client-rendered.  Capture both DOM content and XHR JSON
+    # while repeatedly scrolling/clicking load-more controls.  Network response
+    # bodies are harvested because UKG often keeps opportunity IDs out of the
+    # initial HTML entirely.
+    if sync_playwright is not None:
+        try:
+            with sync_playwright() as pw:
+                browser = pw.chromium.launch(headless=True)
+                page = browser.new_page(
+                    viewport={"width": 1440, "height": 1100},
+                    user_agent=(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/131.0.0.0 Safari/537.36"
+                    ),
+                )
+
+                def on_response(resp):
+                    try:
+                        ct = (resp.headers.get("content-type") or "").lower()
+                        u = resp.url.lower()
+                        if (
+                            "json" in ct
+                            or "opportun" in u
+                            or "jobboard" in u
+                            or "recruit" in u
+                        ):
+                            harvest_text(resp.text())
+                    except Exception:
+                        pass
+
+                page.on("response", on_response)
+                page.goto(start, wait_until="domcontentloaded", timeout=90000)
+                try:
+                    page.wait_for_load_state("networkidle", timeout=30000)
+                except Exception:
+                    pass
+
+                stable = 0
+                last_count = -1
+                for _ in range(90):
+                    try:
+                        harvest_text(page.content())
+                    except Exception:
+                        pass
+
+                    # UKG variants use different labels for incremental results.
+                    clicked = False
+                    for label in (
+                        "Load More", "Load more", "Show More", "Show more",
+                        "More Jobs", "More jobs", "View More", "View more",
+                    ):
+                        try:
+                            loc = page.get_by_text(label, exact=False)
+                            if loc.count() and loc.first.is_visible():
+                                loc.first.click(timeout=2500)
+                                clicked = True
+                                break
+                        except Exception:
+                            pass
+
+                    try:
+                        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                    except Exception:
+                        pass
+                    page.wait_for_timeout(900 if clicked else 650)
+
+                    if len(opportunity_ids) == last_count:
+                        stable += 1
+                    else:
+                        stable = 0
+                        last_count = len(opportunity_ids)
+                    # Give virtual/infinite lists plenty of time, but stop once
+                    # repeated scrolls no longer reveal jobs.
+                    if stable >= 12:
+                        break
+
+                try:
+                    harvest_text(page.content())
+                except Exception:
+                    pass
+                browser.close()
+        except Exception as e:
+            print(f"Gray browser enumeration warning: {type(e).__name__}: {e}")
+
+    # If UKG changes its browser implementation, retain the generic UKG
+    # enumerator as a safe secondary path.  It may still work when server-side
+    # HTML is restored.
+    if not opportunity_ids:
+        try:
+            fallback = ukg({**src, "URL": start})
+            if fallback:
+                return fallback
+        except Exception:
+            pass
+
+    out = []
+    seen_ids = set()
+    for oid in sorted(opportunity_ids):
+        url = f"{board_root}/OpportunityDetail?opportunityId={oid}"
+        try:
+            rr = req("GET", url)
+            final_url = str(getattr(rr, "url", "") or url)
+            j = _ukg_detail(src, final_url, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+
+    print(f"Gray Media UKG: discovered {len(opportunity_ids)} opportunity IDs; accepted {len(out)} jobs")
+    return out
 
 
 V17_TARGETS = {
