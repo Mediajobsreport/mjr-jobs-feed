@@ -379,7 +379,8 @@ def category(title, desc, industry, company):
         or any(x in c for x in [
             "audacy", "beasley", "bonneville", "cumulus", "iheart",
             "lotus communications", "stingray", "pattison", "evanov",
-            "urban one", "siriusxm", "sun broadcasting", "good karma", "hope media group"
+            "urban one", "siriusxm", "sun broadcasting", "good karma", "hope media group",
+            "curtis media group"
         ])
         or re.search(r"\b(radio station|radio group|fm station|am station|broadcast radio)\b", d_short)
     )
@@ -5836,6 +5837,129 @@ def _gray_finalize_job(j, row=None):
     return j
 
 
+def curtis_media_direct(src):
+    """Curtis Media Group official career-post collector.
+
+    Curtis publishes dated, individual openings on curtismedia.net while its
+    ApplyToJob/JazzHR board does not consistently expose a trustworthy posted
+    date. MJR therefore uses Curtis's own dated career posts as the freshness
+    authority and canonical job URL. This avoids importing old-but-still-live
+    JazzHR forms as newly posted jobs.
+    """
+    starts = [
+        "https://www.curtismedia.net/career-opportunities/",
+        "https://www.curtismedia.net/category/employment/",
+    ]
+    article_urls = set()
+    seen_pages = set()
+    queue = list(starts)
+
+    while queue and len(seen_pages) < 12:
+        page = queue.pop(0)
+        if page.rstrip("/") in seen_pages:
+            continue
+        seen_pages.add(page.rstrip("/"))
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        for a in soup.find_all("a", href=True):
+            h = urljoin(final, a["href"]).split("#", 1)[0]
+            hp = urlparse(h)
+            if hp.netloc.lower().replace("www.", "") != "curtismedia.net":
+                continue
+            # Curtis career posts use normal WordPress dated permalinks.
+            if re.search(r"/20\d{2}/\d{2}/\d{2}/[^/?#]+/?$", hp.path, re.I):
+                article_urls.add(h)
+                continue
+            # Follow only employment archive pagination.
+            if re.search(r"/category/employment/page/\d+/?$", hp.path, re.I):
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+    out = []
+    seen_ids = set()
+    for url in sorted(article_urls):
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+        soup = BeautifulSoup(rr.text, "html.parser")
+        txt = clean(soup.get_text(" "))
+
+        h1 = soup.find("h1")
+        title = clean(h1.get_text(" ") if h1 else "")
+        if not title or title.lower() in {"career opportunities", "employment"}:
+            continue
+
+        # Prefer explicit page date; dated permalink is a safe official fallback.
+        pd = None
+        m = re.search(
+            r"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|"
+            r"Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)"
+            r"\s+\d{1,2},\s+20\d{2}\b",
+            txt,
+            re.I,
+        )
+        if m:
+            pd = pdate(m.group(0))
+        if not pd:
+            um = re.search(r"/(20\d{2})/(\d{2})/(\d{2})/", url)
+            if um:
+                pd = pdate(f"{um.group(1)}-{um.group(2)}-{um.group(3)}")
+        if not pd:
+            continue
+
+        main = soup.find("main") or soup.find("article") or soup
+        desc_html = str(main)
+        desc = format_description(desc_html)
+        plain = strip_html(desc)
+        if len(plain) < 200:
+            continue
+
+        jt = jobtype(title, plain)
+        life_days = INTERNSHIP_LIFE_DAYS if jt == "Internship" or category(title, desc, "Radio", "Curtis Media Group") == "Internships" else REGULAR_LIFE_DAYS
+        if pd < TODAY - timedelta(days=life_days):
+            continue
+
+        # Location is normally printed as "Curtis Media Group | City, ST".
+        city = state = ""
+        lm = re.search(r"Curtis Media Group\s*\|\s*([^|\n,]+),\s*([A-Z]{2})\b", plain, re.I)
+        if not lm:
+            lm = re.search(r"\b(?:Location\s*:?\s*)?([A-Za-z .'-]+),\s*(NC)\b", plain)
+        if lm:
+            city = clean(lm.group(1))
+            state = clean(lm.group(2)).upper()
+
+        jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+        if jid in seen_ids:
+            continue
+        seen_ids.add(jid)
+        out.append(Job(
+            jid,
+            title,
+            "Curtis Media Group",
+            desc,
+            pd,
+            jt,
+            category(title, desc, "Radio", "Curtis Media Group"),
+            url,
+            src.get("URL") or "https://www.curtismedia.net/career-opportunities/",
+            src.get("URL") or "https://www.curtismedia.net/career-opportunities/",
+            "",
+            normalize_work_arrangement(plain, f"{city}, {state}"),
+            city,
+            state,
+            "US",
+        ))
+
+    print(f"Curtis Media Group official dated posts: {len(article_urls)} enumerated, {len(out)} fresh")
+    return out
+
+
 def gray_direct(src):
     """Gray Media: enumerate the public UKG Pro board through its JSON endpoint.
 
@@ -11171,6 +11295,17 @@ def main():
     ) as f:
         sources = list(csv.DictReader(f))
 
+    # Curtis Media Group: ensure the verified official career surface is
+    # available even before the shared source CSV is updated.
+    if not any(clean(r.get("Company", "")).lower() == "curtis media group" for r in sources):
+        sources.append({
+            "Company": "Curtis Media Group",
+            "Industry": "Radio",
+            "ATS": "Official Direct",
+            "URL": "https://www.curtismedia.net/career-opportunities/",
+            "Active": "True",
+        })
+
     # v54: normalize any legacy Cox Radio source row before filtering/crawling.
     # This prevents an older CSV row or stale branch copy from forcing the
     # radio-only CMG search back into the feed.
@@ -11249,6 +11384,8 @@ def main():
                 if company_key in {"disney / abc", "espn"}
                 else wbd_phenom(s)
                 if company_key == "cnn"
+                else curtis_media_direct(s)
+                if company_key == "curtis media group"
                 else gray_direct(s)
                 if company_key == "gray media"
                 else workday(s)
