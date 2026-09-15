@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-15T08:33:58.898Z",
+  "generated": "2026-09-15T12:35:55.388Z",
   "version": "2.4",
   "newestDate": "2026-09-13",
   "stale": false,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 90
+      "count": 89
     }
   },
   "count": 120,
@@ -38,7 +38,7 @@
       "majorBrand": true,
       "campaign": "26V578000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V578-3276.pdf",
-      "score": 182
+      "score": 174
     },
     {
       "id": "NHTSA-26V562000",
@@ -109,22 +109,6 @@
       "score": 152
     },
     {
-      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
-      "source": "FDA",
-      "category": "food",
-      "title": "Whole Foods Market Cheese Recalled",
-      "reason": "Undeclared Egg",
-      "brand": "Whole Foods Market",
-      "company": "Whole Foods Market",
-      "product": "Cheese",
-      "date": "2026-09-11",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/la-ceiba-foods-latin-market-inc-recalls-cottage-cheese-products-because-possible-health-risk",
-      "score": 141
-    },
-    {
       "id": "FDA-2026-09-03-great-value-organic-triple-berry-blend-frutas-y-hortalizas-del-sur-s-a",
       "source": "FDA",
       "category": "food",
@@ -156,6 +140,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Prepared-Hero-Recalls-Fire-Spray-Canisters-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
       "score": 143
+    },
+    {
+      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
+      "source": "FDA",
+      "category": "food",
+      "title": "Whole Foods Market Cheese Recalled",
+      "reason": "Undeclared Egg",
+      "brand": "Whole Foods Market",
+      "company": "Whole Foods Market",
+      "product": "Cheese",
+      "date": "2026-09-11",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/la-ceiba-foods-latin-market-inc-recalls-cottage-cheese-products-because-possible-health-risk",
+      "score": 133
     },
     {
       "id": "NHTSA-26V511000",
@@ -407,7 +407,7 @@
       "majorBrand": true,
       "campaign": "26V579000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V579-7717.pdf",
-      "score": 117
+      "score": 109
     },
     {
       "id": "NHTSA-26V580000",
@@ -424,75 +424,7 @@
       "majorBrand": true,
       "campaign": "26V580000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V580-5831.pdf",
-      "score": 117
-    },
-    {
-      "id": "NHTSA-26V577000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford F-150 Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles.The stabilizer rod fasteners may not have been tightened properly during manufacturing, which can allow the rod to shift out of position. 17 vehicles…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "F-150",
-      "date": "2026-09-09",
-      "units": 17,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V577000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V577-7489.pdf",
-      "score": 105
-    },
-    {
-      "id": "NHTSA-26V582000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford Mustang Mach E Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2023-2025 Mustang Mache E vehicles that received a new Battery Energy Control Module (BECM) during a prior repair. The battery energy control module software may display…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "Mustang Mach E",
-      "date": "2026-09-09",
-      "units": 86,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V582000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V582-7531.pdf",
-      "score": 105
-    },
-    {
-      "id": "NHTSA-26E063000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford Battery Energy Control Module Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain Battery Energy Control Modules (BECM) with part numbers PZ98-10B687-K* and PZ98-14C197-K*. The battery energy control module software may cause an incorrect state of…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "Battery Energy Control Module",
-      "date": "2026-09-09",
-      "units": 83,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E063000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E063-9353.pdf",
-      "score": 105
-    },
-    {
-      "id": "NHTSA-26V576000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford F-150 Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles. Incorrect rear axle tail bearings may have been installed, which can result in rear wheel lock-up or driveshaft separation. 37 vehicles or units may…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "F-150",
-      "date": "2026-09-09",
-      "units": 37,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V576000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V576-1003.pdf",
-      "score": 105
+      "score": 109
     },
     {
       "id": "NHTSA-26V528000",
@@ -561,6 +493,74 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/FJTJBSI-Recalls-Six-Drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 98
+    },
+    {
+      "id": "NHTSA-26V577000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford F-150 Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles.The stabilizer rod fasteners may not have been tightened properly during manufacturing, which can allow the rod to shift out of position. 17 vehicles…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "F-150",
+      "date": "2026-09-09",
+      "units": 17,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V577000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V577-7489.pdf",
+      "score": 97
+    },
+    {
+      "id": "NHTSA-26V582000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford Mustang Mach E Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2023-2025 Mustang Mache E vehicles that received a new Battery Energy Control Module (BECM) during a prior repair. The battery energy control module software may display…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "Mustang Mach E",
+      "date": "2026-09-09",
+      "units": 86,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V582000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V582-7531.pdf",
+      "score": 97
+    },
+    {
+      "id": "NHTSA-26E063000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford Battery Energy Control Module Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain Battery Energy Control Modules (BECM) with part numbers PZ98-10B687-K* and PZ98-14C197-K*. The battery energy control module software may cause an incorrect state of…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "Battery Energy Control Module",
+      "date": "2026-09-09",
+      "units": 83,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26E063000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E063-9353.pdf",
+      "score": 97
+    },
+    {
+      "id": "NHTSA-26V576000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford F-150 Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles. Incorrect rear axle tail bearings may have been installed, which can result in rear wheel lock-up or driveshaft separation. 37 vehicles or units may…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "F-150",
+      "date": "2026-09-09",
+      "units": 37,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V576000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V576-1003.pdf",
+      "score": 97
     },
     {
       "id": "CPSC-10913-cooluli-recalls-10-liter-and-15-liter-minifridges-due-to-fire-and-burn",
@@ -997,22 +997,6 @@
       "score": 75
     },
     {
-      "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Foods Alive Moringa Leaf Powder Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "Foods Alive",
-      "company": "Foods Alive Inc.",
-      "product": "Moringa Leaf Powder",
-      "date": "2026-09-04",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
-      "score": 75
-    },
-    {
       "id": "CPSC-10936-workbless-pressure-washers-recalled-due-to-risk-of-serious-injury-or-d",
       "source": "CPSC",
       "category": "consumer",
@@ -1064,23 +1048,6 @@
       "score": 73
     },
     {
-      "id": "NHTSA-26V558000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Tesla Model Y Vehicles Recalled",
-      "reason": "Tesla, Inc. (Tesla) is recalling certain 2026 Model Y vehicles. One or more front suspension lateral link fasteners may not have been properly tightened, allowing the lateral link to loosen or separate from the…",
-      "brand": "Tesla",
-      "company": "Tesla, Inc.",
-      "product": "Model Y",
-      "date": "2026-08-31",
-      "units": 19,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V558000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V558-2943.pdf",
-      "score": 73
-    },
-    {
       "id": "CPSC-10964-haba-usa-recalls-rainbow-rattle-grasping-and-teething-toys-due-to-risk",
       "source": "CPSC",
       "category": "consumer",
@@ -1112,23 +1079,6 @@
       "majorBrand": true,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/b-braun-medical-inc-issues-voluntary-nationwide-recall-lactated-ringers-injection-1l-e7500-due",
       "score": 73
-    },
-    {
-      "id": "NHTSA-26V575000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Can-Am Vehicles Recalled",
-      "reason": "Bombardier Recreational Products, Inc. (BRP) is recalling certain 2025-2026 Can-Am Origin, Can-Am Pulse, 2025-2027 Can-Am Canyon, 2024-2027 Can-Am Spyder RT, and Can-Am Spyder F3 motorcycles equipped with a touchscreen…",
-      "brand": "Can-Am",
-      "company": "Bombardier Recreational Products, Inc.",
-      "product": "Origin, Pulse, Spyder F3, Canyon, Spyder Rt",
-      "date": "2026-09-07",
-      "units": 14014,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V575000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V575-4054.pdf",
-      "score": 72
     },
     {
       "id": "CPSC-10938-shein-distribution-corporation-recalls-spiral-toys-due-to-risk-of-seri",
@@ -1213,22 +1163,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Steelite-Pressure-Washers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Shock-and-Electrocution-Hazards-Sold-on-Amazon-by-Longer-3D",
       "score": 71
-    },
-    {
-      "id": "FDA-2026-09-13-centric-compounding-compounded-glutathione-200-mg-ml-30-ml-multidose-v",
-      "source": "FDA",
-      "category": "health",
-      "title": "Centric Compounding Compounded Glutathione 200 mg/mL 30 mL multidose vial; Myer’s Cocktail 30 mL……",
-      "reason": "Elevated Endotoxin level",
-      "brand": "Centric Compounding",
-      "company": "Centric Compounding LLC",
-      "product": "Compounded Glutathione 200 mg/mL 30 mL multidose vial; Myer’s Cocktail 30 mL multidose vial; Tri-Immune Boost 30 mL multidose vial",
-      "date": "2026-09-13",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/centric-compounding-issues-nationwide-recall-glutathione-myers-cocktail-and-tri-immune-boost-due",
-      "score": 70
     },
     {
       "id": "CPSC-10915-southern-telecom-recalls-brookstone-branded-tabletop-fire-pits-due-to-",
@@ -1401,6 +1335,38 @@
       "score": 65
     },
     {
+      "id": "FDA-2026-09-13-centric-compounding-compounded-glutathione-200-mg-ml-30-ml-multidose-v",
+      "source": "FDA",
+      "category": "health",
+      "title": "Centric Compounding Compounded Glutathione 200 mg/mL 30 mL multidose vial; Myer’s Cocktail 30 mL……",
+      "reason": "Elevated Endotoxin level",
+      "brand": "Centric Compounding",
+      "company": "Centric Compounding LLC",
+      "product": "Compounded Glutathione 200 mg/mL 30 mL multidose vial; Myer’s Cocktail 30 mL multidose vial; Tri-Immune Boost 30 mL multidose vial",
+      "date": "2026-09-13",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/centric-compounding-issues-nationwide-recall-glutathione-myers-cocktail-and-tri-immune-boost-due",
+      "score": 64
+    },
+    {
+      "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Foods Alive Moringa Leaf Powder Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "Foods Alive",
+      "company": "Foods Alive Inc.",
+      "product": "Moringa Leaf Powder",
+      "date": "2026-09-04",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
+      "score": 63
+    },
+    {
       "id": "CPSC-10945-gihnjsi-squeezy-dumplings-toys-recalled-due-to-serious-ingestion-choki",
       "source": "CPSC",
       "category": "consumer",
@@ -1415,6 +1381,23 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/GIHNJSI-Squeezy-Dumplings-Toys-Recalled-Due-to-Serious-Ingestion-Choking-and-Obstruction-Hazards-Sold-on-Amazon-by-Chenyuanhui",
+      "score": 63
+    },
+    {
+      "id": "NHTSA-26V558000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Tesla Model Y Vehicles Recalled",
+      "reason": "Tesla, Inc. (Tesla) is recalling certain 2026 Model Y vehicles. One or more front suspension lateral link fasteners may not have been properly tightened, allowing the lateral link to loosen or separate from the…",
+      "brand": "Tesla",
+      "company": "Tesla, Inc.",
+      "product": "Model Y",
+      "date": "2026-08-31",
+      "units": 19,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V558000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V558-2943.pdf",
       "score": 63
     },
     {
@@ -1582,21 +1565,21 @@
       "score": 63
     },
     {
-      "id": "NHTSA-26V583000",
+      "id": "NHTSA-26V575000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Freightliner Vehicles Recalled",
-      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain 2020-2023 Freightliner Cascadia and 2022 Western Star 49X vehicles previously repaired incorrectly under recall numbers 23V073 or 22V817. The brake…",
-      "brand": "Freightliner",
-      "company": "Daimler Trucks North America, LLC",
-      "product": "Cascadia, 49X",
-      "date": "2026-09-09",
-      "units": 2404,
+      "title": "Can-Am Vehicles Recalled",
+      "reason": "Bombardier Recreational Products, Inc. (BRP) is recalling certain 2025-2026 Can-Am Origin, Can-Am Pulse, 2025-2027 Can-Am Canyon, 2024-2027 Can-Am Spyder RT, and Can-Am Spyder F3 motorcycles equipped with a touchscreen…",
+      "brand": "Can-Am",
+      "company": "Bombardier Recreational Products, Inc.",
+      "product": "Origin, Pulse, Spyder F3, Canyon, Spyder Rt",
+      "date": "2026-09-07",
+      "units": 14014,
       "pet": false,
       "majorBrand": false,
-      "campaign": "26V583000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V583-2664.pdf",
-      "score": 62
+      "campaign": "26V575000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V575-4054.pdf",
+      "score": 60
     },
     {
       "id": "CPSC-10949-adult-portable-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
@@ -1854,6 +1837,23 @@
       "score": 55
     },
     {
+      "id": "NHTSA-26V583000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Freightliner Vehicles Recalled",
+      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain 2020-2023 Freightliner Cascadia and 2022 Western Star 49X vehicles previously repaired incorrectly under recall numbers 23V073 or 22V817. The brake…",
+      "brand": "Freightliner",
+      "company": "Daimler Trucks North America, LLC",
+      "product": "Cascadia, 49X",
+      "date": "2026-09-09",
+      "units": 2404,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V583000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V583-2664.pdf",
+      "score": 54
+    },
+    {
       "id": "CPSC-10948-audio-partnership-recalls-cambridge-audio-yoyo-m-portable-bluetooth-sp",
       "source": "CPSC",
       "category": "consumer",
@@ -1938,22 +1938,6 @@
       "score": 50
     },
     {
-      "id": "USDA-2026-09-09-el-eden-import-distributor-corp-recalls-ineligible-pork-cracklings-pro",
-      "source": "USDA",
-      "category": "food",
-      "title": "El Eden Import Distributor Corp Recalls Ineligible Pork Cracklings Products Imported from The Republic…",
-      "reason": "Import Violation",
-      "brand": "",
-      "company": "",
-      "product": "",
-      "date": "2026-09-09",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/el-eden-import-distributor-corp-recalls-ineligible-pork-cracklings-products-imported",
-      "score": 50
-    },
-    {
       "id": "USDA-2026-09-06-prime-line-distributors-inc-and-ferrarini-usa-inc-recall-imported-read",
       "source": "USDA",
       "category": "food",
@@ -2035,6 +2019,23 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/MONDRAKER-USA-Recalls-Mountain-Bicycles-Equipped-with-ONOFF-S9-Carbon-MTB-Handlebars-Due-to-Risk-of-Serious-Injury-or-Death-from-Fall-Hazard",
+      "score": 46
+    },
+    {
+      "id": "CPSC-10941-nanjing-wu-hai-smart-home-appliance-store-recalls-alanca-6-drawer-dres",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Nanjing Wu Hai Smart Home Appliance Store Recalls Alanca 6-Drawer Dressers Due to Risk of Serious…",
+      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
+      "brand": "",
+      "company": "",
+      "retailers": "Nanjing Wu Hai Smart Home Appliance Store, of China, Sold Online At: Wayfair.com from April 2025 through June 2026 for between $206 and $240.",
+      "product": "Alanca 6-Drawer Dressers",
+      "date": "2026-09-03",
+      "units": 261,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/Nanjing-Wu-Hai-Smart-Home-Appliance-Store-Recalls-Alanca-6-Drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 46
     }
   ]
