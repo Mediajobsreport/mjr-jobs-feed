@@ -5684,166 +5684,166 @@ def wbd_phenom(src):
 
 
 def gray_direct(src):
-    """Gray Media: enumerate its UKG Pro board with a real browser.
+    """Gray Media: enumerate the public UKG Pro board through its JSON endpoint.
 
-    Gray's UKG listing returns an "unsupported browser" shell to plain HTTP
-    clients, so anchor crawling sees zero opportunities.  A Chromium session
-    is used only to enumerate opportunity UUIDs from the rendered board and
-    its JSON/XHR traffic.  Each discovered opportunity is then fetched through
-    the normal request/detail parser so dates, descriptions, locations and
-    canonical apply links continue to use the project's shared rules.
+    Gray's board shell is browser/JavaScript dependent, so ordinary GET crawling
+    can legitimately see zero links. UKG Pro itself loads the public openings by
+    POSTing to JobBoardView/LoadSearchResults. Enumerate that endpoint directly,
+    then fetch each canonical OpportunityDetail page for the employer's full text.
     """
-    tenant = "GRA1017GRYT"
-    board = "ae441110-89bd-444d-8ad2-b76c7b9db7a9"
-    base = "https://recruiting.ultipro.com"
-    board_root = f"{base}/{tenant}/JobBoard/{board}"
-    start = board_root + "/?o=postedDateDesc&q=&w=&wc=&we=&wpst="
+    gray_board = (
+        "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/"
+        "ae441110-89bd-444d-8ad2-b76c7b9db7a9"
+    )
+    parts = _ukg_parts(gray_board + "/")
+    if not parts:
+        return []
+    base, tenant, board = parts
+    endpoint = f"{gray_board}/JobBoardView/LoadSearchResults"
+    headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Origin": base,
+        "Referer": gray_board + "/?q=&o=postedDateDesc&w=&wc=&we=&wpst=",
+        "User-Agent": "Mozilla/5.0 (compatible; MJR-Jobs-Feed/1.0; +https://www.mediajobsreport.com)",
+    }
 
-    # If the source row already contains the current Gray UKG board, preserve
-    # it; otherwise use the verified public board above.  Never follow gray.com
-    # (the unrelated construction company).
-    parts = _ukg_parts(src.get("URL", ""))
-    if parts and parts[1].lower() == tenant.lower():
-        base, tenant, board = parts
-        board_root = f"{base}/{tenant}/JobBoard/{board}"
-        start = board_root + "/?o=postedDateDesc&q=&w=&wc=&we=&wpst="
+    def body(skip, top=50):
+        return {
+            "opportunitySearch": {
+                "Top": top,
+                "Skip": skip,
+                "QueryString": "",
+                "OrderBy": [{
+                    "Value": "postedDateDesc",
+                    "PropertyName": "PostedDate",
+                    "Ascending": False,
+                }],
+                "Filters": [
+                    {"t": "TermsSearchFilterDto", "fieldName": 4, "extra": None, "values": []},
+                    {"t": "TermsSearchFilterDto", "fieldName": 5, "extra": None, "values": []},
+                    {"t": "TermsSearchFilterDto", "fieldName": 6, "extra": None, "values": []},
+                ],
+            },
+            "matchCriteria": {
+                "PreferredJobs": [], "Educations": [],
+                "LicenseAndCertifications": [], "Skills": [],
+                "hasNoLicenses": False, "SkippedSkills": [],
+            },
+        }
 
-    opportunity_ids = set()
-    uuid_re = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.I)
-
-    def harvest_text(text):
-        raw = html.unescape(str(text or "")).replace("\\/", "/")
-        # Strong signal: UUID appears as an opportunityId value or inside an
-        # OpportunityDetail URL.  This avoids treating unrelated telemetry IDs
-        # as jobs.
-        for m in re.finditer(
-            r"(?:opportunityId|OpportunityId)(?:%3D|=|[\\\"']\\s*:\\s*[\\\"'])+([0-9a-f-]{36})",
-            raw,
-            re.I,
-        ):
-            oid = m.group(1)
-            if uuid_re.fullmatch(oid):
-                opportunity_ids.add(oid.lower())
-        for m in re.finditer(
-            r"OpportunityDetail[^\\\"'<>\\s]{0,500}?opportunityId(?:%3D|=)([0-9a-f-]{36})",
-            raw,
-            re.I,
-        ):
-            oid = m.group(1)
-            if uuid_re.fullmatch(oid):
-                opportunity_ids.add(oid.lower())
-
-    # Gray's listing is client-rendered.  Capture both DOM content and XHR JSON
-    # while repeatedly scrolling/clicking load-more controls.  Network response
-    # bodies are harvested because UKG often keeps opportunity IDs out of the
-    # initial HTML entirely.
-    if sync_playwright is not None:
+    rows = []
+    seen = set()
+    skip = 0
+    diag = []
+    # The board currently has hundreds of openings. Page rather than requesting
+    # one giant response so UKG tenant limits cannot silently truncate results.
+    for page_no in range(100):
         try:
-            with sync_playwright() as pw:
-                browser = pw.chromium.launch(headless=True)
-                page = browser.new_page(
-                    viewport={"width": 1440, "height": 1100},
-                    user_agent=(
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/131.0.0.0 Safari/537.36"
-                    ),
-                )
-
-                def on_response(resp):
-                    try:
-                        ct = (resp.headers.get("content-type") or "").lower()
-                        u = resp.url.lower()
-                        if (
-                            "json" in ct
-                            or "opportun" in u
-                            or "jobboard" in u
-                            or "recruit" in u
-                        ):
-                            harvest_text(resp.text())
-                    except Exception:
-                        pass
-
-                page.on("response", on_response)
-                page.goto(start, wait_until="domcontentloaded", timeout=90000)
-                try:
-                    page.wait_for_load_state("networkidle", timeout=30000)
-                except Exception:
-                    pass
-
-                stable = 0
-                last_count = -1
-                for _ in range(90):
-                    try:
-                        harvest_text(page.content())
-                    except Exception:
-                        pass
-
-                    # UKG variants use different labels for incremental results.
-                    clicked = False
-                    for label in (
-                        "Load More", "Load more", "Show More", "Show more",
-                        "More Jobs", "More jobs", "View More", "View more",
-                    ):
-                        try:
-                            loc = page.get_by_text(label, exact=False)
-                            if loc.count() and loc.first.is_visible():
-                                loc.first.click(timeout=2500)
-                                clicked = True
-                                break
-                        except Exception:
-                            pass
-
-                    try:
-                        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                    except Exception:
-                        pass
-                    page.wait_for_timeout(900 if clicked else 650)
-
-                    if len(opportunity_ids) == last_count:
-                        stable += 1
-                    else:
-                        stable = 0
-                        last_count = len(opportunity_ids)
-                    # Give virtual/infinite lists plenty of time, but stop once
-                    # repeated scrolls no longer reveal jobs.
-                    if stable >= 12:
-                        break
-
-                try:
-                    harvest_text(page.content())
-                except Exception:
-                    pass
-                browser.close()
+            r = req("POST", endpoint, headers=headers, json=body(skip))
+            payload = r.json()
         except Exception as e:
-            print(f"Gray browser enumeration warning: {type(e).__name__}: {e}")
+            diag.append(f"LIST_ERROR skip={skip} {type(e).__name__}: {e}")
+            break
 
-    # If UKG changes its browser implementation, retain the generic UKG
-    # enumerator as a safe secondary path.  It may still work when server-side
-    # HTML is restored.
-    if not opportunity_ids:
-        try:
-            fallback = ukg({**src, "URL": start})
-            if fallback:
-                return fallback
-        except Exception:
-            pass
+        opportunities = (
+            payload.get("opportunities")
+            or payload.get("Opportunities")
+            or payload.get("results")
+            or payload.get("Results")
+            or []
+        ) if isinstance(payload, dict) else []
+        if not isinstance(opportunities, list):
+            opportunities = []
+        diag.append(f"LIST skip={skip} count={len(opportunities)}")
+        if not opportunities:
+            break
+
+        added = 0
+        for row in opportunities:
+            if not isinstance(row, dict):
+                continue
+            oid = clean(str(
+                row.get("Id") or row.get("id") or
+                row.get("OpportunityId") or row.get("opportunityId") or ""
+            ))
+            if not re.fullmatch(r"[0-9a-f-]{36}", oid, re.I) or oid.lower() in seen:
+                continue
+            seen.add(oid.lower())
+            rows.append(row)
+            added += 1
+        if not added:
+            break
+        skip += len(opportunities)
+        if len(opportunities) < 50:
+            break
 
     out = []
-    seen_ids = set()
-    for oid in sorted(opportunity_ids):
-        url = f"{board_root}/OpportunityDetail?opportunityId={oid}"
-        try:
-            rr = req("GET", url)
-            final_url = str(getattr(rr, "url", "") or url)
-            j = _ukg_detail(src, final_url, rr.text)
-            if j and j.id not in seen_ids:
-                seen_ids.add(j.id)
-                out.append(j)
-        except Exception:
+    out_ids = set()
+    for row in rows:
+        oid = clean(str(
+            row.get("Id") or row.get("id") or
+            row.get("OpportunityId") or row.get("opportunityId") or ""
+        ))
+        detail_url = f"{gray_board}/OpportunityDetail?opportunityId={oid}"
+
+        # Reject old regular postings before making a detail request. Internship
+        # retention is decided later once title/type are known.
+        list_pd = pdate(
+            row.get("PostedDate") or row.get("postedDate") or
+            row.get("DatePosted") or row.get("datePosted")
+        )
+        if list_pd and list_pd < TODAY - timedelta(days=INTERNSHIP_LIFE_DAYS):
             continue
 
-    print(f"Gray Media UKG: discovered {len(opportunity_ids)} opportunity IDs; accepted {len(out)} jobs")
+        j = None
+        try:
+            rr = req("GET", detail_url, headers={"Referer": gray_board + "/"})
+            j = _ukg_detail(src, detail_url, rr.text)
+        except Exception as e:
+            diag.append(f"DETAIL_ERROR {oid} {type(e).__name__}: {e}")
+
+        # Some UKG tenants serve a thin browser shell on detail GETs. The list
+        # API still contains authoritative public metadata, so retain a posting
+        # when it supplies a real title, date, and meaningful description.
+        if not j:
+            title = clean(str(row.get("Title") or row.get("title") or ""))
+            pd = list_pd
+            raw_desc = str(
+                row.get("Description") or row.get("description") or
+                row.get("BriefDescription") or row.get("briefDescription") or ""
+            )
+            desc = format_description(raw_desc)
+            if title and pd and len(strip_html(desc)) >= 120:
+                jt = jobtype(title, strip_html(desc))
+                if pd >= feed_cutoff(jt):
+                    loc = clean(str(
+                        row.get("Location") or row.get("location") or
+                        row.get("LocationName") or row.get("locationName") or ""
+                    ))
+                    jid = clean(str(
+                        row.get("RequisitionNumber") or row.get("requisitionNumber") or oid
+                    ))
+                    j = Job(
+                        jid, title, src["Company"], desc, pd, jt,
+                        category(title, desc, src["Industry"], src["Company"]),
+                        detail_url, src["URL"], "https://graymedia.com/", "",
+                        normalize_work_arrangement(desc, loc), loc, "",
+                        infer_country(loc, src["Company"], desc),
+                    )
+
+        if j and j.id not in out_ids:
+            # _ukg_detail uses the broad discovery CUTOFF. Enforce MJR's actual
+            # 14-day regular / 30-day internship retention here as well.
+            if j.date and j.date >= feed_cutoff(j.jobtype):
+                out_ids.add(j.id)
+                out.append(j)
+
+    diag.append(f"ENUMERATED={len(rows)} ACCEPTED={len(out)}")
+    try:
+        Path("mjr-gray-diagnostic.txt").write_text("\n".join(diag) + "\n", encoding="utf-8")
+    except Exception:
+        pass
     return out
 
 
