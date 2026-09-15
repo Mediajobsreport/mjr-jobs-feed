@@ -8212,6 +8212,20 @@ MJR_TEST_COMPANIES = {
     for x in os.getenv("MJR_TEST_COMPANIES", "").split(",")
     if clean(x)
 }
+
+# v82: Canonicalize targeted-test names immediately, before main() reads or
+# filters the source CSV.  Washington Post tests previously disappeared before
+# dispatch because aliases were normalized too late in main().
+_WASHINGTON_POST_ALIASES = {
+    "washington post",
+    "the washington post",
+    "washington post company",
+    "the washington post company",
+}
+if MJR_TEST_COMPANIES & _WASHINGTON_POST_ALIASES:
+    MJR_TEST_COMPANIES.difference_update(_WASHINGTON_POST_ALIASES)
+    MJR_TEST_COMPANIES.add("washington post")
+
 MJR_REQUEST_DELAY_MIN = float(os.getenv("MJR_REQUEST_DELAY_MIN", "0.20"))
 MJR_REQUEST_DELAY_MAX = float(os.getenv("MJR_REQUEST_DELAY_MAX", "0.65"))
 MJR_DOMAIN_REQUEST_CAP = int(os.getenv("MJR_DOMAIN_REQUEST_CAP", "175"))
@@ -11294,6 +11308,29 @@ def main():
         encoding="utf-8-sig",
     ) as f:
         sources = list(csv.DictReader(f))
+
+    # v82: Washington Post must exist in the source list BEFORE targeted-test
+    # filtering.  Normalize any existing aliases, then inject the verified
+    # official careers surface when the shared CSV does not yet contain it.
+    wp_aliases = _WASHINGTON_POST_ALIASES | {"washington post"}
+    for row in sources:
+        if clean(row.get("Company", "")).lower() in wp_aliases:
+            row["Company"] = "Washington Post"
+            row["Industry"] = row.get("Industry") or "Newspaper / Digital Media"
+            row["ATS"] = "Official Direct"
+            row["URL"] = "https://company.washingtonpost.com/careers?category_name=careercenter"
+            row["Active"] = "True"
+
+    if "washington post" in MJR_TEST_COMPANIES and not any(
+        clean(r.get("Company", "")).lower() == "washington post" for r in sources
+    ):
+        sources.append({
+            "Company": "Washington Post",
+            "Industry": "Newspaper / Digital Media",
+            "ATS": "Official Direct",
+            "URL": "https://company.washingtonpost.com/careers?category_name=careercenter",
+            "Active": "True",
+        })
 
     # Curtis Media Group: normalize legacy/source-list aliases before targeted
     # filtering so Curtis Media, Curtis Media Company, and Curtis Media Group
