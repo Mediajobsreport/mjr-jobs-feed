@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-15T00:39:14.233Z",
+  "generated": "2026-09-15T04:32:27.157Z",
   "version": "2.4",
   "newestDate": "2026-09-13",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1035
+      "count": 1052
     },
     "CPSC": {
       "ok": true,
@@ -1401,22 +1401,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1430,6 +1414,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -2002,22 +2002,6 @@
       "score": 45
     },
     {
-      "id": "FDA-2026-08-14-the-hampton-grocer-granola-the-hampton-grocer-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "The Hampton Grocer Granola Recalled",
-      "reason": "Potential to be Contaminated with Salmonella",
-      "brand": "The Hampton Grocer",
-      "company": "The Hampton Grocer, Inc.",
-      "product": "Granola",
-      "date": "2026-08-14",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hampton-grocers-inc-recalls-its-8-ounce-packages-lacnola-lactation-granola-because-possible-health",
-      "score": 45
-    },
-    {
       "id": "FDA-2026-08-14-salata-salad-dressing-salata-dressings-llc",
       "source": "FDA",
       "category": "food",
@@ -2031,6 +2015,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 45
+    },
+    {
+      "id": "FDA-2026-08-14-the-hampton-grocer-granola-the-hampton-grocer-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "The Hampton Grocer Granola Recalled",
+      "reason": "Potential to be Contaminated with Salmonella",
+      "brand": "The Hampton Grocer",
+      "company": "The Hampton Grocer, Inc.",
+      "product": "Granola",
+      "date": "2026-08-14",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hampton-grocers-inc-recalls-its-8-ounce-packages-lacnola-lactation-granola-because-possible-health",
       "score": 45
     }
   ]
