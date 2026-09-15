@@ -400,6 +400,14 @@ def category(title, desc, industry, company):
     if re.search(r"\b(intern|internship|fellow|fellowship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
         return "Internships"
 
+    # Lee Enterprises newspaper production/plant operations are Business Office
+    # functions for MJR rather than editorial Journalism roles.
+    if c == "lee enterprises" and re.search(
+        r"\b(machine operator|packaging inserter|inserter|press operator|press trainee|printing press)\b",
+        t,
+    ):
+        return "Business Office"
+
     # Hope Media Group is fundamentally a radio broadcaster (KSBJ, WayFM,
     # Vida Unida, Worship 24/7, NGEN, etc.). Keep its ordinary media/platform
     # roles in Radio unless the title explicitly identifies television/video
@@ -11513,16 +11521,70 @@ def lee_enterprises_direct(src):
                 if not pd or pd < CUTOFF: continue
                 main=soup.find("main") or soup.find("article") or soup; desc=format_description(str(main))
                 if len(clean(BeautifulSoup(desc,"html.parser").get_text(" "))) < 100: continue
-                loc=""
-                mm=re.search(r"([A-Za-z .'-]+,\s*[A-Z]{2})(?:\s|$)", text)
-                if mm: loc=clean(mm.group(1))
-                city=state=""
-                lm=re.match(r"^(.+?),\s*([A-Z]{2})(?:\b|,)",loc) if loc else None
-                if lm: city,state=clean(lm.group(1)),lm.group(2).upper()
+                # Dayforce places the authoritative location immediately after
+                # the requisition number and before "Job Description".  Capture
+                # that block first; it is much safer than searching the whole
+                # description for an arbitrary City, ST reference.
+                loc_block = ""
+                mm = re.search(r"Req\s*#\s*\d+\s*(.*?)\s*Job Description\b", text, re.I | re.S)
+                if mm:
+                    loc_block = clean(mm.group(1)).replace("•", " | ")
+
+                state_names = {
+                    "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR","California":"CA",
+                    "Colorado":"CO","Connecticut":"CT","Delaware":"DE","Florida":"FL","Georgia":"GA",
+                    "Hawaii":"HI","Idaho":"ID","Illinois":"IL","Indiana":"IN","Iowa":"IA","Kansas":"KS",
+                    "Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD","Massachusetts":"MA",
+                    "Michigan":"MI","Minnesota":"MN","Mississippi":"MS","Missouri":"MO","Montana":"MT",
+                    "Nebraska":"NE","Nevada":"NV","New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM",
+                    "New York":"NY","North Carolina":"NC","North Dakota":"ND","Ohio":"OH","Oklahoma":"OK",
+                    "Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
+                    "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Vermont":"VT",
+                    "Virginia":"VA","Washington":"WA","West Virginia":"WV","Wisconsin":"WI","Wyoming":"WY",
+                    "District of Columbia":"DC"
+                }
+                city = state = ""
+                loc = loc_block
+
+                # Prefer a concrete city/state from the Dayforce location block.
+                # Handles "Billings, MT, USA", "Bryan, Texas, United States of
+                # America", street-address forms, and multi-location postings.
+                city_state = re.search(r"(?:^|\||\s)([A-Za-z][A-Za-z .'-]*?),\s*([A-Z]{2})\b", loc_block)
+                if city_state:
+                    city, state = clean(city_state.group(1)), city_state.group(2).upper()
+                    # Strip a leading street address when Dayforce supplies one.
+                    if re.match(r"^\d+\s", city):
+                        parts = [clean(x) for x in city.split(",") if clean(x)]
+                        city = parts[-1] if parts else city
+                else:
+                    for state_name, abbr in state_names.items():
+                        mloc = re.search(r"(?:^|,\s*)([A-Za-z][A-Za-z .'-]*?),\s*" + re.escape(state_name) + r"(?:,|\b)", loc_block, re.I)
+                        if mloc:
+                            city, state = clean(mloc.group(1)), abbr
+                            # Address + city can precede a full state name; take
+                            # the last comma-delimited locality component.
+                            if "," in city:
+                                city = clean(city.rsplit(",", 1)[-1])
+                            break
+
+                # If a title itself supplies a clearer city/state and Dayforce
+                # did not provide one, use that explicit employer-provided value.
+                if not state:
+                    tm = re.search(r"[-–—]\s*([A-Za-z .'-]+),\s*([A-Z]{2})\b", title)
+                    if tm:
+                        city, state = clean(tm.group(1)), tm.group(2).upper()
+
+                # State-only multi-market postings (for example Publisher /
+                # Market President) remain valid US locations even without one
+                # canonical city.
+                if not state:
+                    sm = re.search(r"\b([A-Z]{2}),?\s*(?:USA|United States)", loc_block)
+                    if sm:
+                        state = sm.group(1).upper()
                 jm=re.search(r"/jobs/(\d+)",url); jid=jm.group(1) if jm else hashlib.sha1(url.encode()).hexdigest()[:16]
                 if jid in seen: continue
                 seen.add(jid)
-                out.append(Job(jid,title,src["Company"],desc,pd,jobtype(title,text),category(title,text,src["Industry"],src["Company"]),url,board,board,"",normalize_work_arrangement(text,loc,title),city or loc,state,infer_country(loc,src["Company"],text)))
+                out.append(Job(jid,title,src["Company"],desc,pd,jobtype(title,text),category(title,text,src["Industry"],src["Company"]),url,board,board,"",normalize_work_arrangement(text,loc,title),city,state,"US"))
             browser.close()
     except Exception as exc:
         network_log.append(f"browser_error={type(exc).__name__}: {exc}")
