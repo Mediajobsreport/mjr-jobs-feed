@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-15T12:35:55.388Z",
+  "generated": "2026-09-16T00:36:27.924Z",
   "version": "2.4",
-  "newestDate": "2026-09-13",
+  "newestDate": "2026-09-15",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1035
+      "count": 1055
     },
     "CPSC": {
       "ok": true,
@@ -781,6 +781,22 @@
       "score": 90
     },
     {
+      "id": "FDA-2026-09-15-so-delicious-dairy-free-salted-caramel-cluster-non-dairy-frozen-desser",
+      "source": "FDA",
+      "category": "food",
+      "title": "So Delicious Dairy Free Salted Caramel Cluster Non-Dairy Frozen Dessert pints Recalled",
+      "reason": "Product may contain foreign objects such as small stones and other hard objects",
+      "brand": "So Delicious Dairy Free",
+      "company": "Danone USA",
+      "product": "Salted Caramel Cluster Non-Dairy Frozen Dessert pints",
+      "date": "2026-09-15",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/so-delicious-dairy-freer-issues-voluntary-recall-salted-caramel-cluster-non-dairy-frozen-dessert",
+      "score": 88
+    },
+    {
       "id": "CPSC-10968-sqt-recalls-lontcs-busy-boards-due-to-risk-of-serious-injury-from-lead",
       "source": "CPSC",
       "category": "consumer",
@@ -1165,6 +1181,38 @@
       "score": 71
     },
     {
+      "id": "FDA-2026-09-15-biq-fel-biq-fel-500ml-supplement-bottle-a-p-creations-llc",
+      "source": "FDA",
+      "category": "health",
+      "title": "biQ-FEL biQ-FEL 500mL supplement bottle Recalled",
+      "reason": "Product contains sildenafil and tadalafil",
+      "brand": "biQ-FEL",
+      "company": "A&P Creations LLC",
+      "product": "biQ-FEL 500mL supplement bottle",
+      "date": "2026-09-15",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-biq-fel-due-undeclared-sildenafil-and-tadalafil",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-09-15-x10-x10-natural-enhancement-supplement-a-p-creations-llc",
+      "source": "FDA",
+      "category": "health",
+      "title": "X10 X10 Natural Enhancement Supplement Recalled",
+      "reason": "Product contains sildenafil and tadalafil",
+      "brand": "X10",
+      "company": "A&P Creations LLC",
+      "product": "X10 Natural Enhancement Supplement",
+      "date": "2026-09-15",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ap-creations-llc-issues-nationwide-recall-x10-natural-enhancement-supplement-due-undeclared",
+      "score": 70
+    },
+    {
       "id": "CPSC-10915-southern-telecom-recalls-brookstone-branded-tabletop-fire-pits-due-to-",
       "source": "CPSC",
       "category": "consumer",
@@ -1363,7 +1411,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 63
     },
     {
@@ -1435,22 +1483,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1464,6 +1496,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/updated-omas-pride-voluntarily-recalls-one-lot-woof-complete-canine-chicken-recipe-6-lb-bag-because",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -1986,57 +2034,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/DUMOS-Nine-Drawer-Dressers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 48
-    },
-    {
-      "id": "CPSC-10908-kc-imports-and-exports-recalls-mini-laser-pointer-keychains-due-to-ris",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "KC Imports and Exports Recalls Mini Laser Pointer Keychains Due to Risk of Serious Injury or Death from…",
-      "reason": "The Mini Laser Pointer Keychains violate the mandatory safety standard for consumer products with button cell and coin batteries because the button batteries can be accessed easily by children, posing an ingestion…",
-      "brand": "",
-      "company": "",
-      "retailers": "Gas stations and discount stores nationwide and online at https://www.divaatheartsj.com/from June 2025 through June 2026 for about 42 cents per unit.",
-      "product": "Laser & LED Light Mini Laser Pointer Keychains",
-      "date": "2026-08-06",
-      "units": 9600,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/KC-Imports-and-Exports-Recalls-Mini-Laser-Pointer-Keychains-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Consumer-Products-with-Button-Cell-Batteries",
-      "score": 48
-    },
-    {
-      "id": "CPSC-10946-mondraker-usa-recalls-mountain-bicycles-equipped-with-onoff-s9-carbon-",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "MONDRAKER USA Recalls Mountain Bicycles Equipped with ONOFF S9 Carbon MTB Handlebars Due to Risk of…",
-      "reason": "The affected handlebars may crack or fracture during use, which can lead to loss of control, posing a risk of serious injury or death from fall hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold At: Evolucion Innovations, The Path Bike Shop and bicycle stores nationwide from December 2024 through June 2026 for about $5,000 to $12,000.",
-      "product": "Mondraker mountain bicycles equipped with ONOFF S9 Carbon MTB handlebars.",
-      "date": "2026-09-03",
-      "units": 177,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/MONDRAKER-USA-Recalls-Mountain-Bicycles-Equipped-with-ONOFF-S9-Carbon-MTB-Handlebars-Due-to-Risk-of-Serious-Injury-or-Death-from-Fall-Hazard",
-      "score": 46
-    },
-    {
-      "id": "CPSC-10941-nanjing-wu-hai-smart-home-appliance-store-recalls-alanca-6-drawer-dres",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Nanjing Wu Hai Smart Home Appliance Store Recalls Alanca 6-Drawer Dressers Due to Risk of Serious…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "",
-      "company": "",
-      "retailers": "Nanjing Wu Hai Smart Home Appliance Store, of China, Sold Online At: Wayfair.com from April 2025 through June 2026 for between $206 and $240.",
-      "product": "Alanca 6-Drawer Dressers",
-      "date": "2026-09-03",
-      "units": 261,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Nanjing-Wu-Hai-Smart-Home-Appliance-Store-Recalls-Alanca-6-Drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
-      "score": 46
     }
   ]
 }
