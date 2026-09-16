@@ -11472,7 +11472,13 @@ def leighton_media_direct(src):
             continue
         title = clean(node.get_text(" "))
         title = re.sub(r"^\[?button:\s*", "", title, flags=re.I).strip(" []")
-        if not title or title.lower() in {"open positions", "apply now"}:
+        # Ignore structural H4s used by the careers-page template.  In
+        # particular, the footer's "Locations" heading appears after the
+        # Winona market and was being counted as a sixth opening even though
+        # the live page currently contains only five real jobs.
+        if not title or title.lower() in {
+            "open positions", "apply now", "locations", "location"
+        }:
             continue
 
         parts = []
