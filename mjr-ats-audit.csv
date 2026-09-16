@@ -119,7 +119,7 @@ Stephens Media Group,Company Career Site,https://cherryfm.com/smg-jobs/,zero_or_
 Pamal Broadcasting,Company Career Site,https://www.pamal.com/jobs1/jobs/,zero_or_not_enumerable,0,
 Gray Television,Generic Structured,https://gray.tv/careers,zero_or_not_enumerable,0,
 Associated Press,Generic Structured,https://careers.ap.org/,zero_or_not_enumerable,0,
-Dow Jones,Official Direct,https://dowjones.jobs/,ok,86,enumerated_detail_urls=150; enumerated_detail_urls=150; north_america_detail_urls=95; foreign_urls_skipped=55; detail_http_ok=86; detail_http_error=9; jsonld_jobposting=86; date_found=86; fresh_dates=86; stale_dates=0; undated=0; parse_rejected=0
+Dow Jones,Official Direct,https://dowjones.jobs/,ok,85,enumerated_detail_urls=215; enumerated_detail_urls=215; north_america_detail_urls=137; foreign_urls_skipped=78; detail_http_ok=86; detail_http_error=51; jsonld_jobposting=86; date_found=86; fresh_dates=86; stale_dates=0; undated=0; parse_rejected=0
 TSMG,Lever,https://jobs.lever.co/tsmg,ok,1,voiceover_matches=1; stale_matches=0; rows_checked=98
 Filmless,SmartRecruiters,https://jobs.smartrecruiters.com/Filmless,zero_or_no_fresh_voiceover_jobs,0,voiceover_matches=0; stale_matches=1; rows_checked=6
 CrowdGen/Appen,Lever,https://jobs.lever.co/appen,no_qualifying_voiceover_titles,0,genuine_voiceover_titles=0; rows_checked=29; speech testing and validation excluded
