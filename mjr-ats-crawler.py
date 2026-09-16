@@ -11503,7 +11503,24 @@ def leighton_media_direct(src):
         # Leighton's application form accepts job and loc query parameters.
         # Build a job-specific official application URL when the page exposes
         # only the shared form URL.
-        if not apply_href or "?" not in apply_href:
+        # The page often links every opening to the same shared application
+        # form (for example, only ?hsLang=en).  A shared URL cannot be used as
+        # the job identity because the global URL de-duplicator would collapse
+        # different Leighton openings into one record.  Preserve any harmless
+        # existing query values, but always stamp the official form with this
+        # opening's job title and market unless those parameters are already
+        # present.
+        if apply_href:
+            ap = urlparse(apply_href)
+            aq = parse_qs(ap.query, keep_blank_values=True)
+            aq["job"] = [title]
+            aq["loc"] = [city]
+            flat_q = []
+            for qk, qvals in aq.items():
+                for qv in qvals:
+                    flat_q.append((qk, qv))
+            apply_href = urlunparse((ap.scheme, ap.netloc, ap.path, ap.params, urlencode(flat_q), ap.fragment))
+        else:
             apply_href = apply_base + "?" + urlencode({"job": title, "loc": city})
 
         key = apply_href.rstrip("/").lower()
