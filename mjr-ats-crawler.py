@@ -8333,6 +8333,12 @@ _TARGET_COMPANY_ALIASES = {
         "lee enterprises incorporated",
         "lee enterprises, incorporated",
     },
+    "leighton media": {
+        "leighton media",
+        "leighton enterprises",
+        "leighton enterprises inc",
+        "leighton enterprises inc.",
+    },
 }
 
 def _canonical_target_company(name):
@@ -11421,6 +11427,138 @@ def careeronestop_townsquare_test():
     return out
 
 
+def leighton_media_direct(src):
+    """Collect Leighton Media's official market-by-market careers page.
+
+    Leighton does not publish posting dates. For a newly discovered opening we
+    use MJR's first-seen date, then preserve that original date from the state
+    file on later crawls. This prevents an undated long-running opening from
+    being artificially refreshed every day.
+    """
+    board = "https://www.leighton.media/careers/open-positions/"
+    apply_base = "https://www.leighton.media/careers/employment-application/"
+    market_locations = {
+        "alexandria": ("Alexandria", "MN"),
+        "detroit lakes": ("Detroit Lakes", "MN"),
+        "fergus falls": ("Fergus Falls", "MN"),
+        "grand forks": ("Grand Forks", "ND"),
+        "perham": ("Perham", "MN"),
+        "st. cloud": ("St. Cloud", "MN"),
+        "st cloud": ("St. Cloud", "MN"),
+        "winona": ("Winona", "MN"),
+    }
+
+    try:
+        r = req("GET", board)
+        raw = r.text
+    except Exception:
+        _LAST_ENUMERATED["leighton media"] = 0
+        return []
+
+    soup = BeautifulSoup(raw, "html.parser")
+    state = load_state()
+    openings = []
+    current_market = ""
+
+    # The official page is organized as H3 market headings followed by H4 job
+    # headings. Capture each H4 until the next H4/H3, keeping only real jobs.
+    for node in soup.find_all(["h3", "h4"]):
+        if node.name == "h3":
+            label = clean(node.get_text(" "))
+            if label.lower() in market_locations:
+                current_market = label
+            continue
+        if not current_market:
+            continue
+        title = clean(node.get_text(" "))
+        title = re.sub(r"^\[?button:\s*", "", title, flags=re.I).strip(" []")
+        if not title or title.lower() in {"open positions", "apply now"}:
+            continue
+
+        parts = []
+        apply_href = ""
+        sib = node.find_next_sibling()
+        while sib is not None:
+            if getattr(sib, "name", None) in {"h3", "h4"}:
+                break
+            if hasattr(sib, "get_text"):
+                txt = clean(sib.get_text(" "))
+                if txt:
+                    parts.append(txt)
+                a = sib.find("a", href=True) if hasattr(sib, "find") else None
+                if a and "employment-application" in a.get("href", ""):
+                    apply_href = urljoin(board, a["href"])
+            sib = sib.find_next_sibling()
+
+        body = clean(" ".join(parts))
+        # Some templates render the title as a button wrapper and the detailed
+        # position name inside the body. Prefer the explicit Position field.
+        pm = re.search(r"\bPosition:\s*(.+?)(?=\s+Reports to:|\s+Leighton Media\b|$)", body, re.I)
+        if pm:
+            title = clean(pm.group(1))
+        if not body or "no open positions" in body.lower():
+            continue
+
+        city, st = market_locations[current_market.lower()]
+        # Leighton's application form accepts job and loc query parameters.
+        # Build a job-specific official application URL when the page exposes
+        # only the shared form URL.
+        if not apply_href or "?" not in apply_href:
+            apply_href = apply_base + "?" + urlencode({"job": title, "loc": city})
+
+        key = apply_href.rstrip("/").lower()
+        prior = state.get(key, {}).get("job", {}) if isinstance(state.get(key), dict) else {}
+        posted = None
+        try:
+            posted = date.fromisoformat(prior.get("date", ""))
+        except Exception:
+            posted = TODAY
+
+        jt = jobtype(title, body)
+        if "intern" in title.lower():
+            jt = "Internship"
+        if not posted or (TODAY - posted).days >= retention_days(jt):
+            continue
+
+        # Leighton is radio-first. Functional sales remains Sales & Marketing;
+        # promotions/event street-team work is Radio; internships stay Internships.
+        tl = title.lower()
+        if jt == "Internship":
+            cat = "Internships"
+        elif "media consultant" in tl or "sales" in tl or "account" in tl:
+            cat = "Sales & Marketing"
+        elif "promotion" in tl or "event" in tl or "on-air" in tl:
+            cat = "Radio"
+        else:
+            cat = category(title, body, "Radio", "Leighton Media")
+
+        desc = format_description(body)
+        jid = "leighton-" + hashlib.sha1((title + "|" + city).lower().encode()).hexdigest()[:14]
+        openings.append(Job(
+            jid, title, "Leighton Media", desc, posted, jt, cat,
+            apply_href, board, board, "",
+            normalize_work_arrangement(body, f"{city}, {st}", title),
+            city, st, "US",
+        ))
+
+    # De-duplicate by stable title+market identity.
+    dedup = {}
+    for j in openings:
+        dedup[(j.title.lower(), j.city.lower(), j.state.lower())] = j
+    out = list(dedup.values())
+    _LAST_ENUMERATED["leighton media"] = len(out)
+    try:
+        Path("mjr-leighton-diagnostic.txt").write_text(
+            "Leighton Media official careers diagnostic\n"
+            f"openings_collected={len(out)}\n" +
+            "\n".join(f"{j.city}, {j.state} | {j.title} | {j.category} | {j.date}" for j in out),
+            encoding="utf-8",
+        )
+    except Exception:
+        pass
+    return out
+
+
 def lee_enterprises_direct(src):
     """Lee Enterprises collector for its current Dayforce candidate portal."""
     board = "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL"
@@ -12051,6 +12189,27 @@ def main():
             "Active": "True",
         })
 
+    # Leighton Media: official careers page is a direct market-by-market board.
+    # Normalize corporate variants and inject it before the targeted-test gate.
+    for row in sources:
+        if _canonical_target_company(row.get("Company", "")) == "leighton media":
+            row["Company"] = "Leighton Media"
+            row["Industry"] = row.get("Industry") or "Radio"
+            row["ATS"] = "Official Direct"
+            row["URL"] = "https://www.leighton.media/careers/open-positions/"
+            row["Active"] = "True"
+
+    if "leighton media" in MJR_TEST_COMPANIES and not any(
+        _canonical_target_company(r.get("Company", "")) == "leighton media" for r in sources
+    ):
+        sources.append({
+            "Company": "Leighton Media",
+            "Industry": "Radio",
+            "ATS": "Official Direct",
+            "URL": "https://www.leighton.media/careers/open-positions/",
+            "Active": "True",
+        })
+
     # Curtis Media Group: normalize legacy/source-list aliases before targeted
     # filtering so Curtis Media, Curtis Media Company, and Curtis Media Group
     # all route through the dedicated official collector.
@@ -12180,6 +12339,8 @@ def main():
                 if company_key == "dow jones"
                 else lee_enterprises_direct(s)
                 if company_key == "lee enterprises"
+                else leighton_media_direct(s)
+                if company_key == "leighton media"
                 else curtis_media_direct(s)
                 if company_key == "curtis media group"
                 else gray_direct(s)
