@@ -6722,6 +6722,76 @@ def siriusxm_v17(src):
     return out
 
 
+
+def townsquare_greenhouse(src):
+    """Collect Townsquare jobs directly from Greenhouse's public API.
+
+    Townsquare's branded careers page is dynamic, and the old same-host collector
+    no longer sees its job cards. Townsquare has used both `townsquaremedia` and
+    `townsquare` Greenhouse board identifiers, so try both and de-duplicate.
+    """
+    out = []
+    seen = set()
+    boards = ["townsquaremedia", "townsquare"]
+
+    for board in boards:
+        try:
+            d = req(
+                "GET",
+                f"https://boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true",
+            ).json()
+        except Exception:
+            continue
+
+        for item in d.get("jobs", []):
+            jid = str(item.get("id") or "")
+            if not jid or jid in seen:
+                continue
+
+            posted = pdate(item.get("created_at")) or pdate(item.get("updated_at"))
+            if not posted or posted < CUTOFF:
+                continue
+
+            title = clean(item.get("title"))
+            desc = format_description(item.get("content"))
+            loc = clean((item.get("location") or {}).get("name"))
+            apply_url = clean(item.get("absolute_url"))
+            company = clean(src.get("Company", "Townsquare Media"))
+
+            # Greenhouse content identifies Ignite/Interactive division roles.
+            blob = f"{title} {strip_html(desc)}".lower()
+            if "townsquare ignite" in blob:
+                company = "Townsquare Ignite"
+            elif "townsquare interactive" in blob:
+                company = "Townsquare Interactive"
+            else:
+                company = "Townsquare Media"
+
+            seen.add(jid)
+            out.append(
+                Job(
+                    f"townsquare-{jid}",
+                    title,
+                    company,
+                    desc,
+                    posted,
+                    jobtype(title, desc),
+                    category(title, desc, "Radio", company),
+                    apply_url,
+                    src.get("URL", "https://careers.townsquaremedia.com/job-openings/"),
+                    "https://careers.townsquaremedia.com/",
+                    "",
+                    normalize_work_arrangement(desc, loc, title),
+                    loc,
+                    "",
+                    infer_country(loc, company, desc),
+                )
+            )
+
+    print(f"Townsquare Greenhouse: {len(out)} current jobs")
+    return out
+
+
 def townsquare_v17(src):
     return _v17_samehost_details(
         src,
@@ -11023,8 +11093,8 @@ def main():
                 }
                 else siriusxm_v17(s)
                 if company_key == "siriusxm"
-                else townsquare_v17(s)
-                if company_key == "townsquare media"
+                else townsquare_greenhouse(s)
+                if company_route_key == "townsquare"
                 else nbcuniversal_v17(s)
                 if company_key == "nbcuniversal"
                 else tegna_v17(s)
