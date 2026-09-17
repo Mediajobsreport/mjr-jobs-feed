@@ -366,6 +366,14 @@ def category(title, desc, industry, company):
     c = clean(company).lower()
     ind = clean(industry).lower()
 
+    # Sinclair targeted category corrections.
+    if re.search(r"\bsenior paid search strategist\b", title, re.I):
+        return "Digital"
+    if re.search(r"\bdigital media coordinator\b", title, re.I):
+        return "Digital"
+
+
+
     # A short description slice is enough for fallback context without allowing
     # generic employer boilerplate to dominate the classification.
     d_short = d[:2500]
@@ -5920,6 +5928,17 @@ def company_scope_rejection_reason(job_or_dict):
             title,
         ):
             return "FOX hospitality role outside media scope"
+
+
+    # Sinclair final scope cleanup.
+    # Building/facilities maintenance is outside MJR scope here; this must override
+    # the normal Engineering treatment for technical broadcast maintenance.
+    if company == "sinclair" or company.startswith("sinclair "):
+        if re.search(
+            r"\b(facilities maintenance|facility maintenance|building maintenance)\b",
+            title,
+        ):
+            return "Sinclair facilities/building maintenance role outside media scope"
 
     if company == "meruelo media":
         construction_title = re.search(
