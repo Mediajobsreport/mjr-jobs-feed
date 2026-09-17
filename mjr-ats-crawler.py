@@ -7614,7 +7614,16 @@ def _company_test_key(value):
         "abc news": "disney/abc",
         "the walt disney company / abc": "disney/abc",
         "the walt disney company/abc": "disney/abc",
+        "paramount": "paramount",
+        "paramount global": "paramount",
+        "paramount pictures": "paramount",
+        "paramount skydance": "paramount",
+        "paramount, a skydance corporation": "paramount",
     }
+    # Future-proof Paramount source labels while keeping unrelated CBS rows
+    # isolated unless they are explicitly part of the Paramount source row.
+    if key.startswith("paramount ") or key.startswith("paramount,"):
+        return "paramount"
     return aliases.get(key, key)
 
 def _v28_source_enabled(src):
@@ -10719,7 +10728,7 @@ def main():
                 else cox_successfactors(s)
                 if company_key in {"cox media group", "cox radio"}
                 else paramount_successfactors(s)
-                if company_key == "paramount"
+                if company_route_key == "paramount"
                 else disney_public(s)
                 if company_route_key in {"disney/abc", "espn"}
                 else wbd_phenom(s)
