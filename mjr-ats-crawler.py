@@ -5031,6 +5031,9 @@ def fox_public(src):
                 re.I,
             )
             brand = clean(brand_match.group(1)) if brand_match else clean(src.get("Company", "FOX"))
+            brand = re.sub(r"Error:\s*No label for:\s*SubBrand\s*", "", brand, flags=re.I).strip()
+            if re.search(r"\bBig Ten Network\b", page_text, re.I):
+                brand = "FOX Sports / Big Ten Network"
 
             loc_match = re.search(
                 r"\bLocation\s+(.+?)\s+Job Posting Date:",
@@ -5099,7 +5102,13 @@ def fox_public(src):
                 description,
                 posted,
                 jobtype(title, description),
-                category(title, description, "Television", brand or "FOX"),
+                (
+                    "Journalism"
+                    if re.search(r"\b(multimedia reporters?|reporter/streaming host|news reporter)\b", title, re.I)
+                    else "Television"
+                    if re.search(r"\b(news production director|production automation technician)\b", title, re.I)
+                    else category(title, description, "Television", brand or "FOX")
+                ),
                 detail_url,
                 src.get("URL", search_url),
                 base,
@@ -5888,6 +5897,23 @@ def company_scope_rejection_reason(job_or_dict):
             return "Paramount consumer-products, toys, licensing-design or retail role outside media scope"
         if paramount_nonmedia_title and not paramount_media_title:
             return "Paramount physical-product/licensing role outside media scope"
+
+
+    # FOX final scope cleanup.
+    # FOX Careers occasionally includes facilities/construction and hospitality
+    # positions that are outside MJR's media-job scope.
+    if company in {"fox", "fox corporation", "fox television stations",
+                   "fox entertainment", "fox news media", "fox sports"}:
+        if re.search(
+            r"\b(plant operations|facilities|facility operations|construction)\b",
+            title,
+        ):
+            return "FOX facilities/construction role outside media scope"
+        if re.search(
+            r"\b(members suite specialist|suite host|hospitality host)\b",
+            title,
+        ):
+            return "FOX hospitality role outside media scope"
 
     if company == "meruelo media":
         construction_title = re.search(
