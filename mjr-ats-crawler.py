@@ -4939,6 +4939,172 @@ def cox_successfactors(src):
 
     return out
 
+
+def fox_public(src):
+    """FOX Careers public-site collector.
+
+    FOX's current careers site renders searchable job cards directly in HTML at
+    /Search/SearchResults and detail pages at /Search/JobDetail/<requisition>/...
+    The generic company-site collector did not enumerate those cards reliably.
+    """
+    base = "https://www.foxcareers.com"
+    search_url = base + "/Search/SearchResults"
+    out = []
+    seen = set()
+    stale_pages = 0
+
+    for page in range(0, 40):
+        url = search_url + f"?page={page}&language=en"
+        r = req("GET", url)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        links = []
+        for a in soup.find_all("a", href=True):
+            href = a.get("href", "")
+            if "/Search/JobDetail/" not in href:
+                continue
+            full = urljoin(base, href)
+            rid = re.search(r"/JobDetail/(R\d+)", full, re.I)
+            key = rid.group(1).upper() if rid else full.lower()
+            if key not in {x[0] for x in links}:
+                links.append((key, full))
+
+        if not links:
+            break
+
+        page_new = 0
+        page_recent = 0
+
+        for key, detail_url in links:
+            if key in seen:
+                continue
+            seen.add(key)
+            page_new += 1
+
+            dr = req("GET", detail_url)
+            ds = BeautifulSoup(dr.text, "html.parser")
+            page_text = clean(ds.get_text(" ", strip=True))
+
+            h1 = ds.find("h1")
+            title = clean(h1.get_text(" ", strip=True) if h1 else "")
+            if not title:
+                continue
+
+            rid_match = re.search(r"Job Number:\s*(R\d+)", page_text, re.I)
+            rid = rid_match.group(1).upper() if rid_match else key
+
+            brand_match = re.search(
+                r"Job Number:\s*R\d+\s+Brand\s+(.+?)\s+Job Type:",
+                page_text,
+                re.I,
+            )
+            brand = clean(brand_match.group(1)) if brand_match else clean(src.get("Company", "FOX"))
+
+            posted_match = re.search(
+                r"Job Posting Date:\s*([A-Za-z]+\s+\d{1,2},\s+\d{4})",
+                page_text,
+                re.I,
+            )
+            posted = pdate(posted_match.group(1)) if posted_match else None
+            if not posted:
+                continue
+            if posted < CUTOFF:
+                continue
+            page_recent += 1
+
+            loc_match = re.search(
+                r"\bLocation\s+(.+?)\s+Job Posting Date:",
+                page_text,
+                re.I,
+            )
+            location = clean(loc_match.group(1)) if loc_match else ""
+            location = re.sub(r"\s*;\s*", "; ", location).strip(" ;")
+
+            city = ""
+            state = ""
+            country = "US"
+            primary_loc = location.split(";")[0].strip() if location else ""
+            if re.search(r"\bCanada\b", location, re.I):
+                country = "CA"
+            elif re.search(r"\bUnited Kingdom\b|\bLondon\b", location, re.I):
+                country = "GB"
+            elif re.search(r"\bIndia\b", location, re.I):
+                country = "IN"
+            elif re.search(r"\bAustralia\b", location, re.I):
+                country = "AU"
+
+            if primary_loc:
+                parts = [clean(x) for x in primary_loc.split(",") if clean(x)]
+                if len(parts) >= 2:
+                    city, state = parts[0], parts[1]
+                elif "remote" not in primary_loc.lower():
+                    city = primary_loc
+
+            # Capture only the employer's posting content beginning at JOB DESCRIPTION.
+            desc_parts = []
+            heading = None
+            for tag in ds.find_all(["h2", "h3"]):
+                if "JOB DESCRIPTION" in clean(tag.get_text(" ", strip=True)).upper():
+                    heading = tag
+                    break
+            if heading:
+                for sib in heading.find_all_next():
+                    if sib is heading:
+                        continue
+                    txt = clean(sib.get_text(" ", strip=True))
+                    if not txt:
+                        continue
+                    if sib.name in {"h1", "h2", "h3"} and (
+                        "BACK TO SEARCH" in txt.upper()
+                        or "PRIVACY" in txt.upper()
+                    ):
+                        break
+                    if sib.name in {"p", "ul", "ol", "h3", "h4"}:
+                        desc_parts.append(str(sib))
+                    if "equal opportunity employer" in txt.lower():
+                        break
+
+            description = format_description("".join(desc_parts))
+            if len(strip_html(description)) < 150:
+                # Conservative fallback: retain the detail page text if FOX changes
+                # heading markup, rather than silently dropping a valid current job.
+                description = format_description(page_text)
+
+            work = normalize_work_arrangement(description, location, title)
+            if re.search(r"\bremote\b", page_text, re.I):
+                work = normalize_work_arrangement(description + " Remote", location, title, work)
+
+            out.append(Job(
+                f"fox-{rid}",
+                title,
+                brand or "FOX",
+                description,
+                posted,
+                jobtype(title, description),
+                category(title, description, "Television", brand or "FOX"),
+                detail_url,
+                src.get("URL", search_url),
+                base,
+                "",
+                work,
+                city,
+                state,
+                country,
+            ))
+
+        # Results are ordered newest-first. Once an entire page has no jobs inside
+        # the retention window, one confirmation page is enough to stop pagination.
+        if page_recent == 0:
+            stale_pages += 1
+        else:
+            stale_pages = 0
+        if stale_pages >= 2 or page_new == 0:
+            break
+
+    print(f"FOX public careers: {len(out)} current jobs")
+    return out
+
+
 def paramount_successfactors(src):
     """Paramount SAP SuccessFactors collector — v71.
 
@@ -7672,6 +7838,13 @@ def _company_test_key(value):
         "paramount pictures": "paramount",
         "paramount skydance": "paramount",
         "paramount, a skydance corporation": "paramount",
+        "fox": "fox",
+        "fox corporation": "fox",
+        "fox careers": "fox",
+        "fox television stations": "fox",
+        "fox tv stations": "fox",
+        "fox entertainment": "fox",
+        "fox news media": "fox",
     }
     # Future-proof Paramount source labels while keeping unrelated CBS rows
     # isolated unless they are explicitly part of the Paramount source row.
@@ -10782,6 +10955,8 @@ def main():
                 if company_key in {"cox media group", "cox radio"}
                 else paramount_successfactors(s)
                 if company_route_key == "paramount"
+                else fox_public(s)
+                if company_route_key == "fox"
                 else disney_public(s)
                 if company_route_key in {"disney/abc", "espn"}
                 else wbd_phenom(s)
