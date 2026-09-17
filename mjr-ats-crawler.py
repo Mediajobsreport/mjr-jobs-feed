@@ -5482,6 +5482,30 @@ def company_scope_rejection_reason(job_or_dict):
         if newly_confirmed_disney_nonmedia or disney_experiences_tech:
             return "Disney/ESPN non-media parks, hospitality, costuming or Experiences role"
 
+        # Disney search surfaces can also bleed theme-park education and
+        # vacation/contact-center jobs into ESPN/ABC results. Keep this narrow
+        # so genuine ESPN/ABC internships, sales and technology roles survive.
+        disney_guest_experience_role = (
+            re.search(
+                r"\b(conservation education presenter|wilderness explorer|"
+                r"vacation planning|consumer direct.*specialist|"
+                r"guest service.*specialist|contact center.*specialist)\b",
+                text,
+            )
+            and re.search(
+                r"\b(disney'?s animal kingdom|walt disney world|disney central|"
+                r"vacation planning|guest service|guests?|theme park)\b",
+                text,
+            )
+            and not re.search(
+                r"\b(abc|espn|broadcast|newsroom|journalis|radio|television|tv|"
+                r"streaming|digital media|production|studio|sports media)\b",
+                text,
+            )
+        )
+        if disney_guest_experience_role:
+            return "Disney theme-park education or vacation/contact-center role outside media scope"
+
     if company in {"fox", "fox corporation", "fox television stations"}:
         fox_nonmedia_title = re.search(
             r"\b(catering|hospitality|mailroom|mail room|receiving|"
