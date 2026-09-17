@@ -5902,8 +5902,14 @@ def company_scope_rejection_reason(job_or_dict):
     # FOX final scope cleanup.
     # FOX Careers occasionally includes facilities/construction and hospitality
     # positions that are outside MJR's media-job scope.
-    if company in {"fox", "fox corporation", "fox television stations",
-                   "fox entertainment", "fox news media", "fox sports"}:
+    # Match every FOX-derived brand emitted by the FOX collector, including
+    # FOX Sports / Big Ten Network and other FOX sub-brands.
+    if (
+        company == "fox"
+        or company.startswith("fox ")
+        or company.startswith("fox/")
+        or company.startswith("fox -")
+    ):
         if re.search(
             r"\b(plant operations|facilities|facility operations|construction)\b",
             title,
