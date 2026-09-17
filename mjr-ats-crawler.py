@@ -4941,24 +4941,35 @@ def cox_successfactors(src):
 
 
 def fox_public(src):
-    """FOX Careers public-site collector.
+    """Efficient FOX Careers collector.
 
-    FOX's current careers site renders searchable job cards directly in HTML at
-    /Search/SearchResults and detail pages at /Search/JobDetail/<requisition>/...
-    The generic company-site collector did not enumerate those cards reliably.
+    FOX search pages can expose hundreds of detail links. To stay safely under the
+    crawler's per-domain request cap, enumerate search pages first, stop as soon as
+    the retained/new-job quota is satisfied, and cap detail requests below the
+    global domain ceiling.
     """
     base = "https://www.foxcareers.com"
     search_url = base + "/Search/SearchResults"
     out = []
     seen = set()
-    stale_pages = 0
 
-    for page in range(0, 40):
+    # Leave headroom beneath the global 175-request/domain safeguard for search
+    # pages, retries and any other FOX requests made during the same crawl.
+    max_detail_requests = 145
+    detail_requests = 0
+
+    # FOX results are newest-first. We only need enough detail pages to populate
+    # current jobs inside MJR's retention window.
+    for page in range(0, 20):
+        if detail_requests >= max_detail_requests:
+            break
+
         url = search_url + f"?page={page}&language=en"
         r = req("GET", url)
         soup = BeautifulSoup(r.text, "html.parser")
 
         links = []
+        page_seen = set()
         for a in soup.find_all("a", href=True):
             href = a.get("href", "")
             if "/Search/JobDetail/" not in href:
@@ -4966,24 +4977,45 @@ def fox_public(src):
             full = urljoin(base, href)
             rid = re.search(r"/JobDetail/(R\d+)", full, re.I)
             key = rid.group(1).upper() if rid else full.lower()
-            if key not in {x[0] for x in links}:
-                links.append((key, full))
+            if key in page_seen or key in seen:
+                continue
+            page_seen.add(key)
+            links.append((key, full))
 
         if not links:
             break
 
-        page_new = 0
-        page_recent = 0
+        page_current = 0
+        page_stale = 0
 
         for key, detail_url in links:
+            if detail_requests >= max_detail_requests:
+                break
             if key in seen:
                 continue
             seen.add(key)
-            page_new += 1
 
+            detail_requests += 1
             dr = req("GET", detail_url)
             ds = BeautifulSoup(dr.text, "html.parser")
             page_text = clean(ds.get_text(" ", strip=True))
+
+            posted_match = re.search(
+                r"Job Posting Date:\s*([A-Za-z]+\s+\d{1,2},\s+\d{4})",
+                page_text,
+                re.I,
+            )
+            posted = pdate(posted_match.group(1)) if posted_match else None
+            if not posted:
+                continue
+
+            # Because FOX search results are newest-first, stale jobs tell us when
+            # we've crossed MJR's normal retention window.
+            if posted < CUTOFF:
+                page_stale += 1
+                continue
+
+            page_current += 1
 
             h1 = ds.find("h1")
             title = clean(h1.get_text(" ", strip=True) if h1 else "")
@@ -4999,18 +5031,6 @@ def fox_public(src):
                 re.I,
             )
             brand = clean(brand_match.group(1)) if brand_match else clean(src.get("Company", "FOX"))
-
-            posted_match = re.search(
-                r"Job Posting Date:\s*([A-Za-z]+\s+\d{1,2},\s+\d{4})",
-                page_text,
-                re.I,
-            )
-            posted = pdate(posted_match.group(1)) if posted_match else None
-            if not posted:
-                continue
-            if posted < CUTOFF:
-                continue
-            page_recent += 1
 
             loc_match = re.search(
                 r"\bLocation\s+(.+?)\s+Job Posting Date:",
@@ -5040,7 +5060,6 @@ def fox_public(src):
                 elif "remote" not in primary_loc.lower():
                     city = primary_loc
 
-            # Capture only the employer's posting content beginning at JOB DESCRIPTION.
             desc_parts = []
             heading = None
             for tag in ds.find_all(["h2", "h3"]):
@@ -5055,8 +5074,7 @@ def fox_public(src):
                     if not txt:
                         continue
                     if sib.name in {"h1", "h2", "h3"} and (
-                        "BACK TO SEARCH" in txt.upper()
-                        or "PRIVACY" in txt.upper()
+                        "BACK TO SEARCH" in txt.upper() or "PRIVACY" in txt.upper()
                     ):
                         break
                     if sib.name in {"p", "ul", "ol", "h3", "h4"}:
@@ -5066,13 +5084,13 @@ def fox_public(src):
 
             description = format_description("".join(desc_parts))
             if len(strip_html(description)) < 150:
-                # Conservative fallback: retain the detail page text if FOX changes
-                # heading markup, rather than silently dropping a valid current job.
                 description = format_description(page_text)
 
             work = normalize_work_arrangement(description, location, title)
             if re.search(r"\bremote\b", page_text, re.I):
-                work = normalize_work_arrangement(description + " Remote", location, title, work)
+                work = normalize_work_arrangement(
+                    description + " Remote", location, title, work
+                )
 
             out.append(Job(
                 f"fox-{rid}",
@@ -5092,16 +5110,19 @@ def fox_public(src):
                 country,
             ))
 
-        # Results are ordered newest-first. Once an entire page has no jobs inside
-        # the retention window, one confirmation page is enough to stop pagination.
-        if page_recent == 0:
-            stale_pages += 1
-        else:
-            stale_pages = 0
-        if stale_pages >= 2 or page_new == 0:
+        # Once a FOX results page contains stale postings and no current postings,
+        # we've passed the retention window; do not burn requests on older pages.
+        if page_current == 0 and page_stale > 0:
             break
 
-    print(f"FOX public careers: {len(out)} current jobs")
+        # If most of the page is already stale, the next page will be older.
+        if page_stale > page_current and page_stale >= 5:
+            break
+
+    print(
+        f"FOX public careers: {len(out)} current jobs "
+        f"({detail_requests} detail requests)"
+    )
     return out
 
 
