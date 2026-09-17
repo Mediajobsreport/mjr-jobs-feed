@@ -6758,11 +6758,32 @@ def townsquare_greenhouse(src):
             apply_url = clean(item.get("absolute_url"))
             company = clean(src.get("Company", "Townsquare Media"))
 
-            # Greenhouse content identifies Ignite/Interactive division roles.
-            blob = f"{title} {strip_html(desc)}".lower()
-            if "townsquare ignite" in blob:
+            # Division attribution must come from strong job-level signals, not a
+            # passing mention of Ignite/Interactive in generic Townsquare copy.
+            title_l = title.lower()
+            desc_text = strip_html(desc)
+            lead_text = desc_text[:1800].lower()
+
+            ignite_signal = (
+                "townsquare ignite" in title_l
+                or re.search(
+                    r"\b(?:join|about|team|division|department|role at|position with)\s+"
+                    r"(?:the\s+)?townsquare ignite\b",
+                    lead_text,
+                )
+            )
+            interactive_signal = (
+                "townsquare interactive" in title_l
+                or re.search(
+                    r"\b(?:join|about|team|division|department|role at|position with)\s+"
+                    r"(?:the\s+)?townsquare interactive\b",
+                    lead_text,
+                )
+            )
+
+            if ignite_signal:
                 company = "Townsquare Ignite"
-            elif "townsquare interactive" in blob:
+            elif interactive_signal:
                 company = "Townsquare Interactive"
             else:
                 company = "Townsquare Media"
