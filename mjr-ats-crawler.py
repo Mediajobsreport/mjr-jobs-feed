@@ -5594,6 +5594,54 @@ def company_scope_rejection_reason(job_or_dict):
         if dow_jones_nonmedia_title:
             return "Dow Jones mailroom, receiving or facilities role outside media scope"
 
+
+    # QVC / HSN final scope guard.
+    # These employers mix television/eCommerce/media jobs with a large retail,
+    # fulfillment, warehouse and physical-product merchandising workforce.
+    if company in {"qvc", "hsn", "qurate retail group"}:
+        qvc_nonmedia_title = re.search(
+            r"\b("
+            r"equipment operator|forklift|picker|packer|pick pack|warehouse|"
+            r"distribution center|fulfillment center|fulfillment associate|"
+            r"inventory (?:associate|specialist|control)|shipping|receiving|"
+            r"yard driver|material handler|retail team member|retail associate|"
+            r"sales associate|seasonal sales|design associate|store associate|"
+            r"store manager|assistant store manager|hiring event|"
+            r"customer service specialist|customer service representative|"
+            r"contact center|call center|order specialist|aging order specialist|"
+            r"global sourcing|sourcing specialist|buyer|assistant buyer|"
+            r"merchant|merchandiser|merchandising|"
+            r"maintenance tech|maintenance technician"
+            r")\b",
+            title,
+        )
+        qvc_nonmedia_context = re.search(
+            r"\b("
+            r"warehouse|distribution center|fulfillment center|pick(?:ing)? and pack|"
+            r"shipping and receiving|inventory control|retail store|store location|"
+            r"customer service center|contact center|call center|"
+            r"physical product|product sourcing|vendor sourcing|"
+            r"furniture|kitchen and culinary|apparel merchandise|"
+            r"fulfillment operations|distribution operations"
+            r")\b",
+            description,
+        )
+        qvc_media_title = re.search(
+            r"\b("
+            r"broadcast|television|tv |studio|production|producer|video|audio|"
+            r"on-air|host|content|social media|digital|ecommerce|e-commerce|"
+            r"live commerce|tiktok|marketing|advertising|audience|"
+            r"software|engineer|engineering|developer|data|analytics|ai|"
+            r"automation|information technology|it operations|cyber|security|"
+            r"finance|financial|accounting|legal|human resources|hr "
+            r")\b",
+            title,
+        )
+        if qvc_nonmedia_title and not qvc_media_title:
+            return "QVC/HSN retail, fulfillment, customer-service or physical-product role outside media scope"
+        if qvc_nonmedia_context and qvc_nonmedia_title and not qvc_media_title:
+            return "QVC/HSN non-media operations role outside media scope"
+
     if company == "meruelo media":
         construction_title = re.search(
             r"\b(construction (?:project )?manager|construction manager|"
