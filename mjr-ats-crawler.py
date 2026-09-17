@@ -295,7 +295,7 @@ def jobtype(title, text=""):
     # often mentions interns/internships and must not reclassify normal jobs.
     if re.search(
         r"\b(intern|internship|internships|student intern|summer intern|"
-        r"fall intern|spring intern|co-op intern|gray media .*?training program)\b",
+        r"fall intern|spring intern|co-op intern)\b",
         t,
         re.I,
     ):
@@ -379,8 +379,7 @@ def category(title, desc, industry, company):
         or any(x in c for x in [
             "audacy", "beasley", "bonneville", "cumulus", "iheart",
             "lotus communications", "stingray", "pattison", "evanov",
-            "urban one", "siriusxm", "sun broadcasting", "good karma", "hope media group",
-            "curtis media group"
+            "urban one", "siriusxm", "sun broadcasting", "good karma"
         ])
         or re.search(r"\b(radio station|radio group|fm station|am station|broadcast radio)\b", d_short)
     )
@@ -389,7 +388,7 @@ def category(title, desc, industry, company):
         or any(x in c for x in [
             "paramount", "cbs", "fox television", "fox entertainment", "fox tv stations",
             "nexstar", "sinclair", "televisaunivision", "qvc", "hearst television",
-            "gray television", "gray media", "weigel", "telemundo", "disney", "abc"
+            "gray television", "weigel", "telemundo", "disney", "abc"
         ])
         or re.search(r"\b(television station|tv station|newscast|television studio|local television|broadcast television)\b", d_short)
     )
@@ -399,80 +398,6 @@ def category(title, desc, industry, company):
     # ------------------------------------------------------------------
     if re.search(r"\b(intern|internship|fellow|fellowship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
         return "Internships"
-
-    # Lee Enterprises newspaper production/plant operations are Business Office
-    # functions for MJR rather than editorial Journalism roles.
-    if c == "lee enterprises" and re.search(
-        r"\b(machine operator|packaging inserter|inserter|press operator|press trainee|printing press)\b",
-        t,
-    ):
-        return "Business Office"
-
-    # Hope Media Group is fundamentally a radio broadcaster (KSBJ, WayFM,
-    # Vida Unida, Worship 24/7, NGEN, etc.). Keep its ordinary media/platform
-    # roles in Radio unless the title explicitly identifies television/video
-    # production. Functional departments such as Sales, Engineering and
-    # Business Office still use the normal title-first MJR overrides below.
-    if c == "hope media group" and re.search(
-        r"\b(television|tv|video production|video producer|video editor|videographer|video coordinator)\b",
-        t,
-    ):
-        return "Television"
-
-    # Hope Media Group corporate/support roles override the Radio employer
-    # default. Donor/fundraising/development work and program-impact/data
-    # administration are business functions rather than programming/content.
-    if c == "hope media group" and re.search(
-        r"\b(donor|donor engagement|fundraising|fundraiser|fund development|"
-        r"development officer|development director|development manager|"
-        r"data program|program impact|impact manager|impact director|"
-        r"program & impact|program and impact)\b",
-        t,
-    ):
-        return "Business Office"
-
-    # Hubbard Broadcasting operates radio, television (including REELZ),
-    # news/audio brands such as WTOP/Federal News Network, and digital sales.
-    # Use title + posting context for the mixed-platform cases that a simple
-    # employer default cannot resolve reliably.
-    if c == "hubbard broadcasting":
-        # WTOP traffic is an on-air radio/news-audio function even when the
-        # description mentions cameras, web or social media.
-        if re.search(r"\bwtop\b", td) and re.search(
-            r"\b(traffic reporter|traffic anchor|traffic producer|traffic reporter/producer)\b",
-            t,
-        ):
-            return "Radio"
-
-        # REELZ is Hubbard's television/cable/streaming network. Production,
-        # writing and editing roles supporting REELZ belong in Television.
-        if re.search(r"\breelz\b", td) and re.search(
-            r"\b(content producer|producer|writer|editor|writer/producer/editor|production)\b",
-            t,
-        ):
-            return "Television"
-
-        # Live-newscast directing is a television production function in MJR,
-        # not Engineering, even when the posting discusses switching,
-        # transmission or production-automation systems.
-        if re.search(r"\b(technical director|director)\b", t) and re.search(
-            r"\b(newscast|live broadcast|television systems|vizrt|tricaster|newscaster)\b",
-            d_short,
-        ):
-            return "Television"
-
-        # Hubbard's 2060 Digital strategist/development jobs are revenue and
-        # client-development functions rather than Radio programming roles.
-        if re.search(
-            r"\b(client development strategist|digital brand strategist)\b",
-            t,
-        ):
-            return "Sales & Marketing"
-
-        # Drivers supporting mobile broadcast units are operational/logistics
-        # support rather than programming/on-air positions.
-        if re.search(r"\b(staff driver|mobile unit driver|cdl driver)\b", t):
-            return "Business Office"
 
     # Voice performance belongs in MJR's Voiceover category. Keep the match
     # title-first so ordinary audio engineering, speech testing and AI data
@@ -3749,7 +3674,7 @@ def paycom(src):
 
     out = []
     seen_ids = set()
-    for url in eligible_details:
+    for url in sorted(details):
         try:
             rr = req("GET", url)
             j = _paycom_detail(src, url, rr.text)
@@ -4060,13 +3985,8 @@ def connoisseur_media(src):
                             pd = d
                             break
 
-            # Connoisseur maintains /career-opportunity/ as its authoritative
-            # CURRENT openings archive. A WordPress post may have been created
-            # months ago and remain actively open, so its original publish date
-            # is not a reliable freshness signal. Presence on the live archive
-            # is the freshness signal; stamp the feed record with TODAY so JBoard
-            # keeps the opening active while the employer continues listing it.
-            pd = TODAY
+            if not pd or pd < CUTOFF:
+                continue
 
             # Prefer the central content area and strip application boilerplate
             # only by choosing the article/main container, not by truncating text.
@@ -5535,6 +5455,78 @@ def company_scope_rejection_reason(job_or_dict):
         if nonmedia_operation_context and nonmedia_function_title:
             return "Disney non-media operations role outside ABC/ESPN scope"
 
+    # Employer-specific non-media exclusions. These are intentionally narrow:
+    # MJR still keeps legitimate media support functions such as engineering,
+    # software/IT, sales, accounting, legal, HR and newsroom administration.
+    if company in {"disney / abc", "espn"}:
+        newly_confirmed_disney_nonmedia = re.search(
+            r"\b(recreation host(?:ess)?|pbx (?:phone )?operator|catering server|"
+            r"costuming project analyst(?: intern)?|costuming.*(?:analyst|intern)|"
+            r"guest services?|vacation planner|resort operations?|"
+            r"food service|catering|hospitality)\b",
+            title,
+        )
+        disney_experiences_tech = (
+            re.search(r"\bdisney experiences\b", text)
+            and re.search(
+                r"\b(senior )?technical project manager|technology project manager|"
+                r"technical program manager\b",
+                title,
+            )
+            and not re.search(
+                r"\b(abc|espn|broadcast|newsroom|news|radio|television|tv|"
+                r"streaming|digital media|production|studio|ad tech|advertising)\b",
+                text,
+            )
+        )
+        if newly_confirmed_disney_nonmedia or disney_experiences_tech:
+            return "Disney/ESPN non-media parks, hospitality, costuming or Experiences role"
+
+    if company in {"fox", "fox corporation", "fox television stations"}:
+        fox_nonmedia_title = re.search(
+            r"\b(catering|hospitality|mailroom|mail room|receiving|"
+            r"facilities (?:assistant|coordinator|manager|specialist|technician)|"
+            r"building maintenance|custodial|custodian|food service)\b",
+            title,
+        )
+        if fox_nonmedia_title:
+            return "FOX hospitality, receiving, mailroom or facilities role outside media scope"
+
+    if company in {"qvc", "qurate retail group", "qvc group"}:
+        qvc_nonmedia_title = re.search(
+            r"\b(warehouse|fulfillment|distribution center|distribution centre|"
+            r"picker|packer|material handler|forklift|retail associate|store associate|"
+            r"merchandis(?:e|er|ing)|wave planning|facilities|building maintenance|"
+            r"maintenance technician)\b",
+            title,
+        )
+        if qvc_nonmedia_title:
+            return "QVC retail, warehouse, fulfillment, merchandising or facilities role outside media scope"
+
+    if company == "paramount":
+        paramount_nonmedia_title = re.search(
+            r"\b(toy|toys|consumer products?|product design(?:er)?|"
+            r"industrial design(?:er)?|packaging design(?:er)?|merchandise design(?:er)?)\b",
+            title,
+        )
+        media_product_signal = re.search(
+            r"\b(streaming|paramount\+|pluto|cbs|broadcast|television|tv|"
+            r"news|digital media|video|audio|advertising|ad tech|production)\b",
+            text,
+        )
+        if paramount_nonmedia_title and not media_product_signal:
+            return "Paramount toys or unrelated consumer-product role outside media scope"
+
+    if company in {"dow jones", "wall street journal / dow jones", "wall street journal", "wsj / dow jones"}:
+        dow_jones_nonmedia_title = re.search(
+            r"\b(mailroom|mail room|mailroom manager|shipping and receiving|"
+            r"shipping & receiving|receiving clerk|facilities|custodial|custodian|"
+            r"building maintenance)\b",
+            title,
+        )
+        if dow_jones_nonmedia_title:
+            return "Dow Jones mailroom, receiving or facilities role outside media scope"
+
     if company == "meruelo media":
         construction_title = re.search(
             r"\b(construction (?:project )?manager|construction manager|"
@@ -5692,445 +5684,39 @@ def wbd_phenom(src):
     )
 
 
-GRAY_STATION_LOCATIONS = {
-    # Gray Media's public careers page identifies these station/market pairs.
-    "WALB": ("Albany", "GA"), "KALB": ("Alexandria", "LA"),
-    "KFDA": ("Amarillo", "TX"), "KTUU": ("Anchorage", "AK"),
-    "WANF": ("Atlanta", "GA"), "WKTB": ("Atlanta", "GA"),
-    "WRDW": ("Augusta", "GA"), "WAGT": ("Augusta", "GA"),
-    "WABI": ("Bangor", "ME"), "WAFB": ("Baton Rouge", "LA"),
-    "WLOX": ("Biloxi", "MS"), "WBNG": ("Binghamton", "NY"),
-    "WBRC": ("Birmingham", "AL"), "KFYR": ("Bismarck", "ND"),
-    "WVVA": ("Bluefield", "WV"), "WBKO": ("Bowling Green", "KY"),
-    "WDTV": ("Bridgeport", "WV"), "KBTX": ("Bryan", "TX"),
-    "WCAX": ("Burlington", "VT"), "KFVS": ("Cape Girardeau", "MO"),
-    "KCRG": ("Cedar Rapids", "IA"), "WCSC": ("Charleston", "SC"),
-    "WBTV": ("Charlotte", "NC"), "WVIR": ("Charlottesville", "VA"),
-    "WXIX": ("Cincinnati", "OH"), "WOIO": ("Cleveland", "OH"),
-    "WUAB": ("Cleveland", "OH"), "WIS": ("Columbia", "SC"),
-    "WTVM": ("Columbus", "GA"), "KWQC": ("Davenport", "IA"),
-    "WAND": ("Decatur", "IL"), "KQCD": ("Dickinson", "ND"),
-    "WTVY": ("Dothan", "AL"), "KBJR": ("Duluth", "MN"),
-    "WEAU": ("Eau Claire", "WI"), "KTVF": ("Fairbanks", "AK"),
-    "WNEM": ("Flint", "MI"), "WPTA": ("Fort Wayne", "IN"),
-    "WCJB": ("Gainesville", "FL"), "WBAY": ("Green Bay", "WI"),
-    "WITN": ("Greenville", "NC"), "WHNS": ("Greenville", "SC"),
-    "WSIL": ("Harrisburg", "IL"), "WHSV": ("Harrisonburg", "VA"),
-    "WFSB": ("Hartford", "CT"), "KSNB": ("Hastings", "NE"),
-    "WDAM": ("Hattiesburg", "MS"), "WYMT": ("Hazard", "KY"),
-    "KHNL": ("Honolulu", "HI"), "KGMB": ("Honolulu", "HI"),
-    "WSAZ": ("Huntington", "WV"), "WAFF": ("Huntsville", "AL"),
-    "WLBT": ("Jackson", "MS"), "WBBJ": ("Jackson", "TN"),
-    "KAIT": ("Jonesboro", "AR"), "KCTV": ("Kansas City", "KS"),
-    "WVLT": ("Knoxville", "TN"), "KATC": ("Lafayette", "LA"),
-    "KADN": ("Lafayette", "LA"), "KPLC": ("Lake Charles", "LA"),
-    "WILX": ("Lansing", "MI"), "KGNS": ("Laredo", "TX"),
-    "KVVU": ("Las Vegas", "NV"), "WKYT": ("Lexington", "KY"),
-    "KOLN": ("Lincoln", "NE"), "KGIN": ("Lincoln", "NE"),
-    "WAVE": ("Louisville", "KY"), "KCBD": ("Lubbock", "TX"),
-    "WPGA": ("Macon", "GA"), "WMTV": ("Madison", "WI"),
-    "KEYC": ("Mankato", "MN"), "WLUC": ("Marquette", "MI"),
-    "WMC": ("Memphis", "TN"), "WTOK": ("Meridian", "MS"),
-    "KMOT": ("Minot", "ND"), "WALA": ("Mobile", "AL"),
-    "KNOE": ("Monroe", "LA"), "WSFA": ("Montgomery", "AL"),
-    "WCOV": ("Montgomery", "AL"), "WMBF": ("Myrtle Beach", "SC"),
-    "WSMV": ("Nashville", "TN"), "WVUE": ("New Orleans", "LA"),
-    "KNOP": ("North Platte", "NE"), "KOSA": ("Odessa", "TX"),
-    "WOWT": ("Omaha", "NE"), "KYOU": ("Ottumwa", "IA"),
-    "WJHG": ("Panama City", "FL"), "WTAP": ("Parkersburg", "WV"),
-    "WEEK": ("Peoria", "IL"), "KPHO": ("Phoenix", "AZ"),
-    "KTVK": ("Phoenix", "AZ"), "KPTV": ("Portland", "OR"),
-    "WAGM": ("Presque Isle", "ME"), "WGEM": ("Quincy", "IL"),
-    "KOTA": ("Rapid City", "SD"), "KEVN": ("Rapid City", "SD"),
-    "KOLO": ("Reno", "NV"), "KXNV": ("Reno", "NV"),
-    "WWBT": ("Richmond", "VA"), "WDBJ": ("Roanoke", "VA"),
-    "KTTC": ("Rochester", "MN"), "WIFR": ("Rockford", "IL"),
-    "WWSB": ("Sarasota", "FL"), "WTOC": ("Savannah", "GA"),
-    "KXII": ("Sherman", "TX"), "KSLA": ("Shreveport", "LA"),
-    "KTIV": ("Sioux City", "IA"), "KSFY": ("Sioux Falls", "SD"),
-    "KDLT": ("Sioux Falls", "SD"), "WNDU": ("South Bend", "IN"),
-    "KYTV": ("Springfield", "MO"), "KSPR": ("Springfield", "MO"),
-    "WGGB": ("Springfield", "MA"), "WTVG": ("Toledo", "OH"),
-    "KMOV": ("St. Louis", "MO"), "WCTV": ("Tallahassee", "FL"),
-    "WTHI": ("Terre Haute", "IN"), "WLIO": ("Lima", "OH"),
-    "WOHL": ("Lima", "OH"), "WIBW": ("Topeka", "KS"),
-    "KOLD": ("Tucson", "AZ"), "WTVA": ("Tupelo", "MS"),
-    "KLTV": ("Tyler", "TX"), "KWTX": ("Waco", "TX"),
-    "WWNY": ("Watertown", "NY"), "WSAW": ("Wausau", "WI"),
-    "WLFI": ("West Lafayette", "IN"), "WFLX": ("West Palm Beach", "FL"),
-    "KSWO": ("Lawton", "OK"), "KWCH": ("Wichita", "KS"),
-    "KUMV": ("Williston", "ND"), "WECT": ("Wilmington", "NC"),
-    "POWERNATION STUDIOS": ("Franklin", "TN"),
-    "RAYCOM SPORTS": ("Charlotte", "NC"),
-}
+def gray_direct(src):
+    """Gray Media direct career-center fallback.
 
-
-def _gray_location_from_row(row):
-    """Recover a concrete UKG location from nested public-listing metadata."""
-    values = []
-    def walk(obj, key=""):
-        if isinstance(obj, dict):
-            for k, v in obj.items():
-                lk = str(k).lower()
-                if any(x in lk for x in ("location", "city", "state", "address")):
-                    if isinstance(v, (str, int, float)):
-                        values.append(clean(str(v)))
-                walk(v, lk)
-        elif isinstance(obj, list):
-            for v in obj:
-                walk(v, key)
-    walk(row)
-    joined = " | ".join(v for v in values if v)
-    m = re.search(r"\b([A-Z][A-Za-z .'-]{1,60}),\s*([A-Z]{2})\b", joined)
-    if m:
-        return clean(m.group(1)), m.group(2).upper()
-    return "", ""
-
-
-def _gray_station_location(title):
-    """Use Gray's published station/market directory when UKG omits location."""
-    upper = clean(title).upper()
-    # Remote jobs name their actual territory in the title; honor that first.
-    for pat, value in [
-        (r"REMOTE\s+CHICAGO", ("Chicago", "IL")),
-        (r"REMOTE[/ ]+DES MOINES", ("Des Moines", "IA")),
-        (r"ASHEVILLE\s*-\s*REMOTE", ("Asheville", "NC")),
-    ]:
-        if re.search(pat, upper):
-            return value
-    # Prefer the longest station token to avoid partial matches.
-    for station in sorted(GRAY_STATION_LOCATIONS, key=len, reverse=True):
-        if re.search(r"(?<![A-Z0-9])" + re.escape(station) + r"(?![A-Z0-9])", upper):
-            return GRAY_STATION_LOCATIONS[station]
-    return "", ""
-
-
-def _gray_finalize_job(j, row=None):
-    """Apply MJR's Gray-specific internship, category and location rules."""
-    if not j:
-        return j
-    title = clean(j.title)
-    desc_text = strip_html(j.description)
-
-    # Every Gray Media Training Program posting is an internship, regardless
-    # of department, season, station suffix, or sales/news/weather wording.
-    if re.search(r"\bTRAINING PROGRAM\b", title, re.I):
-        j.jobtype = "Internship"
-        j.category = "Internships"
-    else:
-        # Gray is a television-first employer. Its local newsroom reporters,
-        # anchors, MMJs and photo/video journalists belong in Television.
-        if j.category == "Journalism":
-            if re.search(r"\b(digital content|digital mmj|digital news|digital producer)\b", title, re.I):
-                j.category = "Digital"
-            elif re.search(r"\b(graphic artist|graphic designer|visual designer)\b", title, re.I):
-                j.category = "Digital"
-            else:
-                j.category = "Television"
-
-    if not clean(j.city):
-        city = state = ""
-        if row:
-            city, state = _gray_location_from_row(row)
-        if not city:
-            city, state = _gray_station_location(title)
-        if city:
-            j.city, j.state, j.country = city, state, "US"
-
-    # A stationless Gray training-program listing cannot be assigned a market
-    # safely. Keep station-specific programs, but exclude a truly locationless
-    # generic program rather than sending Google an invalid location.
-    if re.search(r"\bTRAINING PROGRAM\b", title, re.I) and not clean(j.city):
-        return None
-    return j
-
-
-def curtis_media_direct(src):
-    """Curtis Media Group official career-post collector.
-
-    Curtis publishes dated, individual openings on curtismedia.net while its
-    ApplyToJob/JazzHR board does not consistently expose a trustworthy posted
-    date. MJR therefore uses Curtis's own dated career posts as the freshness
-    authority and canonical job URL. This avoids importing old-but-still-live
-    JazzHR forms as newly posted jobs.
+    Gray's corporate careers page currently exposes hundreds of openings and
+    filters publicly. Prefer those canonical employer pages over relying solely
+    on the legacy UKG board.
     """
     starts = [
-        "https://www.curtismedia.net/career-opportunities/",
-        "https://www.curtismedia.net/category/employment/",
+        "https://graymedia.com/careers/",
+        src["URL"],
     ]
-    article_urls = set()
-    seen_pages = set()
-    queue = list(starts)
 
-    while queue and len(seen_pages) < 12:
-        page = queue.pop(0)
-        if page.rstrip("/") in seen_pages:
-            continue
-        seen_pages.add(page.rstrip("/"))
-        try:
-            r = req("GET", page)
-        except Exception:
-            continue
-        final = str(getattr(r, "url", "") or page)
-        soup = BeautifulSoup(r.text, "html.parser")
-
-        for a in soup.find_all("a", href=True):
-            h = urljoin(final, a["href"]).split("#", 1)[0]
-            hp = urlparse(h)
-            if hp.netloc.lower().replace("www.", "") != "curtismedia.net":
-                continue
-            # Curtis career posts use normal WordPress dated permalinks.
-            if re.search(r"/20\d{2}/\d{2}/\d{2}/[^/?#]+/?$", hp.path, re.I):
-                article_urls.add(h)
-                continue
-            # Follow only employment archive pagination.
-            if re.search(r"/category/employment/page/\d+/?$", hp.path, re.I):
-                if h.rstrip("/") not in seen_pages:
-                    queue.append(h)
-
-    out = []
-    seen_ids = set()
-    for url in sorted(article_urls):
-        try:
-            rr = req("GET", url)
-        except Exception:
-            continue
-        soup = BeautifulSoup(rr.text, "html.parser")
-        txt = clean(soup.get_text(" "))
-
-        h1 = soup.find("h1")
-        title = clean(h1.get_text(" ") if h1 else "")
-        if not title or title.lower() in {"career opportunities", "employment"}:
-            continue
-
-        # Prefer explicit page date; dated permalink is a safe official fallback.
-        pd = None
-        m = re.search(
-            r"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|"
-            r"Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)"
-            r"\s+\d{1,2},\s+20\d{2}\b",
-            txt,
-            re.I,
-        )
-        if m:
-            pd = pdate(m.group(0))
-        if not pd:
-            um = re.search(r"/(20\d{2})/(\d{2})/(\d{2})/", url)
-            if um:
-                pd = pdate(f"{um.group(1)}-{um.group(2)}-{um.group(3)}")
-        if not pd:
-            continue
-
-        main = soup.find("main") or soup.find("article") or soup
-        desc_html = str(main)
-        desc = format_description(desc_html)
-        plain = strip_html(desc)
-        if len(plain) < 200:
-            continue
-
-        jt = jobtype(title, plain)
-        life_days = INTERNSHIP_LIFE_DAYS if jt == "Internship" or category(title, desc, "Radio", "Curtis Media Group") == "Internships" else REGULAR_LIFE_DAYS
-        if pd < TODAY - timedelta(days=life_days):
-            continue
-
-        # Location is normally printed as "Curtis Media Group | City, ST".
-        city = state = ""
-        lm = re.search(r"Curtis Media Group\s*\|\s*([^|\n,]+),\s*([A-Z]{2})\b", plain, re.I)
-        if not lm:
-            lm = re.search(r"\b(?:Location\s*:?\s*)?([A-Za-z .'-]+),\s*(NC)\b", plain)
-        if lm:
-            city = clean(lm.group(1))
-            state = clean(lm.group(2)).upper()
-
-        jid = hashlib.sha1(url.encode()).hexdigest()[:16]
-        if jid in seen_ids:
-            continue
-        seen_ids.add(jid)
-        out.append(Job(
-            jid,
-            title,
-            "Curtis Media Group",
-            desc,
-            pd,
-            jt,
-            category(title, desc, "Radio", "Curtis Media Group"),
-            url,
-            src.get("URL") or "https://www.curtismedia.net/career-opportunities/",
-            src.get("URL") or "https://www.curtismedia.net/career-opportunities/",
-            "",
-            normalize_work_arrangement(plain, f"{city}, {state}"),
-            city,
-            state,
-            "US",
-        ))
-
-    print(f"Curtis Media Group official dated posts: {len(article_urls)} enumerated, {len(out)} fresh")
-    return out
-
-
-def gray_direct(src):
-    """Gray Media: enumerate the public UKG Pro board through its JSON endpoint.
-
-    Gray's board shell is browser/JavaScript dependent, so ordinary GET crawling
-    can legitimately see zero links. UKG Pro itself loads the public openings by
-    POSTing to JobBoardView/LoadSearchResults. Enumerate that endpoint directly,
-    then fetch each canonical OpportunityDetail page for the employer's full text.
-    """
-    gray_board = (
-        "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/"
-        "ae441110-89bd-444d-8ad2-b76c7b9db7a9"
+    # First crawl Gray's own careers surface.
+    jobs = _crawl_rendered_job_board(
+        src,
+        starts,
+        allow_hosts={
+            "graymedia.com",
+            "www.graymedia.com",
+            "recruiting.ultipro.com",
+        },
+        max_pages=100,
+        max_jobs=3500,
     )
-    parts = _ukg_parts(gray_board + "/")
-    if not parts:
-        return []
-    base, tenant, board = parts
-    endpoint = f"{gray_board}/JobBoardView/LoadSearchResults"
-    headers = {
-        "Accept": "application/json, text/plain, */*",
-        "Content-Type": "application/json;charset=UTF-8",
-        "Origin": base,
-        "Referer": gray_board + "/?q=&o=postedDateDesc&w=&wc=&we=&wpst=",
-        "User-Agent": "Mozilla/5.0 (compatible; MJR-Jobs-Feed/1.0; +https://www.mediajobsreport.com)",
-    }
+    if jobs:
+        return jobs
 
-    def body(skip, top=50):
-        return {
-            "opportunitySearch": {
-                "Top": top,
-                "Skip": skip,
-                "QueryString": "",
-                "OrderBy": [{
-                    "Value": "postedDateDesc",
-                    "PropertyName": "PostedDate",
-                    "Ascending": False,
-                }],
-                "Filters": [
-                    {"t": "TermsSearchFilterDto", "fieldName": 4, "extra": None, "values": []},
-                    {"t": "TermsSearchFilterDto", "fieldName": 5, "extra": None, "values": []},
-                    {"t": "TermsSearchFilterDto", "fieldName": 6, "extra": None, "values": []},
-                ],
-            },
-            "matchCriteria": {
-                "PreferredJobs": [], "Educations": [],
-                "LicenseAndCertifications": [], "Skills": [],
-                "hasNoLicenses": False, "SkippedSkills": [],
-            },
-        }
-
-    rows = []
-    seen = set()
-    skip = 0
-    diag = []
-    # The board currently has hundreds of openings. Page rather than requesting
-    # one giant response so UKG tenant limits cannot silently truncate results.
-    for page_no in range(100):
-        try:
-            r = req("POST", endpoint, headers=headers, json=body(skip))
-            payload = r.json()
-        except Exception as e:
-            diag.append(f"LIST_ERROR skip={skip} {type(e).__name__}: {e}")
-            break
-
-        opportunities = (
-            payload.get("opportunities")
-            or payload.get("Opportunities")
-            or payload.get("results")
-            or payload.get("Results")
-            or []
-        ) if isinstance(payload, dict) else []
-        if not isinstance(opportunities, list):
-            opportunities = []
-        diag.append(f"LIST skip={skip} count={len(opportunities)}")
-        if not opportunities:
-            break
-
-        added = 0
-        for row in opportunities:
-            if not isinstance(row, dict):
-                continue
-            oid = clean(str(
-                row.get("Id") or row.get("id") or
-                row.get("OpportunityId") or row.get("opportunityId") or ""
-            ))
-            if not re.fullmatch(r"[0-9a-f-]{36}", oid, re.I) or oid.lower() in seen:
-                continue
-            seen.add(oid.lower())
-            rows.append(row)
-            added += 1
-        if not added:
-            break
-        skip += len(opportunities)
-        if len(opportunities) < 50:
-            break
-
-    out = []
-    out_ids = set()
-    for row in rows:
-        oid = clean(str(
-            row.get("Id") or row.get("id") or
-            row.get("OpportunityId") or row.get("opportunityId") or ""
-        ))
-        detail_url = f"{gray_board}/OpportunityDetail?opportunityId={oid}"
-
-        # Reject old regular postings before making a detail request. Internship
-        # retention is decided later once title/type are known.
-        list_pd = pdate(
-            row.get("PostedDate") or row.get("postedDate") or
-            row.get("DatePosted") or row.get("datePosted")
-        )
-        if list_pd and list_pd < TODAY - timedelta(days=INTERNSHIP_LIFE_DAYS):
-            continue
-
-        j = None
-        try:
-            rr = req("GET", detail_url, headers={"Referer": gray_board + "/"})
-            j = _ukg_detail(src, detail_url, rr.text)
-        except Exception as e:
-            diag.append(f"DETAIL_ERROR {oid} {type(e).__name__}: {e}")
-
-        # Some UKG tenants serve a thin browser shell on detail GETs. The list
-        # API still contains authoritative public metadata, so retain a posting
-        # when it supplies a real title, date, and meaningful description.
-        if not j:
-            title = clean(str(row.get("Title") or row.get("title") or ""))
-            pd = list_pd
-            raw_desc = str(
-                row.get("Description") or row.get("description") or
-                row.get("BriefDescription") or row.get("briefDescription") or ""
-            )
-            desc = format_description(raw_desc)
-            if title and pd and len(strip_html(desc)) >= 120:
-                jt = jobtype(title, strip_html(desc))
-                if pd >= feed_cutoff(jt):
-                    loc = clean(str(
-                        row.get("Location") or row.get("location") or
-                        row.get("LocationName") or row.get("locationName") or ""
-                    ))
-                    jid = clean(str(
-                        row.get("RequisitionNumber") or row.get("requisitionNumber") or oid
-                    ))
-                    j = Job(
-                        jid, title, src["Company"], desc, pd, jt,
-                        category(title, desc, src["Industry"], src["Company"]),
-                        detail_url, src["URL"], "https://graymedia.com/", "",
-                        normalize_work_arrangement(desc, loc), loc, "",
-                        infer_country(loc, src["Company"], desc),
-                    )
-
-        j = _gray_finalize_job(j, row)
-        if j and j.id not in out_ids:
-            # _ukg_detail uses the broad discovery CUTOFF. Enforce MJR's actual
-            # 14-day regular / 30-day internship retention here as well.
-            if j.date and j.date >= feed_cutoff(j.jobtype):
-                out_ids.add(j.id)
-                out.append(j)
-
-    diag.append(f"ENUMERATED={len(rows)} ACCEPTED={len(out)}")
+    # If the corporate page links only to UKG opportunity details, use the
+    # existing UKG collector as a final fallback; it already fails safely.
     try:
-        Path("mjr-gray-diagnostic.txt").write_text("\n".join(diag) + "\n", encoding="utf-8")
+        return ukg(src)
     except Exception:
-        pass
-    return out
+        return []
 
 
 V17_TARGETS = {
@@ -6883,179 +6469,17 @@ def _paylocity_board_root(url):
     return url
 
 
-def hope_media_paylocity(src):
-    """Collect all active Hope Media Group openings from its Paylocity board.
-
-    Hope's public Paylocity employer board is the authoritative active inventory.
-    Because some still-active Hope openings remain on the board longer than the
-    normal crawl window, board membership is used as the freshness signal and
-    collected jobs receive TODAY as the feed date. Explicit validThrough dates
-    are still honored when Paylocity exposes them.
-    """
-    board_url = (
-        "https://recruiting.paylocity.com/Recruiting/Jobs/All/"
-        "86640b12-f72f-4e87-9766-d49997610d4c"
-    )
-
-    try:
-        r = req("GET", board_url)
-    except Exception:
-        return []
-
-    final_board = str(getattr(r, "url", "") or board_url)
-    soup = BeautifulSoup(r.text, "html.parser")
-    raw = html.unescape(r.text or "").replace("\\/", "/")
-
-    details = set()
-
-    # Normal rendered board links.
-    for a in soup.find_all("a", href=True):
-        h = urljoin(final_board, a["href"])
-        if re.search(r"(?i)/recruiting/jobs/details/\d+", h):
-            details.add(h.split("#", 1)[0])
-
-    # Paylocity can also inject its openings through script/application state.
-    for m in re.finditer(
-        r'https?://recruiting\.paylocity\.com/[^"\'< >\\s]*?/jobs/details/\d+[^"\'< >\\s]*',
-        raw,
-        re.I,
-    ):
-        details.add(m.group(0).rstrip(".,);"))
-
-    for m in re.finditer(
-        r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']',
-        raw,
-        re.I,
-    ):
-        details.add(urljoin(final_board, m.group(1)).split("#", 1)[0])
-
-    # If a Paylocity rendering change hides the list in the initial HTML, use
-    # known-current Hope detail pages only as additional discovery seeds. Each
-    # seed is parsed only if it still resolves as a live Hope Media Group page.
-    seed_urls = [
-        "https://recruiting.paylocity.com/recruiting/jobs/Details/4395916/Hope-Media-Group/Network-Music-Director",
-        "https://recruiting.paylocity.com/recruiting/jobs/Details/4459287/Hope-Media-Group/Director-of-Production-and-Audio-Ministry",
-        "https://recruiting.paylocity.com/recruiting/jobs/Details/4392281/Hope-Media-Group/Data-Program-Impact-Manager",
-        "https://recruiting.paylocity.com/recruiting/jobs/Details/4106456/Hope-Media-Group/Chief-of-Donor-Engagement",
-        "https://recruiting.paylocity.com/recruiting/jobs/Details/4294707/Hope-Media-Group/Vice-President-Human-Resources",
-        "https://recruiting.paylocity.com/recruiting/jobs/Details/3099850/Hope-Media-Group/KSBJ-On-Air-Show-Host-Fill-In",
-    ]
-    if not details:
-        details.update(seed_urls)
-
-    out, seen_ids = [], set()
-    for url in sorted(details):
-        try:
-            rr = req("GET", url)
-            final = str(getattr(rr, "url", "") or url)
-            soup = BeautifulSoup(rr.text, "html.parser")
-            txt = clean(soup.get_text(" "))
-
-            # Reject wrong employers/expired redirect shells.
-            if "hope media group" not in txt.lower():
-                continue
-
-            title = ""
-            desc = ""
-            loc = ""
-            jt = txt
-            valid_through = None
-            jid = ""
-
-            json_jobs = _jsonld_jobs(soup)
-            if json_jobs:
-                jp = json_jobs[0]
-                title = clean(jp.get("title") or "")
-                desc = format_description(jp.get("description") or "")
-                loc = _location_from_jsonld(jp)
-                jt = _employment_text(jp) or txt
-                valid_through = pdate(jp.get("validThrough"))
-                ident = jp.get("identifier") or {}
-                if isinstance(ident, dict):
-                    jid = clean(str(ident.get("value") or ident.get("name") or ""))
-                elif ident:
-                    jid = clean(str(ident))
-
-            if not title:
-                headings = [clean(h.get_text(" ")) for tag in ("h2", "h3", "h1") for h in soup.find_all(tag)]
-                for h in headings:
-                    hl = h.lower()
-                    if not h or hl in {"apply", "description", "requirements", "job type", "hope media group"}:
-                        continue
-                    if "hope media group" in hl:
-                        continue
-                    if len(h) <= 180:
-                        title = h
-                        break
-            if not title:
-                parts = [x for x in urlparse(final).path.split("/") if x]
-                if parts:
-                    title = clean(parts[-1].replace("-", " "))
-
-            if not desc:
-                main = soup.find("main") or soup.find("article") or soup
-                desc = clean(main.get_text(" "))
-            if not loc:
-                for pat in (
-                    r"(?:Job Location|Location)\s*:?\s*([A-Za-z0-9 .,'/\-&]+?)(?=\s+(?:Job Type|Employment Type|Category|Department|Apply|$))",
-                    r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
-                ):
-                    mm = re.search(pat, txt)
-                    if mm:
-                        loc = clean(mm.group(1))
-                        break
-
-            if not title or len(strip_html(desc)) < 200:
-                continue
-            if valid_through and valid_through < TODAY:
-                continue
-
-            canonical = final.split("#", 1)[0]
-            mid = re.search(r"(?i)/jobs/details/(\d+)", canonical)
-            jid = jid or (mid.group(1) if mid else hashlib.sha1(canonical.encode()).hexdigest()[:16])
-            if jid in seen_ids:
-                continue
-            seen_ids.add(jid)
-
-            out.append(Job(
-                jid,
-                title,
-                src["Company"],
-                desc,
-                TODAY,
-                jobtype(title, jt),
-                category(title, desc, src["Industry"], src["Company"]),
-                canonical,
-                board_url,
-                board_url,
-                "",
-                normalize_work_arrangement(desc, loc or txt),
-                loc,
-                "",
-                infer_country(loc or txt, src["Company"], desc),
-                valid_through,
-            ))
-        except Exception:
-            continue
-
-    return out
-
-
-_LAST_ENUMERATED = {}
-
 def paylocity_v18(src):
     """Targeted Paylocity public-board crawler.
 
-    v84: Paylocity's current public boards can return an unsupported-browser
-    shell to ordinary HTTP requests even though the jobs are visible in a real
-    browser.  Enumerate detail links with normal HTTP first, then use a single
-    Playwright-rendered board pass when necessary.  Only explicit employer
-    posting dates are accepted; stale jobs are enumerated for audit purposes
-    but never emitted into the MJR feed.
+    Supports both All/{board-guid}/{company} boards and individual Details
+    URLs. It enumerates only actual Paylocity detail pages and requires a
+    recent explicit posting date before import.
     """
-    company = clean(src.get("Company", "")).lower()
     starts = [src["URL"]]
+    company = clean(src.get("Company", "")).lower()
 
+    # Known current public board roots from the source inventory.
     known = {
         "dick broadcasting company": [
             "https://recruiting.paylocity.com/recruiting/jobs/All/da27c45a-0c7a-4cbe-a575-3444d884e49b/Dick-Broadcasting-Company-Inc",
@@ -7066,120 +6490,64 @@ def paylocity_v18(src):
         "weigel": [
             "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
         ],
-        "weigel broadcasting": [
-            "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
-        ],
-        "weigel broadcasting co": [
-            "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
-        ],
     }
     starts.extend(known.get(company, []))
     starts = list(dict.fromkeys(starts))
 
+    queue = starts[:]
+    seen_pages = set()
     details = set()
 
-    def add_detail(h, base):
-        if not h:
-            return
-        h = urljoin(base, h).split("#", 1)[0]
-        hp = urlparse(h)
-        if "recruiting.paylocity.com" not in hp.netloc.lower():
-            return
-        if re.search(r"/recruiting/jobs/details/\d+", hp.path, re.I):
-            details.add(h)
+    while queue and len(seen_pages) < 160 and len(details) < 5000:
+        page = queue.pop(0)
+        if page.rstrip("/") in seen_pages:
+            continue
+        seen_pages.add(page.rstrip("/"))
 
-    # Cheap server-rendered discovery first.  This still works for some older
-    # Paylocity tenants and avoids launching a browser unnecessarily.
-    for page in starts:
         try:
             r = req("GET", page)
         except Exception:
             continue
+
         final = str(getattr(r, "url", "") or page)
         soup = BeautifulSoup(r.text, "html.parser")
         raw = html.unescape(r.text or "").replace("\\/", "/")
+
+        def add(h):
+            h = urljoin(final, h)
+            hp = urlparse(h)
+            if "recruiting.paylocity.com" not in hp.netloc.lower():
+                return
+            if re.search(r"/recruiting/jobs/details/\d+", hp.path, re.I):
+                details.add(h.split("#", 1)[0])
+
         for a in soup.find_all("a", href=True):
-            add_detail(a["href"], final)
+            add(a["href"])
+            h = urljoin(final, a["href"])
+            hp = urlparse(h)
+            if "recruiting.paylocity.com" not in hp.netloc.lower():
+                continue
+            label = clean(a.get_text(" ")).lower()
+            if (
+                re.search(r"\b(next|more|view more|load more)\b", label)
+                or re.search(r"[?&](page|pageindex|start|offset)=\d+", h, re.I)
+            ):
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
         for m in re.finditer(
             r'https?://recruiting\.paylocity\.com/[^"\'<>\s]*?/jobs/details/\d+[^"\'<>\s]*',
-            raw, re.I,
+            raw,
+            re.I,
         ):
-            add_detail(m.group(0).rstrip(".,);"), final)
-        for m in re.finditer(
-            r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']',
-            raw, re.I,
-        ):
-            add_detail(m.group(1), final)
+            add(m.group(0).rstrip(".,);"))
 
-    # Modern Paylocity fallback.  The Weigel board currently renders its job
-    # cards client-side and returns an unsupported-browser shell to requests.
-    if not details and sync_playwright is not None:
-        for board in starts:
-            try:
-                with sync_playwright() as p:
-                    browser = p.chromium.launch(
-                        headless=True,
-                        args=["--disable-dev-shm-usage", "--no-sandbox"],
-                    )
-                    context = browser.new_context(
-                        user_agent=(
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                            "AppleWebKit/537.36 (KHTML, like Gecko) "
-                            "Chrome/152.0.0.0 Safari/537.36"
-                        ),
-                        viewport={"width": 1440, "height": 1100},
-                    )
-                    page = context.new_page()
-                    page.set_default_timeout(20000)
-                    page.goto(board, wait_until="domcontentloaded", timeout=45000)
-                    try:
-                        page.wait_for_load_state("networkidle", timeout=15000)
-                    except Exception:
-                        page.wait_for_timeout(4000)
+        for m in re.finditer(r'["\']([^"\']*/Recruiting/Jobs/Details/\d+[^"\']*)["\']', raw, re.I):
+            add(m.group(1))
 
-                    # Scroll a few times in case the tenant lazily renders rows.
-                    last = -1
-                    stable = 0
-                    for _ in range(12):
-                        hrefs = page.eval_on_selector_all(
-                            "a[href]", "els => els.map(e => e.href)"
-                        )
-                        for href in hrefs:
-                            add_detail(href, page.url)
-
-                        # Paylocity sometimes stores the URLs only in the
-                        # rendered markup / framework state.
-                        try:
-                            rendered = page.content()
-                        except Exception:
-                            rendered = ""
-                        rendered = html.unescape(rendered).replace("\\/", "/")
-                        for m in re.finditer(
-                            r'(?:https?://recruiting\.paylocity\.com)?/Recruiting/Jobs/Details/\d+(?:/[^"\'<>\s]*)?',
-                            rendered, re.I,
-                        ):
-                            add_detail(m.group(0), page.url)
-
-                        if len(details) == last:
-                            stable += 1
-                        else:
-                            stable = 0
-                        last = len(details)
-                        if stable >= 2:
-                            break
-                        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                        page.wait_for_timeout(1000)
-                    browser.close()
-            except Exception as e:
-                print(f"Paylocity rendered discovery failed for {src.get('Company')}: {e}")
-            if details:
-                break
-
+    # If the source itself is a single detail page (Hope), include it.
     if re.search(r"/recruiting/jobs/details/\d+", src["URL"], re.I):
         details.add(src["URL"])
-
-    _LAST_ENUMERATED[company] = len(details)
-    print(f"Paylocity v84 {src.get('Company')}: enumerated {len(details)} detail URLs")
 
     out, seen_ids = [], set()
     for url in sorted(details):
@@ -7189,23 +6557,14 @@ def paylocity_v18(src):
             j = _job_from_detail(src, final, rr.text)
             if not j:
                 j = _direct_board_job(src, final, rr.text)
-            if not j:
-                continue
-
-            # Never turn an old still-open Paylocity posting into a new MJR job.
-            pd = getattr(j, "date", None) or _direct_board_date(rr.text)
-            if not pd or pd < CUTOFF:
-                continue
-            j.date = pd
-
-            if j.id not in seen_ids:
+            if j and j.id not in seen_ids:
                 seen_ids.add(j.id)
                 out.append(j)
         except Exception:
             continue
 
-    print(f"Paylocity v84 {src.get('Company')}: {len(out)} fresh jobs")
     return out
+
 
 def _ashby_board_name(url):
     p = urlparse(url)
@@ -7595,212 +6954,40 @@ def townsquare_v23(src):
 
 
 def hubbard_v23(src):
-    """Enumerate Hubbard Broadcasting's public ADP MyJobs board.
-
-    Hubbard uses ADP Recruitment Management / MyJobs (myjobs.adp.com), which is
-    a different public surface from ADP Workforce Now.  The MyJobs SPA first
-    exposes a short-lived public board token and org OID for the tenant slug;
-    those values authorize the anonymous listing/detail endpoints used by the
-    public career site itself.
-    """
-    slug = "hubbardbroadcasting"
-    career_cfg_url = f"https://myjobs.adp.com/public/staffing/v1/career-site/{slug}"
-    listing_url = (
-        "https://my.adp.com/myadp_prefix/mycareer/public/staffing/v1/"
-        "job-requisitions/apply-custom-filters"
-    )
-    detail_prefix = (
-        "https://my.adp.com/myadp_prefix/mycareer/public/staffing/v1/"
-        "job-requisitions/search-meta/"
-    )
-
-    # 1) Establish the anonymous public-board session.
-    cfg_r = req("GET", career_cfg_url, headers={"Accept": "application/json"})
-    if getattr(cfg_r, "status_code", 200) != 200:
-        raise RuntimeError(f"Hubbard ADP career-site HTTP {cfg_r.status_code}")
-    cfg = cfg_r.json()
-    token = clean(str(cfg.get("myJobsToken") or ""))
-    orgoid = clean(str(cfg.get("orgoid") or cfg.get("orgOID") or ""))
-    if not token:
-        raise RuntimeError("Hubbard ADP public myJobsToken missing")
-
-    headers = {
-        "Accept": "application/json",
-        "Accept-Language": "en-US",
-        "Origin": "https://myjobs.adp.com",
-        "Referer": "https://myjobs.adp.com/",
-        "myjobstoken": token,
-        "rolecode": "manager",
-    }
-    if orgoid:
-        headers["orgoid"] = orgoid
-
-    select = (
-        "reqId,jobTitle,publishedJobTitle,type,jobDescription,"
-        "jobQualifications,workLevelCode,clientRequisitionID,"
-        "postingDate,requisitionLocations"
-    )
-
-    # 2) Fully paginate the employer board.  Keep pages modest; very large
-    # MyJobs pages can fail upstream even though normal pagination succeeds.
-    rows = []
-    seen_req = set()
-    skip = 0
-    top = 100
-    total = None
-    while skip < 5000:
-        lr = req(
-            "GET",
-            listing_url,
-            headers=headers,
-            params={
-                "$orderby": "postingDate desc",
-                "$select": select,
-                "$top": top,
-                "$skip": skip,
-                "tz": "America/New_York",
-            },
-        )
-        if getattr(lr, "status_code", 200) != 200:
-            raise RuntimeError(f"Hubbard ADP listing HTTP {lr.status_code}")
-        payload = lr.json()
-        page = payload.get("jobRequisitions") or []
-        if total is None:
-            try:
-                total = int(payload.get("count"))
-            except Exception:
-                total = None
-        if not page:
-            break
-
-        added = 0
-        for p in page:
-            if not isinstance(p, dict):
-                continue
-            rid = clean(str(p.get("reqId") or p.get("clientRequisitionID") or ""))
-            if not rid or rid in seen_req:
-                continue
-            seen_req.add(rid)
-            rows.append(p)
-            added += 1
-
-        if not added:
-            break
-        skip += len(page)
-        if total is not None and len(rows) >= total:
-            break
-
-    # 3) Build MJR jobs.  Fetch search-meta when the list payload is thin so we
-    # retain the employer's complete public description/qualification text.
-    out = []
-    for p in rows:
-        rid = clean(str(p.get("reqId") or p.get("clientRequisitionID") or ""))
-        detail = p
-        raw_desc = clean(str(p.get("jobDescription") or ""))
-        raw_qual = clean(str(p.get("jobQualifications") or ""))
-        if len(strip_html(raw_desc + " " + raw_qual)) < 250:
-            try:
-                dr = req("GET", detail_prefix + quote(rid, safe=""), headers=headers)
-                if getattr(dr, "status_code", 200) == 200:
-                    dp = dr.json()
-                    drows = dp.get("jobRequisitions") or []
-                    if drows and isinstance(drows[0], dict):
-                        # search-meta sometimes nests the useful fields, so
-                        # merge without discarding list fields.
-                        detail = dict(p)
-                        detail.update(drows[0])
-            except Exception:
-                pass
-
-        title = clean(str(
-            detail.get("publishedJobTitle")
-            or detail.get("jobTitle")
-            or p.get("publishedJobTitle")
-            or p.get("jobTitle")
-            or ""
-        ))
-        if not title:
+    """Recover Hubbard's newer ADP CX job-detail links from the public board."""
+    roots = [
+        src["URL"],
+        "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing",
+    ]
+    details = set()
+    for root in roots:
+        try:
+            r = req("GET", root)
+        except Exception:
             continue
-
-        pd = pdate(
-            detail.get("postingDate")
-            or p.get("postingDate")
-            or detail.get("datePosted")
-            or p.get("datePosted")
-        )
-        if pd and pd < CUTOFF:
-            continue
-        # Presence on the live ADP board is authoritative if ADP omits a
-        # parseable posting date.
-        if not pd:
-            pd = TODAY
-
-        desc_bits = []
-        for key in ("jobDescription", "jobQualifications"):
-            val = detail.get(key)
-            if val:
-                desc_bits.append(str(val))
-        desc = format_description("\n".join(desc_bits))
-        if len(strip_html(desc)) < 120:
-            # Do not emit shell/empty records.
-            continue
-
-        city = ""
-        state = ""
-        country = "US"
-        locations = detail.get("requisitionLocations") or p.get("requisitionLocations") or []
-        if isinstance(locations, list) and locations:
-            loc = next(
-                (x for x in locations if isinstance(x, dict) and x.get("primaryIndicator")),
-                locations[0],
+        final = str(getattr(r, "url", "") or root)
+        details.update(_v23_detail_candidates(final, r.text))
+        # Capture ADP CX detail URLs and requisition IDs embedded in JS.
+        for m in re.finditer(
+            r'https?://myjobs\.adp\.com/hubbardbroadcasting/cx/job-details\?[^"\'<>\s]+',
+            r.text, re.I
+        ):
+            details.add(m.group(0).replace("\\/", "/").replace("&amp;", "&"))
+        for m in re.finditer(r'jobId["\']?\s*[:=]\s*["\']([^"\']+)["\']', r.text, re.I):
+            jid = m.group(1)
+            details.add(
+                "https://myjobs.adp.com/hubbardbroadcasting/cx/job-details"
+                f"?reqId={jid}"
             )
-            if isinstance(loc, dict):
-                addr = loc.get("address") or {}
-                if isinstance(addr, dict):
-                    city = clean(str(addr.get("cityName") or ""))
-                    st = addr.get("countrySubdivisionLevel1") or {}
-                    if isinstance(st, dict):
-                        state = clean(str(
-                            st.get("shortName") or st.get("codeValue") or st.get("longName") or ""
-                        ))
-                    co = addr.get("country") or {}
-                    if isinstance(co, dict):
-                        cv = clean(str(co.get("codeValue") or co.get("shortName") or ""))
-                        if cv:
-                            country = "CA" if cv.upper() in ("CA", "CAN", "CANADA") else "US"
-                if not city:
-                    nc = loc.get("nameCode") or {}
-                    if isinstance(nc, dict):
-                        city = clean(str(nc.get("shortName") or nc.get("longName") or ""))
-
-        loc_text = ", ".join(x for x in (city, state) if x)
-        detail_url = f"https://myjobs.adp.com/{slug}/cx/job-details?reqId={quote(rid, safe='')}"
-        context = clean(" ".join([
-            strip_html(desc),
-            loc_text,
-            str(detail.get("type") or ""),
-            str(detail.get("workLevelCode") or ""),
-        ]))
-
-        out.append(
-            Job(
-                hashlib.sha1((slug + ":" + rid).encode()).hexdigest()[:16],
-                title,
-                src["Company"],
-                desc,
-                pd,
-                jobtype(title, context),
-                category(title, desc, src["Industry"], src["Company"]),
-                detail_url,
-                src["URL"],
-                "https://hubbardbroadcasting.com/",
-                "",
-                normalize_work_arrangement(desc, context),
-                city,
-                state,
-                country,
-            )
-        )
+    out, ids = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            j = _radio_recovery_job(src, str(getattr(rr, "url", "") or url), rr.text)
+            if j and j.id not in ids:
+                ids.add(j.id); out.append(j)
+        except Exception:
+            continue
     return out
 
 
@@ -8284,72 +7471,11 @@ def structured_jobs_v27(src):
 # ============================================================
 # v28 SAFE TEST / PRODUCTION CONTROLS
 # ============================================================
-# Preserve the raw GitHub workflow input separately from the normalized set.
-# This makes targeted-test routing deterministic and gives the run log an
-# unambiguous record of exactly what GitHub passed to the crawler.
-MJR_TEST_COMPANIES_RAW = os.getenv("MJR_TEST_COMPANIES", "")
 MJR_TEST_COMPANIES = {
     clean(x).lower()
-    for x in MJR_TEST_COMPANIES_RAW.split(",")
+    for x in os.getenv("MJR_TEST_COMPANIES", "").split(",")
     if clean(x)
 }
-
-# v82: Canonicalize targeted-test names immediately, before main() reads or
-# filters the source CSV.  Washington Post tests previously disappeared before
-# dispatch because aliases were normalized too late in main().
-_WASHINGTON_POST_ALIASES = {
-    "washington post",
-    "the washington post",
-    "washington post company",
-    "the washington post company",
-}
-
-# v83: Canonical company aliases used at the FIRST targeted-test gate.
-# This prevents a valid requested employer from disappearing simply because
-# the shared source CSV uses a legal/corporate variant of the crawler name.
-_TARGET_COMPANY_ALIASES = {
-    "washington post": _WASHINGTON_POST_ALIASES,
-    "curtis media group": {"curtis media", "curtis media company", "curtis media group"},
-    "gray media": {"gray media", "gray television", "gray television inc", "gray television, inc."},
-    "weigel": {
-        "weigel",
-        "weigel broadcasting",
-        "weigel broadcasting co",
-        "weigel broadcasting company",
-        "weigel broadcasting co.",
-    },
-    "dow jones": {
-        "dow jones",
-        "dow jones & company",
-        "dow jones & company, inc.",
-        "dow jones and company",
-        "wall street journal",
-        "the wall street journal",
-    },
-    "lee enterprises": {
-        "lee enterprises",
-        "lee enterprises inc",
-        "lee enterprises, inc.",
-        "lee enterprises incorporated",
-        "lee enterprises, incorporated",
-    },
-    "leighton media": {
-        "leighton media",
-        "leighton enterprises",
-        "leighton enterprises inc",
-        "leighton enterprises inc.",
-    },
-}
-
-def _canonical_target_company(name):
-    key = clean(name).lower()
-    for canonical, aliases in _TARGET_COMPANY_ALIASES.items():
-        if key in aliases:
-            return canonical
-    return key
-
-MJR_TEST_COMPANIES = {_canonical_target_company(x) for x in MJR_TEST_COMPANIES}
-
 MJR_REQUEST_DELAY_MIN = float(os.getenv("MJR_REQUEST_DELAY_MIN", "0.20"))
 MJR_REQUEST_DELAY_MAX = float(os.getenv("MJR_REQUEST_DELAY_MAX", "0.65"))
 MJR_DOMAIN_REQUEST_CAP = int(os.getenv("MJR_DOMAIN_REQUEST_CAP", "175"))
@@ -8357,7 +7483,7 @@ _v28_domain_counts = {}
 
 def _v28_source_enabled(src):
     return (not MJR_TEST_COMPANIES or
-            _canonical_target_company(src.get("Company", "")) in MJR_TEST_COMPANIES)
+            clean(src.get("Company", "")).lower() in MJR_TEST_COMPANIES)
 
 def _v28_before_request(url):
     host = urlparse(url).netloc.lower()
@@ -11203,7 +10329,7 @@ def voiceover_sources_test():
 
 
 def careeronestop_townsquare_test():
-    """Controlled CareerOneStop V2 job-search test for Townsquare Media.
+    """Controlled CareerOneStop job-search test for Townsquare Media.
 
     CareerOneStop fields are retained as supplied. MJR category, job type and
     work arrangement are separate feed metadata. The employer page is consulted
@@ -11228,7 +10354,7 @@ def careeronestop_townsquare_test():
         "250",               # documented maximum page size
         "30",                # postings acquired during the last 30 days
     ]
-    endpoint = "https://api.careeronestop.org/v2/jobsearch/" + "/".join(
+    endpoint = "https://api.careeronestop.org/v1/jobsearch/" + "/".join(
         quote(str(value), safe="") for value in segments
     )
     api_headers = {
@@ -11239,12 +10365,7 @@ def careeronestop_townsquare_test():
         response = req(
             "GET",
             endpoint,
-            params={
-                "companyName": "Townsquare Media",
-                "showFilters": "false",
-                "enableJobDescriptionSnippet": "true",
-                "enableMetaData": "false",
-            },
+            params={"companyName": "Townsquare Media", "showFilters": "false"},
             headers=api_headers,
         )
     except requests.HTTPError as exc:
@@ -11255,12 +10376,7 @@ def careeronestop_townsquare_test():
         response = req(
             "GET",
             endpoint + "/",
-            params={
-                "companyName": "Townsquare Media",
-                "showFilters": "false",
-                "enableJobDescriptionSnippet": "true",
-                "enableMetaData": "false",
-            },
+            params={"companyName": "Townsquare Media", "showFilters": "false"},
             headers=api_headers,
         )
     payload = response.json()
@@ -11316,56 +10432,14 @@ def careeronestop_townsquare_test():
         url = clean(str(value(row, "URL", "JobUrl", "JobURL", "ApplyURL") or ""))
         jid = clean(str(value(row, "JvId", "JobId", "JobID", "Id") or ""))
         location = clean(str(value(row, "Location", "JobLocation") or ""))
-        desc_raw = value(row, "JobDescription", "Description", "DescriptionSnippet", "JobDesc")
+        desc_raw = value(row, "JobDescription", "Description", "JobDesc")
         description = format_description(str(desc_raw or ""))
 
         if not title or not url:
             continue
 
-        # List Jobs may return only a short snippet. When a JvId is available,
-        # ask CareerOneStop V2 for the full job record first. Only fall back to
-        # the employer page if CareerOneStop still does not provide enough text.
-        if len(strip_html(description)) < 200 and jid:
-            try:
-                detail_endpoint = (
-                    "https://api.careeronestop.org/v2/jobsearch/"
-                    + quote(user_id, safe="")
-                    + "/"
-                    + quote(jid, safe="")
-                )
-                detail_api_response = req(
-                    "GET",
-                    detail_endpoint,
-                    params={"isHtml": "true", "enableMetaData": "false"},
-                    headers=api_headers,
-                )
-                detail_payload = detail_api_response.json()
-                if isinstance(detail_payload, dict):
-                    description = format_description(str(
-                        detail_payload.get("Description")
-                        or detail_payload.get("description")
-                        or description
-                        or ""
-                    ))
-                    url = clean(str(
-                        detail_payload.get("URL")
-                        or detail_payload.get("Url")
-                        or detail_payload.get("url")
-                        or url
-                    ))
-                    company = clean(str(
-                        detail_payload.get("Company")
-                        or detail_payload.get("company")
-                        or company
-                    ))
-                    location = clean(str(
-                        detail_payload.get("Location")
-                        or detail_payload.get("location")
-                        or location
-                    ))
-            except Exception:
-                pass
-
+        # Some List Jobs responses are summaries. Use the linked employer page
+        # for the description while leaving CareerOneStop-supplied fields intact.
         if len(strip_html(description)) < 200:
             try:
                 detail_response = req("GET", url)
@@ -11426,840 +10500,12 @@ def careeronestop_townsquare_test():
     print(f"CareerOneStop Townsquare Media test: {len(rows)} API rows, {len(out)} qualifying jobs")
     return out
 
-
-def leighton_media_direct(src):
-    """Collect Leighton Media's official market-by-market careers page.
-
-    Leighton does not publish posting dates. For a newly discovered opening we
-    use MJR's first-seen date, then preserve that original date from the state
-    file on later crawls. This prevents an undated long-running opening from
-    being artificially refreshed every day.
-    """
-    board = "https://www.leighton.media/careers/open-positions/"
-    apply_base = "https://www.leighton.media/careers/employment-application/"
-    market_locations = {
-        "alexandria": ("Alexandria", "MN"),
-        "detroit lakes": ("Detroit Lakes", "MN"),
-        "fergus falls": ("Fergus Falls", "MN"),
-        "grand forks": ("Grand Forks", "ND"),
-        "perham": ("Perham", "MN"),
-        "st. cloud": ("St. Cloud", "MN"),
-        "st cloud": ("St. Cloud", "MN"),
-        "winona": ("Winona", "MN"),
-    }
-
-    try:
-        r = req("GET", board)
-        raw = r.text
-    except Exception:
-        _LAST_ENUMERATED["leighton media"] = 0
-        return []
-
-    soup = BeautifulSoup(raw, "html.parser")
-    state = load_state()
-    openings = []
-    current_market = ""
-
-    # The official page is organized as H3 market headings followed by H4 job
-    # headings. Capture each H4 until the next H4/H3, keeping only real jobs.
-    for node in soup.find_all(["h3", "h4"]):
-        if node.name == "h3":
-            label = clean(node.get_text(" "))
-            if label.lower() in market_locations:
-                current_market = label
-            continue
-        if not current_market:
-            continue
-        title = clean(node.get_text(" "))
-        title = re.sub(r"^\[?button:\s*", "", title, flags=re.I).strip(" []")
-        # Ignore structural H4s used by the careers-page template.  In
-        # particular, the footer's "Locations" heading appears after the
-        # Winona market and was being counted as a sixth opening even though
-        # the live page currently contains only five real jobs.
-        if not title or title.lower() in {
-            "open positions", "apply now", "locations", "location"
-        }:
-            continue
-
-        parts = []
-        apply_href = ""
-        sib = node.find_next_sibling()
-        while sib is not None:
-            if getattr(sib, "name", None) in {"h3", "h4"}:
-                break
-            if hasattr(sib, "get_text"):
-                txt = clean(sib.get_text(" "))
-                if txt:
-                    parts.append(txt)
-                a = sib.find("a", href=True) if hasattr(sib, "find") else None
-                if a and "employment-application" in a.get("href", ""):
-                    apply_href = urljoin(board, a["href"])
-            sib = sib.find_next_sibling()
-
-        body = clean(" ".join(parts))
-        # Some templates render the title as a button wrapper and the detailed
-        # position name inside the body. Prefer the explicit Position field.
-        pm = re.search(r"\bPosition:\s*(.+?)(?=\s+Reports to:|\s+Leighton Media\b|$)", body, re.I)
-        if pm:
-            title = clean(pm.group(1))
-        if not body or "no open positions" in body.lower():
-            continue
-
-        city, st = market_locations[current_market.lower()]
-        # Leighton's application form accepts job and loc query parameters.
-        # Build a job-specific official application URL when the page exposes
-        # only the shared form URL.
-        # The page often links every opening to the same shared application
-        # form (for example, only ?hsLang=en).  A shared URL cannot be used as
-        # the job identity because the global URL de-duplicator would collapse
-        # different Leighton openings into one record.  Preserve any harmless
-        # existing query values, but always stamp the official form with this
-        # opening's job title and market unless those parameters are already
-        # present.
-        if apply_href:
-            ap = urlparse(apply_href)
-            aq = parse_qs(ap.query, keep_blank_values=True)
-            aq["job"] = [title]
-            aq["loc"] = [city]
-            flat_q = []
-            for qk, qvals in aq.items():
-                for qv in qvals:
-                    flat_q.append((qk, qv))
-            apply_href = urlunparse((ap.scheme, ap.netloc, ap.path, ap.params, urlencode(flat_q), ap.fragment))
-        else:
-            apply_href = apply_base + "?" + urlencode({"job": title, "loc": city})
-
-        key = apply_href.rstrip("/").lower()
-        prior = state.get(key, {}).get("job", {}) if isinstance(state.get(key), dict) else {}
-        posted = None
-        try:
-            posted = date.fromisoformat(prior.get("date", ""))
-        except Exception:
-            posted = TODAY
-
-        jt = jobtype(title, body)
-        if "intern" in title.lower():
-            jt = "Internship"
-        if not posted or (TODAY - posted).days >= retention_days(jt):
-            continue
-
-        # Leighton is radio-first. Functional sales remains Sales & Marketing;
-        # promotions/event street-team work is Radio; internships stay Internships.
-        tl = title.lower()
-        if jt == "Internship":
-            cat = "Internships"
-        elif "media consultant" in tl or "sales" in tl or "account" in tl:
-            cat = "Sales & Marketing"
-        elif "promotion" in tl or "event" in tl or "on-air" in tl:
-            cat = "Radio"
-        else:
-            cat = category(title, body, "Radio", "Leighton Media")
-
-        desc = format_description(body)
-        jid = "leighton-" + hashlib.sha1((title + "|" + city).lower().encode()).hexdigest()[:14]
-        openings.append(Job(
-            jid, title, "Leighton Media", desc, posted, jt, cat,
-            apply_href, board, board, "",
-            normalize_work_arrangement(body, f"{city}, {st}", title),
-            city, st, "US",
-        ))
-
-    # De-duplicate by stable title+market identity.
-    dedup = {}
-    for j in openings:
-        dedup[(j.title.lower(), j.city.lower(), j.state.lower())] = j
-    out = list(dedup.values())
-    _LAST_ENUMERATED["leighton media"] = len(out)
-    try:
-        Path("mjr-leighton-diagnostic.txt").write_text(
-            "Leighton Media official careers diagnostic\n"
-            f"openings_collected={len(out)}\n" +
-            "\n".join(f"{j.city}, {j.state} | {j.title} | {j.category} | {j.date}" for j in out),
-            encoding="utf-8",
-        )
-    except Exception:
-        pass
-    return out
-
-
-def lee_enterprises_direct(src):
-    """Lee Enterprises collector for its current Dayforce candidate portal."""
-    board = "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL"
-    if sync_playwright is None:
-        return dayforce(src)
-    found = {}
-    network_log = []
-
-    def add_anchor(href, text=""):
-        if not href:
-            return
-        u = urljoin(board + "/", html.unescape(str(href)).replace("\\/", "/"))
-        if "jobs.dayforcehcm.com" not in urlparse(u).netloc.lower():
-            return
-        m = re.search(r"/jobs/(\d+)(?:[/?#]|$)", u, re.I)
-        if not m:
-            return
-        url = f"https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/{m.group(1)}"
-        text = clean(text)
-        pd = None
-        for pat in (
-            r"Posted\s+(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
-            r"Posted\s+([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
-            r"Posted\s+(\d{1,2}/\d{1,2}/20\d{2})",
-            r"Posted\s+(20\d{2}-\d{2}-\d{2})",
-        ):
-            mm = re.search(pat, text, re.I)
-            if mm:
-                pd = pdate(mm.group(1))
-                if pd:
-                    break
-        rec = found.setdefault(url, {"posted": None, "text": ""})
-        if pd:
-            rec["posted"] = pd
-        if len(text) > len(rec.get("text", "")):
-            rec["text"] = text
-
-    out = []
-    try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True, args=["--disable-dev-shm-usage", "--no-sandbox"])
-            context = browser.new_context(user_agent=SESSION.headers.get("User-Agent", "Mozilla/5.0"), viewport={"width":1440,"height":1200})
-            page = context.new_page(); page.set_default_timeout(8000)
-            def on_response(resp):
-                try:
-                    ru = resp.url or ""
-                    if any(k in ru.lower() for k in ("job", "posting", "search", "candidateportal")):
-                        network_log.append(f"{resp.status} {ru}")
-                except Exception:
-                    pass
-            page.on("response", on_response)
-            _v28_before_request(board)
-            page.goto(board, wait_until="domcontentloaded", timeout=30000)
-            try: page.wait_for_load_state("networkidle", timeout=12000)
-            except Exception: pass
-            page.wait_for_timeout(1200)
-            previous = -1; unchanged = 0
-            for _ in range(80):
-                try:
-                    items = page.eval_on_selector_all("a[href*='/jobs/']", "els => els.map(a => ({href:a.href, text:(a.closest('li,article,[role=row],[class*=job],[class*=card]')||a.parentElement||a).innerText||a.innerText||''}))")
-                    for it in items: add_anchor(it.get("href"), it.get("text", ""))
-                except Exception: pass
-                if len(found) == previous: unchanged += 1
-                else: previous = len(found); unchanged = 0
-                clicked = False
-                for sel in ("button:has-text('Load More')", "button:has-text('Show More')", "button:has-text('Next')", "a:has-text('Next')"):
-                    try:
-                        q=page.locator(sel).first
-                        if q.count() and q.is_visible() and q.is_enabled():
-                            q.click(timeout=2500); page.wait_for_timeout(700); clicked=True; break
-                    except Exception: pass
-                if not clicked:
-                    try: page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                    except Exception: pass
-                    page.wait_for_timeout(500)
-                if unchanged >= 5 and not clicked: break
-
-            _LAST_ENUMERATED["lee enterprises"] = len(found)
-            candidates=[(u,r) for u,r in found.items() if not r.get("posted") or r["posted"] >= CUTOFF]
-            seen=set()
-            for url, meta in candidates:
-                try:
-                    _v28_before_request(url); page.goto(url, wait_until="domcontentloaded", timeout=20000)
-                    try: page.wait_for_load_state("networkidle", timeout=5000)
-                    except Exception: pass
-                    page.wait_for_timeout(250); raw=page.content()
-                except Exception: continue
-                soup=BeautifulSoup(raw,"html.parser"); text=clean(soup.get_text(" "))
-                h1=soup.find("h1"); title=clean(h1.get_text(" ") if h1 else "")
-                if not title or title.lower() in {"job details","search jobs"}: continue
-                pd=meta.get("posted")
-                if not pd:
-                    for pat in (r"Posted\s+(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+([A-Za-z]+\s+\d{1,2},\s+20\d{2})", r"Posted\s+([A-Za-z]+\s+\d{1,2},\s+20\d{2})"):
-                        mm=re.search(pat,text,re.I)
-                        if mm:
-                            pd=pdate(mm.group(1))
-                            if pd: break
-                if not pd or pd < CUTOFF: continue
-                main=soup.find("main") or soup.find("article") or soup; desc=format_description(str(main))
-                if len(clean(BeautifulSoup(desc,"html.parser").get_text(" "))) < 100: continue
-                # Dayforce places the authoritative location immediately after
-                # the requisition number and before "Job Description".  Capture
-                # that block first; it is much safer than searching the whole
-                # description for an arbitrary City, ST reference.
-                loc_block = ""
-                mm = re.search(r"Req\s*#\s*\d+\s*(.*?)\s*Job Description\b", text, re.I | re.S)
-                if mm:
-                    loc_block = clean(mm.group(1)).replace("•", " | ")
-
-                state_names = {
-                    "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR","California":"CA",
-                    "Colorado":"CO","Connecticut":"CT","Delaware":"DE","Florida":"FL","Georgia":"GA",
-                    "Hawaii":"HI","Idaho":"ID","Illinois":"IL","Indiana":"IN","Iowa":"IA","Kansas":"KS",
-                    "Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD","Massachusetts":"MA",
-                    "Michigan":"MI","Minnesota":"MN","Mississippi":"MS","Missouri":"MO","Montana":"MT",
-                    "Nebraska":"NE","Nevada":"NV","New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM",
-                    "New York":"NY","North Carolina":"NC","North Dakota":"ND","Ohio":"OH","Oklahoma":"OK",
-                    "Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
-                    "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Vermont":"VT",
-                    "Virginia":"VA","Washington":"WA","West Virginia":"WV","Wisconsin":"WI","Wyoming":"WY",
-                    "District of Columbia":"DC"
-                }
-                city = state = ""
-                loc = loc_block
-
-                # Prefer a concrete city/state from the Dayforce location block.
-                # Handles "Billings, MT, USA", "Bryan, Texas, United States of
-                # America", street-address forms, and multi-location postings.
-                city_state = re.search(r"(?:^|\||\s)([A-Za-z][A-Za-z .'-]*?),\s*([A-Z]{2})\b", loc_block)
-                if city_state:
-                    city, state = clean(city_state.group(1)), city_state.group(2).upper()
-                    # Strip a leading street address when Dayforce supplies one.
-                    if re.match(r"^\d+\s", city):
-                        parts = [clean(x) for x in city.split(",") if clean(x)]
-                        city = parts[-1] if parts else city
-                else:
-                    for state_name, abbr in state_names.items():
-                        mloc = re.search(r"(?:^|,\s*)([A-Za-z][A-Za-z .'-]*?),\s*" + re.escape(state_name) + r"(?:,|\b)", loc_block, re.I)
-                        if mloc:
-                            city, state = clean(mloc.group(1)), abbr
-                            # Address + city can precede a full state name; take
-                            # the last comma-delimited locality component.
-                            if "," in city:
-                                city = clean(city.rsplit(",", 1)[-1])
-                            break
-
-                # If a title itself supplies a clearer city/state and Dayforce
-                # did not provide one, use that explicit employer-provided value.
-                if not state:
-                    tm = re.search(r"[-–—]\s*([A-Za-z .'-]+),\s*([A-Z]{2})\b", title)
-                    if tm:
-                        city, state = clean(tm.group(1)), tm.group(2).upper()
-
-                # State-only multi-market postings (for example Publisher /
-                # Market President) remain valid US locations even without one
-                # canonical city.
-                if not state:
-                    sm = re.search(r"\b([A-Z]{2}),?\s*(?:USA|United States)", loc_block)
-                    if sm:
-                        state = sm.group(1).upper()
-                jm=re.search(r"/jobs/(\d+)",url); jid=jm.group(1) if jm else hashlib.sha1(url.encode()).hexdigest()[:16]
-                if jid in seen: continue
-                seen.add(jid)
-                out.append(Job(jid,title,src["Company"],desc,pd,jobtype(title,text),category(title,text,src["Industry"],src["Company"]),url,board,board,"",normalize_work_arrangement(text,loc,title),city,state,"US"))
-            browser.close()
-    except Exception as exc:
-        network_log.append(f"browser_error={type(exc).__name__}: {exc}")
-
-    try:
-        Path("mjr-lee-diagnostic.txt").write_text("Lee Enterprises Dayforce diagnostic\n" + f"enumerated_detail_urls={len(found)}\n" + f"fresh_or_undated_candidates={sum(1 for r in found.values() if not r.get('posted') or r['posted'] >= CUTOFF)}\n" + f"jobs_collected={len(out)}\n\n" + "\n".join(network_log[-120:]), encoding="utf-8")
-    except Exception: pass
-    return out
-
-def dow_jones_direct(src):
-    # Enumerate Dow Jones from its official dynamic careers site.
-    root = "https://dowjones.jobs/jobs/"
-    details = set()
-    network_log = []
-
-    def add_url(raw, base=root):
-        if not raw:
-            return
-        u = html.unescape(str(raw)).replace("\\/", "/")
-        u = urljoin(base, u).split("#", 1)[0]
-        up = urlparse(u)
-        if up.netloc.lower().replace("www.", "") != "dowjones.jobs":
-            return
-        if re.search(r"/[A-F0-9]{20,}/job/?$", up.path, re.I):
-            details.add(urlunparse((up.scheme or "https", up.netloc, up.path, "", up.query, "")))
-
-    def mine_text(raw, base=root):
-        raw = html.unescape(str(raw or "")).replace("\\/", "/")
-        pattern = r'''(?:https?://(?:www\.)?dowjones\.jobs)?/[^"'<>\s]+/[A-F0-9]{20,}/job/?(?:\?[^"'<>\s]*)?'''
-        for m in re.finditer(pattern, raw, re.I):
-            add_url(m.group(0), base)
-        field_pattern = r'''["'](?:url|jobUrl|job_url|detailUrl|detail_url)["']\s*:\s*["']([^"']+/[A-F0-9]{20,}/job/?[^"']*)["']'''
-        for m in re.finditer(field_pattern, raw, re.I):
-            add_url(m.group(1), base)
-
-    for start in ("https://dowjones.jobs/", root):
-        try:
-            r = req("GET", start)
-            mine_text(r.text, str(getattr(r, "url", "") or start))
-        except Exception:
-            pass
-
-    if sync_playwright is not None:
-        try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True, args=["--disable-dev-shm-usage", "--no-sandbox"])
-                context = browser.new_context(
-                    user_agent=SESSION.headers.get("User-Agent", "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)"),
-                    viewport={"width": 1440, "height": 1200},
-                )
-                page = context.new_page()
-                page.set_default_timeout(8000)
-
-                def on_response(resp):
-                    try:
-                        ru = resp.url or ""
-                        host = urlparse(ru).netloc.lower().replace("www.", "")
-                        ct = (resp.headers or {}).get("content-type", "").lower()
-                        if any(k in ru.lower() for k in ("job", "search", "career", "position", "requisition")):
-                            network_log.append(f"{resp.status} {ru}")
-                        if host == "dowjones.jobs" and any(x in ct for x in ("json", "text", "html", "javascript")):
-                            try:
-                                mine_text(resp.text(), ru)
-                            except Exception:
-                                pass
-                    except Exception:
-                        pass
-
-                page.on("response", on_response)
-                _v28_before_request(root)
-                page.goto(root, wait_until="domcontentloaded", timeout=30000)
-                try:
-                    page.wait_for_load_state("networkidle", timeout=12000)
-                except Exception:
-                    pass
-                page.wait_for_timeout(1800)
-
-                unchanged = 0
-                previous = -1
-                for _ in range(80):
-                    try:
-                        for href in page.eval_on_selector_all("a[href]", "els => els.map(e => e.href)"):
-                            add_url(href, page.url)
-                        mine_text(page.content(), page.url)
-                    except Exception:
-                        pass
-
-                    if len(details) == previous:
-                        unchanged += 1
-                    else:
-                        unchanged = 0
-                        previous = len(details)
-
-                    clicked = False
-                    for sel in (
-                        "button:has-text('More')", "a:has-text('More')",
-                        "button:has-text('Load More')", "a:has-text('Load More')",
-                        "button:has-text('Next')", "a:has-text('Next')",
-                    ):
-                        try:
-                            loc = page.locator(sel).first
-                            if loc.count() and loc.is_visible() and loc.is_enabled():
-                                loc.click(timeout=2500)
-                                clicked = True
-                                page.wait_for_timeout(900)
-                                break
-                        except Exception:
-                            pass
-                    if not clicked:
-                        try:
-                            page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                        except Exception:
-                            pass
-                        page.wait_for_timeout(700)
-                    if unchanged >= 5 and not clicked:
-                        break
-
-                try:
-                    for href in page.eval_on_selector_all("a[href]", "els => els.map(e => e.href)"):
-                        add_url(href, page.url)
-                    mine_text(page.content(), page.url)
-                except Exception:
-                    pass
-                browser.close()
-        except Exception as exc:
-            network_log.append(f"browser_error={type(exc).__name__}: {exc}")
-
-    _LAST_ENUMERATED["dow jones"] = len(details)
-    try:
-        Path("mjr-dowjones-diagnostic.txt").write_text(
-            "Dow Jones official careers diagnostic\n"
-            f"enumerated_detail_urls={len(details)}\n"
-            + "\n".join(sorted(details)[:100])
-            + "\n\nLikely network calls:\n"
-            + "\n".join(network_log[-100:]),
-            encoding="utf-8",
-        )
-    except Exception:
-        pass
-
-    def rendered_detail(url):
-        """Render a Dow Jones detail page and capture job-related network text."""
-        if sync_playwright is None:
-            return "", []
-        captures, rendered = [], ""
-        try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True, args=["--disable-dev-shm-usage", "--no-sandbox"])
-                context = browser.new_context(user_agent=SESSION.headers.get("User-Agent", "Mozilla/5.0"), viewport={"width":1440,"height":1200})
-                page = context.new_page(); page.set_default_timeout(8000)
-                def capture(resp):
-                    try:
-                        ct=(resp.headers or {}).get("content-type", "").lower(); ru=resp.url or ""
-                        if any(x in ct for x in ("json","javascript","html","text")) and any(x in ru.lower() for x in ("job","career","position","requisition","search")):
-                            body=resp.text()
-                            if body and len(body) < 2000000: captures.append((ru,body))
-                    except Exception: pass
-                page.on("response", capture); _v28_before_request(url)
-                page.goto(url, wait_until="domcontentloaded", timeout=30000)
-                try: page.wait_for_load_state("networkidle", timeout=10000)
-                except Exception: pass
-                page.wait_for_timeout(1000); rendered=page.content(); browser.close()
-        except Exception: pass
-        return rendered, captures
-
-    def dowjones_posted_date(raw):
-        """Extract a posting/publication date; never substitute an application deadline."""
-        text=html.unescape(str(raw or "")).replace("\\/", "/")
-        patterns=[
-            r'''["'](?:datePosted|date_posted|postedDate|postingDate|publishDate|publishedDate|publicationDate|createdDate)["']\s*:\s*["']([^"']+)["']''',
-            r'''(?:Date\s+Posted|Posted\s+Date|Posting\s+Date|Published|Posted)\s*:?\s*([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|20\d{2}-\d{2}-\d{2})'''
-        ]
-        for pat in patterns:
-            m=re.search(pat,text,re.I)
-            if m:
-                d=pdate(m.group(1))
-                if d: return d
-        return None
-
-    def dowjones_job_from_html(url, raw, posted):
-        soup=BeautifulSoup(raw or "", "html.parser"); txt=clean(soup.get_text(" "))
-        h1=soup.find("h1"); title=clean(h1.get_text(" ") if h1 else "")
-        if not title:
-            for pat in (r'''["']jobTitle["']\s*:\s*["']([^"']+)["']''', r'''["']title["']\s*:\s*["']([^"']+)["']'''):
-                m=re.search(pat,raw or "",re.I)
-                if m: title=clean(m.group(1)); break
-        if not posted or posted < CUTOFF or not title: return None
-        main=soup.find("main") or soup.find("article") or soup; desc=format_description(str(main))
-        if len(clean(BeautifulSoup(desc,"html.parser").get_text(" "))) < 200: return None
-        loc=""; m=re.search(r'''(?:Location|Job\s+Location)\s*:?\s*([^|]{2,100}?)(?=\s+(?:Job\s+ID|Req(?:uisition)?|Category|Business\s+Area|$))''',txt,re.I)
-        if m: loc=clean(m.group(1))
-        if not loc:
-            slug=urlparse(url).path.strip("/").split("/")[0]
-            mm=re.match(r'''(.+)-([a-z]{2})$''',slug,re.I)
-            if mm: loc=clean(mm.group(1).replace("-"," ").title()+", "+mm.group(2).upper())
-        m=re.search(r'''/([A-F0-9]{20,})/job/?''',url,re.I); jid=m.group(1) if m else ""
-        valid=None
-        for pat in (r'''(?:Application\s+Deadline|Apply\s+By|Closing\s+Date)\s*:?\s*([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|20\d{2}-\d{2}-\d{2})''', r'''["'](?:validThrough|applicationDeadline|closingDate)["']\s*:\s*["']([^"']+)["']'''):
-            mm=re.search(pat,raw or txt,re.I)
-            if mm: valid=pdate(mm.group(1)); break
-        return Job(jid or hashlib.sha1(url.encode()).hexdigest()[:16],title,src["Company"],desc,posted,jobtype(title,txt),category(title,txt,src["Industry"],src["Company"]),url,src["URL"],src["URL"],"",normalize_work_arrangement(txt,loc,title),loc,"",infer_country(loc,src["Company"],txt),valid)
-
-    # Production optimization: Dow Jones publishes a global board, while MJR
-    # carries U.S. and Canadian jobs.  The first URL path segment is the
-    # location slug (for example new-york-ny, chicago-il, toronto-on,
-    # barcelona-esp).  Filter foreign postings BEFORE detail requests.  This
-    # avoids spending minutes fetching/rendering jobs that can never enter MJR.
-    _us_states = {
-        "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA",
-        "ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR",
-        "PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC"
-    }
-    _ca_provinces = {"AB","BC","MB","NB","NL","NS","NT","NU","ON","PE","QC","SK","YT"}
-
-    def dj_url_location(url):
-        try:
-            slug = urlparse(url).path.strip("/").split("/")[0]
-        except Exception:
-            return "", "", ""
-        low = slug.lower()
-        if low in {"remote-us", "remote-usa", "united-states", "usa", "us"}:
-            return "Remote", "", "US"
-        m = re.match(r"^(.+)-([a-z]{2})$", slug, re.I)
-        if not m:
-            return "", "", ""
-        city = clean(m.group(1).replace("-", " ").title())
-        region = m.group(2).upper()
-        if region in _us_states:
-            return city, region, "US"
-        if region in _ca_provinces:
-            return city, region, "CA"
-        return "", "", ""
-
-    eligible_details = []
-    foreign_skipped = 0
-    for u in sorted(details):
-        city, region, country = dj_url_location(u)
-        if country:
-            eligible_details.append(u)
-        else:
-            foreign_skipped += 1
-
-    # Detail-loop diagnostics are surfaced through the audit CSV because the
-    # current GitHub workflow does not upload the standalone Dow Jones diagnostic.
-    detail_ok = detail_error = jsonld_count = date_found = 0
-    fresh_dates = stale_dates = undated = parse_rejected = 0
-    samples = []
-    out = []
-    seen_ids = set()
-    for url in sorted(eligible_details):
-        # This is the only Dow Jones detail loop. Foreign/global URLs were
-        # deliberately removed above and cannot enter the output downstream.
-        dj_city, dj_state, dj_country = dj_url_location(url)
-        try:
-            r = req("GET", url)
-            detail_ok += 1
-        except Exception as exc:
-            detail_error += 1
-            if len(samples) < 6:
-                samples.append(f"HTTP_ERROR {type(exc).__name__} {url}")
-            continue
-
-        final = str(getattr(r, "url", "") or url)
-        raw = r.text or ""
-        soup = BeautifulSoup(raw, "html.parser")
-        jps = _jsonld_jobs(soup)
-        if jps:
-            jsonld_count += 1
-
-        pd = pdate(jps[0].get("datePosted")) if jps else None
-        if not pd:
-            pd = dowjones_posted_date(raw)
-        captures = []
-        if not pd:
-            rendered, captures = rendered_detail(final)
-            if rendered:
-                raw = rendered
-                soup = BeautifulSoup(raw, "html.parser")
-                rjps = _jsonld_jobs(soup)
-                if rjps:
-                    jps = rjps; jsonld_count += 1
-                    pd = pdate(jps[0].get("datePosted"))
-                if not pd:
-                    pd = dowjones_posted_date(rendered)
-            if not pd:
-                for _, body in captures:
-                    pd = dowjones_posted_date(body)
-                    if pd:
-                        raw += "\n" + body
-                        break
-        if pd:
-            date_found += 1
-            if pd >= CUTOFF:
-                fresh_dates += 1
-            else:
-                stale_dates += 1
-        else:
-            undated += 1
-
-        try:
-            j = _job_from_detail(src, final, raw)
-        except Exception:
-            j = None
-        if not j and pd:
-            try:
-                j = dowjones_job_from_html(final, raw, pd)
-            except Exception:
-                j = None
-        if j:
-            # Canonical Dow Jones URLs carry a reliable North American city and
-            # state/province slug. Populate structured location before XML/state.
-            if dj_city:
-                j.city = dj_city
-            if dj_state:
-                j.state = dj_state
-            if dj_country:
-                j.country = dj_country
-
-            # Enforce the geographic gate again at the object boundary so no
-            # alternate/legacy detail path can leak a foreign Dow Jones job.
-            if j.country not in ("US", "CA"):
-                j = None
-
-        if j:
-            tl = clean(j.title).lower()
-            if any(x in tl for x in (
-                "account manager", "account executive", "client partner",
-                "sales manager", "sales executive", "corporate subscriptions",
-                "advertising sales", "subscription sales"
-            )):
-                j.category = "Sales & Marketing"
-
-        if j and j.id not in seen_ids:
-            seen_ids.add(j.id)
-            out.append(j)
-        elif not j:
-            parse_rejected += 1
-
-        if len(samples) < 6:
-            h1 = soup.find("h1")
-            title = clean((jps[0].get("title") if jps else "") or (h1.get_text(" ") if h1 else ""))
-            samples.append(
-                f"status={getattr(r, 'status_code', '')} bytes={len(raw)} "
-                f"jsonld={bool(jps)} date={pd or ''} title={title[:70]}"
-            )
-
-    diag = (
-        f"enumerated_detail_urls={len(details)}; north_america_detail_urls={len(eligible_details)}; "
-        f"foreign_urls_skipped={foreign_skipped}; detail_http_ok={detail_ok}; "
-        f"detail_http_error={detail_error}; jsonld_jobposting={jsonld_count}; "
-        f"date_found={date_found}; fresh_dates={fresh_dates}; stale_dates={stale_dates}; "
-        f"undated={undated}; parse_rejected={parse_rejected}"
-    )
-    _LAST_ENUMERATED["dow jones"] = {"count": len(details), "diag": diag}
-    try:
-        Path("mjr-dowjones-diagnostic.txt").write_text(
-            "Dow Jones official careers diagnostic\n" + diag + "\n\n" +
-            "\n".join(samples) + "\n\nLikely network calls:\n" +
-            "\n".join(network_log[-100:]), encoding="utf-8"
-        )
-    except Exception:
-        pass
-    return out
-
-
 def main():
     with SOURCES_FILE.open(
         newline="",
         encoding="utf-8-sig",
     ) as f:
         sources = list(csv.DictReader(f))
-
-    # v83: Normalize known company aliases in the loaded source inventory
-    # before the first targeted-test filter.  Weigel's source has appeared as
-    # Weigel, Weigel Broadcasting, and Weigel Broadcasting Co.; all must route
-    # to the same Paylocity v18 collector.
-    for row in sources:
-        raw_company = clean(row.get("Company", "")).lower()
-        canonical = _canonical_target_company(raw_company)
-        if canonical == "weigel":
-            row["Company"] = "Weigel"
-            row["Industry"] = row.get("Industry") or "Television"
-            row["ATS"] = "Paylocity"
-            row["URL"] = "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co"
-            row["Active"] = "True"
-
-    # A targeted Weigel test must be runnable even when the shared CSV branch
-    # does not yet contain the row.  Inject the verified board before filtering.
-    if "weigel" in MJR_TEST_COMPANIES and not any(
-        _canonical_target_company(r.get("Company", "")) == "weigel" for r in sources
-    ):
-        sources.append({
-            "Company": "Weigel",
-            "Industry": "Television",
-            "ATS": "Paylocity",
-            "URL": "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
-            "Active": "True",
-        })
-
-    # v82: Washington Post must exist in the source list BEFORE targeted-test
-    # filtering.  Normalize any existing aliases, then inject the verified
-    # official careers surface when the shared CSV does not yet contain it.
-    wp_aliases = _WASHINGTON_POST_ALIASES | {"washington post"}
-    for row in sources:
-        if clean(row.get("Company", "")).lower() in wp_aliases:
-            row["Company"] = "Washington Post"
-            row["Industry"] = row.get("Industry") or "Newspaper / Digital Media"
-            row["ATS"] = "Official Direct"
-            row["URL"] = "https://company.washingtonpost.com/careers?category_name=careercenter"
-            row["Active"] = "True"
-
-    if "washington post" in MJR_TEST_COMPANIES and not any(
-        clean(r.get("Company", "")).lower() == "washington post" for r in sources
-    ):
-        sources.append({
-            "Company": "Washington Post",
-            "Industry": "Newspaper / Digital Media",
-            "ATS": "Official Direct",
-            "URL": "https://company.washingtonpost.com/careers?category_name=careercenter",
-            "Active": "True",
-        })
-
-    # Dow Jones / Wall Street Journal: canonicalize before targeted filtering.
-    # Dow Jones is the employer source; WSJ-branded roles remain identifiable
-    # in their titles/descriptions without creating a duplicate employer feed.
-    for row in sources:
-        if _canonical_target_company(row.get("Company", "")) == "dow jones":
-            row["Company"] = "Dow Jones"
-            row["Industry"] = row.get("Industry") or "Newspaper / Digital Media"
-            row["ATS"] = "Official Direct"
-            row["URL"] = "https://dowjones.jobs/"
-            row["Active"] = "True"
-
-    if "dow jones" in MJR_TEST_COMPANIES and not any(
-        _canonical_target_company(r.get("Company", "")) == "dow jones" for r in sources
-    ):
-        sources.append({
-            "Company": "Dow Jones",
-            "Industry": "Newspaper / Digital Media",
-            "ATS": "Official Direct",
-            "URL": "https://dowjones.jobs/",
-            "Active": "True",
-        })
-
-    # Lee Enterprises: official recruiting is hosted by Dayforce. Normalize
-    # legal-name variants and make the verified board available before the
-    # targeted-test source gate, just as we do for other newly added employers.
-    for row in sources:
-        if _canonical_target_company(row.get("Company", "")) == "lee enterprises":
-            row["Company"] = "Lee Enterprises"
-            row["Industry"] = row.get("Industry") or "Newspaper / Digital Media"
-            row["ATS"] = "Dayforce"
-            row["URL"] = "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs"
-            row["Active"] = "True"
-
-    if "lee enterprises" in MJR_TEST_COMPANIES and not any(
-        _canonical_target_company(r.get("Company", "")) == "lee enterprises" for r in sources
-    ):
-        sources.append({
-            "Company": "Lee Enterprises",
-            "Industry": "Newspaper / Digital Media",
-            "ATS": "Dayforce",
-            "URL": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs",
-            "Active": "True",
-        })
-
-    # Leighton Media: official careers page is a direct market-by-market board.
-    # Normalize corporate variants and inject it before the targeted-test gate.
-    for row in sources:
-        if _canonical_target_company(row.get("Company", "")) == "leighton media":
-            row["Company"] = "Leighton Media"
-            row["Industry"] = row.get("Industry") or "Radio"
-            row["ATS"] = "Official Direct"
-            row["URL"] = "https://www.leighton.media/careers/open-positions/"
-            row["Active"] = "True"
-
-    if "leighton media" in MJR_TEST_COMPANIES and not any(
-        _canonical_target_company(r.get("Company", "")) == "leighton media" for r in sources
-    ):
-        sources.append({
-            "Company": "Leighton Media",
-            "Industry": "Radio",
-            "ATS": "Official Direct",
-            "URL": "https://www.leighton.media/careers/open-positions/",
-            "Active": "True",
-        })
-
-    # Curtis Media Group: normalize legacy/source-list aliases before targeted
-    # filtering so Curtis Media, Curtis Media Company, and Curtis Media Group
-    # all route through the dedicated official collector.
-    curtis_aliases = {"curtis media", "curtis media company", "curtis media group"}
-    for row in sources:
-        if clean(row.get("Company", "")).lower() in curtis_aliases:
-            row["Company"] = "Curtis Media Group"
-            row["Industry"] = row.get("Industry") or "Radio"
-            row["ATS"] = "Official Direct"
-            row["URL"] = "https://curtismediagroup.applytojob.com/"
-            row["Active"] = "True"
-
-    # Normalize targeted-test aliases to the canonical company name too.
-    if MJR_TEST_COMPANIES & curtis_aliases:
-        MJR_TEST_COMPANIES.difference_update(curtis_aliases)
-        MJR_TEST_COMPANIES.add("curtis media group")
-
-    # Ensure the verified official career surface is available even before the
-    # shared source CSV is updated.
-    if not any(clean(r.get("Company", "")).lower() == "curtis media group" for r in sources):
-        sources.append({
-            "Company": "Curtis Media Group",
-            "Industry": "Radio",
-            "ATS": "Official Direct",
-            "URL": "https://www.curtismedia.net/career-opportunities/",
-            "Active": "True",
-        })
 
     # v54: normalize any legacy Cox Radio source row before filtering/crawling.
     # This prevents an older CSV row or stale branch copy from forcing the
@@ -12292,28 +10538,9 @@ def main():
     )
 
     if MJR_TEST_COMPANIES:
-        # Hard targeted-test gate. Nothing outside the canonical requested set
-        # is allowed into dispatch. This is deliberately repeated here even
-        # though _v28_source_enabled() already applies the same rule: it makes
-        # accidental source injection impossible and exposes the exact routing
-        # decision in the GitHub Actions log.
-        requested = set(MJR_TEST_COMPANIES)
-        sources = [
-            src for src in sources
-            if _canonical_target_company(src.get("Company", "")) in requested
-        ]
-        print("MJR_TEST_COMPANIES raw:", repr(MJR_TEST_COMPANIES_RAW))
-        print("TEST MODE canonical companies:", ", ".join(sorted(requested)))
-        print("TEST MODE source rows:", len(sources))
-        for _src in sources:
-            print(
-                "TEST MODE source:",
-                _src.get("Company", ""),
-                "|", _src.get("ATS", ""),
-                "|", _src.get("URL", ""),
-            )
-        if not sources:
-            print("TEST MODE WARNING: no source rows matched the requested company set")
+        sources = [s for s in sources if _v28_source_enabled(s)]
+        print("TEST MODE companies:", ", ".join(sorted(MJR_TEST_COMPANIES)))
+        print(f"TEST MODE source rows: {len(sources)}")
 
     jobs = []
     audit = []
@@ -12332,11 +10559,10 @@ def main():
                 if "ashby" in a or "ashbyhq.com" in s.get("URL", "").lower()
                 else []
                 if company_key == "audacy"
-                else hope_media_paylocity(s)
-                if company_key == "hope media group"
                 else paylocity_v18(s)
                 if company_key in {
                     "dick broadcasting company",
+                    "hope media group",
                     "nrg media",
                     "weigel",
                 }
@@ -12358,14 +10584,6 @@ def main():
                 if company_key in {"disney / abc", "espn"}
                 else wbd_phenom(s)
                 if company_key == "cnn"
-                else dow_jones_direct(s)
-                if company_key == "dow jones"
-                else lee_enterprises_direct(s)
-                if company_key == "lee enterprises"
-                else leighton_media_direct(s)
-                if company_key == "leighton media"
-                else curtis_media_direct(s)
-                if company_key == "curtis media group"
                 else gray_direct(s)
                 if company_key == "gray media"
                 else workday(s)
@@ -12401,13 +10619,7 @@ def main():
                 else generic(s)
             )
 
-            _enum_info = _LAST_ENUMERATED.pop(company_key, 0)
-            if isinstance(_enum_info, dict):
-                icims_enumerated = int(_enum_info.get("count", 0) or 0)
-                enumeration_diagnostic = clean(_enum_info.get("diag", ""))
-            else:
-                icims_enumerated = int(_enum_info or 0)
-                enumeration_diagnostic = ""
+            icims_enumerated = 0
 
             # v40: Audacy uses direct iCIMS enumeration with strict
             # ID/title/apply-link validation. Do not use the old wrapper path.
@@ -12488,7 +10700,6 @@ def main():
                             ) if icims_enumerated else "",
                             f"non_media_scope_rejected={len(scope_rejected)}"
                             if scope_rejected else "",
-                            enumeration_diagnostic,
                         ]
                         if part
                     ),
