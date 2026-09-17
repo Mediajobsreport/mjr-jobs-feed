@@ -7505,9 +7505,26 @@ MJR_REQUEST_DELAY_MAX = float(os.getenv("MJR_REQUEST_DELAY_MAX", "0.65"))
 MJR_DOMAIN_REQUEST_CAP = int(os.getenv("MJR_DOMAIN_REQUEST_CAP", "175"))
 _v28_domain_counts = {}
 
+def _company_test_key(value):
+    """Normalize company names used by targeted tests without changing feed labels."""
+    key = clean(value).lower()
+    key = re.sub(r"\s*/\s*", "/", key)
+    aliases = {
+        "disney/abc": "disney/abc",
+        "disney / abc": "disney/abc",
+        "abc": "disney/abc",
+        "abc news": "disney/abc",
+        "the walt disney company / abc": "disney/abc",
+        "the walt disney company/abc": "disney/abc",
+    }
+    return aliases.get(key, key)
+
 def _v28_source_enabled(src):
-    return (not MJR_TEST_COMPANIES or
-            clean(src.get("Company", "")).lower() in MJR_TEST_COMPANIES)
+    if not MJR_TEST_COMPANIES:
+        return True
+    source_key = _company_test_key(src.get("Company", ""))
+    test_keys = {_company_test_key(x) for x in MJR_TEST_COMPANIES}
+    return source_key in test_keys
 
 def _v28_before_request(url):
     host = urlparse(url).netloc.lower()
@@ -10577,6 +10594,7 @@ def main():
             a = s["ATS"].lower()
 
             company_key = clean(s.get("Company", "")).lower()
+            company_route_key = _company_test_key(company_key)
 
             got = (
                 ashby(s)
@@ -10605,7 +10623,7 @@ def main():
                 else paramount_successfactors(s)
                 if company_key == "paramount"
                 else disney_public(s)
-                if company_key in {"disney / abc", "espn"}
+                if company_route_key in {"disney/abc", "espn"}
                 else wbd_phenom(s)
                 if company_key == "cnn"
                 else gray_direct(s)
