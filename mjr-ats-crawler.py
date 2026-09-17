@@ -5649,6 +5649,59 @@ def company_scope_rejection_reason(job_or_dict):
         if qvc_nonmedia_context and qvc_nonmedia_title and not qvc_media_title:
             return "QVC/HSN non-media operations role outside media scope"
 
+
+    # Paramount final scope guard.
+    # Paramount's careers feed includes a substantial consumer-products/licensing
+    # business. Keep media, streaming, advertising, technology and normal corporate
+    # functions, but exclude physical-product/toy/licensing-design/retail roles.
+    if company in {"paramount", "paramount global", "paramount pictures", "paramount skydance"}:
+        paramount_nonmedia_title = re.search(
+            r"\b("
+            r"consumer products?|global toys?|toy designer|toys?|hardlines|softlines|"
+            r"licensing design|licensing designer|product licensing|"
+            r"retail marketing|retail sr manager|retail senior manager|"
+            r"commercial growth and retail|"
+            r"cpg and promotions|consumer packaged goods|"
+            r"publishing designer|designer, publishing|"
+            r"pd designer|product development designer|"
+            r"toy & illustration|toy and illustration|"
+            r"creative studio - consumer products"
+            r")\b",
+            title,
+        )
+
+        # These are strong media/technology/corporate signals. They protect legitimate
+        # Paramount work where words such as "product" or "design" are used for
+        # streaming/digital/software rather than physical merchandise.
+        paramount_media_title = re.search(
+            r"\b("
+            r"broadcast|television|film|streaming|paramount\+|pluto|cbs|showtime|"
+            r"news|sports|studio|production|producer|editorial|video|audio|content|"
+            r"digital|social|audience|advertising|ad sales|sales|marketing|publicity|"
+            r"communications|software|engineer|engineering|developer|technology|"
+            r"data|analytics|ai|automation|cyber|security|product manager|"
+            r"finance|financial|accounting|legal|human resources|hr|business affairs"
+            r")\b",
+            title,
+        )
+
+        # Some physical-product roles include generic marketing/design language, so
+        # explicit consumer-products/toy/retail signals take precedence.
+        paramount_hard_reject = re.search(
+            r"\b("
+            r"consumer products?|global toys?|toy designer|hardlines|softlines|"
+            r"licensing design|toy & illustration|toy and illustration|"
+            r"creative studio - consumer products|commercial growth and retail|"
+            r"cpg and promotions|retail marketing"
+            r")\b",
+            title,
+        )
+
+        if paramount_hard_reject:
+            return "Paramount consumer-products, toys, licensing-design or retail role outside media scope"
+        if paramount_nonmedia_title and not paramount_media_title:
+            return "Paramount physical-product/licensing role outside media scope"
+
     if company == "meruelo media":
         construction_title = re.search(
             r"\b(construction (?:project )?manager|construction manager|"
