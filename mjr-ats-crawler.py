@@ -7917,11 +7917,19 @@ def _company_test_key(value):
         "fox tv stations": "fox",
         "fox entertainment": "fox",
         "fox news media": "fox",
+        "townsquare": "townsquare",
+        "townsquare media": "townsquare",
+        "townsquare media, inc.": "townsquare",
+        "townsquare media inc": "townsquare",
+        "townsquare interactive": "townsquare",
+        "townsquare ignite": "townsquare",
     }
     # Future-proof Paramount source labels while keeping unrelated CBS rows
     # isolated unless they are explicitly part of the Paramount source row.
     if key.startswith("paramount ") or key.startswith("paramount,"):
         return "paramount"
+    if key.startswith("townsquare ") or key.startswith("townsquare,"):
+        return "townsquare"
     return aliases.get(key, key)
 
 def _v28_source_enabled(src):
