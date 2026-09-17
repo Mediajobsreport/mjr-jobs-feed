@@ -5517,15 +5517,58 @@ def company_scope_rejection_reason(job_or_dict):
             return "FOX hospitality, receiving, mailroom or facilities role outside media scope"
 
     if company in {"qvc", "qurate retail group", "qvc group"}:
-        qvc_nonmedia_title = re.search(
-            r"\b(warehouse|fulfillment|distribution center|distribution centre|"
-            r"picker|packer|material handler|forklift|retail associate|store associate|"
-            r"merchandis(?:e|er|ing)|wave planning|facilities|building maintenance|"
-            r"maintenance technician)\b",
+        # QVC/Qurate operates large fulfillment, distribution and retail
+        # businesses alongside its television/eCommerce operation. Exclude
+        # physical logistics/store roles while retaining software, IT, digital
+        # commerce, marketing, finance and genuine media/broadcast positions.
+        qvc_hard_nonmedia_title = re.search(
+            r"\b(equipment operator|warehouse|warehouse hiring event|"
+            r"fulfillment|distribution center|distribution centre|"
+            r"picker|packer|pick[ /-]?pack|material handler|forklift|"
+            r"inventory (?:control|specialist|associate|coordinator)|"
+            r"receiving|receiver|shipping|yard driver|yard jockey|"
+            r"retail associate|store associate|store manager|retail store|"
+            r"wave planning|facilities|building maintenance|maintenance tech(?:nician)?|"
+            r"maintenance mechanic)\b",
             title,
         )
-        if qvc_nonmedia_title:
-            return "QVC retail, warehouse, fulfillment, merchandising or facilities role outside media scope"
+        qvc_physical_ops_context = re.search(
+            r"\b(fulfillment center|fulfillment centre|distribution center|"
+            r"distribution centre|warehouse|pick(?:ing)? and pack(?:ing)?|"
+            r"pick/pack|shipping and receiving|shipping & receiving|"
+            r"inventory control|material handling|forklift|conveyor|"
+            r"yard operations|retail store|store operations)\b",
+            text,
+        )
+        qvc_ops_title = re.search(
+            r"\b(maintenance|technician|equipment operator|inventory|"
+            r"operations associate|operations coordinator|receiver|"
+            r"shipping|yard driver|material handler)\b",
+            title,
+        )
+        # Physical-product merchandising/sourcing is outside MJR's scope, but
+        # don't catch digital/eCommerce/marketing roles merely because their
+        # descriptions mention merchandise.
+        qvc_product_merch_title = re.search(
+            r"\b(merchandis(?:e|er|ing)|buyer|assistant buyer|"
+            r"product sourcing|sourcing (?:specialist|manager|coordinator)|"
+            r"category buyer)\b",
+            title,
+        )
+        qvc_media_or_digital_signal = re.search(
+            r"\b(broadcast|television|tv|studio|video|audio|production|"
+            r"digital|ecommerce|e-commerce|software|engineer|engineering|"
+            r"information technology|\bit\b|automation|artificial intelligence|"
+            r"machine learning|marketing|advertising|finance|financial|"
+            r"accounting|legal|human resources|\bhr\b)\b",
+            title,
+        )
+        if qvc_hard_nonmedia_title:
+            return "QVC warehouse, fulfillment, distribution, retail or facilities role outside media scope"
+        if qvc_physical_ops_context and qvc_ops_title and not qvc_media_or_digital_signal:
+            return "QVC fulfillment/distribution operations role outside media scope"
+        if qvc_product_merch_title and not qvc_media_or_digital_signal:
+            return "QVC physical-product merchandising or sourcing role outside media scope"
 
     if company == "paramount":
         paramount_nonmedia_title = re.search(
