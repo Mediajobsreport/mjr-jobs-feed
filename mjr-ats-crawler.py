@@ -5599,6 +5599,13 @@ def company_scope_rejection_reason(job_or_dict):
     # These employers mix television/eCommerce/media jobs with a large retail,
     # fulfillment, warehouse and physical-product merchandising workforce.
     if company in {"qvc", "hsn", "qurate retail group"}:
+        # Explicit fulfillment titles must never be rescued by media-category protection.
+        if re.search(
+            r"\b(equipment operators?|forklift operators?|warehouse equipment operators?)\b",
+            title,
+        ):
+            return "QVC/HSN equipment/fulfillment role outside media scope"
+
         qvc_nonmedia_title = re.search(
             r"\b("
             r"equipment operator|forklift|picker|packer|pick pack|warehouse|"
