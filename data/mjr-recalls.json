@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-17T20:30:07.032Z",
+  "generated": "2026-09-18T00:36:33.638Z",
   "version": "2.4",
   "newestDate": "2026-09-17",
   "stale": false,
@@ -355,7 +355,24 @@
       "units": 2000,
       "pet": false,
       "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Friedrich-Air-Conditioning-Recalls-K%C3%9CHL-Window-Air-Conditioners-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
+      "url": "https://www.cpsc.gov/Recalls/2026/Friedrich-Air-Conditioning-Recalls-K%C3%9CHL-Window-Air-Conditioners-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
+      "score": 135
+    },
+    {
+      "id": "CPSC-10990-hayward-industries-recalls-universal-pool-heaters-due-to-risk-of-serio",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Hayward Industries Recalls Universal Pool Heaters Due to Risk of Serious Injury or Death from Carbon…",
+      "reason": "During operation the heaters can produce high levels of carbon monoxide (CO), posing a risk of serious injury or death from carbon monoxide poisoning.",
+      "brand": "Hayward Industries, Inc., of Charlotte, North Carolina",
+      "company": "Hayward Industries, Inc., of Charlotte, North Carolina",
+      "retailers": "Sold At: Pool equipment distributors, builders and service professionals nationwide from March 2026 through July 2026 for about $5,600.",
+      "product": "400,000 BTU Universal-HC Series Pool Heaters",
+      "date": "2026-09-17",
+      "units": 4600,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/Hayward-Industries-Recalls-Universal-Pool-Heaters-Due-to-Risk-of-Serious-Injury-or-Death-from-Carbon-Monoxide-Poisoning-Hazard-0",
       "score": 135
     },
     {
@@ -476,23 +493,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/Sweet-Cubby-Recalls-Childrens-Loungewear-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Burn-Hazard-Violate-Mandatory-Standard-for-Childrens-Sleepwear",
       "score": 125
-    },
-    {
-      "id": "CPSC-10990-hayward-industries-recalls-universal-pool-heaters-due-to-risk-of-serio",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Hayward Industries Recalls Universal Pool Heaters Due to Risk of Serious Injury or Death from Carbon…",
-      "reason": "During operation the heaters can produce high levels of carbon monoxide (CO), posing a risk of serious injury or death from carbon monoxide poisoning.",
-      "brand": "Hayward Industries, Inc., of Charlotte, North Carolina",
-      "company": "Hayward Industries, Inc., of Charlotte, North Carolina",
-      "retailers": "Sold At: Pool equipment distributors, builders and service professionals nationwide from March 2026 through July 2026 for about $5,600.",
-      "product": "",
-      "date": "2026-09-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Hayward-Industries-Recalls-Universal-Pool-Heaters-Due-to-Risk-of-Serious-Injury-or-Death-from-Carbon-Monoxide-Poisoning-Hazard-0",
-      "score": 123
     },
     {
       "id": "CPSC-10897-louisville-ladder-recalls-over-one-million-attic-stairway-ladders-due-",
@@ -627,7 +627,7 @@
       "units": 10605,
       "pet": false,
       "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Char-Broil-Recalls-Bistro-Pro-Electric-Grills-Due-to-Risk-of-Electric-Shock",
+      "url": "https://www.cpsc.gov/Recalls/2026/Char-Broil-Recalls-Bistro-Pro-Electric-Grills-Due-to-Risk-of-Electric-Shock",
       "score": 100
     },
     {
