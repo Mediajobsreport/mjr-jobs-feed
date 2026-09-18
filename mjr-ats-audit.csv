@@ -44,11 +44,11 @@ Capitol Broadcasting,Company Career Site,https://capitolbroadcasting.com/careers
 Fox Television,Workday,https://fox.wd1.myworkdayjobs.com/en-US/Domestic,ok,40,
 Gray Media,UKG Pro,https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/?q=&o=postedDateDesc&w=&wc=&we=&wpst=,zero_or_not_enumerable,0,
 Hallmark,Company Career Site,https://careers.hallmark.co.uk/viewalljobs/,zero_or_not_enumerable,0,
-Hearst,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_6/jobs,ok,50,
-Morgan Murphy Media,Breezy HR,https://morgan-murphy-media.breezy.hr/,ok,6,
+Hearst,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_6/jobs,ok,47,
+Morgan Murphy Media,Breezy HR,https://morgan-murphy-media.breezy.hr/,ok,5,
 Newsmax,UKG Pro,https://recruiting.ultipro.com/NEW1027/JobBoard/3d5ae180-49c4-20f7-d7b4-adfe940978a7/?q=&o=postedDateDesc,zero_or_not_enumerable,0,
 Nexstar,Workday,https://nexstar.wd5.myworkdayjobs.com/nexstar,ok,40,
-NFL,Greenhouse,https://job-boards.greenhouse.io/nflcareers?keyword=broadcast&offices%5B%5D=4003941008,ok,33,
+NFL,Greenhouse,https://job-boards.greenhouse.io/nflcareers?keyword=broadcast&offices%5B%5D=4003941008,ok,34,
 NPG,Company Career Site,https://www.npgco.com/careers/,zero_or_not_enumerable,0,
 PGA,Workday,https://pgahq.wd1.myworkdayjobs.com/PGAHQ,ok,6,
 QVC,Workday,https://qvc.wd5.myworkdayjobs.com/QRG,ok,40,
@@ -60,18 +60,18 @@ Weigel,Paylocity,https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b
 WWE,Workday,https://wwecorp.wd5.myworkdayjobs.com/wwecorp,ok,21,
 CNN,Company Career Site,https://careers.wbd.com/global/en/cnn-jobs,zero_or_not_enumerable,0,
 Disney / ABC,Company Career Site,https://jobs.disneycareers.com/search-jobs?k=ABC,ok,5,non_media_scope_rejected=3
-ESPN,Company Career Site,https://www.disneycareers.com/en/search-jobs/ESPN/391/1,ok,16,non_media_scope_rejected=3
+ESPN,Company Career Site,https://www.disneycareers.com/en/search-jobs/ESPN/391/1,ok,10,non_media_scope_rejected=8
 FOX,Company Career Site,https://www.foxcareers.com/Search/SearchResults,ok,145,
 Mission Broadcasting,Company Career Site,https://missionbroadcastinginc.com/careers/,zero_or_not_enumerable,0,
-NBA,Company Career Site,https://careers.nba.com/c/media-production-development-jobs,ok,8,
+NBA,Company Career Site,https://careers.nba.com/c/media-production-development-jobs,ok,9,
 NBCUniversal,Company Career Site,https://www.nbcunicareers.com/find-a-job?aoi=2237#jobs_search-react-main-wrapper,zero_or_not_enumerable,0,
-Paramount,Company Career Site,https://careers.paramount.com/go/All-Current-Job-Opportunities/8710000/,ok,295,
+Paramount,Company Career Site,https://careers.paramount.com/go/All-Current-Job-Opportunities/8710000/,ok,294,
 TBN,Company Career Site,https://www.tbn.org/about/careers,zero_or_not_enumerable,0,
 TEGNA,Greenhouse,https://job-boards.greenhouse.io/tegnainc,zero_or_not_enumerable,0,
 American Public Media Group,UKG Pro,https://recruiting2.ultipro.com/AME1098APMG/JobBoard/4b7ae4eb-a67b-4318-80fc-6d9467f9c542/?q=&o=postedDateDesc&w=&wc=&we=&wpst=,zero_or_not_enumerable,0,
 Dotdash Meredith / People Inc,Workday,https://meredith.wd5.myworkdayjobs.com/EXT,ok,40,
 Gannett / USA TODAY Co.,Dayforce,https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=,ok,26,
-Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,ok,42,
+Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,ok,41,
 Lee Enterprises,Dayforce,https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL,zero_or_not_enumerable,0,
 McClatchy,Company Career Site,https://mcclatchy.com/careers,zero_or_not_enumerable,0,
 New York Post,Workday,https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers,ok,47,
@@ -122,4 +122,4 @@ Associated Press,Generic Structured,https://careers.ap.org/,zero_or_not_enumerab
 Wall Street Journal,Generic Structured,https://dowjones.jobs/,zero_or_not_enumerable,0,
 TSMG,Lever,https://jobs.lever.co/tsmg,ok,1,voiceover_matches=1; stale_matches=0; rows_checked=98
 Filmless,SmartRecruiters,https://jobs.smartrecruiters.com/Filmless,zero_or_no_fresh_voiceover_jobs,0,voiceover_matches=0; stale_matches=1; rows_checked=6
-CrowdGen/Appen,Lever,https://jobs.lever.co/appen,no_qualifying_voiceover_titles,0,genuine_voiceover_titles=0; rows_checked=35; speech testing and validation excluded
+CrowdGen/Appen,Lever,https://jobs.lever.co/appen,no_qualifying_voiceover_titles,0,genuine_voiceover_titles=0; rows_checked=34; speech testing and validation excluded
