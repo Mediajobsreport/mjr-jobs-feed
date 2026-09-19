@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-19T16:29:14.960Z",
+  "generated": "2026-09-19T20:29:04.304Z",
   "version": "2.4",
   "newestDate": "2026-09-18",
   "stale": false,
@@ -999,7 +999,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V548000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V548-3059.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V548000",
       "score": 85
     },
     {
