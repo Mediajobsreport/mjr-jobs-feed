@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-18T20:29:27.187Z",
+  "generated": "2026-09-19T00:35:24.839Z",
   "version": "2.4",
   "newestDate": "2026-09-18",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1039
+      "count": 1058
     },
     "CPSC": {
       "ok": true,
@@ -122,7 +122,7 @@
       "units": 1905805,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.cpsc.gov/Recalls/2026/Conair-Expands-Recall-of-Cuisinart-Grill-Brushes-Due-to-Ingestion-Hazard-Over-3-6-Million-Brushes-Now-Recalled",
+      "url": "https://cpsc.gov/Recalls/2026/Conair-Expands-Recall-of-Cuisinart-Grill-Brushes-Due-to-Ingestion-Hazard-Over-3-6-Million-Brushes-Now-Recalled",
       "score": 147
     },
     {
@@ -222,7 +222,7 @@
       "units": 165250,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.cpsc.gov/Recalls/2026/Walmart-Reannounces-Recall-of-Mainstays-Nine-Drawer-Fabric-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Walmart-Distributed-Recalled-Dressers-Post-Recall-Sold-to-Consumers-Through-Liquidators",
+      "url": "https://cpsc.gov/Recalls/2026/Walmart-Reannounces-Recall-of-Mainstays-Nine-Drawer-Fabric-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Walmart-Distributed-Recalled-Dressers-Post-Recall-Sold-to-Consumers-Through-Liquidators",
       "score": 145
     },
     {
@@ -631,6 +631,22 @@
       "score": 105
     },
     {
+      "id": "FDA-2026-09-15-bettergoods-italian-lemon-alfredo-fettuccine-gias-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Bettergoods Italian Lemon Alfredo Fettuccine Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Bettergoods",
+      "company": "Gias Foods, Inc.",
+      "product": "Italian Lemon Alfredo Fettuccine",
+      "date": "2026-09-15",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/boticelli-foods-recalls-bettergoods-pistachio-nut-butter-because-possible-health-risk",
+      "score": 103
+    },
+    {
       "id": "CPSC-10986-char-broil-recalls-bistro-pro-electric-grills-due-to-risk-of-electric-",
       "source": "CPSC",
       "category": "consumer",
@@ -1000,7 +1016,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V548000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V548000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V548-3059.pdf",
       "score": 85
     },
     {
@@ -1085,7 +1101,7 @@
       "units": 20134,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Montessori-Baby-Toy-Sets-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Violate-Mandatory-Standard-for-Toys-Sold-on-Amazon-by-Chillife-Official",
+      "url": "https://cpsc.gov/Recalls/2026/Montessori-Baby-Toy-Sets-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Violate-Mandatory-Standard-for-Toys-Sold-on-Amazon-by-Chillife-Official",
       "score": 83
     },
     {
@@ -1268,7 +1284,7 @@
       "units": 32400,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Truststone-Group-Recalls-XO-Poppy-Power-Trip-Magnetic-Wireless-Power-Banks-Due-to-Fire-and-Burn-Hazards-Sold-Exclusively-at-TJX-and-Marshalls-Stores",
+      "url": "https://cpsc.gov/Recalls/2026/Truststone-Group-Recalls-XO-Poppy-Power-Trip-Magnetic-Wireless-Power-Banks-Due-to-Fire-and-Burn-Hazards-Sold-Exclusively-at-TJX-and-Marshalls-Stores",
       "score": 73
     },
     {
@@ -1365,6 +1381,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/saratoga-potato-chips-issues-allergy-alert-undeclared-soy-j-higgs-loaded-bacon-and-cheddar-potato",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-09-18-truly-aip-eat-g-a-n-g-s-t-e-r-all-purpose-flour-bread-mix-flat-bread-p",
+      "source": "FDA",
+      "category": "food",
+      "title": "Truly AIP, EAT G.A.N.G.S.T.E.R All purpose flour, bread mix, flat bread pizza mix Recalled",
+      "reason": "Undeclared wheat allergen",
+      "brand": "Truly AIP, EAT G.A.N.G.S.T.E.R",
+      "company": "GF Blends",
+      "product": "All purpose flour, bread mix, flat bread pizza mix",
+      "date": "2026-09-18",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gf-blends-recalls-truly-aip-all-purpose-flour-and-bread-mix-and-eat-gangster-flat-bread-pizza-mix",
       "score": 70
     },
     {
@@ -1517,7 +1549,7 @@
       "units": 2000,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/HABA-USA-Recalls-Rainbow-Rattle-Grasping-and-Teething-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-and-Ingestion-Hazards",
+      "url": "https://cpsc.gov/Recalls/2026/HABA-USA-Recalls-Rainbow-Rattle-Grasping-and-Teething-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-and-Ingestion-Hazards",
       "score": 65
     },
     {
@@ -1651,7 +1683,7 @@
       "units": 90,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/AudioLineOut-Recalls-Studio-Six-Headphone-Amplifiers-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Hazard",
+      "url": "https://cpsc.gov/Recalls/2026/AudioLineOut-Recalls-Studio-Six-Headphone-Amplifiers-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Hazard",
       "score": 63
     },
     {
@@ -1668,7 +1700,7 @@
       "units": 300,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Pressure-Washers-Recalled-Due-to-Serious-Risk-of-Injury-or-Death-from-Shock-and-Electrocution-Hazards-Sold-on-Amazon-by-YERYORK",
+      "url": "https://cpsc.gov/Recalls/2026/Pressure-Washers-Recalled-Due-to-Serious-Risk-of-Injury-or-Death-from-Shock-and-Electrocution-Hazards-Sold-on-Amazon-by-YERYORK",
       "score": 63
     },
     {
@@ -1685,7 +1717,7 @@
       "units": 128,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/Steelite-Pressure-Washers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Shock-and-Electrocution-Hazards-Sold-on-Amazon-by-Longer-3D",
+      "url": "https://cpsc.gov/Recalls/2026/Steelite-Pressure-Washers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Shock-and-Electrocution-Hazards-Sold-on-Amazon-by-Longer-3D",
       "score": 63
     },
     {
@@ -1706,22 +1738,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1735,6 +1751,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -2002,40 +2034,6 @@
       "majorBrand": true,
       "campaign": "26V529000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V529-9405.pdf",
-      "score": 55
-    },
-    {
-      "id": "NHTSA-26V530000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "GMC Vehicles Recalled",
-      "reason": "General Motors, LLC (GM) is recalling certain 2024-2025 Chevrolet Silverado 2500 and GMC Sierra 2500 vehicles equipped with the enhanced towing option and 20-inch accessory tire/wheel package. The tire information…",
-      "brand": "GMC",
-      "company": "General Motors, LLC",
-      "product": "Sierra 2500, Silverado 2500",
-      "date": "2026-08-13",
-      "units": 8,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V530000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V530-4213.pdf",
-      "score": 55
-    },
-    {
-      "id": "NHTSA-26V532000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford Explorer Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026 Explorer vehicles equipped with a 2.3L engine. The engine connecting rod bearings may seize, which can result in engine failure. 6 vehicles or units may be affected.",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "Explorer",
-      "date": "2026-08-13",
-      "units": 6,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V532000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V532-1166.pdf",
       "score": 55
     }
   ]
