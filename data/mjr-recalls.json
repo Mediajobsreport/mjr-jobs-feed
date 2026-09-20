@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-20T00:37:42.817Z",
+  "generated": "2026-09-20T04:30:07.191Z",
   "version": "2.4",
   "newestDate": "2026-09-18",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1058
+      "count": 1041
     },
     "CPSC": {
       "ok": true,
@@ -999,7 +999,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V548000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V548-3059.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V548000",
       "score": 85
     },
     {
@@ -1705,22 +1705,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Oma’s Pride Canine Food Recalled",
-      "reason": "Contaminated with Salmonella",
-      "brand": "Oma’s Pride",
-      "company": "Miller Foods, Inc.",
-      "product": "Canine Food",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": true,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
       "source": "FDA",
       "category": "food",
@@ -1734,6 +1718,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Oma’s Pride Canine Food Recalled",
+      "reason": "Contaminated with Salmonella",
+      "brand": "Oma’s Pride",
+      "company": "Miller Foods, Inc.",
+      "product": "Canine Food",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
       "score": 63
     },
     {
