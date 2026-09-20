@@ -50,6 +50,7 @@ jobs:
             echo "MJR_AUDIT=mjr-ats-audit.csv" >> "$GITHUB_ENV"
             echo "MJR_STATE=mjr-job-state.json" >> "$GITHUB_ENV"
             echo "MJR_QUALITY_REPORT=mjr-job-quality-report.csv" >> "$GITHUB_ENV"
+            echo "MJR_HEALTH_OUTPUT=mjr-job-source-health.json" >> "$GITHUB_ENV"
             echo "MJR_DIAGNOSTIC=mjr-salem-diagnostic.txt" >> "$GITHUB_ENV"
             echo "FULL PRODUCTION CRAWL"
           fi
@@ -87,6 +88,7 @@ jobs:
           else:
               print("Response type:", type(data).__name__)
           PY
+
           else
             echo "No CareerOneStop diagnostic file generated."
           fi
@@ -153,6 +155,10 @@ jobs:
           )
           PY
 
+      - name: Build source health dashboard data
+        if: ${{ !(github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '') }}
+        run: python mjr-build-source-health.py
+
       - name: Upload targeted test files
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '' }}
         uses: actions/upload-artifact@v4
@@ -189,6 +195,7 @@ jobs:
             mjr-ats-audit.csv
             mjr-job-quality-report.csv
             mjr-job-state.json
+            mjr-job-source-health.json
           if-no-files-found: warn
           retention-days: 14
 
@@ -198,7 +205,7 @@ jobs:
           git config user.name "MJR Jobs Bot"
           git config user.email "actions@users.noreply.github.com"
 
-          git add mjr-jboard-master.xml mjr-ats-audit.csv mjr-job-quality-report.csv mjr-job-state.json
+          git add mjr-jboard-master.xml mjr-ats-audit.csv mjr-job-quality-report.csv mjr-job-state.json mjr-job-source-health.json
 
           if git diff --cached --quiet; then
             echo "No feed changes to commit."
