@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-21T16:31:05.423Z",
+  "generated": "2026-09-21T20:28:56.741Z",
   "version": "2.4",
-  "newestDate": "2026-09-18",
+  "newestDate": "2026-09-21",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1041
+      "count": 1044
     },
     "CPSC": {
       "ok": true,
@@ -698,6 +698,22 @@
       "score": 90
     },
     {
+      "id": "FDA-2026-09-21-par-pharmaceutical-dexmedetomidine-hcl-in-0-9-sodium-chloride-injectio",
+      "source": "FDA",
+      "category": "health",
+      "title": "Par Pharmaceutical Dexmedetomidine HCl in 0.9% Sodium Chloride Injection 400 mcg/100 mL (4… Recalled",
+      "reason": "Presence of particulate matter identified as cellulose or stopper material",
+      "brand": "Par Pharmaceutical",
+      "company": "Par Health",
+      "product": "Dexmedetomidine HCl in 0.9% Sodium Chloride Injection 400 mcg/100 mL (4 mcg/mL) for Intravenous Infusion",
+      "date": "2026-09-21",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-two-lots-dexmedetomidine-hcl-09-sodium-chloride",
+      "score": 88
+    },
+    {
       "id": "FDA-2026-09-15-bettergoods-italian-lemon-alfredo-fettuccine-gias-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1185,6 +1201,38 @@
       "score": 71
     },
     {
+      "id": "FDA-2026-09-21-icu-medical-llc-0-9-sodium-chloride-injection-usp-100-ml-otsuka-icu-me",
+      "source": "FDA",
+      "category": "health",
+      "title": "ICU Medical LLC 0.9% Sodium Chloride Injection, USP, 100 mL Recalled",
+      "reason": "Product mix-up where 0.9% Sodium Chloride Injection, USP overwrap may contain 10 mEq Potassium Chloride Injection",
+      "brand": "ICU Medical LLC",
+      "company": "Otsuka ICU Medical LLC",
+      "product": "0.9% Sodium Chloride Injection, USP, 100 mL",
+      "date": "2026-09-21",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/b-braun-medical-inc-issues-voluntary-nationwide-recall-09-sodium-chloride-injection-usp-100-ml-150",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-09-21-niwali-tejocote-capsules-and-pieces-global-mix-inc",
+      "source": "FDA",
+      "category": "health",
+      "title": "Niwali Tejocote Capsules and Pieces Recalled",
+      "reason": "Products contain yellow oleander (Thevetia peruviana).",
+      "brand": "Niwali",
+      "company": "Global Mix Inc.",
+      "product": "Tejocote Capsules and Pieces",
+      "date": "2026-09-21",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/global-mix-inc-recalls-niwali-tejocote-capsules-and-niwali-tejocote-pieces-because-possible-health",
+      "score": 70
+    },
+    {
       "id": "CPSC-10979-sauna360-expands-recall-of-tyl-halmstad-and-kiruna-hybrid-saunas-due-t",
       "source": "CPSC",
       "category": "consumer",
@@ -1606,7 +1654,7 @@
       "reason": "The recalled hair dryer brushes are in violation of federal regulations for hair dryers as they lack an integrated immersion protection device, which presents a substantial product hazard to consumers and the risk of…",
       "brand": "",
       "company": "",
-      "retailers": "Sold Online At: Amazon.com from February 2026 through March 2026 for about $30., Guang Zhou Shi Wan Te Fu Ke Ji You Xian Gong Si, dba Wantefully, of China",
+      "retailers": "Sold Online At: Amazon.com from February 2026 through March 2026 for about $30.",
       "product": "Wantefully Hair Dryer Brushes",
       "date": "2026-09-10",
       "units": 2295,
@@ -1986,57 +2034,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Gizoon-Direct-Recalls-Six-Drawer-Double-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violates-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 48
-    },
-    {
-      "id": "CPSC-10918-dumos-nine-drawer-dressers-recalled-due-to-risk-of-serious-injury-or-d",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "DUMOS Nine-Drawer Dressers Recalled Due to Risk of Serious Injury or Death from Tip-Over and Entrapment…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "Jiangsu Jiayubo Furniture Co., Ltd., of China",
-      "company": "Jiangsu Jiayubo Furniture Co., Ltd., of China",
-      "retailers": "Online at Amazon.com from December 2025 through June 2026 for about $54.",
-      "product": "DUMOS Nine-Drawer Dressers",
-      "date": "2026-08-13",
-      "units": 8981,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2026/DUMOS-Nine-Drawer-Dressers-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
-      "score": 48
-    },
-    {
-      "id": "CPSC-10952-excel-industries-recalls-accessory-led-light-kits-due-to-risk-of-serio",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Excel Industries Recalls Accessory LED Light Kits Due to Risk of Serious Injury from Fire Hazard",
-      "reason": "The light bars can overheat or produce flames, posing a risk of serious injury from a fire hazard.",
-      "brand": "Excel Industries LLC, of Hesston, Kansas",
-      "company": "Excel Industries LLC, of Hesston, Kansas",
-      "retailers": "Sold At: Hustler and BigDog dealerships nationwide or online at www.hustlerturf.com/law-mower-accessories or www.bigdogmower.com/accessories from April 2020 through July 2026 for between $180 and $330.",
-      "product": "Accessory LED Light Kits used with certain ride-on mowers",
-      "date": "2026-08-27",
-      "units": 1800,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Excel-Industries-Recalls-Accessory-LED-Light-Kits-Due-to-Risk-of-Serious-Injury-from-Fire-Hazard",
-      "score": 47
-    },
-    {
-      "id": "CPSC-10969-victgoal-recalls-bicycle-helmets-due-to-risk-of-serious-injury-or-deat",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Victgoal Recalls Bicycle Helmets Due to Risk of Serious Injury or Death from Head Injury; Violate…",
-      "reason": "The recalled helmets violate the mandatory safety standard for bicycle helmets because the helmets do not comply with the retention system, positional stability and certification requirements. The helmets can fail to…",
-      "brand": "Dongguan Hongtu Sports Goods Co. Ltd., of China",
-      "company": "Dongguan Hongtu Sports Goods Co. Ltd., of China",
-      "retailers": "Sold Online At: Walmart.com from March 2026 through June 2026 for between $22 and $36.",
-      "product": "Victgoal Children’s Bike Helmets",
-      "date": "2026-09-10",
-      "units": 40,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Victgoal-Recalls-Bicycle-Helmets-Due-to-Risk-of-Serious-Injury-or-Death-from-Head-Injury-Violate-Mandatory-Standard-for-Bicycle-Helmets",
-      "score": 46
     }
   ]
 }
