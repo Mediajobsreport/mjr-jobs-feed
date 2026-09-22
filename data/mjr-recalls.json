@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-22T08:31:35.752Z",
+  "generated": "2026-09-22T12:35:45.329Z",
   "version": "2.4",
   "newestDate": "2026-09-21",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1044
+      "count": 1061
     },
     "CPSC": {
       "ok": true,
@@ -41,23 +41,6 @@
       "score": 175
     },
     {
-      "id": "NHTSA-26V590000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Volkswagen Vehicles Recalled",
-      "reason": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2018 Tiguan, 2018-2019 Atlas, and 2019-2021 Audi Q3 vehicles. One of the bolts that attaches the steering rack to the subframe may corrode and break.…",
-      "brand": "Volkswagen",
-      "company": "Volkswagen Group of America, Inc.",
-      "product": "Tiguan, Atlas, Q3",
-      "date": "2026-09-11",
-      "units": 208724,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V590000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V590-2304.pdf",
-      "score": 162
-    },
-    {
       "id": "NHTSA-26V531000",
       "source": "NHTSA",
       "category": "consumer",
@@ -73,6 +56,23 @@
       "campaign": "26V531000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V531-6260.pdf",
       "score": 152
+    },
+    {
+      "id": "NHTSA-26V590000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Volkswagen Vehicles Recalled",
+      "reason": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2018 Tiguan, 2018-2019 Atlas, and 2019-2021 Audi Q3 vehicles. One of the bolts that attaches the steering rack to the subframe may corrode and break.…",
+      "brand": "Volkswagen",
+      "company": "Volkswagen Group of America, Inc.",
+      "product": "Tiguan, Atlas, Q3",
+      "date": "2026-09-11",
+      "units": 208724,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V590000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V590-2304.pdf",
+      "score": 150
     },
     {
       "id": "CPSC-10953-conair-expands-recall-of-cuisinart-grill-brushes-due-to-ingestion-haza",
@@ -256,22 +256,6 @@
       "majorBrand": true,
       "url": "https://cpsc.gov/Recalls/2026/Melissa-and-Doug-Recalls-Fire-Truck-Activity-Board-Toys-Due-to-Risk-of-Serious-Injury-from-Choking-Hazard-Sold-Exclusively-at-Target",
       "score": 125
-    },
-    {
-      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
-      "source": "FDA",
-      "category": "food",
-      "title": "Whole Foods Market Cheese Recalled",
-      "reason": "Undeclared Egg",
-      "brand": "Whole Foods Market",
-      "company": "Whole Foods Market",
-      "product": "Cheese",
-      "date": "2026-09-11",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/whole-foods-market-issues-allergy-alert-undeclared-egg-cabricharme-cheese",
-      "score": 113
     },
     {
       "id": "NHTSA-26V560000",
@@ -512,23 +496,6 @@
       "score": 105
     },
     {
-      "id": "NHTSA-26V588000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Hyundai Ioniq 9 Vehicles Recalled",
-      "reason": "Hyundai Motor America (Hyundai) is recalling certain 2026 Ioniq 9 vehicles equipped with a Limited, Calligraphy, or Calligraphy Design trim package. The second-row power seats may fail to detect a person. As a result,…",
-      "brand": "Hyundai",
-      "company": "Hyundai Motor America",
-      "product": "Ioniq 9",
-      "date": "2026-09-11",
-      "units": 5360,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V588000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V588-0403.pdf",
-      "score": 105
-    },
-    {
       "id": "NHTSA-26V528000",
       "source": "NHTSA",
       "category": "consumer",
@@ -544,6 +511,22 @@
       "campaign": "26V528000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V528-0755.pdf",
       "score": 105
+    },
+    {
+      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
+      "source": "FDA",
+      "category": "food",
+      "title": "Whole Foods Market Cheese Recalled",
+      "reason": "Undeclared Egg",
+      "brand": "Whole Foods Market",
+      "company": "Whole Foods Market",
+      "product": "Cheese",
+      "date": "2026-09-11",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/whole-foods-market-issues-allergy-alert-undeclared-egg-cabricharme-cheese",
+      "score": 101
     },
     {
       "id": "CPSC-10972-sweet-cubby-recalls-children-s-loungewear-sets-due-to-risk-of-serious-",
@@ -595,6 +578,23 @@
       "campaign": "26V525000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V525-9403.pdf",
       "score": 95
+    },
+    {
+      "id": "NHTSA-26V588000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Hyundai Ioniq 9 Vehicles Recalled",
+      "reason": "Hyundai Motor America (Hyundai) is recalling certain 2026 Ioniq 9 vehicles equipped with a Limited, Calligraphy, or Calligraphy Design trim package. The second-row power seats may fail to detect a person. As a result,…",
+      "brand": "Hyundai",
+      "company": "Hyundai Motor America",
+      "product": "Ioniq 9",
+      "date": "2026-09-11",
+      "units": 5360,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V588000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V588-0403.pdf",
+      "score": 93
     },
     {
       "id": "CPSC-10968-dual-fuel-ranges-recalled-due-to-risk-of-serious-injury-or-death-from-",
@@ -1418,23 +1418,6 @@
       "score": 63
     },
     {
-      "id": "NHTSA-26V558000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Tesla Model Y Vehicles Recalled",
-      "reason": "Tesla, Inc. (Tesla) is recalling certain 2026 Model Y vehicles. One or more front suspension lateral link fasteners may not have been properly tightened, allowing the lateral link to loosen or separate from the…",
-      "brand": "Tesla",
-      "company": "Tesla, Inc.",
-      "product": "Model Y",
-      "date": "2026-08-31",
-      "units": 19,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V558000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V558-2943.pdf",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-29-martina-mangoes-panorama-produce",
       "source": "FDA",
       "category": "food",
@@ -1519,22 +1502,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1548,6 +1515,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -1600,22 +1583,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-07-food-to-live-green-powder-products-lexunder-inc-dba-food-to-live",
-      "source": "FDA",
-      "category": "food",
-      "title": "Food To Live Green Powder Products Recalled",
-      "reason": "Possible Salmonella Contamination",
-      "brand": "Food To Live",
-      "company": "Lexunder Inc. dba Food To Live",
-      "product": "Green Powder Products",
-      "date": "2026-08-07",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/lexunder-inc-recalls-food-live-brand-green-powder-products-because-possible-health-risk",
-      "score": 63
-    },
-    {
       "id": "CPSC-10938-shein-distribution-corporation-recalls-spiral-toys-due-to-risk-of-seri",
       "source": "CPSC",
       "category": "consumer",
@@ -1647,38 +1614,6 @@
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/so-delicious-dairy-freer-issues-voluntary-recall-salted-caramel-cluster-non-dairy-frozen-dessert",
       "score": 60
-    },
-    {
-      "id": "FDA-2026-09-18-j-higgs-loaded-bacon-cheddar-potato-chips-saratoga-potato-chips-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "J. HIGGS Loaded Bacon & Cheddar Potato Chips Recalled",
-      "reason": "Undeclared soy allergen",
-      "brand": "J. HIGGS",
-      "company": "Saratoga Potato Chips LLC",
-      "product": "Loaded Bacon & Cheddar Potato Chips",
-      "date": "2026-09-18",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/saratoga-potato-chips-issues-allergy-alert-undeclared-soy-j-higgs-loaded-bacon-and-cheddar-potato",
-      "score": 58
-    },
-    {
-      "id": "FDA-2026-09-18-truly-aip-eat-g-a-n-g-s-t-e-r-all-purpose-flour-bread-mix-flat-bread-p",
-      "source": "FDA",
-      "category": "food",
-      "title": "Truly AIP, EAT G.A.N.G.S.T.E.R All purpose flour, bread mix, flat bread pizza mix Recalled",
-      "reason": "Undeclared wheat allergen",
-      "brand": "Truly AIP, EAT G.A.N.G.S.T.E.R",
-      "company": "GF Blends",
-      "product": "All purpose flour, bread mix, flat bread pizza mix",
-      "date": "2026-09-18",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gf-blends-recalls-truly-aip-all-purpose-flour-and-bread-mix-and-eat-gangster-flat-bread-pizza-mix",
-      "score": 58
     },
     {
       "id": "CPSC-10967-guang-zhou-recalls-wantefully-hair-dryer-brushes-due-to-risk-of-seriou",
@@ -1746,6 +1681,23 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Daikin-Comfort-Technologies-Manufacturing-Recalls-Amana-Through-The-Wall-Air-Conditioners-and-Heat-Pumps-Due-to-Risk-of-Serious-Injury-from-Fire",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26V558000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Tesla Model Y Vehicles Recalled",
+      "reason": "Tesla, Inc. (Tesla) is recalling certain 2026 Model Y vehicles. One or more front suspension lateral link fasteners may not have been properly tightened, allowing the lateral link to loosen or separate from the…",
+      "brand": "Tesla",
+      "company": "Tesla, Inc.",
+      "product": "Model Y",
+      "date": "2026-08-31",
+      "units": 19,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V558000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V558-2943.pdf",
       "score": 55
     },
     {
@@ -1968,6 +1920,38 @@
       "score": 53
     },
     {
+      "id": "FDA-2026-09-18-j-higgs-loaded-bacon-cheddar-potato-chips-saratoga-potato-chips-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "J. HIGGS Loaded Bacon & Cheddar Potato Chips Recalled",
+      "reason": "Undeclared soy allergen",
+      "brand": "J. HIGGS",
+      "company": "Saratoga Potato Chips LLC",
+      "product": "Loaded Bacon & Cheddar Potato Chips",
+      "date": "2026-09-18",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/saratoga-potato-chips-issues-allergy-alert-undeclared-soy-j-higgs-loaded-bacon-and-cheddar-potato",
+      "score": 50
+    },
+    {
+      "id": "FDA-2026-09-18-truly-aip-eat-g-a-n-g-s-t-e-r-all-purpose-flour-bread-mix-flat-bread-p",
+      "source": "FDA",
+      "category": "food",
+      "title": "Truly AIP, EAT G.A.N.G.S.T.E.R All purpose flour, bread mix, flat bread pizza mix Recalled",
+      "reason": "Undeclared wheat allergen",
+      "brand": "Truly AIP, EAT G.A.N.G.S.T.E.R",
+      "company": "GF Blends",
+      "product": "All purpose flour, bread mix, flat bread pizza mix",
+      "date": "2026-09-18",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gf-blends-recalls-truly-aip-all-purpose-flour-and-bread-mix-and-eat-gangster-flat-bread-pizza-mix",
+      "score": 50
+    },
+    {
       "id": "CPSC-10977-shein-distribution-corporation-recalls-pull-and-chew-montessori-teethi",
       "source": "CPSC",
       "category": "consumer",
@@ -2019,20 +2003,37 @@
       "score": 50
     },
     {
-      "id": "NHTSA-26V575000",
-      "source": "NHTSA",
+      "id": "CPSC-10949-adult-portable-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
+      "source": "CPSC",
       "category": "consumer",
-      "title": "Can-Am Vehicles Recalled",
-      "reason": "Bombardier Recreational Products, Inc. (BRP) is recalling certain 2025-2026 Can-Am Origin, Can-Am Pulse, 2025-2027 Can-Am Canyon, 2024-2027 Can-Am Spyder RT, and Can-Am Spyder F3 motorcycles equipped with a touchscreen…",
-      "brand": "Can-Am",
-      "company": "Bombardier Recreational Products, Inc.",
-      "product": "Spyder Rt, Spyder F3, Pulse, Origin, Canyon",
-      "date": "2026-09-07",
-      "units": 14014,
+      "title": "Adult Portable Bed Rails Recalled Due to Risk of Serious Injury or Death from Entrapment and…",
+      "reason": "The recalled bed rails violate the mandatory standard for adult portable bed rails because users can become entrapped within the bed rail or between the bed rail and the side of the mattress, posing a serious…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Amazon.com from June 2025 through April 2026 for between $40 and $50.",
+      "product": "Loyoda Adult Portable Bed Rails",
+      "date": "2026-09-03",
+      "units": 2200,
       "pet": false,
       "majorBrand": false,
-      "campaign": "26V575000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V575-4054.pdf",
+      "url": "https://cpsc.gov/Recalls/2026/Adult-Portable-Bed-Rails-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Sold-on-Amazon-by-Loyoda-Direct-and-Loyoda",
+      "score": 48
+    },
+    {
+      "id": "CPSC-10942-gizoon-direct-recalls-six-drawer-double-dressers-due-to-risk-of-seriou",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Gizoon Direct Recalls Six-Drawer Double Dressers Due to Risk of Serious Injury or Death from Tip-Over…",
+      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Amazon.com from May 2025 through August 2026 for between $138 and $171.",
+      "product": "Gizoon Six-Drawer Double Dressers",
+      "date": "2026-09-03",
+      "units": 4396,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://cpsc.gov/Recalls/2026/Gizoon-Direct-Recalls-Six-Drawer-Double-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violates-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 48
     }
   ]
