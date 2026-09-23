@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-23T12:36:10.275Z",
+  "generated": "2026-09-23T16:32:30.782Z",
   "version": "2.4",
   "newestDate": "2026-09-22",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1045
+      "count": 1062
     },
     "CPSC": {
       "ok": true,
@@ -1518,22 +1518,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1547,6 +1531,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -1937,22 +1937,6 @@
       "score": 53
     },
     {
-      "id": "FDA-2026-09-18-j-higgs-loaded-bacon-cheddar-potato-chips-saratoga-potato-chips-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "J. HIGGS Loaded Bacon & Cheddar Potato Chips Recalled",
-      "reason": "Undeclared soy allergen",
-      "brand": "J. HIGGS",
-      "company": "Saratoga Potato Chips LLC",
-      "product": "Loaded Bacon & Cheddar Potato Chips",
-      "date": "2026-09-18",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/saratoga-potato-chips-issues-allergy-alert-undeclared-soy-j-higgs-loaded-bacon-and-cheddar-potato",
-      "score": 50
-    },
-    {
       "id": "FDA-2026-09-18-truly-aip-eat-g-a-n-g-s-t-e-r-all-purpose-flour-bread-mix-flat-bread-p",
       "source": "FDA",
       "category": "food",
@@ -1966,6 +1950,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gf-blends-recalls-truly-aip-all-purpose-flour-and-bread-mix-and-eat-gangster-flat-bread-pizza-mix",
+      "score": 50
+    },
+    {
+      "id": "FDA-2026-09-18-j-higgs-loaded-bacon-cheddar-potato-chips-saratoga-potato-chips-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "J. HIGGS Loaded Bacon & Cheddar Potato Chips Recalled",
+      "reason": "Undeclared soy allergen",
+      "brand": "J. HIGGS",
+      "company": "Saratoga Potato Chips LLC",
+      "product": "Loaded Bacon & Cheddar Potato Chips",
+      "date": "2026-09-18",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/saratoga-potato-chips-issues-allergy-alert-undeclared-soy-j-higgs-loaded-bacon-and-cheddar-potato",
       "score": 50
     },
     {
