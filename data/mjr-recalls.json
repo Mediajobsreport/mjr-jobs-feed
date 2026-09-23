@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-23T04:30:38.657Z",
+  "generated": "2026-09-23T08:31:42.141Z",
   "version": "2.4",
   "newestDate": "2026-09-22",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1045
+      "count": 1062
     },
     "CPSC": {
       "ok": true,
@@ -14,11 +14,11 @@
     },
     "USDA": {
       "ok": true,
-      "count": 2025
+      "count": 2026
     },
     "NHTSA": {
       "ok": true,
-      "count": 85
+      "count": 87
     }
   },
   "count": 120,
@@ -44,11 +44,11 @@
       "id": "NHTSA-26V531000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Dodge Vehicles Recalled",
+      "title": "Ram Vehicles Recalled",
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Wrangler, Jeep Gladiator, Jeep Compass, Jeep Cherokee, Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Wagoneer, Jeep Grand Wagoneer L, Ram Promaster, Ram…",
-      "brand": "Dodge",
+      "brand": "Ram",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Charger, Voyager, Pacifica Plug-In Hybrid, Pacifica, Promaster Bev, Promaster, 2500, 1500",
+      "product": "Promaster, 2500, 1500, Wrangler, Grand Wagoneer L, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
       "date": "2026-08-13",
       "units": 844027,
       "pet": false,
@@ -175,6 +175,23 @@
       "score": 125
     },
     {
+      "id": "NHTSA-26V597000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Rivian Vehicles Recalled",
+      "reason": "Rivian Automotive, LLC (Rivian) is recalling certain 2022-2027 R1S, 2022-2026 R1T, and 2027 R2 vehicles. The rearview camera image may be obstructed by a notification when in reverse. As such, these vehicles fail to…",
+      "brand": "Rivian",
+      "company": "Rivian Automotive, LLC",
+      "product": "R1S, R1T, R2",
+      "date": "2026-09-16",
+      "units": 98828,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V597000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V597-1248.pdf",
+      "score": 147
+    },
+    {
       "id": "CPSC-10975-jkmax-recalls-heated-blankets-and-heating-pads-due-to-fire-and-burn-ha",
       "source": "CPSC",
       "category": "consumer",
@@ -190,23 +207,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/JKMAX-Recalls-Heated-Blankets-and-Heating-Pads-Due-to-Fire-and-Burn-Hazards",
       "score": 137
-    },
-    {
-      "id": "NHTSA-26V539000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Chevrolet Vehicles Recalled",
-      "reason": "General Motors, LLC is recalling certain 2024-2025 Buick Envista, 2024-2026 Buick Encore GX, Chevrolet Trailblazer, and 2025 Chevrolet Trax vehicles. The rearview camera screen may display a distorted or blank image.…",
-      "brand": "Chevrolet",
-      "company": "General Motors, LLC",
-      "product": "Trax, Trailblazer, Envista, Encore Gx",
-      "date": "2026-08-20",
-      "units": 306511,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V539000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V539-4446.pdf",
-      "score": 142
     },
     {
       "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
@@ -274,6 +274,40 @@
       "score": 118
     },
     {
+      "id": "NHTSA-26V539000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Chevrolet Vehicles Recalled",
+      "reason": "General Motors, LLC is recalling certain 2024-2025 Buick Envista, 2024-2026 Buick Encore GX, Chevrolet Trailblazer, and 2025 Chevrolet Trax vehicles. The rearview camera screen may display a distorted or blank image.…",
+      "brand": "Chevrolet",
+      "company": "General Motors, LLC",
+      "product": "Trax, Trailblazer, Envista, Encore Gx",
+      "date": "2026-08-20",
+      "units": 306511,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V539000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V539-4446.pdf",
+      "score": 142
+    },
+    {
+      "id": "NHTSA-26V559000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Jeep Vehicles Recalled",
+      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
+      "brand": "Jeep",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "Grand Wagoneer L PHEV, Grand Cherokee 4XE, Grand Wagoneer L, Wagoneer L, Wagoneer, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
+      "date": "2026-09-01",
+      "units": 201976,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V559000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
+      "score": 140
+    },
+    {
       "id": "NHTSA-26V560000",
       "source": "NHTSA",
       "category": "consumer",
@@ -288,23 +322,6 @@
       "majorBrand": true,
       "campaign": "26V560000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V560-9456.pdf",
-      "score": 140
-    },
-    {
-      "id": "NHTSA-26V559000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Jeep Vehicles Recalled",
-      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
-      "brand": "Jeep",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee 4XE, Grand Wagoneer L PHEV, Grand Wagoneer L, Wagoneer L, Wagoneer, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
-      "date": "2026-09-01",
-      "units": 201976,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V559000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 140
     },
     {
@@ -332,7 +349,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2022-2025 Jeep Wagoneer, 2022-2026 Jeep Grand Wagoneer, 2023-2025 Jeep Wagoneer L, and 2023-2026 Jeep Grand Wagoneer L vehicles. The pivot bolts for the roof rack crossbars…",
       "brand": "Jeep",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Wagoneer L, Grand Wagoneer L, Wagoneer, Grand Wagoneer",
+      "product": "Grand Wagoneer, Wagoneer, Grand Wagoneer L, Wagoneer L",
       "date": "2026-09-10",
       "units": 97349,
       "pet": false,
@@ -821,7 +838,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026 Explorer, Bronco, Bronco Sport, Mustang, and Ranger vehicles. The engine piston domes may have been manufactured incorrectly, which can result in piston dome failure…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "Bronco Sport, Bronco, Explorer, Ranger, Mustang",
+      "product": "Mustang, Ranger, Bronco, Bronco Sport, Explorer",
       "date": "2026-08-25",
       "units": 10001,
       "pet": false,
@@ -935,11 +952,11 @@
       "id": "NHTSA-26V599000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Jaguar Vehicles Recalled",
+      "title": "Land Rover Vehicles Recalled",
       "reason": "Jaguar Land Rover North America, LLC (Land Rover) is recalling certain 2019-2024 Land Rover Range Rover Sport, 2020-2024 Land Rover Range Rover Evoque, Land Rover Range Rover, Land Rover Discovery Sport, Land Rover…",
-      "brand": "Jaguar",
+      "brand": "Land Rover",
       "company": "Jaguar Land Rover North America, LLC",
-      "product": "F-Pace, Range Rover Sport, Range Rover Velar, E-Pace, Range Rover, Range Rover Evoque, Defender, Discovery Sport",
+      "product": "Defender, Discovery, Discovery Sport, F-Pace, Range Rover, Range Rover Evoque, E-Pace, Range Rover Sport",
       "date": "2026-09-17",
       "units": 23677,
       "pet": false,
@@ -1007,7 +1024,7 @@
       "reason": "Britax Child Safety, Inc. (Britax) is recalling certain B-Safe Gen 2, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe 35, B-Safe Ultra, and Endeavours child seats. Please refer to Britax's recall report for the…",
       "brand": "Britax",
       "company": "Britax Child Safety, Inc.",
-      "product": "B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2, Endeavours, B-Safe Ultra, B-Safe 35",
+      "product": "B-Safe 35, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2, Endeavours, B-Safe Ultra",
       "date": "2026-08-20",
       "units": 114660,
       "pet": false,
@@ -1024,7 +1041,7 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2025-2026 Chrysler Voyager, Chrysler Pacifica, and 2026 Chrysler Voyager Plug-In Hybrid Electric (PHEV) vehicles. The brake pedal position sensor capacitor may be cracked,…",
       "brand": "Chrysler",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Voyager, Pacifica Plug-In Hybrid, Pacifica",
+      "product": "Pacifica, Pacifica Plug-In Hybrid, Voyager",
       "date": "2026-09-01",
       "units": 2017,
       "pet": false,
@@ -1249,6 +1266,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Ricky-Joy-Recalls-More-Than-2-3-Million-Sour-Crush-Candy-Bottles-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Hazard",
       "score": 71
+    },
+    {
+      "id": "USDA-2026-09-22-star-meat-delivery-inc-recalls-raw-pork-beef-and-goat-products-produce",
+      "source": "USDA",
+      "category": "food",
+      "title": "Star Meat Delivery Inc. Recalls Raw Pork, Beef, and Goat Products Produced Without the Benefit of…",
+      "reason": "Produced Without Benefit of Inspection",
+      "brand": "",
+      "company": "",
+      "product": "",
+      "date": "2026-09-22",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "http://www.fsis.usda.gov/recalls-alerts/star-meat-delivery-inc--recalls-raw-pork-beef-and-goat-products-produced-without",
+      "score": 70
     },
     {
       "id": "FDA-2026-09-21-icu-medical-llc-0-9-sodium-chloride-injection-usp-100-ml-otsuka-icu-me",
@@ -1518,22 +1551,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1547,6 +1564,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -1724,7 +1757,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026 Maverick, F-150, and Bronco Sport vehicles. Certain vehicle joints may be improperly tightened. This can lead to detached parts, unsecured cargo, degraded crash…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "Maverick, F-150, Bronco Sport",
+      "product": "Bronco Sport, F-150, Maverick",
       "date": "2026-08-25",
       "units": 23,
       "pet": false,
@@ -1768,14 +1801,31 @@
       "score": 55
     },
     {
+      "id": "NHTSA-26V529000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Jeep Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Grand Cherokee and Grand Cherokee L vehicles. Due to a software issue in the body control module (BCM), the windshield wipers may fail. 81 vehicles or units may be…",
+      "brand": "Jeep",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "Grand Cherokee L, Grand Cherokee",
+      "date": "2026-08-13",
+      "units": 81,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V529000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V529-9405.pdf",
+      "score": 55
+    },
+    {
       "id": "NHTSA-26V530000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "GMC Vehicles Recalled",
+      "title": "Chevrolet Vehicles Recalled",
       "reason": "General Motors, LLC (GM) is recalling certain 2024-2025 Chevrolet Silverado 2500 and GMC Sierra 2500 vehicles equipped with the enhanced towing option and 20-inch accessory tire/wheel package. The tire information…",
-      "brand": "GMC",
+      "brand": "Chevrolet",
       "company": "General Motors, LLC",
-      "product": "Sierra 2500, Silverado 2500",
+      "product": "Silverado 2500, Sierra 2500",
       "date": "2026-08-13",
       "units": 8,
       "pet": false,
@@ -1799,23 +1849,6 @@
       "majorBrand": true,
       "campaign": "26V532000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V532-1166.pdf",
-      "score": 55
-    },
-    {
-      "id": "NHTSA-26V529000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Jeep Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Grand Cherokee and Grand Cherokee L vehicles. Due to a software issue in the body control module (BCM), the windshield wipers may fail. 81 vehicles or units may be…",
-      "brand": "Jeep",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee L, Grand Cherokee",
-      "date": "2026-08-13",
-      "units": 81,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V529000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V529-9405.pdf",
       "score": 55
     },
     {
@@ -2000,40 +2033,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Diamond-Wipes-International-Recalls-MD-Wipe-Outz-Numbing-Tattoo-Wipes-Due-to-Risk-of-Serious-Injury-or-Death-from-Child-Poisoning-Violate-Mandatory-Standard-for-Child-Resistant-Packaging?utm_campaign=&utm_content=&utm_medium=email&utm_source=govdelivery&utm_term=20260827",
       "score": 50
-    },
-    {
-      "id": "NHTSA-26V549000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Mitsubishi Vehicles Recalled",
-      "reason": "Mitsubishi Motors North America, Inc. (MMNA) is recalling certain 2025-2026 Outlander and 2026 Outlander PHEV vehicles. Due to improper software programming, the Alliance In-Vehicle Infotainment (A-IVI) system may fail…",
-      "brand": "Mitsubishi",
-      "company": "Mitsubishi Motors North America, Inc.",
-      "product": "Outlander, Outlander PHEV",
-      "date": "2026-08-25",
-      "units": 67146,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V549000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V549-3979.pdf",
-      "score": 50
-    },
-    {
-      "id": "CPSC-10949-adult-portable-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Adult Portable Bed Rails Recalled Due to Risk of Serious Injury or Death from Entrapment and…",
-      "reason": "The recalled bed rails violate the mandatory standard for adult portable bed rails because users can become entrapped within the bed rail or between the bed rail and the side of the mattress, posing a serious…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from June 2025 through April 2026 for between $40 and $50.",
-      "product": "Loyoda Adult Portable Bed Rails",
-      "date": "2026-09-03",
-      "units": 2200,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Adult-Portable-Bed-Rails-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Sold-on-Amazon-by-Loyoda-Direct-and-Loyoda",
-      "score": 48
     }
   ]
 }
