@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-23T16:32:30.782Z",
+  "generated": "2026-09-23T20:30:56.174Z",
   "version": "2.4",
   "newestDate": "2026-09-22",
   "stale": false,
@@ -1937,22 +1937,6 @@
       "score": 53
     },
     {
-      "id": "FDA-2026-09-18-truly-aip-eat-g-a-n-g-s-t-e-r-all-purpose-flour-bread-mix-flat-bread-p",
-      "source": "FDA",
-      "category": "food",
-      "title": "Truly AIP, EAT G.A.N.G.S.T.E.R All purpose flour, bread mix, flat bread pizza mix Recalled",
-      "reason": "Undeclared wheat allergen",
-      "brand": "Truly AIP, EAT G.A.N.G.S.T.E.R",
-      "company": "GF Blends",
-      "product": "All purpose flour, bread mix, flat bread pizza mix",
-      "date": "2026-09-18",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gf-blends-recalls-truly-aip-all-purpose-flour-and-bread-mix-and-eat-gangster-flat-bread-pizza-mix",
-      "score": 50
-    },
-    {
       "id": "FDA-2026-09-18-j-higgs-loaded-bacon-cheddar-potato-chips-saratoga-potato-chips-llc",
       "source": "FDA",
       "category": "food",
@@ -1966,6 +1950,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/saratoga-potato-chips-issues-allergy-alert-undeclared-soy-j-higgs-loaded-bacon-and-cheddar-potato",
+      "score": 50
+    },
+    {
+      "id": "FDA-2026-09-18-truly-aip-eat-g-a-n-g-s-t-e-r-all-purpose-flour-bread-mix-flat-bread-p",
+      "source": "FDA",
+      "category": "food",
+      "title": "Truly AIP, EAT G.A.N.G.S.T.E.R All purpose flour, bread mix, flat bread pizza mix Recalled",
+      "reason": "Undeclared wheat allergen",
+      "brand": "Truly AIP, EAT G.A.N.G.S.T.E.R",
+      "company": "GF Blends",
+      "product": "All purpose flour, bread mix, flat bread pizza mix",
+      "date": "2026-09-18",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gf-blends-recalls-truly-aip-all-purpose-flour-and-bread-mix-and-eat-gangster-flat-bread-pizza-mix",
       "score": 50
     },
     {
