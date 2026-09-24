@@ -1,16 +1,16 @@
 {
-  "generated": "2026-09-24T12:36:55.069Z",
+  "generated": "2026-09-24T16:32:30.825Z",
   "version": "2.4",
-  "newestDate": "2026-09-23",
+  "newestDate": "2026-09-24",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1046
+      "count": 1063
     },
     "CPSC": {
       "ok": true,
-      "count": 10016
+      "count": 10017
     },
     "USDA": {
       "ok": true,
@@ -175,6 +175,23 @@
       "score": 119
     },
     {
+      "id": "CPSC-10991-zck01-recalls-kesyup-mattresses-due-to-risk-of-serious-injury-or-death",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "ZCK01 Recalls Kesyup Mattresses Due to Risk of Serious Injury or Death from Fire Hazard; Violate…",
+      "reason": "This recall involves Kesyup-branded Mattresses. They are 12 inches thick and were sold in twin, full, queen and king sizes. They have a white top and blue sides with blue trim. The mattresses were sold in compressed…",
+      "brand": "",
+      "company": "",
+      "retailers": "",
+      "product": "",
+      "date": "2026-09-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2026/ZCK01-Recalls-Kesyup-Mattresses-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Mattress-Flammability",
+      "score": 133
+    },
+    {
       "id": "NHTSA-26V578000",
       "source": "NHTSA",
       "category": "consumer",
@@ -192,6 +209,22 @@
       "score": 140
     },
     {
+      "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
+      "source": "FDA",
+      "category": "food",
+      "title": "Northwest Naturals Chicken Recipe Pet Food Recalled",
+      "reason": "Potential contamination with Salmonella and/or Listeria monocytogenes",
+      "brand": "Northwest Naturals",
+      "company": "Northwest Naturals",
+      "product": "Chicken Recipe",
+      "date": "2026-08-28",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/panorama-produce-recalls-mangoes-due-possible-salmonella-contamination",
+      "score": 118
+    },
+    {
       "id": "CPSC-10975-jkmax-recalls-heated-blankets-and-heating-pads-due-to-fire-and-burn-ha",
       "source": "CPSC",
       "category": "consumer",
@@ -207,22 +240,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/JKMAX-Recalls-Heated-Blankets-and-Heating-Pads-Due-to-Fire-and-Burn-Hazards",
       "score": 129
-    },
-    {
-      "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
-      "source": "FDA",
-      "category": "food",
-      "title": "Northwest Naturals Chicken Recipe Pet Food Recalled",
-      "reason": "Potential contamination with Salmonella and/or Listeria monocytogenes",
-      "brand": "Northwest Naturals",
-      "company": "Northwest Naturals",
-      "product": "Chicken Recipe",
-      "date": "2026-08-28",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/panorama-produce-recalls-mangoes-due-possible-salmonella-contamination",
-      "score": 118
     },
     {
       "id": "FDA-2026-08-14-naturebest-heb-finished-products-such-as-pico-de-gallo-stuffed-mushroo",
@@ -255,23 +272,6 @@
       "majorBrand": true,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 118
-    },
-    {
-      "id": "CPSC-10976-melissa-doug-recalls-fire-truck-activity-board-toys-due-to-risk-of-ser",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Melissa & Doug Recalls Fire Truck Activity Board Toys Due to Risk of Serious Injury from Choking…",
-      "reason": "The fire hose port can come loose and detach, posing a risk of serious injury from choking hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold At: Target stores nationwide and online at Target.com from July 2025 through August 2026 for about $30.",
-      "product": "Lights & Sounds Fire Truck Activity Board",
-      "date": "2026-09-17",
-      "units": 84000,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://cpsc.gov/Recalls/2026/Melissa-and-Doug-Recalls-Fire-Truck-Activity-Board-Toys-Due-to-Risk-of-Serious-Injury-from-Choking-Hazard-Sold-Exclusively-at-Target",
-      "score": 117
     },
     {
       "id": "NHTSA-26V597000",
@@ -357,6 +357,23 @@
       "campaign": "26V584000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V584-2913.pdf",
       "score": 123
+    },
+    {
+      "id": "CPSC-10976-melissa-doug-recalls-fire-truck-activity-board-toys-due-to-risk-of-ser",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Melissa & Doug Recalls Fire Truck Activity Board Toys Due to Risk of Serious Injury from Choking…",
+      "reason": "The fire hose port can come loose and detach, posing a risk of serious injury from choking hazard.",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold At: Target stores nationwide and online at Target.com from July 2025 through August 2026 for about $30.",
+      "product": "Lights & Sounds Fire Truck Activity Board",
+      "date": "2026-09-17",
+      "units": 84000,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://cpsc.gov/Recalls/2026/Melissa-and-Doug-Recalls-Fire-Truck-Activity-Board-Toys-Due-to-Risk-of-Serious-Injury-from-Choking-Hazard-Sold-Exclusively-at-Target",
+      "score": 117
     },
     {
       "id": "FDA-2026-09-23-berlin-seeds-alfalfa-sprouting-seeds-berlin-seeds",
@@ -1502,22 +1519,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1531,6 +1532,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -2018,23 +2035,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Adult-Portable-Bed-Rails-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Sold-on-Amazon-by-Loyoda-Direct-and-Loyoda",
-      "score": 48
-    },
-    {
-      "id": "CPSC-10942-gizoon-direct-recalls-six-drawer-double-dressers-due-to-risk-of-seriou",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Gizoon Direct Recalls Six-Drawer Double Dressers Due to Risk of Serious Injury or Death from Tip-Over…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from May 2025 through August 2026 for between $138 and $171.",
-      "product": "Gizoon Six-Drawer Double Dressers",
-      "date": "2026-09-03",
-      "units": 4396,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Gizoon-Direct-Recalls-Six-Drawer-Double-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violates-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 48
     }
   ]
