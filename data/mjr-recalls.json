@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-23T20:30:56.174Z",
+  "generated": "2026-09-24T00:37:31.528Z",
   "version": "2.4",
-  "newestDate": "2026-09-22",
+  "newestDate": "2026-09-23",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1062
+      "count": 1063
     },
     "CPSC": {
       "ok": true,
@@ -357,6 +357,22 @@
       "campaign": "26V584000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V584-2913.pdf",
       "score": 123
+    },
+    {
+      "id": "FDA-2026-09-23-berlin-seeds-alfalfa-sprouting-seeds-berlin-seeds",
+      "source": "FDA",
+      "category": "food",
+      "title": "Berlin Seeds Alfalfa sprouting seeds Recalled",
+      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (STEC) and/or Salmonella",
+      "brand": "Berlin Seeds",
+      "company": "Berlin Seeds",
+      "product": "Alfalfa sprouting seeds",
+      "date": "2026-09-23",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/berlin-seeds-recalls-alfalfa-sprouting-seed-because-possible-health-risk",
+      "score": 115
     },
     {
       "id": "NHTSA-26V587000",
@@ -2016,23 +2032,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/so-delicious-dairy-freer-issues-voluntary-recall-salted-caramel-cluster-non-dairy-frozen-dessert",
-      "score": 48
-    },
-    {
-      "id": "CPSC-10949-adult-portable-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Adult Portable Bed Rails Recalled Due to Risk of Serious Injury or Death from Entrapment and…",
-      "reason": "The recalled bed rails violate the mandatory standard for adult portable bed rails because users can become entrapped within the bed rail or between the bed rail and the side of the mattress, posing a serious…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from June 2025 through April 2026 for between $40 and $50.",
-      "product": "Loyoda Adult Portable Bed Rails",
-      "date": "2026-09-03",
-      "units": 2200,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Adult-Portable-Bed-Rails-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Sold-on-Amazon-by-Loyoda-Direct-and-Loyoda",
       "score": 48
     }
   ]
