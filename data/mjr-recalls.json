@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-24T00:37:31.528Z",
+  "generated": "2026-09-24T04:31:08.234Z",
   "version": "2.4",
   "newestDate": "2026-09-23",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1063
+      "count": 1046
     },
     "CPSC": {
       "ok": true,
@@ -1534,22 +1534,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Oma’s Pride Canine Food Recalled",
-      "reason": "Contaminated with Salmonella",
-      "brand": "Oma’s Pride",
-      "company": "Miller Foods, Inc.",
-      "product": "Canine Food",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": true,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
       "source": "FDA",
       "category": "food",
@@ -1563,6 +1547,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Oma’s Pride Canine Food Recalled",
+      "reason": "Contaminated with Salmonella",
+      "brand": "Oma’s Pride",
+      "company": "Miller Foods, Inc.",
+      "product": "Canine Food",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
       "score": 63
     },
     {
