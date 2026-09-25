@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-25T04:31:19.856Z",
+  "generated": "2026-09-25T08:33:10.824Z",
   "version": "2.4",
   "newestDate": "2026-09-24",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1048
+      "count": 1065
     },
     "CPSC": {
       "ok": true,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 89
+      "count": 91
     }
   },
   "count": 120,
@@ -95,11 +95,11 @@
       "id": "NHTSA-26V590000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Volkswagen Vehicles Recalled",
+      "title": "Audi Vehicles Recalled",
       "reason": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2018 Tiguan, 2018-2019 Atlas, and 2019-2021 Audi Q3 vehicles. One of the bolts that attaches the steering rack to the subframe may corrode and break.…",
-      "brand": "Volkswagen",
+      "brand": "Audi",
       "company": "Volkswagen Group of America, Inc.",
-      "product": "Tiguan, Atlas, Q3",
+      "product": "Q3, Atlas, Tiguan",
       "date": "2026-09-11",
       "units": 208724,
       "pet": false,
@@ -162,11 +162,11 @@
       "id": "NHTSA-26V539000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Chevrolet Vehicles Recalled",
+      "title": "Buick Vehicles Recalled",
       "reason": "General Motors, LLC is recalling certain 2024-2025 Buick Envista, 2024-2026 Buick Encore GX, Chevrolet Trailblazer, and 2025 Chevrolet Trax vehicles. The rearview camera screen may display a distorted or blank image.…",
-      "brand": "Chevrolet",
+      "brand": "Buick",
       "company": "General Motors, LLC",
-      "product": "Trax, Encore Gx, Envista, Trailblazer",
+      "product": "Encore Gx, Envista, Trailblazer, Trax",
       "date": "2026-08-20",
       "units": 306511,
       "pet": false,
@@ -393,23 +393,6 @@
       "score": 133
     },
     {
-      "id": "NHTSA-26V559000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Jeep Vehicles Recalled",
-      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
-      "brand": "Jeep",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee, Cherokee, Grand Cherokee L, Grand Wagoneer, Grand Wagoneer L, Wagoneer, Wagoneer L, Grand Cherokee 4XE",
-      "date": "2026-09-01",
-      "units": 201976,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V559000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
-      "score": 132
-    },
-    {
       "id": "NHTSA-26V560000",
       "source": "NHTSA",
       "category": "consumer",
@@ -424,6 +407,23 @@
       "majorBrand": true,
       "campaign": "26V560000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V560-9456.pdf",
+      "score": 132
+    },
+    {
+      "id": "NHTSA-26V559000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Jeep Vehicles Recalled",
+      "reason": "Chrysler (FCA US LLC) is recalling certain 2024-2025 Jeep Wagoneer, 2024-2026 Jeep Grand Cherokee, Jeep Grand Cherokee L, Jeep Grand Cherokee 4XE, Jeep Grand Wagoneer, 2025 Jeep Wagoneer L, 2025-2026 Jeep Grand…",
+      "brand": "Jeep",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "Grand Cherokee 4XE, Grand Wagoneer L PHEV, Grand Wagoneer L, Wagoneer L, Wagoneer, Grand Wagoneer, Grand Cherokee L, Grand Cherokee",
+      "date": "2026-09-01",
+      "units": 201976,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V559000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 132
     },
     {
@@ -785,11 +785,11 @@
       "id": "NHTSA-26V598000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Lexus Vehicles Recalled",
+      "title": "Toyota Vehicles Recalled",
       "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2026 Lexus TX350, RX350 Hybrid, RX350, RX500 Hybrid, TX500 Hybrid, Toyota Grand Highlander, and Grand Highlander Hybrid vehicles. Due to a…",
-      "brand": "Lexus",
+      "brand": "Toyota",
       "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Rx Hybrid, Tx Hybrid, Tx, Rx, Grand Highlander Hybrid, Grand Highlander",
+      "product": "Grand Highlander, Grand Highlander Hybrid, Rx, Rx Hybrid, Tx, Tx Hybrid",
       "date": "2026-09-17",
       "units": 617,
       "pet": false,
@@ -1076,7 +1076,7 @@
       "reason": "Britax Child Safety, Inc. (Britax) is recalling certain B-Safe Gen 2, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe 35, B-Safe Ultra, and Endeavours child seats. Please refer to Britax's recall report for the…",
       "brand": "Britax",
       "company": "Britax Child Safety, Inc.",
-      "product": "B-Safe 35, B-Safe Gen 2 Flexfit, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2, Endeavours, B-Safe Ultra",
+      "product": "Endeavours, B-Safe Gen 2, B-Safe Gen 2 Flexfit Plus, B-Safe Gen 2 Flexfit, B-Safe Ultra, B-Safe 35",
       "date": "2026-08-20",
       "units": 114660,
       "pet": false,
@@ -1118,23 +1118,6 @@
       "score": 75
     },
     {
-      "id": "NHTSA-26V579000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford Transit Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 Transit vehicles. The wireless seat belt reminder system (SBR) within the rear seat belt buckles may malfunction and fail to show a change in buckle status.…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "Transit",
-      "date": "2026-09-09",
-      "units": 1945,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V579000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V579-7717.pdf",
-      "score": 75
-    },
-    {
       "id": "NHTSA-26V580000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1149,6 +1132,23 @@
       "majorBrand": true,
       "campaign": "26V580000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V580-5831.pdf",
+      "score": 75
+    },
+    {
+      "id": "NHTSA-26V579000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford Transit Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 Transit vehicles. The wireless seat belt reminder system (SBR) within the rear seat belt buckles may malfunction and fail to show a change in buckle status.…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "Transit",
+      "date": "2026-09-09",
+      "units": 1945,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V579000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V579-7717.pdf",
       "score": 75
     },
     {
@@ -1201,6 +1201,23 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/COMMOWNER-Pressure-Washers-Recalled-Due-to-Serious-Risk-of-Injury-or-Death-from-Shock-and-Electrocution-Hazards-Imported-by-AZ-Home-Concept",
       "score": 75
+    },
+    {
+      "id": "NHTSA-26V592000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Farber Specialty Vehicles Recalled",
+      "reason": "Farber Specialty Vehicles (Farber Specialty) is recalling certain Farber vehicles equipped with certain S-Series and K-Series wheelchair platform lifts. Please see the recall report for a complete list of models. The…",
+      "brand": "Farber Specialty",
+      "company": "Farber Specialty Vehicles",
+      "product": "Chevrolet 7500XD, M-B Sprinter, Ford Transit, International MV607 Sba 4X2, Freightliner MT55, Freightliner MT50E, Freightliner M2 106, Freightliner M2",
+      "date": "2026-09-11",
+      "units": 69,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V592000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V592-6459.pdf",
+      "score": 73
     },
     {
       "id": "CPSC-10939-truststone-group-recalls-xo-poppy-power-trip-magnetic-wireless-power-b",
@@ -1532,7 +1549,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/star-meat-delivery-inc--recalls-raw-pork-beef-and-goat-products-produced-without",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/star-meat-delivery-inc--recalls-raw-pork-beef-and-goat-products-produced-without",
       "score": 64
     },
     {
@@ -1552,20 +1569,20 @@
       "score": 63
     },
     {
-      "id": "NHTSA-26E063000",
+      "id": "NHTSA-26V577000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Ford Battery Energy Control Module Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain Battery Energy Control Modules (BECM) with part numbers PZ98-10B687-K* and PZ98-14C197-K*. The battery energy control module software may cause an incorrect state of…",
+      "title": "Ford F-150 Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles.The stabilizer rod fasteners may not have been tightened properly during manufacturing, which can allow the rod to shift out of position. 17 vehicles…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "Battery Energy Control Module",
+      "product": "F-150",
       "date": "2026-09-09",
-      "units": 83,
+      "units": 17,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26E063000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E063-9353.pdf",
+      "campaign": "26V577000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V577-7489.pdf",
       "score": 63
     },
     {
@@ -1586,6 +1603,23 @@
       "score": 63
     },
     {
+      "id": "NHTSA-26E063000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ford Battery Energy Control Module Vehicles Recalled",
+      "reason": "Ford Motor Company (Ford) is recalling certain Battery Energy Control Modules (BECM) with part numbers PZ98-10B687-K* and PZ98-14C197-K*. The battery energy control module software may cause an incorrect state of…",
+      "brand": "Ford",
+      "company": "Ford Motor Company",
+      "product": "Battery Energy Control Module",
+      "date": "2026-09-09",
+      "units": 83,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26E063000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E063-9353.pdf",
+      "score": 63
+    },
+    {
       "id": "NHTSA-26V576000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1600,23 +1634,6 @@
       "majorBrand": true,
       "campaign": "26V576000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V576-1003.pdf",
-      "score": 63
-    },
-    {
-      "id": "NHTSA-26V577000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford F-150 Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026 F-150 vehicles.The stabilizer rod fasteners may not have been tightened properly during manufacturing, which can allow the rod to shift out of position. 17 vehicles…",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "F-150",
-      "date": "2026-09-09",
-      "units": 17,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V577000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V577-7489.pdf",
       "score": 63
     },
     {
@@ -1721,22 +1738,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1750,6 +1751,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -1996,30 +2013,13 @@
       "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Jeep Grand Cherokee and Grand Cherokee L vehicles. Due to a software issue in the body control module (BCM), the windshield wipers may fail. 81 vehicles or units may be…",
       "brand": "Jeep",
       "company": "Chrysler (FCA US, LLC)",
-      "product": "Grand Cherokee, Grand Cherokee L",
+      "product": "Grand Cherokee L, Grand Cherokee",
       "date": "2026-08-13",
       "units": 81,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V529000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V529-9405.pdf",
-      "score": 55
-    },
-    {
-      "id": "NHTSA-26V532000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ford Explorer Vehicles Recalled",
-      "reason": "Ford Motor Company (Ford) is recalling certain 2026 Explorer vehicles equipped with a 2.3L engine. The engine connecting rod bearings may seize, which can result in engine failure. 6 vehicles or units may be affected.",
-      "brand": "Ford",
-      "company": "Ford Motor Company",
-      "product": "Explorer",
-      "date": "2026-08-13",
-      "units": 6,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V532000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V532-1166.pdf",
       "score": 55
     },
     {
