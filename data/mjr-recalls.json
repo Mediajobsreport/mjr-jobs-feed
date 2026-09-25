@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-24T20:32:04.726Z",
+  "generated": "2026-09-25T00:38:17.609Z",
   "version": "2.4",
   "newestDate": "2026-09-24",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1046
+      "count": 1065
     },
     "CPSC": {
       "ok": true,
@@ -1335,6 +1335,38 @@
       "score": 71
     },
     {
+      "id": "FDA-2026-09-24-lior-ground-cinnamon-galil-importing-corp",
+      "source": "FDA",
+      "category": "food",
+      "title": "Lior Ground cinnamon Recalled",
+      "reason": "Potential to be contaminated with elevated levels of lead",
+      "brand": "Lior",
+      "company": "Galil Importing Corp",
+      "product": "Ground cinnamon",
+      "date": "2026-09-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/galil-importing-corp-recalls-lior-cinnamon-ground-seasoning-due-elevated-lead-levels",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-09-24-deano-s-pasta-pasta-deano-s-pasta",
+      "source": "FDA",
+      "category": "food",
+      "title": "Deano’s Pasta Pasta Recalled",
+      "reason": "Undeclared crustacean shellfish (lobster) allergen",
+      "brand": "Deano’s Pasta",
+      "company": "Deano’s Pasta",
+      "product": "Pasta",
+      "date": "2026-09-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/deanos-pasta-issue-allergy-alert-undeclared-lobster-pear-and-pecorino-triangoli-ravioli",
+      "score": 70
+    },
+    {
       "id": "CPSC-10981-regfear-recalls-bedspick-mattresses-due-to-risk-of-serious-injury-or-d",
       "source": "CPSC",
       "category": "consumer",
@@ -1689,22 +1721,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
-      "reason": "Potential Salmonella Contamination",
-      "brand": "Dairyland Produce LLC",
-      "company": "Dairyland Produce LLC",
-      "product": "Pepper Jalapenos",
-      "date": "2026-08-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
-      "score": 63
-    },
-    {
       "id": "FDA-2026-08-17-oma-s-pride-canine-food-miller-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1718,6 +1734,22 @@
       "pet": true,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/hardies-fresh-foods-recalls-jalapenos-because-possible-health-risk",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-08-17-dairyland-produce-llc-pepper-jalapenos-dairyland-produce-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Dairyland Produce LLC Pepper Jalapenos Recalled",
+      "reason": "Potential Salmonella Contamination",
+      "brand": "Dairyland Produce LLC",
+      "company": "Dairyland Produce LLC",
+      "product": "Pepper Jalapenos",
+      "date": "2026-08-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naturebest-precut-produce-llc-voluntarily-recalls-products-containing-jalapenos-due-potential",
       "score": 63
     },
     {
@@ -2005,40 +2037,6 @@
       "majorBrand": true,
       "campaign": "26V530000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V530-4213.pdf",
-      "score": 55
-    },
-    {
-      "id": "NHTSA-26E054000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Grote Clearance/Marker Lamp Vehicles Recalled",
-      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain Grote replacement marker lights with part number 78513681. The center roof marker lights may fail to illuminate. As such, this equipment fails to comply…",
-      "brand": "Grote",
-      "company": "Volvo Trucks North America",
-      "product": "Clearance/Marker Lamp",
-      "date": "2026-08-12",
-      "units": 844,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E054000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E054-0627.pdf",
-      "score": 55
-    },
-    {
-      "id": "NHTSA-26V526000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Nissan Altima Vehicles Recalled",
-      "reason": "Nissan North America, Inc. (Nissan) is recalling certain 2025 Altima vehicles. The front passenger air bag and front passenger knee air bag may have been installed with incorrect mounting fasteners, which can cause the…",
-      "brand": "Nissan",
-      "company": "Nissan North America, Inc.",
-      "product": "Altima",
-      "date": "2026-08-12",
-      "units": 149,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V526000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V526-2061.pdf",
       "score": 55
     }
   ]
