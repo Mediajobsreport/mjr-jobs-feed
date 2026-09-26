@@ -1,12 +1,12 @@
 {
-  "generated": "2026-09-25T20:29:23.756Z",
+  "generated": "2026-09-26T05:05:04.804Z",
   "version": "2.4",
-  "newestDate": "2026-09-24",
+  "newestDate": "2026-09-25",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1065
+      "count": 1066
     },
     "CPSC": {
       "ok": true,
@@ -883,6 +883,22 @@
       "score": 90
     },
     {
+      "id": "FDA-2026-09-25-mezzetta-greek-peppers-golden-greek-peperoncini-medium-heat-g-l-mezzet",
+      "source": "FDA",
+      "category": "food",
+      "title": "Mezzetta Greek peppers/ Golden Greek Peperoncini, Medium Heat Recalled",
+      "reason": "Product may contain foreign objects such as Pest contaminant in jar",
+      "brand": "Mezzetta",
+      "company": "G. L. Mezzetta Inc.",
+      "product": "Greek peppers/ Golden Greek Peperoncini, Medium Heat",
+      "date": "2026-09-25",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/g-l-mezzetta-inc-announces-recall-mezzetta-brand-golden-greek-peperoncini-medium-heat-due-presence",
+      "score": 88
+    },
+    {
       "id": "NHTSA-26V598000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1699,7 +1715,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/star-meat-delivery-inc--recalls-raw-pork-beef-and-goat-products-produced-without",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/star-meat-delivery-inc--recalls-raw-pork-beef-and-goat-products-produced-without",
       "score": 58
     },
     {
@@ -2019,23 +2035,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
-      "score": 53
-    },
-    {
-      "id": "CPSC-10938-shein-distribution-corporation-recalls-spiral-toys-due-to-risk-of-seri",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "SHEIN Distribution Corporation Recalls Spiral Toys Due to Risk of Serious Injury or Death from Choking…",
-      "reason": "The toys violate the small ball ban because they contain small balls and are intended for children under three years of age, posing a deadly choking hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: SHEIN.com from September 2025 through May 2026 for between $6 to $16.",
-      "product": "Spiral Toy",
-      "date": "2026-09-03",
-      "units": 963,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/SHEIN-Distribution-Corporation-Recalls-Spiral-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Hazard-Violate-Small-Ball-Ban",
       "score": 53
     }
   ]
