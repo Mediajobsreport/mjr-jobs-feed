@@ -1,7 +1,7 @@
 {
-  "generated": "2026-09-26T13:09:41.185Z",
+  "generated": "2026-09-26T19:15:39.718Z",
   "version": "2.4",
-  "newestDate": "2026-09-25",
+  "newestDate": "2026-09-26",
   "stale": false,
   "sources": {
     "FDA": {
@@ -916,7 +916,7 @@
       "score": 90
     },
     {
-      "id": "FDA-2026-09-25-mezzetta-greek-peppers-golden-greek-peperoncini-medium-heat-g-l-mezzet",
+      "id": "FDA-2026-09-26-mezzetta-greek-peppers-golden-greek-peperoncini-medium-heat-g-l-mezzet",
       "source": "FDA",
       "category": "food",
       "title": "Mezzetta Greek peppers/ Golden Greek Peperoncini, Medium Heat Recalled",
@@ -924,7 +924,7 @@
       "brand": "Mezzetta",
       "company": "G. L. Mezzetta Inc.",
       "product": "Greek peppers/ Golden Greek Peperoncini, Medium Heat",
-      "date": "2026-09-25",
+      "date": "2026-09-26",
       "units": 0,
       "pet": false,
       "majorBrand": false,
