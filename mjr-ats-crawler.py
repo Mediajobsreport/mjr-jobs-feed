@@ -7983,6 +7983,44 @@ def connoisseur_paycor(src):
                                 diag.append(h)
                     for h in diag[:120]:
                         print("CONNOISSEUR_PAYCOR_HREF:", h)
+
+                    # Paycor's current widget can render jobs as JS controls
+                    # rather than anchors. Inspect interactive/card elements
+                    # and their identifying attributes without clicking them.
+                    for ctx in [page] + list(page.frames):
+                        try:
+                            frame_url = clean(str(getattr(ctx, "url", "") or ""))
+                            els = ctx.locator(
+                                "button, [role='button'], [onclick], "
+                                "[data-job-id], [data-jobid], [data-id], "
+                                "[class*='job'], [id*='job']"
+                            )
+                            count = min(els.count(), 160)
+                            for idx in range(count):
+                                el = els.nth(idx)
+                                try:
+                                    info = el.evaluate("""e => ({
+                                        tag: e.tagName,
+                                        text: (e.innerText || e.textContent || '').trim().slice(0, 500),
+                                        id: e.id || '',
+                                        cls: e.className || '',
+                                        onclick: e.getAttribute('onclick') || '',
+                                        href: e.getAttribute('href') || '',
+                                        dataJobId: e.getAttribute('data-job-id') || e.getAttribute('data-jobid') || '',
+                                        dataId: e.getAttribute('data-id') || '',
+                                        aria: e.getAttribute('aria-label') || ''
+                                    })""")
+                                    blob = " | ".join(
+                                        f"{k}={clean(str(v or ''))}"
+                                        for k, v in info.items()
+                                        if v
+                                    )
+                                    if blob:
+                                        print("CONNOISSEUR_PAYCOR_ELEMENT:", frame_url, "|", blob)
+                                except Exception:
+                                    pass
+                        except Exception:
+                            pass
             else:
                 print(f"Connoisseur Paycor direct board: hrefs={len(hrefs)} details={len(found)}")
             browser.close()
