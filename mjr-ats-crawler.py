@@ -7922,6 +7922,7 @@ def connoisseur_paycor(src):
     board = "https://connoisseurmedia.com/careers/"
     st = load_state()
     detail_urls = []
+    paycor_rendered = {}
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
@@ -8135,6 +8136,27 @@ def connoisseur_paycor(src):
                                     paycor_found += 1
                                 print("CONNOISSEUR_HANDOFF_PAYCOR_LINK:", clean(str(item))[:4000])
                             print("CONNOISSEUR_PAYCOR_ENUMERATED:", paycor_found)
+
+                            # Render Paycor detail pages in the authenticated/live
+                            # browser context. Standalone HTTP requests to these
+                            # JobIntroduction pages do not expose parseable content.
+                            paycor_urls = list(dict.fromkeys(
+                                u for u in detail_urls
+                                if "recruitingbypaycor.com/career/JobIntroduction.action" in u
+                            ))
+                            detail_page = context.new_page()
+                            detail_page.set_default_timeout(12000)
+                            for n, job_url in enumerate(paycor_urls[:300], 1):
+                                try:
+                                    detail_page.goto(job_url, wait_until="domcontentloaded", timeout=15000)
+                                    detail_page.wait_for_timeout(350)
+                                    rendered_html = detail_page.content()
+                                    rendered_text = clean(detail_page.locator("body").inner_text())
+                                    paycor_rendered[job_url] = (rendered_html, rendered_text)
+                                except Exception as ex:
+                                    print("CONNOISSEUR_PAYCOR_DETAIL_ERROR:", n, job_url[:500], type(ex).__name__, str(ex)[:300])
+                            detail_page.close()
+                            print("CONNOISSEUR_PAYCOR_RENDERED:", len(paycor_rendered))
                         except Exception as ex:
                             print("CONNOISSEUR_HANDOFF_PAYCOR_LINK_ERROR:", type(ex).__name__, str(ex)[:300])
                 forms = handoff.locator("form").evaluate_all("""els => els.map(f => ({
@@ -8180,13 +8202,21 @@ def connoisseur_paycor(src):
     out = []
     for url in detail_urls[:300]:
         key = url.rstrip("/").lower()
-        try:
-            r = _req_raw("GET", url, timeout=4, tries=1)
-        except Exception:
-            continue
-        soup = BeautifulSoup(r.text, "html.parser")
-        txt = clean(soup.get_text(" "))
-        j = _job_from_detail(src, url, r.text)
+        rendered = paycor_rendered.get(url)
+        if rendered:
+            raw_html, txt = rendered
+            class _RenderedResponse:
+                text = raw_html
+            r = _RenderedResponse()
+        else:
+            try:
+                r = _req_raw("GET", url, timeout=4, tries=1)
+            except Exception:
+                continue
+            raw_html = r.text
+            txt = clean(BeautifulSoup(raw_html, "html.parser").get_text(" "))
+        soup = BeautifulSoup(raw_html, "html.parser")
+        j = _job_from_detail(src, url, raw_html)
         if j:
             # Connoisseur is radio-first for programming/on-air/promotions.
             probe = (j.title + " " + strip_html(j.description)[:1200])
