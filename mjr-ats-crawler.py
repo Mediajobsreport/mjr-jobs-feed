@@ -8056,6 +8056,43 @@ def connoisseur_paycor(src):
             except Exception:
                 pass
 
+            # Probe Paycor/Newton CareerV3 directly. Connoisseur's frame
+            # source references /career/css/careerv3/newton.css, so enumerate
+            # the sibling JS/resources and inspect them for the inventory
+            # request used by Newton's public career UI.
+            try:
+                paycor_url = "https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b"
+                probe = page.context.new_page()
+                probe.goto(paycor_url, wait_until="domcontentloaded", timeout=15000)
+                probe.wait_for_timeout(2500)
+                print("CONNOISSEUR_NEWTON_URL:", probe.url)
+                resources = probe.locator("script[src], link[href]").evaluate_all(
+                    """els => els.map(e => e.src || e.href || "").filter(Boolean)"""
+                )
+                for u in resources:
+                    if re.search(r"(careerv3|newton|career|recruit)", u, re.I):
+                        print("CONNOISSEUR_NEWTON_RESOURCE:", u[:3000])
+                        if re.search(r"\\.js(?:\\?|$)", u, re.I):
+                            try:
+                                rr = probe.request.get(u, timeout=7000)
+                                body = rr.text()
+                                print("CONNOISSEUR_NEWTON_JS:", u[:1500], "|", clean(body)[:12000])
+                            except Exception as ex:
+                                print("CONNOISSEUR_NEWTON_JS_ERROR:", u[:1500], type(ex).__name__, str(ex)[:300])
+                ph = probe.content()
+                for pat in [
+                    r'[^"\\']*(?:Career|Job|Position|Requisition)[^"\\']*\\.(?:action|json|do)[^"\\']*',
+                    r'/(?:career|Career)/[^"\\'<> ]+',
+                ]:
+                    try:
+                        for hit in re.findall(pat, ph, re.I)[:80]:
+                            print("CONNOISSEUR_NEWTON_ENDPOINT_HINT:", clean(str(hit))[:3000])
+                    except Exception:
+                        pass
+                probe.close()
+            except Exception as e:
+                print("Connoisseur Newton probe failed:", type(e).__name__, str(e)[:500])
+
             # Inspect the "View All Current Openings" handoff itself.
             # The landing page may launch Paycor through a form/script rather
             # than exposing its inventory as ordinary anchors.
