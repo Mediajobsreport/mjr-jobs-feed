@@ -8062,7 +8062,7 @@ def connoisseur_paycor(src):
             # request used by Newton's public career UI.
             try:
                 paycor_url = "https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b"
-                probe = page.context.new_page()
+                probe = page
                 probe.goto(paycor_url, wait_until="domcontentloaded", timeout=15000)
                 probe.wait_for_timeout(2500)
                 print("CONNOISSEUR_NEWTON_URL:", probe.url)
