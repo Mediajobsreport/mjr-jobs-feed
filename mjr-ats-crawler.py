@@ -12109,7 +12109,7 @@ def main():
             company_route_key = _company_test_key(company_key)
 
             got = (
-                connoisseur_direct(s)
+                ats_html(s)
                 if company_key == "connoisseur media"
                 else midwest_family_direct(s)
                 if company_key == "mid-west family of companies"
