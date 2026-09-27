@@ -7157,6 +7157,92 @@ def _paylocity_board_root(url):
 
 
 
+
+def _paylocity_rendered_detail(src, url, raw):
+    """Parse Paylocity's rendered detail view without inventing a post date."""
+    soup = BeautifulSoup(raw, "html.parser")
+    txt = clean(soup.get_text(" "))
+
+    # First retain the normal structured parser whenever Paylocity exposes it.
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+
+    # Paylocity's SPA uses several labels across tenant versions. Require an
+    # explicit posting date from rendered text/application state.
+    normalized = html.unescape(raw or "").replace("\\/", "/")
+    pd = None
+    date_patterns = [
+        r"(?:Date Posted|Posted Date|Posting Date|Posted On|Date)\s*:?\s*"
+        r"([A-Za-z]{3,9}\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})",
+        r'["\'](?:datePosted|postedDate|postingDate|createdDate|createDate)["\']\s*:\s*["\']([^"\']+)["\']',
+    ]
+    for pat in date_patterns:
+        m = re.search(pat, normalized if "date" in pat.lower() and "[\"\\']" in pat else txt, re.I)
+        if m:
+            pd = pdate(m.group(1))
+            if pd:
+                break
+    if not pd or pd < feed_cutoff(jobtype("", txt)) or pd > TODAY:
+        return None
+
+    # Prefer the visible detail heading; reject board/application chrome.
+    title = ""
+    bad = {
+        "job opportunities", "job details", "apply now", "nrg media llc",
+        "careers", "employment opportunities",
+    }
+    for node in soup.find_all(["h1","h2","h3"]):
+        cand = clean(node.get_text(" "))
+        if cand and cand.lower() not in bad and 3 <= len(cand) <= 180:
+            title = cand
+            break
+    if not title:
+        m = re.search(
+            r"(?:Job Title|Position Title)\s*:?\s*(.{3,180}?)(?=\s+(?:Location|Department|Date Posted|Posted Date|Job Type|$))",
+            txt, re.I,
+        )
+        if m:
+            title = clean(m.group(1))
+    if not title:
+        return None
+
+    main = (
+        soup.find("main")
+        or soup.find(attrs={"class": re.compile(r"(job.?description|job.?detail|description)", re.I)})
+        or soup
+    )
+    desc = format_description(str(main))
+    if len(strip_html(desc)) < 200:
+        return None
+
+    loc = ""
+    for pat in (
+        r"(?:Job Location|Location)\s*:?\s*(.{2,100}?)(?=\s+(?:Department|Job Type|Employment Type|Date Posted|Posted Date|Apply|$))",
+        r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
+    ):
+        m = re.search(pat, txt, re.I)
+        if m:
+            loc = clean(m.group(1))
+            break
+    city = state = ""
+    mm = re.match(r"(.+?),\s*([A-Z]{2})\b", loc)
+    if mm:
+        city, state = clean(mm.group(1)), mm.group(2).upper()
+    else:
+        city = loc
+
+    m_id = re.search(r"/recruiting/jobs/details/(\d+)", url, re.I)
+    jid = m_id.group(1) if m_id else hashlib.sha1(url.encode()).hexdigest()[:16]
+    canonical = url.split("#",1)[0]
+    return Job(
+        jid, title, src["Company"], desc, pd, jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]), canonical,
+        src["URL"], src["URL"], "", normalize_work_arrangement(desc, loc or txt),
+        city, state, infer_country(loc or txt, src["Company"], desc),
+    )
+
+
 def _paylocity_rendered_v18(src, starts):
     """Bounded Chromium fallback for Paylocity's JavaScript-only public board."""
     if sync_playwright is None:
@@ -7239,9 +7325,7 @@ def _paylocity_rendered_v18(src, starts):
     parse_failures = 0
     stale = 0
     for url, raw in rendered.items():
-        j = _job_from_detail(src, url, raw)
-        if not j:
-            j = _direct_board_job(src, url, raw)
+        j = _paylocity_rendered_detail(src, url, raw)
         if not j:
             parse_failures += 1
             continue
