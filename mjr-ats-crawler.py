@@ -7826,7 +7826,7 @@ def midwest_family_direct(src):
 
     for market, page in markets:
         try:
-            r = req("GET", page)
+            r = _req_raw("GET", page, timeout=4, tries=1)
         except Exception:
             continue
         final = str(getattr(r, "url", "") or page)
@@ -7839,9 +7839,16 @@ def midwest_family_direct(src):
                 "careers","open positions","explore opportunities",
                 "apply through the links below.","our mission & vision",
                 "contact us","company","services","why join us",
+                "job responsibilities:","job responsibilities",
+                "salary and benefits","requirements:","requirements",
+                "contact:","contact","position details:","position details",
+                "qualifications:","qualifications","responsibilities:",
+                "responsibilities","benefits:","benefits",
             }:
                 continue
 
+            if re.match(r"^(?:job )?(?:responsibilities|requirements|qualifications|benefits|contact|position details|salary(?: and benefits)?)[ :]*$", title, re.I):
+                continue
             chunks = []
             for sib in node.next_siblings:
                 if getattr(sib, "name", None) in {"h2","h3"}:
@@ -7860,7 +7867,17 @@ def midwest_family_direct(src):
             block_soup = BeautifulSoup(raw, "html.parser")
             for a in block_soup.find_all("a", href=True):
                 h = urljoin(final, a["href"]).split("#",1)[0]
-                if h.startswith("http") and h.rstrip("/") != final.rstrip("/"):
+                lowh = h.lower()
+                label = clean(a.get_text(" ")).lower()
+                if (
+                    h.startswith("http")
+                    and h.rstrip("/") != final.rstrip("/")
+                    and (
+                        re.search(r"/(?:job|jobs|career|careers|apply)/", lowh)
+                        or lowh.endswith(".pdf")
+                        or label in {"apply","apply now","learn more","job description","details"}
+                    )
+                ):
                     apply_url = h
                     break
 
