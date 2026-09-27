@@ -8127,8 +8127,14 @@ def connoisseur_paycor(src):
                             fh = fr.locator("a[href]").evaluate_all(
                                 "els => els.map(e => ({text:(e.innerText || '').trim(), href:e.href || ''}))"
                             )
-                            for item in fh[:200]:
+                            paycor_found = 0
+                            for item in fh[:300]:
+                                href = clean(str(item.get("href") or "")).split("#", 1)[0]
+                                if re.search(r"/career/JobIntroduction\.action\?", href, re.I):
+                                    detail_urls.append(href)
+                                    paycor_found += 1
                                 print("CONNOISSEUR_HANDOFF_PAYCOR_LINK:", clean(str(item))[:4000])
+                            print("CONNOISSEUR_PAYCOR_ENUMERATED:", paycor_found)
                         except Exception as ex:
                             print("CONNOISSEUR_HANDOFF_PAYCOR_LINK_ERROR:", type(ex).__name__, str(ex)[:300])
                 forms = handoff.locator("form").evaluate_all("""els => els.map(f => ({
