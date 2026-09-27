@@ -7927,6 +7927,36 @@ def connoisseur_paycor(src):
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             page = browser.new_page()
+
+            # Capture the AWSM/WP Job Openings AJAX exchange. The public page
+            # hydrates its inventory dynamically, so the request/response is
+            # more authoritative than guessing at rendered anchors.
+            awsm_requests = []
+            awsm_responses = []
+            def _cap_req(req):
+                try:
+                    if "admin-ajax.php" in (req.url or ""):
+                        awsm_requests.append({
+                            "url": req.url,
+                            "method": req.method,
+                            "post_data": req.post_data or "",
+                        })
+                except Exception:
+                    pass
+            def _cap_resp(resp):
+                try:
+                    if "admin-ajax.php" in (resp.url or ""):
+                        body = resp.text()
+                        awsm_responses.append({
+                            "url": resp.url,
+                            "status": resp.status,
+                            "body": (body or "")[:12000],
+                        })
+                except Exception:
+                    pass
+            page.on("request", _cap_req)
+            page.on("response", _cap_resp)
+
             page.goto(board, wait_until="domcontentloaded", timeout=15000)
             page.wait_for_timeout(2500)
             try:
@@ -7967,6 +7997,19 @@ def connoisseur_paycor(src):
                 pass
 
             print(f"Connoisseur AWSM board: hrefs={len(hrefs)} details={len(detail_urls)}")
+            print(f"Connoisseur AWSM AJAX: requests={len(awsm_requests)} responses={len(awsm_responses)}")
+            for item in awsm_requests[:20]:
+                pdata = clean(str(item.get("post_data") or ""))
+                print(
+                    "CONNOISSEUR_AWSM_REQUEST:",
+                    item.get("method"), "|", item.get("url"), "|", pdata[:4000]
+                )
+            for item in awsm_responses[:20]:
+                body = clean(str(item.get("body") or ""))
+                print(
+                    "CONNOISSEUR_AWSM_RESPONSE:",
+                    item.get("status"), "|", item.get("url"), "|", body[:8000]
+                )
             browser.close()
     except Exception as e:
         print(f"Connoisseur AWSM render failed: {e}")
