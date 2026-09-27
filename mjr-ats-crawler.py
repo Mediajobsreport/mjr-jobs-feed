@@ -7913,8 +7913,13 @@ def renda_media_direct(src):
 
 
 def connoisseur_paycor(src):
-    """Bounded collector for Connoisseur Media's embedded Paycor board."""
-    board = src["URL"]
+    """Collect Connoisseur's first-party WP Job Openings inventory.
+
+    Connoisseur's career-openings page uses the AWSM WP Job Openings plugin.
+    Enumerate the rendered first-party job cards/details there; Paycor is only
+    an application destination for some records, not the discovery source.
+    """
+    board = "https://connoisseurmedia.com/career-openings/"
     st = load_state()
     detail_urls = []
     try:
@@ -7923,109 +7928,48 @@ def connoisseur_paycor(src):
             browser = p.chromium.launch(headless=True)
             page = browser.new_page()
             page.goto(board, wait_until="domcontentloaded", timeout=15000)
-            page.wait_for_timeout(1800)
+            page.wait_for_timeout(2500)
+            try:
+                page.locator(".t-acceptAllButton").click(timeout=1000)
+                page.wait_for_timeout(500)
+            except Exception:
+                pass
+            try:
+                page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                page.wait_for_timeout(1000)
+            except Exception:
+                pass
 
-            def harvest(pg):
-                found, all_hrefs = [], []
-                contexts = [pg] + list(pg.frames)
-                for ctx in contexts:
-                    try:
-                        hs = ctx.locator("a[href]").evaluate_all("(els) => els.map(a => a.href)")
-                    except Exception:
-                        continue
-                    all_hrefs.extend(hs)
-                    for h in hs:
-                        h = clean(str(h or "")).split("#", 1)[0]
-                        if (
-                            "recruitingbypaycor.com" in h.lower()
-                            and re.search(r"career/JobIntroduction\\.action", h, re.I)
-                        ):
-                            found.append(h)
-                        elif (
-                            "connoisseurmedia.com/career-openings/" in h.lower()
-                            and re.search(r"[?&]gnk=job(?:&|$)", h, re.I)
-                            and re.search(r"[?&]gni=", h, re.I)
-                        ):
-                            found.append(h)
-                return all_hrefs, found
+            hrefs = page.locator("a[href]").evaluate_all("(els) => els.map(a => a.href)")
+            for h in hrefs:
+                h = clean(str(h or "")).split("#", 1)[0]
+                if not h:
+                    continue
+                hp = urlparse(h)
+                host = hp.netloc.lower().replace("www.", "")
+                path = hp.path.rstrip("/")
+                if host == "connoisseurmedia.com" and (
+                    re.search(r"/(?:job-openings|career-opportunity)/[^/]+$", path, re.I)
+                    or re.search(r"/jobs?/[^/]+$", path, re.I)
+                ):
+                    detail_urls.append(h)
 
-            hrefs, found = harvest(page)
-            detail_urls.extend(found)
-
-            if not detail_urls:
-                page.goto(
-                    "https://connoisseurmedia.com/career-openings/",
-                    wait_until="domcontentloaded",
-                    timeout=15000,
+            # AWSM may keep the listing URL in card data attributes rather than
+            # a conventional anchor. Capture those first-party values too.
+            try:
+                vals = page.locator("[class*='awsm-job'], [data-job-id], [data-id]").evaluate_all(
+                    """els => els.flatMap(e => Array.from(e.attributes || [])
+                        .map(a => a.value)
+                        .filter(v => /connoisseurmedia\\.com\\/(?:job-openings|career-opportunity|job)\\//i.test(v)))"""
                 )
-                page.wait_for_timeout(2500)
-                try:
-                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                    page.wait_for_timeout(1200)
-                except Exception:
-                    pass
-                hrefs, found = harvest(page)
-                detail_urls.extend(found)
-                print(f"Connoisseur Paycor embedded fallback: hrefs={len(hrefs)} details={len(found)}")
-                if not found:
-                    diag = []
-                    for h in hrefs:
-                        h = clean(str(h or ""))
-                        low = h.lower()
-                        if (
-                            "paycor" in low
-                            or "career" in low
-                            or "job" in low
-                            or "gnk=" in low
-                            or "gni=" in low
-                        ):
-                            if h not in diag:
-                                diag.append(h)
-                    for h in diag[:120]:
-                        print("CONNOISSEUR_PAYCOR_HREF:", h)
+                detail_urls.extend(clean(str(v or "")).split("#", 1)[0] for v in vals if v)
+            except Exception:
+                pass
 
-                    # Paycor's current widget can render jobs as JS controls
-                    # rather than anchors. Inspect interactive/card elements
-                    # and their identifying attributes without clicking them.
-                    for ctx in [page] + list(page.frames):
-                        try:
-                            frame_url = clean(str(getattr(ctx, "url", "") or ""))
-                            els = ctx.locator(
-                                "button, [role='button'], [onclick], "
-                                "[data-job-id], [data-jobid], [data-id], "
-                                "[class*='job'], [id*='job']"
-                            )
-                            count = min(els.count(), 160)
-                            for idx in range(count):
-                                el = els.nth(idx)
-                                try:
-                                    info = el.evaluate("""e => ({
-                                        tag: e.tagName,
-                                        text: (e.innerText || e.textContent || '').trim().slice(0, 500),
-                                        id: e.id || '',
-                                        cls: e.className || '',
-                                        onclick: e.getAttribute('onclick') || '',
-                                        href: e.getAttribute('href') || '',
-                                        dataJobId: e.getAttribute('data-job-id') || e.getAttribute('data-jobid') || '',
-                                        dataId: e.getAttribute('data-id') || '',
-                                        aria: e.getAttribute('aria-label') || ''
-                                    })""")
-                                    blob = " | ".join(
-                                        f"{k}={clean(str(v or ''))}"
-                                        for k, v in info.items()
-                                        if v
-                                    )
-                                    if blob:
-                                        print("CONNOISSEUR_PAYCOR_ELEMENT:", frame_url, "|", blob)
-                                except Exception:
-                                    pass
-                        except Exception:
-                            pass
-            else:
-                print(f"Connoisseur Paycor direct board: hrefs={len(hrefs)} details={len(found)}")
+            print(f"Connoisseur AWSM board: hrefs={len(hrefs)} details={len(detail_urls)}")
             browser.close()
     except Exception as e:
-        print(f"Connoisseur Paycor render failed: {e}")
+        print(f"Connoisseur AWSM render failed: {e}")
 
     detail_urls = list(dict.fromkeys(detail_urls))
     out = []
@@ -8037,18 +7981,24 @@ def connoisseur_paycor(src):
             continue
         soup = BeautifulSoup(r.text, "html.parser")
         txt = clean(soup.get_text(" "))
+        j = _job_from_detail(src, url, r.text)
+        if j:
+            # Connoisseur is radio-first for programming/on-air/promotions.
+            probe = (j.title + " " + strip_html(j.description)[:1200])
+            if re.search(r"\\b(program|on[- ]?air|air talent|host|promotion|content director|producer|board operator)\\b", probe, re.I):
+                if not re.search(r"\\b(sales|account executive|market manager|general manager)\\b", j.title, re.I):
+                    j.category = "Radio"
+            if job_is_fresh(j):
+                out.append(j)
+            continue
+
         h1 = soup.find("h1")
         title = clean(h1.get_text(" ") if h1 else "")
         if not title:
-            title = clean((soup.title.get_text(" ") if soup.title else "")).split("|")[0].strip()
-        if not title:
             continue
-
         main = (
-            soup.find("main")
-            or soup.find("article")
-            or soup.find(attrs={"class": re.compile(r"(job.?description|job.?detail|position.?description)", re.I)})
-            or soup
+            soup.find(attrs={"class": re.compile(r"(awsm-job-content|job-content|entry-content)", re.I)})
+            or soup.find("main") or soup.find("article") or soup
         )
         desc = format_description(str(main))
         plain = clean(main.get_text(" "))
@@ -8064,33 +8014,36 @@ def connoisseur_paycor(src):
                 pd = TODAY
 
         jt = jobtype(title, txt)
-        probe = Job("", title, src["Company"], desc, pd, jt, "", url,
-                    src["URL"], src["URL"], "", "", "", "")
-        if not job_is_fresh(probe):
+        if not job_is_fresh(Job("", title, src["Company"], desc, pd, jt, "", url,
+                                board, board, "", "", "", "", "")):
             continue
 
         city = state = ""
-        m = re.search(r"(?:Location|Job Location)\s*:?\s*([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\b", txt, re.I)
+        m = re.search(r"(?:Location|Job Location)\\s*:?\\s*([A-Z][A-Za-z .'-]+),\\s*([A-Z]{2})\\b", txt, re.I)
         if m:
             city, state = clean(m.group(1)), m.group(2).upper()
-        else:
-            m = re.search(r"\b([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\b", txt)
-            if m:
-                city, state = clean(m.group(1)), m.group(2).upper()
 
         cat = category(title, plain, src["Industry"], src["Company"])
-        if re.search(r"\b(program|on[- ]?air|air talent|host|promotion|content director|producer|board operator)\b", title + " " + plain[:1200], re.I):
-            if not re.search(r"\b(sales|account executive|market manager|general manager)\b", title, re.I):
+        if re.search(r"\\b(program|on[- ]?air|air talent|host|promotion|content director|producer|board operator)\\b", title + " " + plain[:1200], re.I):
+            if not re.search(r"\\b(sales|account executive|market manager|general manager)\\b", title, re.I):
                 cat = "Radio"
 
+        apply_url = url
+        for a in soup.find_all("a", href=True):
+            label = clean(a.get_text(" "))
+            h = urljoin(url, a["href"])
+            if re.search(r"\\b(apply|application)\\b", label, re.I) and h.startswith("http"):
+                apply_url = h
+                break
+
         out.append(Job(
-            hashlib.sha1(key.encode()).hexdigest()[:16],
-            title, src["Company"], desc, pd, jt, cat, url,
-            src["URL"], src["URL"], "",
+            hashlib.sha1(key.encode()).hexdigest()[:16], title, src["Company"],
+            desc, pd, jt, cat, apply_url, url, board, "",
             normalize_work_arrangement(txt, (city + (", " + state if state else ""))),
             city, state, infer_country((city + " " + state), src["Company"], plain),
         ))
-    print(f"Connoisseur Paycor active board: enumerated={len(detail_urls)} parsed={len(out)}")
+
+    print(f"Connoisseur AWSM active board: enumerated={len(detail_urls)} parsed={len(out)}")
     return out
 
 
