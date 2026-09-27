@@ -8061,7 +8061,7 @@ def connoisseur_paycor(src):
             # the sibling JS/resources and inspect them for the inventory
             # request used by Newton's public career UI.
             try:
-                paycor_url = "https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b"
+                paycor_url = "https://recruitingbypaycor.com/career/iframe.action?clientId=8a7883d082ae53c80182f17d3aba194b"
                 probe = page
                 probe.goto(paycor_url, wait_until="domcontentloaded", timeout=15000)
                 probe.wait_for_timeout(2500)
