@@ -2484,8 +2484,11 @@ ATS_JOB_HINTS = {
         r"/job/",
     ],
     "betterteam": [
+        # Betterteam tenant boards use root-level slugs for individual jobs,
+        # e.g. /bilingual-sales-consultant-26, not /job/... paths.
         r"/jobs/",
         r"/job/",
+        r"betterteam\.com/[A-Za-z0-9][A-Za-z0-9_-]+/?(?:[?#].*)?$",
     ],
 }
 
