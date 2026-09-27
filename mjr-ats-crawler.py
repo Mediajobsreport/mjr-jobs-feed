@@ -7954,9 +7954,34 @@ def connoisseur_direct(src):
                 hrefs = page.locator("a[href]").evaluate_all(
                     "(els) => els.map(a => a.href)"
                 )
+                # Paycor's hosted widget can live in an iframe. Capture its
+                # actual recruitingbypaycor.com source and links rather than
+                # guessing a tenant/client ID.
+                frame_urls = [fr.url for fr in page.frames if fr.url]
+                paycor_frames = [
+                    u for u in frame_urls
+                    if "recruitingbypaycor.com" in u.lower()
+                ]
+                for fr in page.frames:
+                    if "recruitingbypaycor.com" not in (fr.url or "").lower():
+                        continue
+                    try:
+                        hrefs.extend(fr.locator("a[href]").evaluate_all(
+                            "(els) => els.map(a => a.href)"
+                        ))
+                    except Exception:
+                        pass
+                print("CONNOISSEUR_PAYCOR_FRAMES:", " | ".join(paycor_frames))
                 for h in hrefs:
                     h = clean(str(h or "")).split("#", 1)[0]
-                    if re.search(r"connoisseurmedia\\.com/career-opportunity/[^/?#]+/?$", h, re.I):
+                    if (
+                        "recruitingbypaycor.com" in h.lower()
+                        and re.search(r"(?:JobIntroduction\\.action|[?&](?:id|jobId)=)", h, re.I)
+                    ) or (
+                        "connoisseurmedia.com/career-openings/" in h.lower()
+                        and re.search(r"[?&]gnk=job(?:&|$)", h, re.I)
+                        and re.search(r"[?&]gni=", h, re.I)
+                    ):
                         detail_urls.append(h)
                 print(
                     f"Connoisseur rendered board: status={page.url} "
