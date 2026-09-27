@@ -3876,6 +3876,110 @@ def betterteam_active_board(src):
     return out
 
 
+
+def jazzhr_active_board(src):
+    """Collect an actively enumerated ApplyToJob/JazzHR board.
+
+    Explicit source dates win. If JazzHR omits a posting date, reuse the
+    canonical URL's stored first-seen date; only a genuinely new active URL
+    receives TODAY once. This never refreshes an evergreen opening daily.
+    """
+    start = clean(src.get("URL", ""))
+    if not start:
+        return []
+    try:
+        r = req("GET", start)
+    except Exception:
+        return []
+
+    final = str(getattr(r, "url", "") or start)
+    soup = BeautifulSoup(r.text, "html.parser")
+    host = (urlparse(final).netloc or "").lower()
+    links = []
+    for a in soup.find_all("a", href=True):
+        h = urljoin(final, a["href"]).split("#", 1)[0]
+        if (urlparse(h).netloc or "").lower() != host:
+            continue
+        if re.search(r"/apply/[A-Za-z0-9_-]+(?:/[^?#]*)?$", h, re.I):
+            # Exclude the listing itself and filter/query controls.
+            if re.search(r"/apply/?(?:\?|$)", h, re.I):
+                continue
+            links.append(h)
+    links = list(dict.fromkeys(links))
+
+    st = load_state()
+    out = []
+    for url in links[:500]:
+        key = url.rstrip("/").lower()
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+        raw = rr.text
+        ss = BeautifulSoup(raw, "html.parser")
+        txt = clean(ss.get_text(" "))
+
+        # Use the normal detail parser whenever the page exposes a qualifying
+        # source date.
+        j = _job_from_detail(src, url, raw)
+        if j:
+            out.append(j)
+            continue
+
+        pd = _direct_board_date(raw)
+        if not pd:
+            stored = st.get(key, {}).get("job", {}) if isinstance(st.get(key), dict) else {}
+            try:
+                pd = date.fromisoformat(str(stored.get("date") or ""))
+            except Exception:
+                pd = TODAY
+
+        h1 = ss.find("h1")
+        title = clean(h1.get_text(" ") if h1 else "")
+        if not title:
+            # JazzHR pages can put the role in og:title/page title.
+            og = ss.find("meta", attrs={"property": "og:title"})
+            title = clean(og.get("content") if og else "")
+        if not title and ss.title:
+            title = clean(ss.title.get_text(" "))
+            title = re.sub(r"\s*[-|]\s*(?:Beasley Media Group|Career Page).*$", "", title, flags=re.I)
+
+        main = (
+            ss.find("div", class_=re.compile(r"(job|description|posting)", re.I))
+            or ss.find("main")
+            or ss.find("article")
+            or ss
+        )
+        desc = format_description(str(main))
+        plain = clean(main.get_text(" "))
+        if not title or len(strip_html(desc)) < 200:
+            continue
+
+        jt = jobtype(title, txt)
+        probe = Job("", title, src["Company"], desc, pd, jt, "", url,
+                    src["URL"], src["URL"], "", "", "", "")
+        if not job_is_fresh(probe):
+            continue
+
+        city = state = ""
+        loc = ""
+        m = re.search(r"\b([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\b", txt)
+        if m:
+            city, state = clean(m.group(1)), m.group(2)
+            loc = city + ", " + state
+
+        out.append(Job(
+            hashlib.sha1(key.encode()).hexdigest()[:16],
+            title, src["Company"], desc, pd, jt,
+            category(title, plain, src["Industry"], src["Company"]),
+            url, src["URL"], src["URL"], "",
+            normalize_work_arrangement(txt, loc), city, state, "US",
+        ))
+
+    print(f"JazzHR active board {src['Company']}: enumerated={len(links)} parsed={len(out)}")
+    return out
+
+
 def ats_html(src):
     """Enhanced multi-ATS public-page adapter.
 
@@ -11914,6 +12018,8 @@ def main():
                 if clean(s.get("Company", "")).lower() in BATCH_DIRECT_COMPANIES
                 else betterteam_active_board(s)
                 if _ats_family(s) == "betterteam"
+                else jazzhr_active_board(s)
+                if _ats_family(s) == "jazzhr"
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
