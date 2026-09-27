@@ -8081,8 +8081,8 @@ def connoisseur_paycor(src):
                                 print("CONNOISSEUR_NEWTON_JS_ERROR:", u[:1500], type(ex).__name__, str(ex)[:300])
                 ph = probe.content()
                 for pat in [
-                    r'[^"\\']*(?:Career|Job|Position|Requisition)[^"\\']*\\.(?:action|json|do)[^"\\']*',
-                    r'/(?:career|Career)/[^"\\'<> ]+',
+                    r"[^\\\"']*(?:Career|Job|Position|Requisition)[^\\\"']*\\.(?:action|json|do)[^\\\"']*",
+                    r"/(?:career|Career)/[^\\\"'<> ]+",
                 ]:
                     try:
                         for hit in re.findall(pat, ph, re.I)[:80]:
