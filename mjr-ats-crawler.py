@@ -7905,6 +7905,91 @@ def renda_media_direct(src):
 
 
 
+
+def connoisseur_direct(src):
+    """Collect Connoisseur's authoritative active career-opportunity pages."""
+    roots = [
+        "https://connoisseurmedia.com/careers/",
+        "https://connoisseurmedia.com/career-opportunity/",
+    ]
+    st = load_state()
+    detail_urls = []
+    for root in roots:
+        try:
+            r = _req_raw("GET", root, timeout=5, tries=1)
+        except Exception:
+            continue
+        soup = BeautifulSoup(r.text, "html.parser")
+        for a in soup.find_all("a", href=True):
+            h = urljoin(str(getattr(r, "url", "") or root), a["href"]).split("#", 1)[0]
+            if re.search(r"connoisseurmedia\.com/career-opportunity/[^/?#]+/?$", h, re.I):
+                detail_urls.append(h)
+    detail_urls = list(dict.fromkeys(detail_urls))
+
+    out = []
+    for url in detail_urls[:250]:
+        key = url.rstrip("/").lower()
+        try:
+            r = _req_raw("GET", url, timeout=5, tries=1)
+        except Exception:
+            continue
+        soup = BeautifulSoup(r.text, "html.parser")
+        txt = clean(soup.get_text(" "))
+        h1 = soup.find("h1")
+        title = clean(h1.get_text(" ") if h1 else "")
+        if not title:
+            continue
+
+        # Description ends before the application form where possible.
+        main = soup.find("main") or soup.find("article") or soup
+        for form in main.find_all("form"):
+            form.decompose()
+        desc = format_description(str(main))
+        plain = clean(main.get_text(" "))
+        if len(strip_html(desc)) < 200:
+            continue
+
+        pd = _direct_board_date(r.text)
+        if not pd:
+            stored = st.get(key, {}).get("job", {}) if isinstance(st.get(key), dict) else {}
+            try:
+                pd = date.fromisoformat(str(stored.get("date") or ""))
+            except Exception:
+                pd = TODAY
+
+        jt = jobtype(title, txt)
+        probe = Job("", title, src["Company"], desc, pd, jt, "", url,
+                    src["URL"], src["URL"], "", "", "", "")
+        if not job_is_fresh(probe):
+            continue
+
+        city = state = ""
+        country = "US"
+        m = re.search(r"(?:Location\s*:?\s*)?([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\b", txt)
+        if m:
+            city, state = clean(m.group(1)), m.group(2)
+        elif re.search(r"\bVarious Markets Nationwide\b", txt, re.I):
+            city = "Various Markets Nationwide"
+
+        cat = category(title, plain, src["Industry"], src["Company"])
+        # Connoisseur is radio-first; programming/on-air/promotions/content
+        # openings belong in Radio unless a more specific business function
+        # (Management/Sales/etc.) is explicit.
+        if re.search(r"\b(program|on[- ]?air|air talent|host|promotion|content director)\b", title + " " + plain[:1200], re.I):
+            if not re.search(r"\b(sales|market manager|general manager)\b", title, re.I):
+                cat = "Radio"
+
+        out.append(Job(
+            hashlib.sha1(key.encode()).hexdigest()[:16],
+            title, src["Company"], desc, pd, jt, cat, url,
+            src["URL"], src["URL"], "",
+            normalize_work_arrangement(txt, (city + (", " + state if state else ""))),
+            city, state, country,
+        ))
+    print(f"Connoisseur active board: enumerated={len(detail_urls)} parsed={len(out)}")
+    return out
+
+
 def midwest_family_direct(src):
     """Collect Mid-West Family openings from its seven local market career pages."""
     markets = [
@@ -11949,7 +12034,9 @@ def main():
             company_route_key = _company_test_key(company_key)
 
             got = (
-                midwest_family_direct(s)
+                connoisseur_direct(s)
+                if company_key == "connoisseur media"
+                else midwest_family_direct(s)
                 if company_key == "mid-west family of companies"
                 else saga_distributed_direct(s)
                 if company_key == "saga communications"
