@@ -1629,6 +1629,28 @@ def _adp_apply_url(src_url, job_id, detail=None):
     return urlunparse((u.scheme or "https", u.netloc or "workforcenow.adp.com", path, "", query, ""))
 
 
+
+def _split_adp_location(value):
+    """Split an explicit ADP location string into city/state/country fields."""
+    raw = clean(value)
+    if not raw:
+        return "", "", ""
+    # Multiple locations remain a display string; do not guess a single city.
+    if " / " in raw:
+        return raw, "", infer_country(raw, "", "")
+    parts = [clean(x) for x in raw.split(",") if clean(x)]
+    city = parts[0] if parts else ""
+    state = parts[1] if len(parts) > 1 else ""
+    country = parts[2] if len(parts) > 2 else ""
+    if country.upper() in {"USA", "UNITED STATES", "UNITED STATES OF AMERICA"}:
+        country = "US"
+    elif country.upper() == "CANADA":
+        country = "CA"
+    if not country:
+        country = infer_country(raw, "", "")
+    return city, state, country
+
+
 def adp(src):
     """Dedicated ADP Workforce Now public career-center collector.
 
@@ -1714,6 +1736,7 @@ def adp(src):
                 continue
 
             loc = _adp_location(detail) or _adp_location(p)
+            city, state, country = _split_adp_location(loc)
             work_level = clean(str(
                 _first_deep(detail, {"workLevelCode", "employmentType", "workerType", "timeType"}, "")
                 or _first_deep(p, {"workLevelCode", "employmentType", "workerType", "timeType"}, "")
@@ -1733,9 +1756,9 @@ def adp(src):
                 src["URL"],
                 "",
                 normalize_work_arrangement(desc, loc),
-                loc,
-                "",
-                infer_country(loc, src["Company"], desc),
+                city,
+                state,
+                country or infer_country(loc, src["Company"], desc),
             ))
 
         total = payload.get("meta", {}).get("totalNumber") if isinstance(payload.get("meta"), dict) else None
@@ -11688,6 +11711,22 @@ def main():
 
             jobs += got
 
+            eligibility_notes = []
+            for _j in got:
+                _reasons = []
+                if not _j.url:
+                    _reasons.append("missing_url")
+                if len(_j.description or "") < 200:
+                    _reasons.append("description_lt_200")
+                if not job_is_fresh(_j):
+                    _reasons.append("not_fresh")
+                if _j.category not in APPROVED:
+                    _reasons.append("unapproved_category=" + str(_j.category))
+                if _reasons:
+                    eligibility_notes.append(
+                        clean(_j.title) + ":" + "|".join(_reasons)
+                    )
+
             audit.append(
                 [
                     s["Company"],
@@ -11710,6 +11749,8 @@ def main():
                             ) if icims_enumerated else "",
                             f"non_media_scope_rejected={len(scope_rejected)}"
                             if scope_rejected else "",
+                            ("feed_filter_rejected=" + " ; ".join(eligibility_notes[:12]))
+                            if eligibility_notes else "",
                         ]
                         if part
                     ),
