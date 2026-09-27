@@ -7919,7 +7919,7 @@ def connoisseur_paycor(src):
     Enumerate the rendered first-party job cards/details there; Paycor is only
     an application destination for some records, not the discovery source.
     """
-    board = "https://connoisseurmedia.com/career-openings/"
+    board = "https://connoisseurmedia.com/careers/"
     st = load_state()
     detail_urls = []
     try:
@@ -8179,7 +8179,7 @@ def connoisseur_direct(src):
             with sync_playwright() as p:
                 browser = p.chromium.launch(headless=True)
                 page = browser.new_page()
-                page.goto("https://connoisseurmedia.com/career-openings/", wait_until="domcontentloaded", timeout=15000)
+                page.goto("https://connoisseurmedia.com/careers/", wait_until="domcontentloaded", timeout=15000)
                 try:
                     page.wait_for_timeout(2500)
                 except Exception:
