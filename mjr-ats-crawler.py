@@ -8110,6 +8110,27 @@ def connoisseur_paycor(src):
                 print("CONNOISSEUR_HANDOFF_URL:", handoff.url)
                 for fr in handoff.frames:
                     print("CONNOISSEUR_HANDOFF_FRAME:", fr.url)
+                    if "recruitingbypaycor.com" in (fr.url or "").lower():
+                        try:
+                            print("CONNOISSEUR_HANDOFF_PAYCOR_TEXT:", clean(fr.locator("body").inner_text())[:20000])
+                        except Exception as ex:
+                            print("CONNOISSEUR_HANDOFF_PAYCOR_TEXT_ERROR:", type(ex).__name__, str(ex)[:300])
+                        try:
+                            fres = fr.locator("script[src], link[href]").evaluate_all(
+                                "els => els.map(e => e.src || e.href || '').filter(Boolean)"
+                            )
+                            for u in fres[:120]:
+                                print("CONNOISSEUR_HANDOFF_PAYCOR_RESOURCE:", str(u)[:3000])
+                        except Exception as ex:
+                            print("CONNOISSEUR_HANDOFF_PAYCOR_RESOURCE_ERROR:", type(ex).__name__, str(ex)[:300])
+                        try:
+                            fh = fr.locator("a[href]").evaluate_all(
+                                "els => els.map(e => ({text:(e.innerText || '').trim(), href:e.href || ''}))"
+                            )
+                            for item in fh[:200]:
+                                print("CONNOISSEUR_HANDOFF_PAYCOR_LINK:", clean(str(item))[:4000])
+                        except Exception as ex:
+                            print("CONNOISSEUR_HANDOFF_PAYCOR_LINK_ERROR:", type(ex).__name__, str(ex)[:300])
                 forms = handoff.locator("form").evaluate_all("""els => els.map(f => ({
                     action: f.action || "",
                     method: f.method || "",
@@ -8119,7 +8140,7 @@ def connoisseur_paycor(src):
                 for item in forms[:30]:
                     print("CONNOISSEUR_HANDOFF_FORM:", clean(str(item))[:5000])
                 scripts = handoff.locator("script").evaluate_all(
-                    """els => els.map(s => (s.src || "") + "\n" + (s.textContent || "")).filter(x => /paycor|recruit|clientId|careerhome|opening/i.test(x))"""
+                    "els => els.map(s => (s.src || '') + ' ' + (s.textContent || '')).filter(x => /paycor|recruit|clientId|careerhome|opening/i.test(x))"
                 )
                 for item in scripts[:30]:
                     print("CONNOISSEUR_HANDOFF_SCRIPT:", clean(str(item))[:8000])
