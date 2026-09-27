@@ -8080,7 +8080,7 @@ def connoisseur_paycor(src):
                 for item in scripts[:30]:
                     print("CONNOISSEUR_HANDOFF_SCRIPT:", clean(str(item))[:8000])
                 html = handoff.content()
-                for m in re.findall(r'https?://[^"\\'<> ]+', html, re.I):
+                for m in re.findall(r"https?://[^\\\"'<> ]+", html, re.I):
                     if re.search(r"(paycor|recruit|career|job|opening)", m, re.I):
                         print("CONNOISSEUR_HANDOFF_LINK:", m[:3000])
                 handoff.close()
