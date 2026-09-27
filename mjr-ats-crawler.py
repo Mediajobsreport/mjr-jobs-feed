@@ -7183,7 +7183,16 @@ def _paylocity_rendered_detail(src, url, raw):
             pd = pdate(m.group(1))
             if pd:
                 break
-    if not pd or pd < feed_cutoff(jobtype("", txt)) or pd > TODAY:
+    if not pd:
+        # Diagnostic only: never manufacture a date.
+        print(
+            f"Paylocity detail reject {src['Company']}: no_date "
+            f"url={url} title={clean((soup.find('h1') or soup.find('h2') or soup.title).get_text(' ') if (soup.find('h1') or soup.find('h2') or soup.title) else '')[:100]} "
+            f"text={txt[:260]}"
+        )
+        return None
+    if pd < feed_cutoff(jobtype("", txt)) or pd > TODAY:
+        print(f"Paylocity detail reject {src['Company']}: date={pd} url={url}")
         return None
 
     # Prefer the visible detail heading; reject board/application chrome.
@@ -7205,6 +7214,7 @@ def _paylocity_rendered_detail(src, url, raw):
         if m:
             title = clean(m.group(1))
     if not title:
+        print(f"Paylocity detail reject {src['Company']}: no_title url={url} text={txt[:260]}")
         return None
 
     main = (
@@ -7214,6 +7224,7 @@ def _paylocity_rendered_detail(src, url, raw):
     )
     desc = format_description(str(main))
     if len(strip_html(desc)) < 200:
+        print(f"Paylocity detail reject {src['Company']}: short_desc={len(strip_html(desc))} title={title[:100]} url={url}")
         return None
 
     loc = ""
