@@ -7160,49 +7160,103 @@ def _paylocity_board_root(url):
 def _paylocity_rendered_v18(src, starts):
     """Bounded Chromium fallback for Paylocity's JavaScript-only public board."""
     if sync_playwright is None:
+        print(f"Paylocity rendered {src['Company']}: Playwright unavailable")
         return []
     details = set()
     rendered = {}
+    board_stats = []
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            page = browser.new_page()
-            for start in starts[:3]:
+            browser = p.chromium.launch(
+                headless=True,
+                args=["--disable-dev-shm-usage", "--no-sandbox"],
+            )
+            context = browser.new_context(
+                user_agent=SESSION.headers.get(
+                    "User-Agent",
+                    "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)",
+                ),
+                viewport={"width": 1440, "height": 1200},
+            )
+            page = context.new_page()
+            page.set_default_timeout(20000)
+
+            for start_url in starts[:3]:
+                before = len(details)
+                final_url = ""
+                title = ""
                 try:
-                    page.goto(start, wait_until="domcontentloaded", timeout=30000)
-                    page.wait_for_timeout(2500)
-                    for _ in range(4):
-                        page.mouse.wheel(0, 2500)
+                    resp = page.goto(start_url, wait_until="domcontentloaded", timeout=30000)
+                    page.wait_for_timeout(3500)
+                    try:
+                        page.wait_for_load_state("networkidle", timeout=8000)
+                    except Exception:
+                        pass
+                    for _ in range(5):
+                        page.mouse.wheel(0, 2600)
                         page.wait_for_timeout(500)
-                    for href in page.locator("a").evaluate_all(
+
+                    final_url = page.url
+                    title = clean(page.title())
+                    hrefs = page.locator("a").evaluate_all(
                         "(els) => els.map(a => a.href).filter(Boolean)"
-                    ):
+                    )
+                    raw = page.content()
+                    for href in hrefs:
                         if re.search(r"/recruiting/jobs/details/\d+", str(href), re.I):
                             details.add(str(href).split("#", 1)[0])
-                except Exception:
-                    continue
+                    # Paylocity may serialize routes in its rendered application
+                    # state without creating an anchor until the card is clicked.
+                    raw2 = html.unescape(raw or "").replace("\\/", "/")
+                    for m in re.finditer(
+                        r'(?:https?://recruiting\.paylocity\.com)?'
+                        r'(/recruiting/jobs/details/\d+[^"\'<>\s]*)',
+                        raw2, re.I,
+                    ):
+                        details.add(urljoin(final_url or start_url, m.group(1)).split("#",1)[0])
+                    status = getattr(resp, "status", None)
+                    board_stats.append(
+                        f"{status or 'no-status'} {title[:80]} final={final_url} "
+                        f"hrefs={len(hrefs)} new_details={len(details)-before}"
+                    )
+                except Exception as e:
+                    board_stats.append(f"error {type(e).__name__}: {clean(str(e))[:160]}")
 
-            # Keep the fallback bounded; radio boards are small and this path
-            # should never turn a full crawl into a browser marathon.
+            # Keep the fallback bounded; radio boards are small.
             for url in sorted(details)[:100]:
                 try:
                     page.goto(url, wait_until="domcontentloaded", timeout=30000)
-                    page.wait_for_timeout(1200)
+                    page.wait_for_timeout(1500)
                     rendered[url] = page.content()
                 except Exception:
                     continue
             browser.close()
-    except Exception:
+    except Exception as e:
+        print(f"Paylocity rendered {src['Company']}: browser error {type(e).__name__}: {clean(str(e))[:180]}")
         return []
 
     out, seen_ids = [], set()
+    parse_failures = 0
+    stale = 0
     for url, raw in rendered.items():
         j = _job_from_detail(src, url, raw)
         if not j:
             j = _direct_board_job(src, url, raw)
-        if j and j.id not in seen_ids:
+        if not j:
+            parse_failures += 1
+            continue
+        if not job_is_fresh(j):
+            stale += 1
+        if j.id not in seen_ids:
             seen_ids.add(j.id)
             out.append(j)
+
+    print(
+        f"Paylocity rendered {src['Company']}: "
+        f"boards=[{' || '.join(board_stats)}] details={len(details)} "
+        f"rendered_details={len(rendered)} parsed={len(out)} "
+        f"parse_failures={parse_failures} not_fresh={stale}"
+    )
     return out
 
 
@@ -7300,6 +7354,10 @@ def paylocity_v18(src):
         except Exception:
             continue
 
+    print(
+        f"Paylocity server {src['Company']}: "
+        f"listing_pages={len(seen_pages)} detail_urls={len(details)} parsed={len(out)}"
+    )
     if out:
         return out
     return _paylocity_rendered_v18(src, starts)
