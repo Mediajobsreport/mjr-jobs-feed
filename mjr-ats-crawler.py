@@ -7789,6 +7789,101 @@ def renda_media_direct(src):
     return out
 
 
+
+def midwest_family_direct(src):
+    """Collect Mid-West Family openings from its seven local market career pages."""
+    markets = [
+        ("Madison, WI", "https://www.midwestfamilymadison.com/careers/"),
+        ("La Crosse, WI", "https://midwestfamilylacrosse.com/careers/"),
+        ("Southwest, MI", "https://www.midwestfamilyswmi.com/careers/"),
+        ("Springfield, MO", "https://www.mwfmarketing.fm/category/careers/"),
+        ("Eau Claire, WI", "https://www.midwestfamilyeauclaire.com/careers/"),
+        ("Rockford, IL", "https://midwestfamilynorthernillinois.com/careers/"),
+        ("South Bend, IN", "https://www.midwestfamilysouthbend.com/careers/"),
+    ]
+    st = load_state()
+    out, seen = [], set()
+
+    def stable_date(key, explicit=None):
+        if explicit:
+            return explicit
+        stored = st.get(key, {}).get("job", {}) if isinstance(st.get(key), dict) else {}
+        try:
+            return date.fromisoformat(str(stored.get("date") or ""))
+        except Exception:
+            return TODAY
+
+    for market, page in markets:
+        try:
+            r = req("GET", page)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        headings = soup.find_all(["h2","h3"])
+        for node in headings:
+            title = clean(node.get_text(" "))
+            if not title or title.lower() in {
+                "careers","open positions","explore opportunities",
+                "apply through the links below.","our mission & vision",
+                "contact us","company","services","why join us",
+            }:
+                continue
+
+            chunks = []
+            for sib in node.next_siblings:
+                if getattr(sib, "name", None) in {"h2","h3"}:
+                    break
+                chunks.append(str(sib))
+            raw = "".join(chunks)
+            body = clean(BeautifulSoup(raw, "html.parser").get_text(" "))
+            if len(body) < 180 or not re.search(
+                r"\b(job|position|full[- ]?time|part[- ]?time|resume|apply|salary|"
+                r"compensation|responsibilit|qualification|opening)\b", body, re.I
+            ):
+                continue
+
+            # Prefer an individual job/PDF link inside this job block.
+            apply_url = final
+            block_soup = BeautifulSoup(raw, "html.parser")
+            for a in block_soup.find_all("a", href=True):
+                h = urljoin(final, a["href"]).split("#",1)[0]
+                if h.startswith("http") and h.rstrip("/") != final.rstrip("/"):
+                    apply_url = h
+                    break
+
+            key = apply_url.rstrip("/").lower()
+            if key == final.rstrip("/").lower():
+                key += "#" + re.sub(r"[^a-z0-9]+","-",title.lower()).strip("-")
+                apply_url = key
+            if key in seen:
+                continue
+
+            pd = _direct_board_date(raw) or _direct_board_date(title + " " + body[:1500])
+            pd = stable_date(key, pd)
+            jt = jobtype(title, body)
+            probe = Job("", title, src["Company"], body, pd, jt, "", apply_url,
+                        src["URL"], src["URL"], "", "", "", "")
+            if not job_is_fresh(probe):
+                continue
+
+            locm = re.search(r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b", body)
+            loc = clean(locm.group(1)) if locm else market
+            mm = re.match(r"(.+?),\s*([A-Z]{2})$", loc)
+            city, state = (clean(mm.group(1)), mm.group(2)) if mm else (loc, "")
+
+            seen.add(key)
+            out.append(Job(
+                hashlib.sha1(key.encode()).hexdigest()[:16], title, src["Company"],
+                format_description(raw), pd, jt,
+                category(title, body, src["Industry"], src["Company"]),
+                apply_url, src["URL"], src["URL"], "",
+                normalize_work_arrangement(body, loc), city, state, "US",
+            ))
+    return out
+
+
 def saga_distributed_direct(src):
     """Collect Saga jobs only from a small first-party employment allowlist.
 
@@ -11722,7 +11817,9 @@ def main():
             company_route_key = _company_test_key(company_key)
 
             got = (
-                saga_distributed_direct(s)
+                midwest_family_direct(s)
+                if company_key == "mid-west family of companies"
+                else saga_distributed_direct(s)
                 if company_key == "saga communications"
                 else renda_media_direct(s)
                 if company_key == "renda media"
