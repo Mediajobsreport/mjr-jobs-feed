@@ -7926,6 +7926,42 @@ def connoisseur_direct(src):
                 detail_urls.append(h)
     detail_urls = list(dict.fromkeys(detail_urls))
 
+    # The current Connoisseur careers inventory is hydrated client-side.
+    # If the server HTML exposes no detail links, render only the authoritative
+    # careers page and harvest first-party /career-opportunity/ URLs.
+    if not detail_urls:
+        try:
+            from playwright.sync_api import sync_playwright
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page()
+                page.goto("https://connoisseurmedia.com/career-openings/", wait_until="domcontentloaded", timeout=15000)
+                try:
+                    page.wait_for_timeout(2500)
+                except Exception:
+                    pass
+                # One bounded scroll is enough to trigger lazy-loaded cards.
+                try:
+                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                    page.wait_for_timeout(1200)
+                except Exception:
+                    pass
+                hrefs = page.locator("a[href]").evaluate_all(
+                    "(els) => els.map(a => a.href)"
+                )
+                for h in hrefs:
+                    h = clean(str(h or "")).split("#", 1)[0]
+                    if re.search(r"connoisseurmedia\\.com/career-opportunity/[^/?#]+/?$", h, re.I):
+                        detail_urls.append(h)
+                print(
+                    f"Connoisseur rendered board: status={page.url} "
+                    f"hrefs={len(hrefs)} details={len(detail_urls)}"
+                )
+                browser.close()
+        except Exception as e:
+            print(f"Connoisseur rendered board failed: {e}")
+
+    detail_urls = list(dict.fromkeys(detail_urls))
     out = []
     for url in detail_urls[:250]:
         key = url.rstrip("/").lower()
