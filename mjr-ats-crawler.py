@@ -7911,6 +7911,99 @@ def renda_media_direct(src):
 
 
 
+
+def connoisseur_paycor(src):
+    """Bounded collector for Connoisseur Media's embedded Paycor board."""
+    board = src["URL"]
+    st = load_state()
+    detail_urls = []
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(board, wait_until="domcontentloaded", timeout=15000)
+            page.wait_for_timeout(1800)
+            hrefs = page.locator("a[href]").evaluate_all("(els) => els.map(a => a.href)")
+            for h in hrefs:
+                h = clean(str(h or "")).split("#", 1)[0]
+                if (
+                    "recruitingbypaycor.com" in h.lower()
+                    and re.search(r"career/JobIntroduction\.action", h, re.I)
+                ):
+                    detail_urls.append(h)
+            print(f"Connoisseur Paycor board: hrefs={len(hrefs)} details={len(detail_urls)}")
+            browser.close()
+    except Exception as e:
+        print(f"Connoisseur Paycor render failed: {e}")
+
+    detail_urls = list(dict.fromkeys(detail_urls))
+    out = []
+    for url in detail_urls[:300]:
+        key = url.rstrip("/").lower()
+        try:
+            r = _req_raw("GET", url, timeout=4, tries=1)
+        except Exception:
+            continue
+        soup = BeautifulSoup(r.text, "html.parser")
+        txt = clean(soup.get_text(" "))
+        h1 = soup.find("h1")
+        title = clean(h1.get_text(" ") if h1 else "")
+        if not title:
+            title = clean((soup.title.get_text(" ") if soup.title else "")).split("|")[0].strip()
+        if not title:
+            continue
+
+        main = (
+            soup.find("main")
+            or soup.find("article")
+            or soup.find(attrs={"class": re.compile(r"(job.?description|job.?detail|position.?description)", re.I)})
+            or soup
+        )
+        desc = format_description(str(main))
+        plain = clean(main.get_text(" "))
+        if len(strip_html(desc)) < 120:
+            continue
+
+        pd = _direct_board_date(r.text)
+        if not pd:
+            stored = st.get(key, {}).get("job", {}) if isinstance(st.get(key), dict) else {}
+            try:
+                pd = date.fromisoformat(str(stored.get("date") or ""))
+            except Exception:
+                pd = TODAY
+
+        jt = jobtype(title, txt)
+        probe = Job("", title, src["Company"], desc, pd, jt, "", url,
+                    src["URL"], src["URL"], "", "", "", "")
+        if not job_is_fresh(probe):
+            continue
+
+        city = state = ""
+        m = re.search(r"(?:Location|Job Location)\s*:?\s*([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\b", txt, re.I)
+        if m:
+            city, state = clean(m.group(1)), m.group(2).upper()
+        else:
+            m = re.search(r"\b([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\b", txt)
+            if m:
+                city, state = clean(m.group(1)), m.group(2).upper()
+
+        cat = category(title, plain, src["Industry"], src["Company"])
+        if re.search(r"\b(program|on[- ]?air|air talent|host|promotion|content director|producer|board operator)\b", title + " " + plain[:1200], re.I):
+            if not re.search(r"\b(sales|account executive|market manager|general manager)\b", title, re.I):
+                cat = "Radio"
+
+        out.append(Job(
+            hashlib.sha1(key.encode()).hexdigest()[:16],
+            title, src["Company"], desc, pd, jt, cat, url,
+            src["URL"], src["URL"], "",
+            normalize_work_arrangement(txt, (city + (", " + state if state else ""))),
+            city, state, infer_country((city + " " + state), src["Company"], plain),
+        ))
+    print(f"Connoisseur Paycor active board: enumerated={len(detail_urls)} parsed={len(out)}")
+    return out
+
+
 def connoisseur_direct(src):
     """Collect Connoisseur's authoritative active career-opportunity pages."""
     roots = [
@@ -12109,7 +12202,7 @@ def main():
             company_route_key = _company_test_key(company_key)
 
             got = (
-                ats_html(s)
+                connoisseur_paycor(s)
                 if company_key == "connoisseur media"
                 else midwest_family_direct(s)
                 if company_key == "mid-west family of companies"
