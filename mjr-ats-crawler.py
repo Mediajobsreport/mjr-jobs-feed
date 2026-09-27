@@ -7957,6 +7957,25 @@ def connoisseur_paycor(src):
             page.on("request", _cap_req)
             page.on("response", _cap_resp)
 
+            paycor_board = "https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b"
+            paycor_hits = []
+            def _paycor_response(resp):
+                try:
+                    if resp.request.resource_type in ("xhr", "fetch"):
+                        body = ""
+                        try:
+                            body = resp.text()
+                        except Exception:
+                            pass
+                        paycor_hits.append((resp.request.method, resp.status, resp.url, body[:6000]))
+                except Exception:
+                    pass
+            page.on("response", _paycor_response)
+            page.goto(paycor_board, wait_until="domcontentloaded", timeout=15000)
+            page.wait_for_timeout(4000)
+            print(f"Connoisseur Paycor XHR: responses={len(paycor_hits)}")
+            for method, status, url, body in paycor_hits[:40]:
+                print("CONNOISSEUR_PAYCOR_XHR:", method, "|", status, "|", url, "|", clean(body)[:3000])
             page.goto(board, wait_until="domcontentloaded", timeout=15000)
             page.wait_for_timeout(2500)
             try:
