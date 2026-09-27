@@ -7659,12 +7659,86 @@ def hubbard_v23(src):
 
 
 def midwest_v23(src):
-    """Target Midwest's Paylocity board plus Midwest Careers detail pages."""
+    """Enumerate Midwest Careers' JavaScript WP Job Manager board.
+
+    The public homepage intentionally contains no server-rendered listings.
+    WP Job Manager loads them from /jm-ajax/get_listings/; collect those
+    returned detail URLs first, then retain the older Paylocity/direct-page
+    discovery as a fallback.
+    """
     roots = [
         "https://midwestcareers.com/",
         "https://recruiting.paylocity.com/recruiting/jobs/All/0cb3a074-2113-4e9e-a32d-27e40c132e62/Midwest-Communications",
     ]
     details = set()
+
+    # Primary source: the AJAX endpoint used by the visible Midwest Careers
+    # listings UI. Bound pagination so a site change cannot create a runaway.
+    ajax = "https://midwestcareers.com/jm-ajax/get_listings/"
+    for page_num in range(1, 11):
+        try:
+            r = req(
+                "POST",
+                ajax,
+                data={
+                    "action": "get_listings",
+                    "search_keywords": "",
+                    "search_location": "",
+                    "search_categories[]": "",
+                    "filter_job_type[]": "",
+                    "per_page": "50",
+                    "page": str(page_num),
+                    "orderby": "featured",
+                    "order": "DESC",
+                    "show_pagination": "false",
+                },
+                headers={
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Referer": "https://midwestcareers.com/",
+                },
+            )
+            payload = r.json()
+        except Exception:
+            break
+
+        raw = ""
+        if isinstance(payload, dict):
+            raw = str(payload.get("html") or payload.get("data") or "")
+        elif isinstance(payload, str):
+            raw = payload
+        if not raw:
+            break
+
+        before = len(details)
+        soup = BeautifulSoup(raw, "html.parser")
+        for a in soup.find_all("a", href=True):
+            href = urljoin("https://midwestcareers.com/", a["href"]).split("#", 1)[0]
+            p = urlparse(href)
+            if p.netloc.lower() not in {"midwestcareers.com", "www.midwestcareers.com"}:
+                continue
+            if re.search(r"/(?:job|jobs)/[^/?#]+/?$", p.path, re.I):
+                details.add(href)
+
+        # Also catch links serialized inside response fragments.
+        for m in re.finditer(
+            r'https?://(?:www\.)?midwestcareers\.com/(?:job|jobs)/[^"\'< >]+',
+            raw,
+            re.I,
+        ):
+            details.add(html.unescape(m.group(0)).rstrip("\\/,.;)"))
+
+        # WP Job Manager normally reports whether another page exists.
+        max_num_pages = 0
+        if isinstance(payload, dict):
+            try:
+                max_num_pages = int(payload.get("max_num_pages") or 0)
+            except Exception:
+                max_num_pages = 0
+        if (max_num_pages and page_num >= max_num_pages) or len(details) == before:
+            break
+
+    # Fallback discovery preserves compatibility if Midwest changes the AJAX
+    # endpoint or temporarily exposes links directly in either public board.
     for root in roots:
         try:
             r = req("GET", root)
@@ -7673,17 +7747,23 @@ def midwest_v23(src):
         final = str(getattr(r, "url", "") or root)
         details.update(_v23_detail_candidates(final, r.text))
         for m in re.finditer(
-            r'https?://recruiting\.paylocity\.com/recruiting/jobs/Details/\d+/[^"\'<>\s]+',
-            r.text, re.I
+            r'https?://recruiting\.paylocity\.com/recruiting/jobs/Details/\d+/[^"\'< >]+',
+            r.text,
+            re.I,
         ):
             details.add(m.group(0).replace("\\/", "/"))
+
     out, ids = [], set()
     for url in sorted(details):
         try:
             rr = req("GET", url)
-            j = _radio_recovery_job(src, str(getattr(rr, "url", "") or url), rr.text)
+            final = str(getattr(rr, "url", "") or url)
+            j = _radio_recovery_job(src, final, rr.text)
+            if not j:
+                j = _job_from_detail(src, final, rr.text)
             if j and j.id not in ids:
-                ids.add(j.id); out.append(j)
+                ids.add(j.id)
+                out.append(j)
         except Exception:
             continue
     return out
