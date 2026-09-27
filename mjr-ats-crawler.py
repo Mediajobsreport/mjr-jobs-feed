@@ -7284,6 +7284,188 @@ def _radio_recovery_job(src, url, raw):
                src["URL"],src["URL"],"",normalize_work_arrangement(desc,loc or txt),
                loc,"",infer_country(loc or txt,src["Company"],desc))
 
+
+def _radio_page_posted_date(raw):
+    """Parse explicit posted dates used by direct radio-company career pages."""
+    txt = clean(BeautifulSoup(raw, "html.parser").get_text(" "))
+    patterns = (
+        r"Posted\s+(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*,?\s*"
+        r"([A-Za-z]+\s+\d{1,2}(?:st|nd|rd|th)?\s*,\s*20\d{2})",
+        r"(?:Posted|Date Posted|Posted Date)\s*:?\s*"
+        r"([A-Za-z]+\s+\d{1,2}(?:st|nd|rd|th)?\s*,\s*20\d{2})",
+    )
+    for pat in patterns:
+        m = re.search(pat, txt, re.I)
+        if not m:
+            continue
+        value = re.sub(r"(\d{1,2})(?:st|nd|rd|th)", r"\1", m.group(1), flags=re.I)
+        parsed = pdate(value)
+        if parsed:
+            return parsed
+    return _direct_board_date(raw)
+
+
+def _radio_direct_detail(src, url, raw, forced_title=""):
+    """Build one direct-company radio job while requiring a real posted date."""
+    soup = BeautifulSoup(raw, "html.parser")
+    txt = clean(soup.get_text(" "))
+    pd = _radio_page_posted_date(raw)
+    if not pd or pd > TODAY or pd < feed_cutoff(jobtype(forced_title or txt[:180], txt)):
+        return None
+
+    h1 = soup.find("h1")
+    h2 = soup.find("h2")
+    title = clean(forced_title or (h1.get_text(" ") if h1 else "") or (h2.get_text(" ") if h2 else ""))
+    if not title or title.lower() in {"careers", "careers list", "career opportunities", "jobs", "employment"}:
+        return None
+
+    main = (
+        soup.select_one(".entry-content, .post-content, .career-content, .job-content")
+        or soup.find("main") or soup.find("article") or soup
+    )
+    desc = format_description(str(main))
+    if len(strip_html(desc)) < 220:
+        return None
+
+    loc = ""
+    for pat in (
+        r"(?:Work Location|Job Location|Location)\s*:?\s*([A-Za-z0-9 .,'/\-&]+?)(?=\s+(?:Job Type|Employment Type|Benefits|Schedule|How to Apply|Posted|$))",
+        r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
+    ):
+        m = re.search(pat, txt)
+        if m:
+            loc = clean(m.group(1))
+            break
+
+    canonical = url.split("#", 1)[0]
+    jid = hashlib.sha1((src["Company"] + "|" + title + "|" + canonical).encode()).hexdigest()[:16]
+    return Job(
+        jid, title, src["Company"], desc, pd, jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]), canonical,
+        src["URL"], src["URL"], "", normalize_work_arrangement(desc, loc or txt),
+        loc, "", infer_country(loc or txt, src["Company"], desc),
+    )
+
+
+def renda_media_direct(src):
+    """Enumerate Renda Media's first-party career list and individual postings."""
+    roots = [
+        src["URL"],
+        "https://rendamedia.com/careers",
+        "https://rendabroadcasting.com/careers-list/",
+    ]
+    details = set()
+    for root in roots:
+        try:
+            r = req("GET", root)
+        except Exception:
+            continue
+        final = str(getattr(r, "url", "") or root)
+        soup = BeautifulSoup(r.text, "html.parser")
+        for a in soup.find_all("a", href=True):
+            href = urljoin(final, a["href"]).split("#", 1)[0]
+            host = urlparse(href).netloc.lower()
+            path = urlparse(href).path.lower().rstrip("/")
+            if host not in {"rendamedia.com", "www.rendamedia.com", "rendabroadcasting.com", "www.rendabroadcasting.com"}:
+                continue
+            if re.search(r"/careers-list/\d+$", path):
+                details.add(href)
+
+        # Some templates expose detail URLs only inside script/application state.
+        for m in re.finditer(r'https?://(?:www\.)?(?:rendamedia|rendabroadcasting)\.com/careers-list/\d+', r.text, re.I):
+            details.add(m.group(0).replace("\\/", "/"))
+        for m in re.finditer(r'["\'](/careers-list/\d+)["\']', r.text, re.I):
+            details.add(urljoin(final, m.group(1)))
+
+    out, seen = [], set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            final = str(getattr(rr, "url", "") or url)
+            j = _radio_direct_detail(src, final, rr.text)
+            if j and j.id not in seen:
+                seen.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def saga_distributed_direct(src):
+    """Discover Saga jobs from its first-party market/station sites.
+
+    Saga no longer exposes a useful corporate careers listing at the configured
+    /careers/ URL. Its stations page is the stable first-party directory, and
+    market sites publish their own Jobs/Careers pages. We require an explicit
+    posted date before admitting a job so evergreen EEO/employment pages cannot
+    be refreshed indefinitely as new jobs.
+    """
+    directory = "https://sagacom.com/stations/"
+    market_hosts = set()
+    try:
+        r = req("GET", directory)
+        soup = BeautifulSoup(r.text, "html.parser")
+        for a in soup.find_all("a", href=True):
+            href = urljoin(directory, a["href"])
+            p = urlparse(href)
+            host = p.netloc.lower()
+            if not host or host.endswith("sagacom.com"):
+                continue
+            if any(x in host for x in ("facebook.com", "instagram.com", "youtube.com", "twitter.com", "x.com", "linkedin.com", "amperwave.net")):
+                continue
+            if p.scheme in {"http", "https"}:
+                market_hosts.add(host)
+    except Exception:
+        return []
+
+    detail_pages = set()
+    listing_pages = set()
+    # Limit to unique first-party market hosts; two conventional paths per host
+    # keeps this bounded well below the normal domain request cap.
+    for host in sorted(market_hosts)[:80]:
+        for path in ("/jobs/", "/careers/"):
+            url = f"https://{host}{path}"
+            try:
+                rr = req("GET", url)
+            except Exception:
+                continue
+            if getattr(rr, "status_code", 200) >= 400:
+                continue
+            final = str(getattr(rr, "url", "") or url)
+            raw = rr.text
+            txt = clean(BeautifulSoup(raw, "html.parser").get_text(" ")).lower()
+            if not any(k in txt for k in ("job", "career", "employment", "position", "apply")):
+                continue
+            listing_pages.add(final)
+            soup = BeautifulSoup(raw, "html.parser")
+            base_host = urlparse(final).netloc.lower()
+            for a in soup.find_all("a", href=True):
+                href = urljoin(final, a["href"]).split("#", 1)[0]
+                hp = urlparse(href)
+                label = clean(a.get_text(" ")).lower()
+                if hp.netloc.lower() != base_host:
+                    continue
+                if href.rstrip("/") == final.rstrip("/"):
+                    continue
+                if re.search(r"/(?:job|jobs|career|careers|employment)/", hp.path.lower()) or any(k in label for k in ("apply", "read more", "view job", "job details")):
+                    detail_pages.add(href)
+
+    out, seen = [], set()
+    # Prefer individual detail pages. Listing pages are attempted only when they
+    # themselves represent one dated posting.
+    candidates = list(sorted(detail_pages)) + list(sorted(listing_pages))
+    for url in candidates[:250]:
+        try:
+            rr = req("GET", url)
+            final = str(getattr(rr, "url", "") or url)
+            j = _radio_direct_detail(src, final, rr.text)
+            if j and j.id not in seen:
+                seen.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+    return out
+
 def radio_recovery(src):
     company=clean(src.get("Company","")).lower()
     if company not in RADIO_RECOVERY_COMPANIES:
@@ -11101,7 +11283,11 @@ def main():
             company_route_key = _company_test_key(company_key)
 
             got = (
-                ashby(s)
+                saga_distributed_direct(s)
+                if company_key == "saga communications"
+                else renda_media_direct(s)
+                if company_key == "renda media"
+                else ashby(s)
                 if "ashby" in a or "ashbyhq.com" in s.get("URL", "").lower()
                 else []
                 if company_key == "audacy"
