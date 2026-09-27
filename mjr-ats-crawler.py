@@ -8056,6 +8056,37 @@ def connoisseur_paycor(src):
             except Exception:
                 pass
 
+            # Inspect the "View All Current Openings" handoff itself.
+            # The landing page may launch Paycor through a form/script rather
+            # than exposing its inventory as ordinary anchors.
+            try:
+                handoff = page.context.new_page()
+                handoff.goto("https://connoisseurmedia.com/career-openings/", wait_until="domcontentloaded", timeout=15000)
+                handoff.wait_for_timeout(2000)
+                print("CONNOISSEUR_HANDOFF_URL:", handoff.url)
+                for fr in handoff.frames:
+                    print("CONNOISSEUR_HANDOFF_FRAME:", fr.url)
+                forms = handoff.locator("form").evaluate_all("""els => els.map(f => ({
+                    action: f.action || "",
+                    method: f.method || "",
+                    text: (f.innerText || "").slice(0,1000),
+                    html: f.outerHTML.slice(0,4000)
+                }))""")
+                for item in forms[:30]:
+                    print("CONNOISSEUR_HANDOFF_FORM:", clean(str(item))[:5000])
+                scripts = handoff.locator("script").evaluate_all(
+                    """els => els.map(s => (s.src || "") + "\n" + (s.textContent || "")).filter(x => /paycor|recruit|clientId|careerhome|opening/i.test(x))"""
+                )
+                for item in scripts[:30]:
+                    print("CONNOISSEUR_HANDOFF_SCRIPT:", clean(str(item))[:8000])
+                html = handoff.content()
+                for m in re.findall(r'https?://[^"\\'<> ]+', html, re.I):
+                    if re.search(r"(paycor|recruit|career|job|opening)", m, re.I):
+                        print("CONNOISSEUR_HANDOFF_LINK:", m[:3000])
+                handoff.close()
+            except Exception as e:
+                print("Connoisseur handoff diagnostic failed:", type(e).__name__, str(e)[:500])
+
             print(f"Connoisseur AWSM board: hrefs={len(hrefs)} details={len(detail_urls)}")
             print(f"Connoisseur AWSM AJAX: requests={len(awsm_requests)} responses={len(awsm_responses)}")
             for item in awsm_requests[:20]:
