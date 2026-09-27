@@ -3900,11 +3900,12 @@ def jazzhr_active_board(src):
         h = urljoin(final, a["href"]).split("#", 1)[0]
         if (urlparse(h).netloc or "").lower() != host:
             continue
-        if re.search(r"/apply/[A-Za-z0-9_-]+(?:/[^?#]*)?$", h, re.I):
-            # Exclude the listing itself and filter/query controls.
-            if re.search(r"/apply/?(?:\?|$)", h, re.I):
-                continue
-            links.append(h)
+        path = urlparse(h).path or ""
+        # JazzHR boards use both /apply/<id>/<slug> and /apply/<id> forms.
+        # Require a non-empty identifier after /apply/ but exclude the board root.
+        if re.match(r"^/apply/[^/]+(?:/.*)?/?$", path, re.I):
+            if path.rstrip("/").lower() != "/apply":
+                links.append(h)
     links = list(dict.fromkeys(links))
 
     st = load_state()
@@ -3968,10 +3969,14 @@ def jazzhr_active_board(src):
             city, state = clean(m.group(1)), m.group(2)
             loc = city + ", " + state
 
+        cat = category(title, plain, src["Industry"], src["Company"])
+        if clean(src.get("Company", "")).lower() == "beasley media group":
+            if re.search(r"\b(program(?:ming)?|program director|on[- ]?air|air talent|host|promotions?|producer|board operator)\b", title + " " + plain[:1200], re.I):
+                if not re.search(r"\b(sales|account executive|market manager|general manager)\b", title, re.I):
+                    cat = "Radio"
         out.append(Job(
             hashlib.sha1(key.encode()).hexdigest()[:16],
-            title, src["Company"], desc, pd, jt,
-            category(title, plain, src["Industry"], src["Company"]),
+            title, src["Company"], desc, pd, jt, cat,
             url, src["URL"], src["URL"], "",
             normalize_work_arrangement(txt, loc), city, state, "US",
         ))
@@ -7957,6 +7962,9 @@ def connoisseur_direct(src):
                     f"Connoisseur rendered board: status={page.url} "
                     f"hrefs={len(hrefs)} details={len(detail_urls)}"
                 )
+                if not detail_urls:
+                    for _h in hrefs[:80]:
+                        print("CONNOISSEUR_HREF:", clean(str(_h or "")))
                 browser.close()
         except Exception as e:
             print(f"Connoisseur rendered board failed: {e}")
@@ -8057,7 +8065,7 @@ def midwest_family_direct(src):
         final = str(getattr(r, "url", "") or page)
         soup = BeautifulSoup(r.text, "html.parser")
 
-        headings = soup.find_all(["h2","h3"])
+        headings = soup.find_all(["h1","h2","h3","h4"])
         for node in headings:
             title = clean(node.get_text(" "))
             if not title or title.lower() in {
@@ -8076,20 +8084,26 @@ def midwest_family_direct(src):
                 continue
             chunks = []
             for sib in node.next_siblings:
-                if getattr(sib, "name", None) in {"h2","h3"}:
+                if getattr(sib, "name", None) in {"h1","h2","h3","h4"}:
                     break
                 chunks.append(str(sib))
             raw = "".join(chunks)
             body = clean(BeautifulSoup(raw, "html.parser").get_text(" "))
-            if len(body) < 180 or not re.search(
-                r"\b(job|position|full[- ]?time|part[- ]?time|resume|apply|salary|"
-                r"compensation|responsibilit|qualification|opening)\b", body, re.I
+            block_soup = BeautifulSoup(raw, "html.parser")
+            has_job_link = any(
+                re.search(r"/(?:job|jobs|career|careers|apply)/|\.pdf(?:$|\?)", urljoin(final, a.get("href", "")), re.I)
+                for a in block_soup.find_all("a", href=True)
+            )
+            if len(body) < 100 or not (
+                has_job_link or re.search(
+                    r"\b(job|position|full[- ]?time|part[- ]?time|resume|apply|salary|"
+                    r"compensation|responsibilit|qualification|opening|employment)\b", body, re.I
+                )
             ):
                 continue
 
             # Prefer an individual job/PDF link inside this job block.
             apply_url = final
-            block_soup = BeautifulSoup(raw, "html.parser")
             for a in block_soup.find_all("a", href=True):
                 h = urljoin(final, a["href"]).split("#",1)[0]
                 lowh = h.lower()
