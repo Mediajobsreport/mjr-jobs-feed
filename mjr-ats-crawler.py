@@ -1543,11 +1543,45 @@ def _adp_location(obj):
     if locs:
         return " / ".join(dict.fromkeys(locs))
 
-    # Fallbacks used by some public career-center payload variants.
-    return clean(str(_first_deep(obj, {
+    # Some ADP tenants put the address directly on a nested object instead of
+    # under requisitionLocations. Walk nested dictionaries and recover only
+    # explicit city/state/country fields supplied by ADP.
+    found = []
+    def walk(v):
+        if isinstance(v, dict):
+            city = clean(str(v.get("cityName") or v.get("city") or ""))
+            region = v.get("stateProvinceCode") or v.get("stateProvinceName") or v.get("state") or ""
+            country = v.get("countryCode") or v.get("countryName") or v.get("country") or ""
+            def scalar(x):
+                if isinstance(x, dict):
+                    return clean(str(x.get("codeValue") or x.get("shortName") or x.get("longName") or ""))
+                return clean(str(x or ""))
+            region = scalar(region)
+            country = scalar(country)
+            if city:
+                value = ", ".join(x for x in [city, region, country] if x)
+                if value:
+                    found.append(value)
+            for child in v.values():
+                walk(child)
+        elif isinstance(v, list):
+            for child in v:
+                walk(child)
+    walk(obj)
+    if found:
+        return " / ".join(dict.fromkeys(found))
+
+    # Final scalar fallbacks used by some public career-center payload variants.
+    val = _first_deep(obj, {
         "location", "locationName", "workLocation", "requisitionLocation",
         "formattedAddress", "addressLineOne"
-    }, "")))
+    }, "")
+    if isinstance(val, dict):
+        for k in ("longName", "shortName", "codeValue", "name"):
+            if val.get(k):
+                return clean(str(val[k]))
+        return ""
+    return clean(str(val))
 
 
 def _adp_description(obj):
@@ -7388,7 +7422,10 @@ def _radio_recovery_job(src, url, raw):
     if pd and pd < CUTOFF:
         return None
     if not pd:
-        pd = TODAY
+        # Never manufacture freshness for an undated evergreen radio page.
+        # Source-specific collectors may use a persisted first-seen date only
+        # when they can prove the URL is an actively enumerated job posting.
+        return None
     headings = soup.find_all(["h1", "h2", "h3"])
     title = ""
     bad = {
