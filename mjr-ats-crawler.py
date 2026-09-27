@@ -7924,15 +7924,51 @@ def connoisseur_paycor(src):
             page = browser.new_page()
             page.goto(board, wait_until="domcontentloaded", timeout=15000)
             page.wait_for_timeout(1800)
-            hrefs = page.locator("a[href]").evaluate_all("(els) => els.map(a => a.href)")
-            for h in hrefs:
-                h = clean(str(h or "")).split("#", 1)[0]
-                if (
-                    "recruitingbypaycor.com" in h.lower()
-                    and re.search(r"career/JobIntroduction\.action", h, re.I)
-                ):
-                    detail_urls.append(h)
-            print(f"Connoisseur Paycor board: hrefs={len(hrefs)} details={len(detail_urls)}")
+
+            def harvest(pg):
+                found, all_hrefs = [], []
+                contexts = [pg] + list(pg.frames)
+                for ctx in contexts:
+                    try:
+                        hs = ctx.locator("a[href]").evaluate_all("(els) => els.map(a => a.href)")
+                    except Exception:
+                        continue
+                    all_hrefs.extend(hs)
+                    for h in hs:
+                        h = clean(str(h or "")).split("#", 1)[0]
+                        if (
+                            "recruitingbypaycor.com" in h.lower()
+                            and re.search(r"career/JobIntroduction\\.action", h, re.I)
+                        ):
+                            found.append(h)
+                        elif (
+                            "connoisseurmedia.com/career-openings/" in h.lower()
+                            and re.search(r"[?&]gnk=job(?:&|$)", h, re.I)
+                            and re.search(r"[?&]gni=", h, re.I)
+                        ):
+                            found.append(h)
+                return all_hrefs, found
+
+            hrefs, found = harvest(page)
+            detail_urls.extend(found)
+
+            if not detail_urls:
+                page.goto(
+                    "https://connoisseurmedia.com/career-openings/",
+                    wait_until="domcontentloaded",
+                    timeout=15000,
+                )
+                page.wait_for_timeout(2500)
+                try:
+                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                    page.wait_for_timeout(1200)
+                except Exception:
+                    pass
+                hrefs, found = harvest(page)
+                detail_urls.extend(found)
+                print(f"Connoisseur Paycor embedded fallback: hrefs={len(hrefs)} details={len(found)}")
+            else:
+                print(f"Connoisseur Paycor direct board: hrefs={len(hrefs)} details={len(found)}")
             browser.close()
     except Exception as e:
         print(f"Connoisseur Paycor render failed: {e}")
