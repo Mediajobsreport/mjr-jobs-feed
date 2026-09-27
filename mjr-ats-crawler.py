@@ -7957,27 +7957,68 @@ def connoisseur_paycor(src):
             page.on("request", _cap_req)
             page.on("response", _cap_resp)
 
-            paycor_board = "https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b"
-            paycor_hits = []
-            def _paycor_response(resp):
+            embedded_hits = []
+            def _embedded_response(resp):
                 try:
-                    if resp.request.resource_type in ("xhr", "fetch"):
+                    u = resp.url or ""
+                    if (
+                        resp.request.resource_type in ("xhr", "fetch", "document")
+                        and (
+                            "recruitingbypaycor.com" in u.lower()
+                            or "connoisseurmedia.com" in u.lower()
+                        )
+                    ):
                         body = ""
                         try:
                             body = resp.text()
                         except Exception:
                             pass
-                        paycor_hits.append((resp.request.method, resp.status, resp.url, body[:6000]))
+                        embedded_hits.append((
+                            resp.request.method,
+                            resp.status,
+                            resp.request.resource_type,
+                            u,
+                            body[:8000],
+                        ))
                 except Exception:
                     pass
-            page.on("response", _paycor_response)
-            page.goto(paycor_board, wait_until="domcontentloaded", timeout=15000)
-            page.wait_for_timeout(4000)
-            print(f"Connoisseur Paycor XHR: responses={len(paycor_hits)}")
-            for method, status, url, body in paycor_hits[:40]:
-                print("CONNOISSEUR_PAYCOR_XHR:", method, "|", status, "|", url, "|", clean(body)[:3000])
+            page.on("response", _embedded_response)
             page.goto(board, wait_until="domcontentloaded", timeout=15000)
-            page.wait_for_timeout(2500)
+            page.wait_for_timeout(3500)
+            print("Connoisseur embedded frames:", " | ".join(fr.url for fr in page.frames))
+            try:
+                controls = page.locator("a, button")
+                limit = min(controls.count(), 80)
+                for i in range(limit):
+                    el = controls.nth(i)
+                    txt = clean(el.inner_text() or "")
+                    href = el.get_attribute("href") or ""
+                    if re.search(r"(career|job|opening|position|view|search)", txt + " " + href, re.I):
+                        print("CONNOISSEUR_CONTROL:", txt[:250], "|", href[:1000])
+            except Exception as e:
+                print("Connoisseur control scan error:", type(e).__name__, str(e)[:300])
+            try:
+                for fr in page.frames:
+                    if "recruitingbypaycor.com" in (fr.url or "").lower():
+                        print("CONNOISSEUR_PAYCOR_FRAME:", fr.url)
+                        try:
+                            print("CONNOISSEUR_PAYCOR_FRAME_TEXT:", clean(fr.locator("body").inner_text())[:10000])
+                        except Exception:
+                            pass
+            except Exception:
+                pass
+            page.wait_for_timeout(1500)
+            print(f"Connoisseur embedded network: responses={len(embedded_hits)}")
+            for method, status, rtype, url, body in embedded_hits[:80]:
+                if (
+                    "recruitingbypaycor.com" in url.lower()
+                    or re.search(r"(job|career|position|requisition|opening)", body[:6000], re.I)
+                ):
+                    print(
+                        "CONNOISSEUR_EMBEDDED_NETWORK:",
+                        method, "|", status, "|", rtype, "|", url,
+                        "|", clean(body)[:6000]
+                    )
             try:
                 page.locator(".t-acceptAllButton").click(timeout=1000)
                 page.wait_for_timeout(500)
