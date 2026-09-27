@@ -3696,6 +3696,129 @@ def paycom(src):
             continue
     return out
 
+
+def betterteam_active_board(src):
+    """Collect active Betterteam postings using a stable first-seen date.
+
+    Betterteam employer boards expose active jobs and locations but commonly
+    omit datePosted. For those pages, use the date already stored for the same
+    canonical URL; only a genuinely new active URL receives TODAY once.
+    """
+    try:
+        r = req("GET", src["URL"])
+    except Exception:
+        return []
+
+    base = str(getattr(r, "url", "") or src["URL"])
+    host = (urlparse(base).netloc or "").lower()
+    soup = BeautifulSoup(r.text, "html.parser")
+    detail_urls = set()
+
+    for a in soup.find_all("a", href=True):
+        h = urljoin(base, a["href"]).split("#", 1)[0]
+        u = urlparse(h)
+        if (u.netloc or "").lower() != host:
+            continue
+        path = u.path.strip("/")
+        if not path:
+            continue
+        # Betterteam tenant jobs are root-level slugs. Exclude obvious utility
+        # routes while requiring a job-like anchor label or slug.
+        label = clean(a.get_text(" "))
+        low = path.lower()
+        if low in {"about", "contact", "privacy", "terms", "jobs", "careers"}:
+            continue
+        if label and label.lower() not in {"apply", "view", "learn more"}:
+            detail_urls.add(h.rstrip("/"))
+
+    st = load_state()
+    out, seen = [], set()
+    state_names = {
+        "alabama":"AL","alaska":"AK","arizona":"AZ","arkansas":"AR","california":"CA",
+        "colorado":"CO","connecticut":"CT","delaware":"DE","florida":"FL","georgia":"GA",
+        "hawaii":"HI","idaho":"ID","illinois":"IL","indiana":"IN","iowa":"IA",
+        "kansas":"KS","kentucky":"KY","louisiana":"LA","maine":"ME","maryland":"MD",
+        "massachusetts":"MA","michigan":"MI","minnesota":"MN","mississippi":"MS",
+        "missouri":"MO","montana":"MT","nebraska":"NE","nevada":"NV",
+        "new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY",
+        "north carolina":"NC","north dakota":"ND","ohio":"OH","oklahoma":"OK",
+        "oregon":"OR","pennsylvania":"PA","rhode island":"RI","south carolina":"SC",
+        "south dakota":"SD","tennessee":"TN","texas":"TX","utah":"UT","vermont":"VT",
+        "virginia":"VA","washington":"WA","west virginia":"WV","wisconsin":"WI",
+        "wyoming":"WY","district of columbia":"DC",
+    }
+
+    for url in sorted(detail_urls)[:100]:
+        key = url.rstrip("/").lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+        ss = BeautifulSoup(rr.text, "html.parser")
+        text = clean(ss.get_text(" "))
+
+        headings = [clean(x.get_text(" ")) for x in ss.find_all(["h1","h2","h3"])]
+        headings = [x for x in headings if x and x.lower() != clean(src["Company"]).lower()]
+        title = headings[0] if headings else ""
+        if not title or title.lower() in {"about the job", "current positions"}:
+            continue
+
+        # Betterteam prints "City, State • Full-time" immediately under title.
+        city = state = ""
+        m = re.search(
+            r"([A-Z][A-Za-z .'-]{1,60}),\s*([A-Z][A-Za-z ]{2,30})\s*[•·|]\s*"
+            r"(Full[- ]?time|Part[- ]?time|Temporary|Contract|Internship)",
+            text, re.I,
+        )
+        employment = ""
+        if m:
+            city = clean(m.group(1))
+            region = clean(m.group(2))
+            state = state_names.get(region.lower(), region.upper() if len(region) == 2 else "")
+            employment = clean(m.group(3))
+
+        main = ss.find("main") or ss.find("article") or ss
+        desc = format_description(str(main))
+        if len(strip_html(desc)) < 200:
+            continue
+
+        # Prefer a real source date if Betterteam adds one later.
+        pd = None
+        for jp in _jsonld_jobs(ss):
+            pd = pdate(jp.get("datePosted") or "")
+            if pd:
+                break
+        if not pd:
+            stored = st.get(key, {}).get("job", {}) if isinstance(st.get(key), dict) else {}
+            try:
+                pd = date.fromisoformat(str(stored.get("date") or ""))
+            except Exception:
+                pd = TODAY
+
+        jt = jobtype(title, employment + " " + text)
+        out.append(Job(
+            hashlib.sha1(url.encode()).hexdigest()[:16],
+            title,
+            src["Company"],
+            desc,
+            pd,
+            jt,
+            category(title, desc, src["Industry"], src["Company"]),
+            url,
+            src["URL"],
+            src["URL"],
+            "",
+            normalize_work_arrangement(desc, ", ".join(x for x in [city, state] if x), title),
+            city,
+            state,
+            infer_country(", ".join(x for x in [city, state] if x), src["Company"], desc),
+        ))
+    return out
+
+
 def ats_html(src):
     """Enhanced multi-ATS public-page adapter.
 
@@ -6976,6 +7099,56 @@ def _paylocity_board_root(url):
     return url
 
 
+
+def _paylocity_rendered_v18(src, starts):
+    """Bounded Chromium fallback for Paylocity's JavaScript-only public board."""
+    if sync_playwright is None:
+        return []
+    details = set()
+    rendered = {}
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            for start in starts[:3]:
+                try:
+                    page.goto(start, wait_until="domcontentloaded", timeout=30000)
+                    page.wait_for_timeout(2500)
+                    for _ in range(4):
+                        page.mouse.wheel(0, 2500)
+                        page.wait_for_timeout(500)
+                    for href in page.locator("a").evaluate_all(
+                        "(els) => els.map(a => a.href).filter(Boolean)"
+                    ):
+                        if re.search(r"/recruiting/jobs/details/\d+", str(href), re.I):
+                            details.add(str(href).split("#", 1)[0])
+                except Exception:
+                    continue
+
+            # Keep the fallback bounded; radio boards are small and this path
+            # should never turn a full crawl into a browser marathon.
+            for url in sorted(details)[:100]:
+                try:
+                    page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                    page.wait_for_timeout(1200)
+                    rendered[url] = page.content()
+                except Exception:
+                    continue
+            browser.close()
+    except Exception:
+        return []
+
+    out, seen_ids = [], set()
+    for url, raw in rendered.items():
+        j = _job_from_detail(src, url, raw)
+        if not j:
+            j = _direct_board_job(src, url, raw)
+        if j and j.id not in seen_ids:
+            seen_ids.add(j.id)
+            out.append(j)
+    return out
+
+
 def paylocity_v18(src):
     """Targeted Paylocity public-board crawler.
 
@@ -7070,9 +7243,9 @@ def paylocity_v18(src):
         except Exception:
             continue
 
-    return out
-
-
+    if out:
+        return out
+    return _paylocity_rendered_v18(src, starts)
 def _ashby_board_name(url):
     p = urlparse(url)
     if "ashbyhq.com" not in p.netloc.lower():
@@ -11412,6 +11585,8 @@ def main():
                 if "isolved" in a or "ourcareerpages" in s.get("URL", "").lower()
                 else batch_direct_board(s)
                 if clean(s.get("Company", "")).lower() in BATCH_DIRECT_COMPANIES
+                else betterteam_active_board(s)
+                if _ats_family(s) == "betterteam"
                 else ats_html(s)
                 if _ats_family(s)
                 else generic(s)
