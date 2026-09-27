@@ -7926,7 +7926,14 @@ def connoisseur_paycor(src):
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
-            page = browser.new_page()
+            context = browser.new_context(
+                user_agent=SESSION.headers.get(
+                    "User-Agent",
+                    "MJR-Jobs-Feed/1.0 (+https://www.mediajobsreport.com)",
+                ),
+                viewport={"width": 1440, "height": 1200},
+            )
+            page = context.new_page()
 
             # Capture the AWSM/WP Job Openings AJAX exchange. The public page
             # hydrates its inventory dynamically, so the request/response is
@@ -8062,7 +8069,7 @@ def connoisseur_paycor(src):
             # request used by Newton's public career UI.
             try:
                 paycor_url = "https://recruitingbypaycor.com/career/iframe.action?clientId=8a7883d082ae53c80182f17d3aba194b"
-                probe = page
+                probe = context.new_page()
                 probe.goto(paycor_url, wait_until="domcontentloaded", timeout=15000)
                 probe.wait_for_timeout(2500)
                 print("CONNOISSEUR_NEWTON_URL:", probe.url)
@@ -8097,7 +8104,7 @@ def connoisseur_paycor(src):
             # The landing page may launch Paycor through a form/script rather
             # than exposing its inventory as ordinary anchors.
             try:
-                handoff = page.context.new_page()
+                handoff = context.new_page()
                 handoff.goto("https://connoisseurmedia.com/career-openings/", wait_until="domcontentloaded", timeout=15000)
                 handoff.wait_for_timeout(2000)
                 print("CONNOISSEUR_HANDOFF_URL:", handoff.url)
