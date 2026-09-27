@@ -7967,6 +7967,22 @@ def connoisseur_paycor(src):
                 hrefs, found = harvest(page)
                 detail_urls.extend(found)
                 print(f"Connoisseur Paycor embedded fallback: hrefs={len(hrefs)} details={len(found)}")
+                if not found:
+                    diag = []
+                    for h in hrefs:
+                        h = clean(str(h or ""))
+                        low = h.lower()
+                        if (
+                            "paycor" in low
+                            or "career" in low
+                            or "job" in low
+                            or "gnk=" in low
+                            or "gni=" in low
+                        ):
+                            if h not in diag:
+                                diag.append(h)
+                    for h in diag[:120]:
+                        print("CONNOISSEUR_PAYCOR_HREF:", h)
             else:
                 print(f"Connoisseur Paycor direct board: hrefs={len(hrefs)} details={len(found)}")
             browser.close()
