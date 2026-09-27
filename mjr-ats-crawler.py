@@ -7347,18 +7347,36 @@ def _radio_direct_detail(src, url, raw, forced_title=""):
     )
 
 
+def _radiofix_fast_get(url, timeout=4):
+    """Single-attempt GET for distributed radio career sites.
+
+    These employer-specific collectors must never use req(), whose nested retry
+    policy is appropriate for primary ATS APIs but can turn a dead local radio
+    site into a multi-minute stall.
+    """
+    try:
+        r = SESSION.get(url, timeout=timeout, allow_redirects=True)
+        if r.status_code >= 400:
+            return None
+        return r
+    except requests.RequestException:
+        return None
+
+
 def renda_media_direct(src):
-    """Enumerate Renda Media's first-party career list and individual postings."""
+    """Enumerate Renda's current first-party career list without shared retries."""
     roots = [
-        src["URL"],
-        "https://rendamedia.com/careers",
         "https://rendabroadcasting.com/careers-list/",
+        src.get("URL", ""),
     ]
     details = set()
-    for root in roots:
-        try:
-            r = req("GET", root)
-        except Exception:
+    deadline = time.monotonic() + 20.0
+
+    for root in list(dict.fromkeys(x for x in roots if x)):
+        if time.monotonic() >= deadline:
+            break
+        r = _radiofix_fast_get(root, timeout=4)
+        if not r:
             continue
         final = str(getattr(r, "url", "") or root)
         soup = BeautifulSoup(r.text, "html.parser")
@@ -7370,17 +7388,19 @@ def renda_media_direct(src):
                 continue
             if re.search(r"/careers-list/\d+$", path):
                 details.add(href)
-
-        # Some templates expose detail URLs only inside script/application state.
         for m in re.finditer(r'https?://(?:www\.)?(?:rendamedia|rendabroadcasting)\.com/careers-list/\d+', r.text, re.I):
             details.add(m.group(0).replace("\\/", "/"))
         for m in re.finditer(r'["\'](/careers-list/\d+)["\']', r.text, re.I):
             details.add(urljoin(final, m.group(1)))
 
     out, seen = [], set()
-    for url in sorted(details):
+    for url in sorted(details)[:40]:
+        if time.monotonic() >= deadline:
+            break
+        rr = _radiofix_fast_get(url, timeout=4)
+        if not rr:
+            continue
         try:
-            rr = req("GET", url)
             final = str(getattr(rr, "url", "") or url)
             j = _radio_direct_detail(src, final, rr.text)
             if j and j.id not in seen:
@@ -7392,71 +7412,32 @@ def renda_media_direct(src):
 
 
 def saga_distributed_direct(src):
-    """Discover Saga jobs from its first-party market/station sites.
+    """Collect Saga jobs only from a small first-party employment allowlist.
 
-    Saga no longer exposes a useful corporate careers listing at the configured
-    /careers/ URL. Its stations page is the stable first-party directory, and
-    market sites publish their own Jobs/Careers pages. We require an explicit
-    posted date before admitting a job so evergreen EEO/employment pages cannot
-    be refreshed indefinitely as new jobs.
+    Do not enumerate Saga's station directory during a crawl. Saga operates many
+    independently hosted local sites, so probing arbitrary station domains is
+    intentionally excluded from the production path. Known first-party career
+    pages can be expanded after they are verified outside the crawler.
     """
-    directory = "https://sagacom.com/stations/"
-    market_hosts = set()
-    try:
-        r = req("GET", directory)
-        soup = BeautifulSoup(r.text, "html.parser")
-        for a in soup.find_all("a", href=True):
-            href = urljoin(directory, a["href"])
-            p = urlparse(href)
-            host = p.netloc.lower()
-            if not host or host.endswith("sagacom.com"):
-                continue
-            if any(x in host for x in ("facebook.com", "instagram.com", "youtube.com", "twitter.com", "x.com", "linkedin.com", "amperwave.net")):
-                continue
-            if p.scheme in {"http", "https"}:
-                market_hosts.add(host)
-    except Exception:
-        return []
-
-    detail_pages = set()
-    listing_pages = set()
-    # Limit to unique first-party market hosts; two conventional paths per host
-    # keeps this bounded well below the normal domain request cap.
-    for host in sorted(market_hosts)[:80]:
-        for path in ("/jobs/", "/careers/"):
-            url = f"https://{host}{path}"
-            try:
-                rr = req("GET", url)
-            except Exception:
-                continue
-            if getattr(rr, "status_code", 200) >= 400:
-                continue
-            final = str(getattr(rr, "url", "") or url)
-            raw = rr.text
-            txt = clean(BeautifulSoup(raw, "html.parser").get_text(" ")).lower()
-            if not any(k in txt for k in ("job", "career", "employment", "position", "apply")):
-                continue
-            listing_pages.add(final)
-            soup = BeautifulSoup(raw, "html.parser")
-            base_host = urlparse(final).netloc.lower()
-            for a in soup.find_all("a", href=True):
-                href = urljoin(final, a["href"]).split("#", 1)[0]
-                hp = urlparse(href)
-                label = clean(a.get_text(" ")).lower()
-                if hp.netloc.lower() != base_host:
-                    continue
-                if href.rstrip("/") == final.rstrip("/"):
-                    continue
-                if re.search(r"/(?:job|jobs|career|careers|employment)/", hp.path.lower()) or any(k in label for k in ("apply", "read more", "view job", "job details")):
-                    detail_pages.add(href)
-
+    pages = [
+        "https://kmit.com/jobs/",
+        "https://wnax.com/employment-opportunities/",
+        "https://1017chuckfm.com/jobs/",
+        "https://pureoldies1069.com/careers/",
+        "https://wixy.com/jobs/",
+        "https://mix945.com/jobs/",
+        "https://myez997.com/jobs/",
+    ]
+    deadline = time.monotonic() + 25.0
     out, seen = [], set()
-    # Prefer individual detail pages. Listing pages are attempted only when they
-    # themselves represent one dated posting.
-    candidates = list(sorted(detail_pages)) + list(sorted(listing_pages))
-    for url in candidates[:250]:
+
+    for url in pages:
+        if time.monotonic() >= deadline:
+            break
+        rr = _radiofix_fast_get(url, timeout=3)
+        if not rr:
+            continue
         try:
-            rr = req("GET", url)
             final = str(getattr(rr, "url", "") or url)
             j = _radio_direct_detail(src, final, rr.text)
             if j and j.id not in seen:
