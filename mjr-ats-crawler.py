@@ -7923,6 +7923,7 @@ def connoisseur_paycor(src):
     st = load_state()
     detail_urls = []
     paycor_rendered = {}
+    paycor_meta = {}
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
@@ -8153,6 +8154,20 @@ def connoisseur_paycor(src):
                                     rendered_html = detail_page.content()
                                     rendered_text = clean(detail_page.locator("body").inner_text())
                                     paycor_rendered[job_url] = (rendered_html, rendered_text)
+                                    try:
+                                        meta = detail_page.locator("body").evaluate("""body => {
+                                            const norm = s => (s || '').replace(/\\s+/g,' ').trim();
+                                            const headings = Array.from(body.querySelectorAll('h1,h2,h3,.job-title,.position-title,[class*=title]'))
+                                                .map(e => norm(e.innerText)).filter(Boolean);
+                                            const title = headings.find(x => !/career openings|connoisseur media|job description|apply/i.test(x)) || '';
+                                            const text = norm(body.innerText);
+                                            const loc = text.match(/(?:Location|Job Location)\\s*:?\\s*([^\\n]{2,180})/i);
+                                            return {title, location: loc ? norm(loc[1]) : ''};
+                                        }""")
+                                        if meta:
+                                            paycor_meta[job_url] = meta
+                                    except Exception:
+                                        pass
                                 except Exception as ex:
                                     print("CONNOISSEUR_PAYCOR_DETAIL_ERROR:", n, job_url[:500], type(ex).__name__, str(ex)[:300])
                             detail_page.close()
@@ -8218,6 +8233,24 @@ def connoisseur_paycor(src):
         soup = BeautifulSoup(raw_html, "html.parser")
         j = _job_from_detail(src, url, raw_html)
         if j:
+            if rendered:
+                meta = paycor_meta.get(url) or {}
+                real_title = clean(str(meta.get("title") or ""))
+                # Paycor's document title is generically "Career Openings".
+                # Prefer the job-specific heading captured from the rendered page.
+                if real_title and j.title.lower() in ("career openings", "careers", "job openings"):
+                    j.title = real_title
+                # Fall back to the board anchor text if Paycor omits a usable H1.
+                if j.title.lower() in ("career openings", "careers", "job openings"):
+                    try:
+                        anchor_title = next(
+                            clean(str(x.get("text") or "")) for x in fh
+                            if clean(str(x.get("href") or "")).split("#",1)[0] == url
+                        )
+                        if anchor_title:
+                            j.title = anchor_title
+                    except Exception:
+                        pass
             # Connoisseur is radio-first for programming/on-air/promotions.
             probe = (j.title + " " + strip_html(j.description)[:1200])
             if re.search(r"\\b(program|on[- ]?air|air talent|host|promotion|content director|producer|board operator)\\b", probe, re.I):
