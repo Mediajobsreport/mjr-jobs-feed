@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-27T22:16:14.473Z",
+  "generated_at": "2026-09-28T16:45:57.701Z",
   "source": "U.S. Census Bureau Monthly Retail Trade; MJR analysis",
   "methodology": "MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available, averages those monthly shares, identifies the strongest one-third of months for each category, and assigns every category with complete data to one primary action window: Sell Now (current month), Start Prospecting (about 30 days ahead), On Deck (about 60–90 days ahead), or Watch Ahead (longer-range opportunity).",
   "years_requested": [
@@ -10,9 +10,9 @@
   "current_month": "September",
   "group_counts": {
     "sell_now": 1,
-    "start_prospecting": 4,
-    "on_deck": 7,
-    "watch_ahead": 1
+    "start_prospecting": 3,
+    "on_deck": 6,
+    "watch_ahead": 3
   },
   "categories_analyzed": 13,
   "groups": {
@@ -26,10 +26,10 @@
         "target_month": "September",
         "target_window": "September–October",
         "lead_time": "September ranks #4 of 12 for this category",
-        "target_month_avg_share": 8.44,
+        "target_month_avg_share": 8.43,
         "current_month": "September",
         "current_month_rank": 4,
-        "current_month_avg_share": 8.44,
+        "current_month_avg_share": 8.43,
         "years_used": [
           2025,
           2024,
@@ -49,10 +49,10 @@
         "target_month": "October",
         "target_window": "October",
         "lead_time": "About 30 days ahead",
-        "target_month_avg_share": 9.1,
+        "target_month_avg_share": 9.06,
         "current_month": "September",
         "current_month_rank": 7,
-        "current_month_avg_share": 8.39,
+        "current_month_avg_share": 8.38,
         "years_used": [
           2025,
           2024,
@@ -60,27 +60,6 @@
         ],
         "rationale": "MJR analysis places October in this category’s stronger historical selling window across the complete years used.",
         "sales_angle": "Identify the specific retail niche, then connect the stronger window to a concrete offer, event or customer need."
-      },
-      {
-        "category": "Building Material & Garden Supply",
-        "category_code": "444",
-        "signal": "start_prospecting",
-        "stronger_months": "April, May, June, October",
-        "strong_months": "April, May, June, October",
-        "target_month": "October",
-        "target_window": "October",
-        "lead_time": "About 30 days ahead",
-        "target_month_avg_share": 8.8,
-        "current_month": "September",
-        "current_month_rank": 7,
-        "current_month_avg_share": 8.21,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "rationale": "MJR analysis places October in this category’s stronger historical selling window across the complete years used.",
-        "sales_angle": "Use project season, weather, home improvement, storm preparation and contractor/homeowner demand."
       },
       {
         "category": "Gasoline Stations",
@@ -91,10 +70,10 @@
         "target_month": "October",
         "target_window": "October",
         "lead_time": "About 30 days ahead",
-        "target_month_avg_share": 8.72,
+        "target_month_avg_share": 8.74,
         "current_month": "September",
         "current_month_rank": 6,
-        "current_month_avg_share": 8.52,
+        "current_month_avg_share": 8.54,
         "years_used": [
           2025,
           2024,
@@ -112,10 +91,10 @@
         "target_month": "October",
         "target_window": "October–December",
         "lead_time": "About 30 days ahead",
-        "target_month_avg_share": 8.67,
+        "target_month_avg_share": 8.6,
         "current_month": "September",
-        "current_month_rank": 8,
-        "current_month_avg_share": 7.87,
+        "current_month_rank": 9,
+        "current_month_avg_share": 7.84,
         "years_used": [
           2025,
           2024,
@@ -135,9 +114,9 @@
         "target_month": "November",
         "target_window": "November–December",
         "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 9.62,
+        "target_month_avg_share": 9.56,
         "current_month": "September",
-        "current_month_rank": 8,
+        "current_month_rank": 9,
         "current_month_avg_share": 7.93,
         "years_used": [
           2025,
@@ -156,10 +135,10 @@
         "target_month": "November",
         "target_window": "November–December",
         "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 9.44,
+        "target_month_avg_share": 9.45,
         "current_month": "September",
         "current_month_rank": 10,
-        "current_month_avg_share": 7.47,
+        "current_month_avg_share": 7.46,
         "years_used": [
           2025,
           2024,
@@ -177,10 +156,10 @@
         "target_month": "November",
         "target_window": "November–December",
         "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 9.39,
+        "target_month_avg_share": 9.32,
         "current_month": "September",
         "current_month_rank": 9,
-        "current_month_avg_share": 7.9,
+        "current_month_avg_share": 7.91,
         "years_used": [
           2025,
           2024,
@@ -193,15 +172,15 @@
         "category": "Furniture & Home Furnishings",
         "category_code": "442",
         "signal": "on_deck",
-        "stronger_months": "May, August, November, December",
-        "strong_months": "May, August, November, December",
+        "stronger_months": "March, August, November, December",
+        "strong_months": "March, August, November, December",
         "target_month": "November",
         "target_window": "November–December",
         "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 8.96,
+        "target_month_avg_share": 8.92,
         "current_month": "September",
-        "current_month_rank": 8,
-        "current_month_avg_share": 8.18,
+        "current_month_rank": 7,
+        "current_month_avg_share": 8.15,
         "years_used": [
           2025,
           2024,
@@ -219,10 +198,10 @@
         "target_month": "November",
         "target_window": "November–December",
         "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 8.87,
+        "target_month_avg_share": 8.86,
         "current_month": "September",
         "current_month_rank": 10,
-        "current_month_avg_share": 7.9,
+        "current_month_avg_share": 7.88,
         "years_used": [
           2025,
           2024,
@@ -240,7 +219,7 @@
         "target_month": "November",
         "target_window": "November–December",
         "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 8.52,
+        "target_month_avg_share": 8.53,
         "current_month": "September",
         "current_month_rank": 9,
         "current_month_avg_share": 8.15,
@@ -251,27 +230,6 @@
         ],
         "rationale": "MJR analysis places November–December in this category’s stronger historical selling window across the complete years used.",
         "sales_angle": "Build around seasonal entertaining, holidays, game days, meal occasions, promotions and local shopping behavior."
-      },
-      {
-        "category": "Restaurants & Drinking Places",
-        "category_code": "722",
-        "signal": "on_deck",
-        "stronger_months": "May, July, August, December",
-        "strong_months": "May, July, August, December",
-        "target_month": "December",
-        "target_window": "December",
-        "lead_time": "About 90 days ahead",
-        "target_month_avg_share": 8.59,
-        "current_month": "September",
-        "current_month_rank": 9,
-        "current_month_avg_share": 8.28,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "rationale": "MJR analysis places December in this category’s stronger historical selling window across the complete years used.",
-        "sales_angle": "Build around dayparts, game days, events, holidays, catering, gift cards, traffic needs and limited-time offers."
       }
     ],
     "watch_ahead": [
@@ -279,22 +237,64 @@
         "category": "Motor Vehicle & Parts Dealers",
         "category_code": "441",
         "signal": "watch_ahead",
+        "stronger_months": "March, April, May, August",
+        "strong_months": "March, April, May, August",
+        "target_month": "March",
+        "target_window": "March–May",
+        "lead_time": "6 months ahead",
+        "target_month_avg_share": 8.98,
+        "current_month": "September",
+        "current_month_rank": 9,
+        "current_month_avg_share": 8.14,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places March–May in this category’s stronger historical selling window across the complete years used.",
+        "sales_angle": "Lead with inventory movement, service growth, trade-ins, event timing and integrated lead generation."
+      },
+      {
+        "category": "Restaurants & Drinking Places",
+        "category_code": "722",
+        "signal": "watch_ahead",
         "stronger_months": "March, May, July, August",
         "strong_months": "March, May, July, August",
         "target_month": "March",
         "target_window": "March",
         "lead_time": "6 months ahead",
-        "target_month_avg_share": 8.92,
+        "target_month_avg_share": 8.59,
         "current_month": "September",
         "current_month_rank": 9,
-        "current_month_avg_share": 8.18,
+        "current_month_avg_share": 8.27,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "rationale": "MJR analysis places March in this category’s stronger historical selling window across the complete years used.",
-        "sales_angle": "Lead with inventory movement, service growth, trade-ins, event timing and integrated lead generation."
+        "sales_angle": "Build around dayparts, game days, events, holidays, catering, gift cards, traffic needs and limited-time offers."
+      },
+      {
+        "category": "Building Material & Garden Supply",
+        "category_code": "444",
+        "signal": "watch_ahead",
+        "stronger_months": "April, May, June, July",
+        "strong_months": "April, May, June, July",
+        "target_month": "April",
+        "target_window": "April–July",
+        "lead_time": "7 months ahead",
+        "target_month_avg_share": 9.06,
+        "current_month": "September",
+        "current_month_rank": 7,
+        "current_month_avg_share": 8.2,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "rationale": "MJR analysis places April–July in this category’s stronger historical selling window across the complete years used.",
+        "sales_angle": "Use project season, weather, home improvement, storm preparation and contractor/homeowner demand."
       }
     ]
   },
@@ -303,7 +303,7 @@
       "category_code": "441",
       "category": "Motor Vehicle & Parts Dealers",
       "signal": "watch_ahead",
-      "next_stronger_window": "March",
+      "next_stronger_window": "March–May",
       "months_ahead": 6,
       "current_month_rank": 9,
       "years_used": [
@@ -318,7 +318,7 @@
       "signal": "on_deck",
       "next_stronger_window": "November–December",
       "months_ahead": 2,
-      "current_month_rank": 8,
+      "current_month_rank": 7,
       "years_used": [
         2025,
         2024,
@@ -331,7 +331,7 @@
       "signal": "on_deck",
       "next_stronger_window": "November–December",
       "months_ahead": 2,
-      "current_month_rank": 8,
+      "current_month_rank": 9,
       "years_used": [
         2025,
         2024,
@@ -341,9 +341,9 @@
     {
       "category_code": "444",
       "category": "Building Material & Garden Supply",
-      "signal": "start_prospecting",
-      "next_stronger_window": "October",
-      "months_ahead": 1,
+      "signal": "watch_ahead",
+      "next_stronger_window": "April–July",
+      "months_ahead": 7,
       "current_month_rank": 7,
       "years_used": [
         2025,
@@ -448,7 +448,7 @@
       "signal": "start_prospecting",
       "next_stronger_window": "October–December",
       "months_ahead": 1,
-      "current_month_rank": 8,
+      "current_month_rank": 9,
       "years_used": [
         2025,
         2024,
@@ -458,9 +458,9 @@
     {
       "category_code": "722",
       "category": "Restaurants & Drinking Places",
-      "signal": "on_deck",
-      "next_stronger_window": "December",
-      "months_ahead": 3,
+      "signal": "watch_ahead",
+      "next_stronger_window": "March",
+      "months_ahead": 6,
       "current_month_rank": 9,
       "years_used": [
         2025,
@@ -518,52 +518,52 @@
     },
     "category_type_month_counts": {
       "2025:441": {
+        "IR": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12,
         "IM": 12,
         "E_IM": 12,
-        "IR": 12,
         "E_IR": 12,
         "MPCIM": 4,
         "E_MPCIM": 12,
-        "MPCSM": 5,
-        "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
       "2025:442": {
+        "E_SM": 12,
         "MPCSM": 6,
         "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "SM": 12
       },
       "2025:443": {
+        "E_SM": 12,
         "MPCSM": 6,
         "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "SM": 12
       },
       "2025:444": {
-        "IM": 12,
-        "E_IM": 12,
-        "IR": 12,
         "E_IR": 12,
         "MPCIM": 7,
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
         "E_MPCIM": 12,
         "MPCSM": 5,
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "E_MPCSM": 12
       },
       "2025:445": {
+        "MPCIM": 8,
+        "E_MPCIM": 12,
+        "SM": 12,
+        "E_SM": 12,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 8,
-        "E_MPCIM": 12,
         "MPCSM": 5,
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "E_MPCSM": 12
       },
       "2025:446": {
         "MPCSM": 6,
@@ -580,31 +580,31 @@
       "2025:448": {
         "IM": 12,
         "E_IM": 12,
+        "MPCSM": 8,
+        "E_MPCSM": 12,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 9,
         "E_MPCIM": 12,
-        "MPCSM": 8,
-        "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
       "2025:451": {
-        "MPCSM": 7,
         "E_MPCSM": 12,
+        "MPCSM": 7,
         "SM": 12,
         "E_SM": 12
       },
       "2025:452": {
-        "IM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 8,
-        "E_MPCIM": 10,
-        "MPCSM": 7,
         "E_MPCSM": 9,
         "SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 9,
+        "E_MPCIM": 10,
+        "MPCSM": 7,
         "E_SM": 12
       },
       "2025:453": {
@@ -620,20 +620,20 @@
         "E_SM": 12
       },
       "2025:722": {
-        "MPCSM": 6,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12
       },
       "2024:441": {
-        "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 9,
-        "E_MPCIM": 12,
         "MPCSM": 7,
         "E_MPCSM": 12,
+        "IM": 12,
+        "MPCIM": 8,
+        "E_MPCIM": 12,
         "SM": 12,
         "E_SM": 12
       },
@@ -644,34 +644,34 @@
         "E_SM": 12
       },
       "2024:443": {
+        "E_SM": 12,
         "MPCSM": 6,
         "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "SM": 12
       },
       "2024:444": {
-        "IM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 7,
+        "SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 9,
         "E_MPCIM": 12,
         "MPCSM": 6,
         "E_MPCSM": 12,
-        "SM": 12,
         "E_SM": 12
       },
       "2024:445": {
-        "IM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 6,
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 5,
         "E_MPCIM": 12,
         "MPCSM": 6,
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "E_MPCSM": 12
       },
       "2024:446": {
         "MPCSM": 6,
@@ -686,14 +686,14 @@
         "E_SM": 12
       },
       "2024:448": {
-        "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 8,
-        "E_MPCIM": 12,
         "MPCSM": 8,
         "E_MPCSM": 12,
+        "IM": 12,
+        "MPCIM": 7,
+        "E_MPCIM": 12,
         "SM": 12,
         "E_SM": 12
       },
@@ -704,21 +704,21 @@
         "E_SM": 12
       },
       "2024:452": {
+        "E_MPCIM": 10,
+        "MPCSM": 7,
+        "E_MPCSM": 10,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 6,
-        "E_MPCIM": 10,
-        "MPCSM": 7,
-        "E_MPCSM": 10,
+        "MPCIM": 8,
         "SM": 12,
         "E_SM": 12
       },
       "2024:453": {
-        "MPCSM": 7,
         "E_MPCSM": 12,
         "SM": 12,
+        "MPCSM": 7,
         "E_SM": 12
       },
       "2024:454": {
@@ -728,72 +728,73 @@
         "E_SM": 12
       },
       "2024:722": {
-        "MPCSM": 6,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12
       },
       "2023:441": {
+        "SM": 12,
+        "E_SM": 12,
+        "E_IR": 12,
+        "MPCIM": 11,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
-        "E_IR": 12,
-        "MPCIM": 11,
         "E_MPCIM": 12,
         "MPCSM": 5,
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "E_MPCSM": 12
       },
       "2023:442": {
-        "MPCSM": 4,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "MPCSM": 4,
+        "E_MPCSM": 12
       },
       "2023:443": {
-        "MPCSM": 6,
         "E_MPCSM": 12,
         "SM": 12,
+        "MPCSM": 6,
         "E_SM": 12
       },
       "2023:444": {
-        "IM": 12,
         "E_IM": 12,
         "IR": 12,
-        "E_IR": 12,
-        "MPCIM": 3,
-        "E_MPCIM": 12,
         "MPCSM": 5,
         "E_MPCSM": 12,
+        "IM": 12,
+        "E_IR": 12,
+        "MPCIM": 7,
+        "E_MPCIM": 12,
         "SM": 12,
         "E_SM": 12
       },
       "2023:445": {
-        "IM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 7,
-        "E_MPCIM": 12,
         "MPCSM": 6,
         "E_MPCSM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCIM": 8,
+        "E_MPCIM": 12,
         "SM": 12,
         "E_SM": 12
       },
       "2023:446": {
+        "E_SM": 12,
         "MPCSM": 5,
         "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "SM": 12
       },
       "2023:447": {
-        "MPCSM": 4,
+        "MPCSM": 5,
         "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
       "2023:448": {
+        "E_SM": 12,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
@@ -802,8 +803,7 @@
         "E_MPCIM": 12,
         "MPCSM": 8,
         "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "SM": 12
       },
       "2023:451": {
         "MPCSM": 6,
@@ -812,8 +812,6 @@
         "E_SM": 12
       },
       "2023:452": {
-        "IM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 6,
@@ -821,10 +819,12 @@
         "MPCSM": 8,
         "E_MPCSM": 9,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12
       },
       "2023:453": {
-        "MPCSM": 6,
+        "MPCSM": 5,
         "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
@@ -836,10 +836,10 @@
         "E_SM": 12
       },
       "2023:722": {
-        "MPCSM": 5,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12
       }
     }
   }
