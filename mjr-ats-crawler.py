@@ -12559,6 +12559,23 @@ def main():
             company_key = clean(s.get("Company", "")).lower()
             company_route_key = _company_test_key(company_key)
 
+            # TEMP SAFETY: Connoisseur's Paycor inventory is discoverable, but
+            # its detail pages currently parse as generic "Career Openings"
+            # records with blank locations. Keep targeted Connoisseur tests
+            # available while preventing malformed records from entering the
+            # normal production/full crawl.
+            if company_key == "connoisseur media" and not MJR_TEST_COMPANIES:
+                print("Connoisseur Media: skipped in full crawl pending Paycor field mapping")
+                audit.append({
+                    "Company": s.get("Company", ""),
+                    "ATS": s.get("ATS", ""),
+                    "URL": s.get("URL", ""),
+                    "Status": "temporarily_skipped_paycor_mapping",
+                    "Jobs": 0,
+                    "Error": "",
+                })
+                continue
+
             got = (
                 connoisseur_paycor(s)
                 if company_key == "connoisseur media"
