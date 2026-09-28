@@ -7924,6 +7924,7 @@ def connoisseur_paycor(src):
     detail_urls = []
     paycor_rendered = {}
     paycor_meta = {}
+    paycor_board_meta = {}
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
@@ -8129,11 +8130,30 @@ def connoisseur_paycor(src):
                             fh = fr.locator("a[href]").evaluate_all(
                                 "els => els.map(e => ({text:(e.innerText || '').trim(), href:e.href || ''}))"
                             )
+                            # Pair each job anchor with its containing Paycor
+                            # listing card text so we retain the board's location.
+                            try:
+                                cards = fr.locator("a[href*='JobIntroduction.action']").evaluate_all("""els => els.map(a => ({
+                                    href: a.href || '',
+                                    text: (a.innerText || '').replace(/\\s+/g,' ').trim(),
+                                    card: ((a.closest('li, tr, article, [class*=job], [class*=position]') || a.parentElement || a).innerText || '').replace(/\\s+/g,' ').trim()
+                                }))""")
+                                for card in cards:
+                                    hu = clean(str(card.get("href") or "")).split("#",1)[0]
+                                    if hu:
+                                        paycor_board_meta[hu] = {
+                                            "title": clean(str(card.get("text") or "")),
+                                            "card": clean(str(card.get("card") or "")),
+                                        }
+                            except Exception:
+                                pass
                             paycor_found = 0
                             for item in fh[:300]:
                                 href = clean(str(item.get("href") or "")).split("#", 1)[0]
                                 if re.search(r"/career/JobIntroduction\.action\?", href, re.I):
                                     detail_urls.append(href)
+                                    title_text = clean(str(item.get("text") or ""))
+                                    paycor_board_meta[href] = {"title": title_text}
                                     paycor_found += 1
                                 print("CONNOISSEUR_HANDOFF_PAYCOR_LINK:", clean(str(item))[:4000])
                             print("CONNOISSEUR_PAYCOR_ENUMERATED:", paycor_found)
@@ -8235,7 +8255,8 @@ def connoisseur_paycor(src):
         if j:
             if rendered:
                 meta = paycor_meta.get(url) or {}
-                real_title = clean(str(meta.get("title") or ""))
+                board_meta = paycor_board_meta.get(url) or {}
+                real_title = clean(str(board_meta.get("title") or meta.get("title") or ""))
                 # Paycor's document title is generically "Career Openings".
                 # Prefer the job-specific heading captured from the rendered page.
                 if real_title and j.title.lower() in ("career openings", "careers", "job openings"):
