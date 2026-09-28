@@ -8187,7 +8187,16 @@ def connoisseur_paycor(src):
                                     detail_page.wait_for_timeout(350)
                                     rendered_html = detail_page.content()
                                     rendered_text = clean(detail_page.locator("body").inner_text())
-                                    paycor_rendered[job_url] = (rendered_html, rendered_text)
+                                    pj = urlparse(job_url)
+                                    qj = parse_qs(pj.query)
+                                    render_key = ((qj.get("clientId") or [""])[0] + "|" + (qj.get("id") or [""])[0])
+                                    bm = paycor_board_meta.get(render_key) or paycor_board_meta.get(job_url) or {}
+                                    paycor_rendered[job_url] = (
+                                        rendered_html,
+                                        rendered_text,
+                                        clean(str(bm.get("title") or "")),
+                                        clean(str(bm.get("card") or "")),
+                                    )
                                     try:
                                         meta = detail_page.locator("body").evaluate("""body => {
                                             const norm = s => (s || '').replace(/\\s+/g,' ').trim();
@@ -8253,7 +8262,7 @@ def connoisseur_paycor(src):
         key = url.rstrip("/").lower()
         rendered = paycor_rendered.get(url)
         if rendered:
-            raw_html, txt = rendered
+            raw_html, txt, rendered_title, rendered_card = rendered
             class _RenderedResponse:
                 text = raw_html
             r = _RenderedResponse()
@@ -8273,7 +8282,7 @@ def connoisseur_paycor(src):
                 qu = parse_qs(pu.query)
                 meta_key = ((qu.get("clientId") or [""])[0] + "|" + (qu.get("id") or [""])[0])
                 board_meta = paycor_board_meta.get(meta_key) or paycor_board_meta.get(url) or {}
-                real_title = clean(str(board_meta.get("title") or meta.get("title") or ""))
+                real_title = clean(str(rendered_title or board_meta.get("title") or meta.get("title") or ""))
                 # Paycor's document title is generically "Career Openings".
                 # Prefer the job-specific heading captured from the rendered page.
                 if real_title and j.title.lower() in ("career openings", "careers", "job openings"):
