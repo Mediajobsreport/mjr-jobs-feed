@@ -8160,7 +8160,14 @@ def connoisseur_paycor(src):
                                 if re.search(r"/career/JobIntroduction\.action\?", href, re.I):
                                     detail_urls.append(href)
                                     title_text = clean(str(item.get("text") or ""))
-                                    paycor_board_meta[href] = {"title": title_text}
+                                    ph = urlparse(href)
+                                    qh = parse_qs(ph.query)
+                                    cid = (qh.get("clientId") or [""])[0]
+                                    jid = (qh.get("id") or [""])[0]
+                                    mk = cid + "|" + jid if jid else href
+                                    existing = paycor_board_meta.get(mk) or {}
+                                    existing["title"] = title_text or existing.get("title", "")
+                                    paycor_board_meta[mk] = existing
                                     paycor_found += 1
                                 print("CONNOISSEUR_HANDOFF_PAYCOR_LINK:", clean(str(item))[:4000])
                             print("CONNOISSEUR_PAYCOR_ENUMERATED:", paycor_found)
