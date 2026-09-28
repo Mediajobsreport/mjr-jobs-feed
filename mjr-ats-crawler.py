@@ -8141,7 +8141,14 @@ def connoisseur_paycor(src):
                                 for card in cards:
                                     hu = clean(str(card.get("href") or "")).split("#",1)[0]
                                     if hu:
-                                        paycor_board_meta[hu] = {
+                                        # Normalize away source/lang noise so board metadata
+                                        # matches the canonical detail URL used downstream.
+                                        parsed_hu = urlparse(hu)
+                                        q_hu = parse_qs(parsed_hu.query)
+                                        cid_hu = (q_hu.get("clientId") or [""])[0]
+                                        jid_hu = (q_hu.get("id") or [""])[0]
+                                        meta_key = cid_hu + "|" + jid_hu if jid_hu else hu
+                                        paycor_board_meta[meta_key] = {
                                             "title": clean(str(card.get("text") or "")),
                                             "card": clean(str(card.get("card") or "")),
                                         }
@@ -8255,7 +8262,10 @@ def connoisseur_paycor(src):
         if j:
             if rendered:
                 meta = paycor_meta.get(url) or {}
-                board_meta = paycor_board_meta.get(url) or {}
+                pu = urlparse(url)
+                qu = parse_qs(pu.query)
+                meta_key = ((qu.get("clientId") or [""])[0] + "|" + (qu.get("id") or [""])[0])
+                board_meta = paycor_board_meta.get(meta_key) or paycor_board_meta.get(url) or {}
                 real_title = clean(str(board_meta.get("title") or meta.get("title") or ""))
                 # Paycor's document title is generically "Career Openings".
                 # Prefer the job-specific heading captured from the rendered page.
