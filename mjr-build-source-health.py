@@ -43,6 +43,20 @@ def iso_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def safe_int(value: Any, default: int = 0) -> int:
+    """Convert audit counts without allowing a malformed/header row to abort a crawl."""
+    raw = text(value).replace(",", "")
+    if not raw:
+        return default
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        try:
+            return int(float(raw))
+        except (TypeError, ValueError):
+            return default
+
+
 def job_fingerprint(job: dict[str, Any], fallback: str) -> str:
     identity = text(job.get("url") or job.get("id") or fallback).lower()
     return hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
@@ -117,6 +131,16 @@ def main() -> None:
         company = text(row.get("company"))
         if not company:
             continue
+
+        # Some crawl/audit paths can append a human-readable CSV header such as
+        # "Company,ATS,URL,Status,Jobs,Error". DictReader correctly reads the
+        # first header but treats a later header as data. Never let that row
+        # become a source or crash numeric conversion.
+        jobs_collected_raw = text(row.get("jobs_collected"))
+        if company.lower() == "company" and jobs_collected_raw.lower() in {
+            "jobs", "jobs_collected", "jobs collected"
+        }:
+            continue
         previous_item = previous_sources.get(company, {})
         has_previous_run = bool(previous_item)
         previous_ids = set(previous_item.get("active_job_ids", []))
@@ -180,7 +204,7 @@ def main() -> None:
                     generated_at if not has_error else previous_item.get("last_successful_crawl_at")
                 ),
                 "crawl_result": crawl_state or "unknown",
-                "jobs_collected_this_crawl": int(row.get("jobs_collected") or 0),
+                "jobs_collected_this_crawl": safe_int(row.get("jobs_collected")),
                 "new_jobs_this_crawl": new_count,
                 "active_jobs": active_count,
                 "latest_jobs": latest_jobs,
