@@ -5923,6 +5923,25 @@ def company_scope_rejection_reason(job_or_dict):
         if foreign_location:
             return "Disney/ESPN job outside the United States and Canada"
 
+        # Disney/ESPN search surfaces can also return international recruiting
+        # event postings with no structured city/state. In that case the
+        # foreign place appears only in the title/description, so reject clear
+        # recruiting-event notices before they can enter the MJR feed.
+        foreign_recruiting_event = (
+            re.search(
+                r"\\b(recruit(?:ing|ment)|hiring|selezione del personale|career(?:s)? event|job fair|open day)\\b",
+                text,
+            )
+            and re.search(
+                r"\\b(rome|roma|bari|milan|milano|paris|london|madrid|barcelona|"
+                r"berlin|munich|amsterdam|dublin|lisbon|vienna|zurich|geneva|"
+                r"france|germany|spain|italy|portugal|ireland|united kingdom)\\b",
+                text,
+            )
+        )
+        if foreign_recruiting_event:
+            return "Disney/ESPN international recruiting event outside media scope"
+
         # Clear hospitality, parks, cruise, retail and physical-trade titles.
         # These occasionally leak into Disney's ABC/ESPN search surfaces.
         hard_nonmedia_title = re.search(
