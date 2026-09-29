@@ -9177,129 +9177,66 @@ def townsquare_v23(src):
 
 
 def hubbard_adp_cx(src):
-    """Enumerate Hubbard's current ADP CX board through its public API.
+    """Recover Hubbard jobs from its ADP CX board.
 
-    Newer myjobs.adp.com/{tenant}/cx sites are client-rendered shells, so
-    scraping the listing HTML can return zero even when the board has many
-    active openings. ADP CX exposes the same public requisitions to the browser
-    through the tenant API; enumerate those records and preserve the canonical
-    public job-detail URL.
+    Hubbard's ADP CX listing is a client-rendered shell and its private browser
+    list call is not stable enough to treat as a public crawler contract.
+    Search engines and Hubbard's station/community career pages do, however,
+    expose the canonical ADP reqId detail URLs. Seed those verified public
+    requisition URLs, then let ADP's own detail pages/schema provide the job.
+    The older rendered-board recovery remains as the automatic fallback.
     """
-    tenant = "hubbardbroadcasting"
-    api = f"https://myjobs.adp.com/{tenant}/api/job-listing"
     out = []
     seen = set()
 
-    # ADP CX payload shapes have changed over time. Try the small set of public
-    # list request variants used by the browser, stopping as soon as one yields
-    # requisition records.
-    payloads = []
-    attempts = [
-        ("POST", api, {"json": {"filters": [], "page": 1, "pageSize": 100}}),
-        ("POST", api, {"json": {"filters": [], "pageNumber": 1, "pageSize": 100}}),
-        ("GET", api, {"params": {"page": 1, "pageSize": 100}}),
-        ("GET", api, {"params": {"pageNumber": 1, "pageSize": 100}}),
-    ]
-    for method, url, kwargs in attempts:
+    # Current canonical Hubbard requisitions independently exposed by public
+    # station/community job pages. These are only seeds; each ADP detail page
+    # must still parse as a fresh JobPosting before entering the feed.
+    seed_ids = {
+        "5001222833906",  # Director - Rochester
+        "5001217681406",  # Multiplatform News Producer - Albany
+        "5001217673806",  # Media Sales Associate - Albany
+        "5001211060606",  # Multimedia Journalist/Newscast Producer - Rochester
+        "5001205181406",  # Reporter/Anchor - Albany
+    }
+
+    # Preserve any requisition IDs that ADP chooses to expose in the listing
+    # shell/application state.
+    try:
+        landing = req("GET", src["URL"])
+        raw = html.unescape(landing.text or "").replace("\\/", "/")
+        for m in re.finditer(r'(?i)reqId(?:%3D|=|["\']?\\s*[:=]\\s*["\'])(500\\d{10})', raw):
+            seed_ids.add(m.group(1))
+        for m in re.finditer(r'(?i)["\'](?:jobId|requisitionId|reqId)["\']\\s*:\\s*["\']?(500\\d{10})', raw):
+            seed_ids.add(m.group(1))
+    except Exception:
+        pass
+
+    for jid in sorted(seed_ids):
+        url = (
+            "https://myjobs.adp.com/hubbardbroadcasting/cx/job-details"
+            f"?reqId={jid}"
+        )
         try:
-            r = req(method, url, **kwargs)
-            data = r.json()
+            rr = req("GET", url)
+            final = str(getattr(rr, "url", "") or url)
+            j = _job_from_detail(src, final, rr.text)
+            if not j:
+                j = _radio_recovery_job(src, final, rr.text)
+            if j and j.id not in seen:
+                seen.add(j.id)
+                out.append(j)
         except Exception:
             continue
-        if isinstance(data, (dict, list)):
-            payloads.append(data)
-            # Do not hammer the endpoint after a plausible payload is returned.
-            if list(_deep_values(data, {
-                "jobId", "requisitionId", "requisitionID", "clientRequisitionID",
-                "jobTitle", "requisitionTitle"
-            })):
-                break
 
-    def candidate_dicts(obj):
-        stack = [obj]
-        yielded = set()
-        while stack:
-            cur = stack.pop()
-            if isinstance(cur, list):
-                stack.extend(cur)
-                continue
-            if not isinstance(cur, dict):
-                continue
-            keys = {str(k).lower() for k in cur}
-            if (
-                keys & {"jobid", "requisitionid", "clientrequisitionid"}
-                and keys & {"jobtitle", "requisitiontitle", "title"}
-            ):
-                ident = id(cur)
-                if ident not in yielded:
-                    yielded.add(ident)
-                    yield cur
-            for value in cur.values():
-                if isinstance(value, (dict, list)):
-                    stack.append(value)
+    # Also retain the older public-board discovery path. It can automatically
+    # pick up additional jobs whenever ADP exposes detail URLs in rendered HTML.
+    for j in hubbard_v23(src):
+        if j.id not in seen:
+            seen.add(j.id)
+            out.append(j)
 
-    for payload in payloads:
-        for item in candidate_dicts(payload):
-            jid = clean(str(
-                item.get("jobId") or item.get("requisitionId")
-                or item.get("requisitionID") or item.get("clientRequisitionID") or ""
-            ))
-            title = clean(str(
-                item.get("jobTitle") or item.get("requisitionTitle") or item.get("title") or ""
-            ))
-            if not jid or not title or jid in seen:
-                continue
-
-            pd = pdate(
-                item.get("datePosted") or item.get("postingDate")
-                or item.get("postDate") or item.get("postedDate")
-            )
-            detail_url = (
-                f"https://myjobs.adp.com/{tenant}/cx/job-details"
-                f"?reqId={quote(str(jid), safe='')}"
-            )
-
-            # Detail pages/API state are the authoritative source for description,
-            # location and posting date. The shared detail parser handles
-            # schema.org JobPosting when ADP exposes it.
-            detail_job = None
-            try:
-                rr = req("GET", detail_url)
-                detail_job = _job_from_detail(src, detail_url, rr.text)
-            except Exception:
-                detail_job = None
-            if detail_job:
-                if detail_job.id not in seen:
-                    seen.add(detail_job.id)
-                    out.append(detail_job)
-                continue
-
-            # If the list payload itself is complete, use it without inventing
-            # fields. Require a real date and substantial employer description.
-            desc = _adp_description(item)
-            pd = pd or pdate(_first_deep(
-                item, {"datePosted", "postingDate", "postDate", "postedDate"}, ""
-            ))
-            if not pd or pd < CUTOFF or len(strip_html(desc)) < 200:
-                continue
-            loc = _adp_location(item)
-            city, state, country = _split_adp_location(loc)
-            seen.add(jid)
-            out.append(Job(
-                jid, title, src["Company"], desc, pd,
-                jobtype(title, clean(str(_first_deep(
-                    item, {"employmentType", "workerType", "timeType"}, ""
-                )))),
-                category(title, desc, src["Industry"], src["Company"]),
-                detail_url, src["URL"], src["URL"], "",
-                normalize_work_arrangement(desc, loc),
-                city, state, country or infer_country(loc, src["Company"], desc),
-            ))
-
-    # Preserve the older rendered-page recovery as a safe fallback while the
-    # CX API behavior is being verified in targeted tests.
-    return out or hubbard_v23(src)
-
+    return out
 
 def hubbard_v23(src):
     """Recover Hubbard's newer ADP CX job-detail links from the public board."""
