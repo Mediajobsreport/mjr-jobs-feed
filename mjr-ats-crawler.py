@@ -7200,12 +7200,163 @@ def tegna_v17(src):
 
 
 def cumulus_v17(src):
-    """Cumulus public career site collector with common listing variants."""
+    """Cumulus direct Jibe collector with same-host fallback.
+
+    Cumulus uses the same Jibe-style career platform signature as other
+    /jobs/{id}?lang=en-us sites. The public listing HTML can contain no job
+    anchors even while individual jobs are live, so enumerate the site's
+    public /api/jobs endpoint first and parse only canonical Cumulus details.
+    """
+    host = "https://jobs.cumulusmedia.com"
+    api = host + "/api/jobs"
+    detail_urls = set()
+    prior_ids = set()
+
+    # First use the public Jibe jobs API. Keep pagination bounded and stop when
+    # the tenant repeats a page or reports no records.
+    try:
+        for page_num in range(1, 31):
+            rr = req(
+                "GET",
+                (
+                    f"{api}?page={page_num}&sortBy=relevance&descending=false"
+                    f"&internal=false&limit=100"
+                ),
+                headers={
+                    "Accept": "application/json, text/plain, */*",
+                    "Referer": host + "/jobs",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            )
+            payload = rr.json()
+            rows = payload.get("jobs") or [] if isinstance(payload, dict) else []
+            ids = set()
+            for item in rows:
+                if not isinstance(item, dict):
+                    continue
+                data = item.get("data", item)
+                if not isinstance(data, dict):
+                    continue
+                jid = clean(str(
+                    data.get("slug")
+                    or data.get("req_id")
+                    or data.get("id")
+                    or data.get("jobId")
+                    or ""
+                ))
+                if re.fullmatch(r"\\d{3,10}", jid):
+                    ids.add(jid)
+                    detail_urls.add(f"{host}/jobs/{jid}?lang=en-us")
+            print(
+                f"Cumulus Jibe API page={page_num} rows={len(rows)} "
+                f"ids={len(ids)}"
+            )
+            if not rows or (ids and ids.issubset(prior_ids)):
+                break
+            prior_ids |= ids
+            total = payload.get("totalCount") if isinstance(payload, dict) else None
+            if isinstance(total, int) and len(prior_ids) >= total:
+                break
+    except Exception as e:
+        print(
+            f"Cumulus Jibe API HTTP fallback: "
+            f"{type(e).__name__}: {clean(str(e))[:180]}"
+        )
+
+    # If ordinary HTTP is blocked, bootstrap the same public API through the
+    # site's browser session. This is enumeration only; canonical detail pages
+    # remain the source of job content and dates.
+    if not detail_urls and sync_playwright is not None:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(
+                    headless=True,
+                    args=["--disable-dev-shm-usage", "--no-sandbox"],
+                )
+                page = browser.new_page()
+                page.goto(host + "/jobs", wait_until="domcontentloaded", timeout=60000)
+                try:
+                    page.wait_for_load_state("networkidle", timeout=12000)
+                except Exception:
+                    page.wait_for_timeout(3000)
+                prior_ids = set()
+                for page_num in range(1, 31):
+                    url = (
+                        f"{api}?page={page_num}&sortBy=relevance&descending=false"
+                        f"&internal=false&limit=100"
+                    )
+                    resp = page.request.get(
+                        url,
+                        headers={
+                            "Accept": "application/json, text/plain, */*",
+                            "Referer": host + "/jobs",
+                        },
+                        timeout=30000,
+                    )
+                    if resp.status != 200:
+                        break
+                    payload = resp.json()
+                    rows = payload.get("jobs") or [] if isinstance(payload, dict) else []
+                    ids = set()
+                    for item in rows:
+                        if not isinstance(item, dict):
+                            continue
+                        data = item.get("data", item)
+                        if not isinstance(data, dict):
+                            continue
+                        jid = clean(str(
+                            data.get("slug")
+                            or data.get("req_id")
+                            or data.get("id")
+                            or data.get("jobId")
+                            or ""
+                        ))
+                        if re.fullmatch(r"\\d{3,10}", jid):
+                            ids.add(jid)
+                            detail_urls.add(f"{host}/jobs/{jid}?lang=en-us")
+                    print(
+                        f"Cumulus Jibe browser API page={page_num} "
+                        f"rows={len(rows)} ids={len(ids)}"
+                    )
+                    if not rows or (ids and ids.issubset(prior_ids)):
+                        break
+                    prior_ids |= ids
+                    total = payload.get("totalCount") if isinstance(payload, dict) else None
+                    if isinstance(total, int) and len(prior_ids) >= total:
+                        break
+                browser.close()
+        except Exception as e:
+            print(
+                f"Cumulus Jibe browser fallback failed: "
+                f"{type(e).__name__}: {clean(str(e))[:180]}"
+            )
+
+    out, seen_ids = [], set()
+    for url in sorted(detail_urls):
+        try:
+            rr = req("GET", url)
+            final = str(getattr(rr, "url", "") or url)
+            j = _job_from_detail(src, final, rr.text)
+            if not j:
+                j = _direct_board_job(src, final, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+
+    if out:
+        print(
+            f"Cumulus Jibe direct: details={len(detail_urls)} parsed={len(out)}"
+        )
+        return out
+
+    # Preserve the older same-host discovery path as a final fallback.
     return _v17_samehost_details(
         src,
         [
-            "https://jobs.cumulusmedia.com/jobs",
-            "https://jobs.cumulusmedia.com/",
+            host + "/jobs",
+            host + "/",
             src["URL"],
         ],
         {"jobs.cumulusmedia.com"},
