@@ -442,6 +442,15 @@ def category(title, desc, industry, company):
     if re.search(r"\b(morning show personality|radio personality|air personality|on[- ]air personality)\b", t):
         return "Radio"
 
+    # Generic Program Director is Radio when the posting clearly identifies
+    # a radio/public-radio operation. This must precede description fallbacks
+    # because public-media fundraising language can otherwise look like Sales.
+    if re.search(r"\bprogram director\b", t) and re.search(
+        r"\b(public radio|radio station|radio programming|on[- ]air|broadcast programming|fm station|am station|radio network)\b",
+        d_short,
+    ):
+        return "Radio"
+
     if re.search(r"\b(business supervisor|business director|director,? business|supervisor,? business)\b", t):
         return "Business Office"
 
