@@ -7431,16 +7431,125 @@ def townsquare_v17(src):
 
 
 def nbcuniversal_v17(src):
-    return _v17_samehost_details(
-        src,
-        [
-            "https://www.nbcunicareers.com/find-a-job",
-            src["URL"],
-        ],
-        {"nbcunicareers.com"},
-        max_pages=140,
-        max_jobs=4000,
+    """Collect NBCUniversal's public SmartRecruiters postings.
+
+    NBCUniversal's careers shell no longer exposes enumerable same-host job
+    details. Its authoritative public postings are published by SmartRecruiters
+    under company identifier NBCUniversal3. Use the structured public API,
+    follow only returned detail refs, and keep the crawl bounded.
+    """
+    company_id = "NBCUniversal3"
+    endpoint = f"https://api.smartrecruiters.com/v1/companies/{company_id}/postings"
+    out = []
+    seen_ids = set()
+    offset = 0
+    limit = 100
+    rows_checked = 0
+
+    while offset < 5000:
+        payload = req(
+            "GET",
+            endpoint,
+            params={"limit": str(limit), "offset": str(offset)},
+        ).json()
+        rows = payload.get("content", []) if isinstance(payload, dict) else []
+        if not rows:
+            break
+
+        for summary in rows:
+            if not isinstance(summary, dict):
+                continue
+            rows_checked += 1
+            detail = summary
+            ref = clean(str(summary.get("ref") or ""))
+            if ref:
+                try:
+                    detail = req("GET", ref).json()
+                except Exception:
+                    detail = summary
+            if not isinstance(detail, dict):
+                continue
+
+            jid = clean(str(detail.get("id") or summary.get("id") or ""))
+            if not jid or jid in seen_ids:
+                continue
+            seen_ids.add(jid)
+
+            pd = pdate(detail.get("releasedDate") or summary.get("releasedDate"))
+            if not pd or pd < CUTOFF:
+                continue
+
+            title = clean(str(detail.get("name") or summary.get("name") or ""))
+            if not title:
+                continue
+
+            location_obj = detail.get("location") or summary.get("location") or {}
+            if not isinstance(location_obj, dict):
+                location_obj = {}
+            city = clean(str(location_obj.get("city") or ""))
+            state = clean(str(location_obj.get("region") or ""))
+            country_raw = clean(str(location_obj.get("country") or ""))
+            full_location = clean(str(
+                location_obj.get("fullLocation")
+                or ", ".join(x for x in [city, state, country_raw] if x)
+            ))
+            country = infer_country(full_location, src["Company"], "")
+            if country not in {"US", "CA"}:
+                continue
+
+            sections = ((detail.get("jobAd") or {}).get("sections") or {})
+            desc_parts = []
+            if isinstance(sections, dict):
+                for section in sections.values():
+                    if isinstance(section, dict) and section.get("text"):
+                        desc_parts.append(str(section.get("text")))
+            desc = format_description("".join(desc_parts))
+            if len(strip_html(desc)) < 200:
+                continue
+
+            apply_url = clean(str(
+                detail.get("applyUrl")
+                or summary.get("applyUrl")
+                or f"https://jobs.smartrecruiters.com/{company_id}/{jid}"
+            ))
+            employment = clean(str(
+                (detail.get("typeOfEmployment") or {}).get("label", "")
+                if isinstance(detail.get("typeOfEmployment"), dict)
+                else detail.get("typeOfEmployment") or ""
+            ))
+            remote = bool(location_obj.get("remote"))
+            work = "Remote" if remote else normalize_work_arrangement(
+                desc, full_location, title
+            )
+
+            out.append(Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, employment),
+                category(title, desc, src["Industry"], src["Company"]),
+                apply_url,
+                src["URL"],
+                "https://jobs.smartrecruiters.com/NBCUniversal3",
+                "",
+                work,
+                city or full_location,
+                state,
+                country,
+            ))
+
+        total = payload.get("totalFound") if isinstance(payload, dict) else None
+        offset += len(rows)
+        if len(rows) < limit or (isinstance(total, int) and offset >= total):
+            break
+
+    print(
+        f"NBCUniversal SmartRecruiters: rows_checked={rows_checked} "
+        f"unique={len(seen_ids)} fresh_us_ca={len(out)}"
     )
+    return out
 
 
 def tegna_v17(src):
