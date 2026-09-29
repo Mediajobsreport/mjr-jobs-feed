@@ -7431,12 +7431,13 @@ def townsquare_v17(src):
 
 
 def nbcuniversal_v17(src):
-    """Collect NBCUniversal's public SmartRecruiters postings.
+    """Collect NBCUniversal's public SmartRecruiters postings efficiently.
 
-    NBCUniversal's careers shell no longer exposes enumerable same-host job
-    details. Its authoritative public postings are published by SmartRecruiters
-    under company identifier NBCUniversal3. Use the structured public API,
-    follow only returned detail refs, and keep the crawl bounded.
+    SmartRecruiters list results already contain releasedDate and location.
+    Filter the public inventory to MJR's freshness window at the list endpoint,
+    reject non-US/Canada summaries before detail retrieval, and fetch details
+    only for jobs that can actually enter the feed. This keeps NBCU well below
+    the crawler's per-domain request safety cap.
     """
     company_id = "NBCUniversal3"
     endpoint = f"https://api.smartrecruiters.com/v1/companies/{company_id}/postings"
@@ -7445,12 +7446,21 @@ def nbcuniversal_v17(src):
     offset = 0
     limit = 100
     rows_checked = 0
+    details_fetched = 0
+    stale_or_invalid = 0
+    foreign = 0
+    released_after = CUTOFF.isoformat() + "T00:00:00.000Z"
 
     while offset < 5000:
         payload = req(
             "GET",
             endpoint,
-            params={"limit": str(limit), "offset": str(offset)},
+            params={
+                "limit": str(limit),
+                "offset": str(offset),
+                "destination": "PUBLIC",
+                "releasedAfter": released_after,
+            },
         ).json()
         rows = payload.get("content", []) if isinstance(payload, dict) else []
         if not rows:
@@ -7460,42 +7470,71 @@ def nbcuniversal_v17(src):
             if not isinstance(summary, dict):
                 continue
             rows_checked += 1
+
+            jid = clean(str(summary.get("id") or ""))
+            if not jid or jid in seen_ids:
+                continue
+            seen_ids.add(jid)
+
+            # List objects contain releasedDate and location. Reject anything
+            # outside MJR's scope before spending a detail request.
+            pd = pdate(summary.get("releasedDate"))
+            if not pd or pd < CUTOFF:
+                stale_or_invalid += 1
+                continue
+
+            sloc = summary.get("location") or {}
+            if not isinstance(sloc, dict):
+                sloc = {}
+            country_raw = clean(str(sloc.get("country") or "")).upper()
+            if country_raw in {"US", "USA", "UNITED STATES", "UNITED STATES OF AMERICA"}:
+                summary_country = "US"
+            elif country_raw in {"CA", "CANADA"}:
+                summary_country = "CA"
+            else:
+                summary_loc = clean(", ".join(
+                    str(x) for x in [
+                        sloc.get("city"), sloc.get("region"), sloc.get("country")
+                    ] if x
+                ))
+                summary_country = infer_country(summary_loc, src["Company"], "")
+            if summary_country not in {"US", "CA"}:
+                foreign += 1
+                continue
+
             detail = summary
             ref = clean(str(summary.get("ref") or ""))
             if ref:
                 try:
                     detail = req("GET", ref).json()
+                    details_fetched += 1
                 except Exception:
                     detail = summary
             if not isinstance(detail, dict):
-                continue
-
-            jid = clean(str(detail.get("id") or summary.get("id") or ""))
-            if not jid or jid in seen_ids:
-                continue
-            seen_ids.add(jid)
-
-            pd = pdate(detail.get("releasedDate") or summary.get("releasedDate"))
-            if not pd or pd < CUTOFF:
                 continue
 
             title = clean(str(detail.get("name") or summary.get("name") or ""))
             if not title:
                 continue
 
-            location_obj = detail.get("location") or summary.get("location") or {}
+            location_obj = detail.get("location") or sloc
             if not isinstance(location_obj, dict):
                 location_obj = {}
             city = clean(str(location_obj.get("city") or ""))
-            state = clean(str(location_obj.get("region") or ""))
-            country_raw = clean(str(location_obj.get("country") or ""))
+            state = clean(str(
+                location_obj.get("regionCode")
+                or location_obj.get("region")
+                or ""
+            ))
             full_location = clean(str(
                 location_obj.get("fullLocation")
-                or ", ".join(x for x in [city, state, country_raw] if x)
+                or ", ".join(x for x in [
+                    city, state, location_obj.get("country")
+                ] if x)
             ))
             country = infer_country(full_location, src["Company"], "")
             if country not in {"US", "CA"}:
-                continue
+                country = summary_country
 
             sections = ((detail.get("jobAd") or {}).get("sections") or {})
             desc_parts = []
@@ -7509,17 +7548,23 @@ def nbcuniversal_v17(src):
 
             apply_url = clean(str(
                 detail.get("applyUrl")
+                or detail.get("postingUrl")
                 or summary.get("applyUrl")
+                or summary.get("postingUrl")
                 or f"https://jobs.smartrecruiters.com/{company_id}/{jid}"
             ))
+            employment_obj = detail.get("typeOfEmployment") or summary.get("typeOfEmployment") or {}
             employment = clean(str(
-                (detail.get("typeOfEmployment") or {}).get("label", "")
-                if isinstance(detail.get("typeOfEmployment"), dict)
-                else detail.get("typeOfEmployment") or ""
+                employment_obj.get("label", "")
+                if isinstance(employment_obj, dict)
+                else employment_obj or ""
             ))
             remote = bool(location_obj.get("remote"))
-            work = "Remote" if remote else normalize_work_arrangement(
-                desc, full_location, title
+            hybrid = bool(location_obj.get("hybrid"))
+            work = (
+                "Remote" if remote
+                else "Hybrid" if hybrid
+                else normalize_work_arrangement(desc, full_location, title)
             )
 
             out.append(Job(
@@ -7547,7 +7592,9 @@ def nbcuniversal_v17(src):
 
     print(
         f"NBCUniversal SmartRecruiters: rows_checked={rows_checked} "
-        f"unique={len(seen_ids)} fresh_us_ca={len(out)}"
+        f"unique={len(seen_ids)} details={details_fetched} "
+        f"foreign={foreign} stale_or_invalid={stale_or_invalid} "
+        f"fresh_us_ca={len(out)}"
     )
     return out
 
