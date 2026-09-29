@@ -1435,6 +1435,22 @@ def workday(src):
             title = clean(info.get("title") or p.get("title"))
             desc = format_description(info.get("jobDescription"))
             loc = clean(info.get("location") or p.get("locationsText"))
+
+            # Workday often supplies only a display location, with no country
+            # code. Do not let a US-based employer cause obvious international
+            # offices to be inferred as US jobs.
+            loc_low = loc.lower()
+            foreign_workday = re.search(
+                r"\b(london|barcelona|berlin|tokyo|paris|madrid|amsterdam|"
+                r"dublin|singapore|sydney|melbourne|munich|frankfurt|rome|"
+                r"milan|lisbon|vienna|zurich|geneva|brussels|hong kong|"
+                r"united kingdom|england|germany|spain|france|italy|japan|"
+                r"australia|singapore|netherlands|ireland|switzerland)\b",
+                loc_low,
+            )
+            if foreign_workday:
+                continue
+
             url = info.get("externalUrl") or f"https://{host}/{site}{ext}"
 
             out.append(
