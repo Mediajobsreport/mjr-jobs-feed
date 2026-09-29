@@ -8362,6 +8362,50 @@ def connoisseur_paycor(src):
             raw_html = r.text
             txt = clean(BeautifulSoup(raw_html, "html.parser").get_text(" "))
         soup = BeautifulSoup(raw_html, "html.parser")
+        stable_paycor_key = paycor_key(url)
+        board_meta_direct = paycor_board_meta.get(stable_paycor_key) or {}
+        direct_title = clean(str(board_meta_direct.get("title") or rendered_title or "")) if rendered else clean(str(board_meta_direct.get("title") or ""))
+        direct_card = clean(str(board_meta_direct.get("card") or rendered_card or "")) if rendered else clean(str(board_meta_direct.get("card") or ""))
+
+        # Paycor iframe pages do not expose the structured title/date fields
+        # expected by the generic detail parser. When we have the authoritative
+        # board record plus the real iframe body, construct the job directly.
+        if rendered and direct_title and txt and len(txt) >= 200:
+            loc_matches = re.findall(
+                r"\\b([A-Z][A-Za-z .'-]{1,80}),\\s*([A-Z]{2})(?:\\s+\\d{5}(?:-\\d{4})?)?\\b",
+                direct_card,
+            )
+            city, state = "", ""
+            if loc_matches:
+                city, state = loc_matches[-1]
+                city = clean(city.split(",")[-1])
+                state = state.upper()
+
+            pd = _direct_board_date(txt) or TODAY
+            jt = jobtype(direct_title, txt)
+            cat = category(direct_title, txt, src["Industry"], src["Company"])
+            _ct = direct_title.lower()
+            if "intern" in _ct:
+                cat = "Internships"
+            elif any(x in _ct for x in ("account executive", "account manager", "sales executive", "sales director", "sales manager", "marketing consultant", "digital sales")):
+                cat = "Sales & Marketing"
+            elif any(x in _ct for x in ("network administrator", "chief engineer", "remote technician")):
+                cat = "Engineering"
+            elif "traffic coordinator" in _ct or "sales assistant" in _ct or "administrative" in _ct:
+                cat = "Business Office"
+            elif any(x in _ct for x in ("on-air", "on air", "board operator", "program director", "news reporter", "street team", "promotions")):
+                cat = "Radio"
+
+            desc_html = format_description(raw_html)
+            out.append(Job(
+                hashlib.sha1(stable_paycor_key.encode()).hexdigest()[:16],
+                direct_title, src["Company"], desc_html, pd, jt, cat,
+                url, src["URL"], src["URL"], "",
+                normalize_work_arrangement(txt, (city + ", " + state).strip(", ")),
+                city, state, "US",
+            ))
+            continue
+
         j = _job_from_detail(src, url, raw_html)
         if j:
             if rendered:
@@ -8666,7 +8710,7 @@ def midwest_family_direct(src):
 
     for market, page in markets:
         try:
-            r = _req_raw("GET", page, tries=1)
+            r = _req_raw("GET", page)
         except Exception as ex:
             print("MIDWEST_FAMILY_PAGE_ERROR:", market, type(ex).__name__, str(ex)[:200])
             continue
