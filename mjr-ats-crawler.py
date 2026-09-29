@@ -8425,10 +8425,25 @@ def connoisseur_paycor(src):
 
             pd = _direct_board_date(txt)
             if not pd:
-                stored = st.get(stable_paycor_key, {}).get("job", {}) if isinstance(st.get(stable_paycor_key), dict) else {}
+                # Paycor does not consistently publish a posting date. Preserve
+                # the first-seen date by stable Paycor job identity rather than
+                # assigning TODAY on every crawl. Global state is URL-keyed, so
+                # locate the prior record by the deterministic Job.id generated
+                # from clientId|Paycor job id.
+                stable_job_id = hashlib.sha1(stable_paycor_key.encode()).hexdigest()[:16]
+                stored = {}
+                for _state_row in st.values():
+                    if not isinstance(_state_row, dict):
+                        continue
+                    _stored_job = _state_row.get("job") or {}
+                    if isinstance(_stored_job, dict) and clean(str(_stored_job.get("id") or "")) == stable_job_id:
+                        stored = _stored_job
+                        break
                 try:
                     pd = date.fromisoformat(str(stored.get("date") or ""))
                 except Exception:
+                    # First production sighting only: establish the first-seen
+                    # date. Subsequent crawls recover this value by Paycor ID.
                     pd = TODAY
             jt = jobtype(direct_title, txt)
             cat = category(direct_title, txt, src["Industry"], src["Company"])
