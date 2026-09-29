@@ -8398,7 +8398,9 @@ def connoisseur_paycor(src):
 
             # Keep only the actual iframe posting text. Paycor's body HTML
             # also contains application-form controls that polluted the feed.
-            desc_html = "<p>" + escape_xml(txt) + "</p>"
+            desc_html = "<p>" + (
+                txt.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            ) + "</p>"
             out.append(Job(
                 hashlib.sha1(stable_paycor_key.encode()).hexdigest()[:16],
                 direct_title, src["Company"], desc_html, pd, jt, cat,
