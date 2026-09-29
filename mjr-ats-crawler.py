@@ -8242,6 +8242,20 @@ def connoisseur_paycor(src):
                                     detail_page.wait_for_timeout(350)
                                     rendered_html = detail_page.content()
                                     rendered_text = clean(detail_page.locator("body").inner_text())
+                                    # The Connoisseur wrapper is generic; the actual
+                                    # Paycor job description lives inside its iframe.
+                                    for _job_frame in detail_page.frames:
+                                        if "recruitingbypaycor.com" not in (_job_frame.url or "").lower():
+                                            continue
+                                        try:
+                                            _frame_text = clean(_job_frame.locator("body").inner_text())
+                                            _frame_html = _job_frame.locator("body").inner_html()
+                                            if len(_frame_text) >= 200:
+                                                rendered_text = _frame_text
+                                                rendered_html = "<html><body>" + _frame_html + "</body></html>"
+                                                break
+                                        except Exception:
+                                            pass
                                     if n == 1:
                                         print("CONNOISSEUR_PAYCOR_DETAIL_URL:", detail_page.url)
                                         print("CONNOISSEUR_PAYCOR_DETAIL_TEXT:", rendered_text[:12000])
@@ -8639,7 +8653,7 @@ def midwest_family_direct(src):
 
     for market, page in markets:
         try:
-            r = _req_raw("GET", page, timeout=6, tries=1)
+            r = _req_raw("GET", page, tries=1)
         except Exception as ex:
             print("MIDWEST_FAMILY_PAGE_ERROR:", market, type(ex).__name__, str(ex)[:200])
             continue
