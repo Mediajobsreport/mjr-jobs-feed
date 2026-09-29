@@ -8227,6 +8227,40 @@ def connoisseur_paycor(src):
                             for _mk, _mv in list(paycor_board_meta.items())[:3]:
                                 print("CONNOISSEUR_PAYCOR_BOARD_META:", _mk, "|", clean(str(_mv))[:1800])
 
+                            # Paycor occasionally returns a blank CareerHome iframe.
+                            # Retry the first-party board directly before accepting zero.
+                            if paycor_found == 0:
+                                retry_url = "https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b"
+                                for _attempt in range(2):
+                                    try:
+                                        rp = context.new_page()
+                                        rp.goto(retry_url, wait_until="domcontentloaded", timeout=20000)
+                                        rp.wait_for_timeout(2500)
+                                        retry_links = rp.locator("a[href*='JobIntroduction.action']").evaluate_all(
+                                            "els => els.map(a => ({href:a.href||'', text:(a.innerText||'').trim(), card:((a.parentElement?.parentElement?.innerText||a.parentElement?.innerText||'')).replace(/\\s+/g,' ').trim()}))"
+                                        )
+                                        rp.close()
+                                        for item in retry_links:
+                                            hu = clean(str(item.get("href") or "")).split("#", 1)[0]
+                                            if not hu:
+                                                continue
+                                            detail_urls.append(hu)
+                                            ph = urlparse(hu)
+                                            qh = parse_qs(ph.query)
+                                            cid = (qh.get("clientId") or [""])[0]
+                                            jid = (qh.get("id") or [""])[0]
+                                            mk = cid + "|" + jid if jid else hu
+                                            paycor_board_meta[mk] = {
+                                                "title": clean(str(item.get("text") or "")),
+                                                "card": clean(str(item.get("card") or "")),
+                                            }
+                                        paycor_found = len(retry_links)
+                                        print("CONNOISSEUR_PAYCOR_RETRY_ENUMERATED:", paycor_found)
+                                        if paycor_found:
+                                            break
+                                    except Exception as ex:
+                                        print("CONNOISSEUR_PAYCOR_RETRY_ERROR:", type(ex).__name__, str(ex)[:200])
+
                             # Render Paycor detail pages in the authenticated/live
                             # browser context. Standalone HTTP requests to these
                             # JobIntroduction pages do not expose parseable content.
