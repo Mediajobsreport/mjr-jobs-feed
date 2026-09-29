@@ -10397,6 +10397,13 @@ def _v28_before_request(url):
     if host in {"careers.paramount.com", "www.careers.paramount.com"}:
         host_cap = max(host_cap, int(os.getenv("MJR_PARAMOUNT_REQUEST_CAP", "300")))
 
+    # NBCUniversal publishes a large current inventory through SmartRecruiters.
+    # The collector first filters list summaries by date and US/Canada location,
+    # then follows only qualifying detail refs. Give that verified, bounded
+    # collector enough room to finish without weakening the global default.
+    if host == "api.smartrecruiters.com":
+        host_cap = max(host_cap, int(os.getenv("MJR_SMARTRECRUITERS_REQUEST_CAP", "350")))
+
     # Hearst Television and Hearst Newspapers use different Oracle sites on
     # the same hostname. The domain counter is shared, so the normal per-source
     # allowance can be exhausted by the first site before the second begins.
