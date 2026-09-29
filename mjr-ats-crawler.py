@@ -1363,7 +1363,7 @@ def workday(src):
                     ep,
                     json={
                         "appliedFacets": {},
-                        "limit": 20,
+                        "limit": 100,
                         "offset": 0,
                         "searchText": "",
                     },
@@ -1397,7 +1397,7 @@ def workday(src):
             ep,
             json={
                 "appliedFacets": {},
-                "limit": 20,
+                "limit": 100,
                 "offset": offset,
                 "searchText": "",
             },
@@ -1413,6 +1413,13 @@ def workday(src):
             if not ext:
                 continue
 
+            # Workday list payloads already include postedOn. Reject stale
+            # postings before the per-job detail request; large tenants can
+            # otherwise exhaust the domain request cap on jobs MJR cannot use.
+            list_pd = pdate(p.get("postedOn"))
+            if list_pd and list_pd < CUTOFF:
+                continue
+
             try:
                 info = req(
                     "GET",
@@ -1421,7 +1428,7 @@ def workday(src):
             except Exception:
                 continue
 
-            pd = pdate(info.get("postedOn") or p.get("postedOn"))
+            pd = pdate(info.get("postedOn")) or list_pd
             if not pd or pd < CUTOFF:
                 continue
 
