@@ -8829,6 +8829,9 @@ def midwest_family_direct(src):
 
         for title, box in candidates:
             title_key = title.lower().strip().rstrip(":")
+            if title_key == "join the ownership class." and "account-executive" in str(box).lower():
+                title = "Account Executive"
+                title_key = "account executive"
             if (
                 "@" in title
                 or title_key in skip_titles
