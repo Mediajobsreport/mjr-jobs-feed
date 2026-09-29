@@ -492,6 +492,16 @@ def category(title, desc, industry, company):
     if re.search(r"\bassignment desk(?: assistant| editor| manager| coordinator)?\b", t) and television_context:
         return "Television"
 
+    # Print/digital newsroom editing and news-design titles are Journalism.
+    # Keep this title-first so generic business/product language in newspaper
+    # descriptions does not push editorial jobs into Business Office.
+    if ind == "journalism" and re.search(
+        r"\b(news designer|newsroom designer|news editor|editor,? the |"
+        r"assignment editor|photo assignment editor|copy editor|visual editor)\b",
+        t,
+    ):
+        return "Journalism"
+
     # ------------------------------------------------------------------
     # 2) ENGINEERING / IT / SOFTWARE / PROGRAMMING / TECHNICAL SYSTEMS
     #
