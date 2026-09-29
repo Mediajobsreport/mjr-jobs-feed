@@ -8780,7 +8780,12 @@ def midwest_family_direct(src):
 
         for title, box in candidates:
             title_key = title.lower().strip().rstrip(":")
-            if "@" in title or title_key in skip_titles:
+            if (
+                "@" in title
+                or title_key in skip_titles
+                or title_key.startswith("what’s in it for you")
+                or title_key.startswith("what's in it for you")
+            ):
                 continue
             raw = str(box)
             body = clean(box.get_text(" "))
@@ -8824,7 +8829,9 @@ def midwest_family_direct(src):
 
             locm = re.search(r"\\b([A-Z][A-Za-z .'-]+,\\s*[A-Z]{2})\\b", body)
             loc = clean(locm.group(1)) if locm else market
-            mm = re.match(r"(.+?),\\s*([A-Z]{2})$", loc)
+            mm = re.match(r"(.+?),[ ]*([A-Z]{2})$", loc)
+            if not mm:
+                mm = re.match(r"(.+?),[ ]*([A-Z]{2})$", market)
             city, state = (clean(mm.group(1)), mm.group(2)) if mm else (loc, "")
 
             seen.add(key)
