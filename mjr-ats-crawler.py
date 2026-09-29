@@ -214,18 +214,28 @@ def pdate(v):
 
 
 def _req_raw(method, url, **kw):
+    last_retryable = None
     for n in range(4):
         try:
             r = SESSION.request(method, url, timeout=15, **kw)
             if r.status_code in (429, 500, 502, 503, 504):
-                time.sleep(2**n)
-                continue
+                last_retryable = RuntimeError(f"HTTP {r.status_code} for {url}")
+                if n < 3:
+                    time.sleep(2**n)
+                    continue
+                raise last_retryable
             r.raise_for_status()
             return r
         except requests.RequestException:
             if n == 3:
                 raise
             time.sleep(2**n)
+
+    # Defensive guard: never allow a failed request path to return None.
+    # Callers expect a response object and may immediately access .text/.json().
+    if last_retryable:
+        raise last_retryable
+    raise RuntimeError(f"Request failed without a response for {url}")
 
 
 
