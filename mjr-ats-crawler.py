@@ -3025,21 +3025,39 @@ def ukg(src):
                 "QueryString": "",
                 "OrderBy": [
                     {
-                        "Value": "postedDate",
+                        "Value": "postedDateDesc",
                         "PropertyName": "PostedDate",
                         "Ascending": False,
                     }
                 ],
-                "Filters": [],
+                "Filters": [
+                    {
+                        "t": "TermsSearchFilterDto",
+                        "fieldName": 4,
+                        "extra": None,
+                        "values": [],
+                    },
+                    {
+                        "t": "TermsSearchFilterDto",
+                        "fieldName": 5,
+                        "extra": None,
+                        "values": [],
+                    },
+                    {
+                        "t": "TermsSearchFilterDto",
+                        "fieldName": 6,
+                        "extra": None,
+                        "values": [],
+                    },
+                ],
             },
             "matchCriteria": {
                 "PreferredJobs": [],
                 "Educations": [],
                 "LicenseAndCertifications": [],
                 "Skills": [],
-                "Experiences": [],
-                "Locations": [],
-                "OpportunityIds": [],
+                "hasNoLicenses": False,
+                "SkippedSkills": [],
             },
         }
 
@@ -3066,6 +3084,25 @@ def ukg(src):
         # UKG deployments have used several wrappers. Recursively collect only
         # dictionaries that contain a real opportunity GUID.
         rows = []
+
+        # The canonical UKG response contains an "opportunities" array. Feed
+        # those rows directly to the generic recursive walker below while still
+        # tolerating alternate wrappers used by older tenants.
+        canonical = payload.get("opportunities") if isinstance(payload, dict) else None
+        if isinstance(canonical, list):
+            for item in canonical:
+                if not isinstance(item, dict):
+                    continue
+                oid = clean(str(
+                    item.get("Id")
+                    or item.get("id")
+                    or item.get("OpportunityId")
+                    or item.get("opportunityId")
+                    or ""
+                ))
+                if re.fullmatch(r"[0-9a-f-]{36}", oid, re.I):
+                    rows.append((oid, item))
+
         def walk(obj):
             if isinstance(obj, dict):
                 oid = clean(str(
