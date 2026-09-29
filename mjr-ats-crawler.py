@@ -8196,6 +8196,8 @@ def connoisseur_paycor(src):
                                     paycor_found += 1
                                 print("CONNOISSEUR_HANDOFF_PAYCOR_LINK:", clean(str(item))[:4000])
                             print("CONNOISSEUR_PAYCOR_ENUMERATED:", paycor_found)
+                            for _mk, _mv in list(paycor_board_meta.items())[:3]:
+                                print("CONNOISSEUR_PAYCOR_BOARD_META:", _mk, "|", clean(str(_mv))[:1800])
 
                             # Render Paycor detail pages in the authenticated/live
                             # browser context. Standalone HTTP requests to these
@@ -8309,9 +8311,28 @@ def connoisseur_paycor(src):
                 board_meta = paycor_board_meta.get(meta_key) or paycor_board_meta.get(url) or {}
                 real_title = clean(str(rendered_title or board_meta.get("title") or meta.get("title") or ""))
                 # Paycor's document title is generically "Career Openings".
-                # Prefer the job-specific heading captured from the rendered page.
+                # Prefer the job-specific heading captured from the live board.
                 if real_title and j.title.lower() in ("career openings", "careers", "job openings"):
                     j.title = real_title
+
+                # The live Paycor listing carries the physical address even when
+                # JobIntroduction renders a generic shell. Bind city/state from
+                # that same job-ID record instead of leaving Google Jobs location
+                # fields blank.
+                card_lines = board_meta.get("card_lines") or []
+                card_text = " | ".join(card_lines) or clean(str(rendered_card or board_meta.get("card") or ""))
+                loc_match = re.search(
+                    r"\\b([A-Z][A-Za-z .'-]{1,80}),\\s*([A-Z]{2})(?:\\s+\\d{5}(?:-\\d{4})?)?\\b",
+                    card_text,
+                )
+                if loc_match:
+                    j.city = clean(loc_match.group(1))
+                    j.state = loc_match.group(2).upper()
+                    j.country = "US"
+                    j.work_arrangement = normalize_work_arrangement(
+                        txt, j.city + ", " + j.state
+                    )
+
                 # Fall back to the board anchor text if Paycor omits a usable H1.
                 if j.title.lower() in ("career openings", "careers", "job openings"):
                     try:
