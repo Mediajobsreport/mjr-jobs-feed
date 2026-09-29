@@ -13309,7 +13309,7 @@ def main():
                 if company_route_key == "townsquare"
                 else nbcuniversal_v17(s)
                 if company_key == "nbcuniversal"
-                else tegna_v17(s)
+                else greenhouse(s)
                 if company_key == "tegna"
                 else cumulus_v17(s)
                 if company_key == "cumulus media"
