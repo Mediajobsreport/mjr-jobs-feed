@@ -2997,12 +2997,10 @@ def _ukg_detail(src, url, raw):
 def ukg(src):
     """Dedicated UKG Pro Recruiting / UltiPro public-board collector.
 
-    Public UKG boards use:
-      /{tenant}/JobBoard/{board-guid}/OpportunityDetail?opportunityId={guid}
-
-    The listing is JavaScript-heavy, but the opportunity URLs are exposed in
-    anchors/application state on public board pages. Enumerate those URLs,
-    follow listing pagination/search links, then parse each real detail page.
+    UKG boards enumerate opportunities through the public POST endpoint:
+      /JobBoardView/LoadSearchResults
+    using opportunitySearch Top/Skip pagination. Detail pages remain canonical
+    public OpportunityDetail URLs and are parsed by the existing strict parser.
     """
     parts = _ukg_parts(src["URL"])
     if not parts:
@@ -3010,68 +3008,153 @@ def ukg(src):
 
     base, tenant, board = parts
     board_root = f"{base}/{tenant}/JobBoard/{board}"
-    start = board_root + "/?q=&o=postedDateDesc&w=&wc=&we=&wpst="
-
-    queue = [start]
-    seen_pages = set()
+    list_url = board_root + "/JobBoardView/LoadSearchResults"
     detail_urls = set()
 
-    detail_pat = (
-        rf"/{re.escape(tenant)}/JobBoard/{re.escape(board)}/"
-        r"OpportunityDetail\?[^\"'<>\s]*opportunityId=[0-9a-f-]{36}"
-    )
+    # Current UKG Pro public board contract. Keep the body deliberately minimal;
+    # filters/search are empty because MJR wants every public opportunity.
+    skip = 0
+    page_size = 50
+    prior_ids = set()
 
-    while queue and len(seen_pages) < 80 and len(detail_urls) < 4000:
-        page = queue.pop(0)
-        key = page.rstrip("/")
-        if key in seen_pages:
-            continue
-        seen_pages.add(key)
+    while skip < 5000:
+        body = {
+            "opportunitySearch": {
+                "Top": page_size,
+                "Skip": skip,
+                "QueryString": "",
+                "OrderBy": [
+                    {
+                        "Value": "postedDate",
+                        "PropertyName": "PostedDate",
+                        "Ascending": False,
+                    }
+                ],
+                "Filters": [],
+            },
+            "matchCriteria": {
+                "PreferredJobs": [],
+                "Educations": [],
+                "LicenseAndCertifications": [],
+                "Skills": [],
+                "Experiences": [],
+                "Locations": [],
+                "OpportunityIds": [],
+            },
+        }
 
-        r = req("GET", page)
-        raw = html.unescape(r.text or "").replace("\\/", "/")
-        soup = BeautifulSoup(r.text, "html.parser")
+        try:
+            r = req(
+                "POST",
+                list_url,
+                json=body,
+                headers={
+                    "Accept": "application/json, text/plain, */*",
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Referer": board_root + "/",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            )
+            payload = r.json()
+        except Exception as e:
+            print(
+                f"UKG list API failed {src.get('Company','')}: "
+                f"{type(e).__name__}: {clean(str(e))[:160]}"
+            )
+            break
 
-        # Visible anchors.
-        for a in soup.find_all("a", href=True):
-            h = urljoin(page, a["href"])
-            hp = urlparse(h)
-            if hp.netloc.lower() != urlparse(base).netloc.lower():
-                continue
-            if "opportunitydetail" in hp.path.lower():
-                q = parse_qs(hp.query)
-                oid = clean((q.get("opportunityId") or [""])[0])
+        # UKG deployments have used several wrappers. Recursively collect only
+        # dictionaries that contain a real opportunity GUID.
+        rows = []
+        def walk(obj):
+            if isinstance(obj, dict):
+                oid = clean(str(
+                    obj.get("OpportunityId")
+                    or obj.get("opportunityId")
+                    or obj.get("Id")
+                    or obj.get("id")
+                    or ""
+                ))
                 if re.fullmatch(r"[0-9a-f-]{36}", oid, re.I):
-                    detail_urls.add(h.split("#", 1)[0])
-                    continue
+                    rows.append((oid, obj))
+                for v in obj.values():
+                    if isinstance(v, (dict, list)):
+                        walk(v)
+            elif isinstance(obj, list):
+                for v in obj:
+                    walk(v)
+        walk(payload)
 
-            # Follow UKG board-page controls/pagination while staying on this board.
-            if hp.path.rstrip("/").lower() == urlparse(board_root).path.rstrip("/").lower():
-                if h.rstrip("/") not in seen_pages:
-                    queue.append(h)
+        page_ids = set()
+        for oid, row in rows:
+            if oid in page_ids:
+                continue
+            page_ids.add(oid)
+            detail_urls.add(
+                f"{board_root}/OpportunityDetail?opportunityId={oid}"
+            )
 
-        # Hydrated state/scripts can contain escaped OpportunityDetail URLs.
-        for m in re.finditer(detail_pat, raw, re.I):
-            detail_urls.add(urljoin(base, m.group(0)))
+        print(
+            f"UKG list {src.get('Company','')}: skip={skip} "
+            f"rows={len(page_ids)}"
+        )
 
-        # Also recover bare opportunity IDs paired with this board in embedded JSON.
-        for m in re.finditer(
-            r'["\'](?:opportunityId|OpportunityId)["\']\s*:\s*["\']([0-9a-f-]{36})["\']',
-            raw,
-            re.I,
-        ):
-            oid = m.group(1)
-            detail_urls.add(f"{board_root}/OpportunityDetail?opportunityId={oid}")
+        if not page_ids or page_ids.issubset(prior_ids):
+            break
+        prior_ids |= page_ids
 
-        # Generic next/pagination controls, limited to the same board.
-        for h in _listing_next_links(page, soup):
-            hp = urlparse(h)
-            if (
-                hp.netloc.lower() == urlparse(base).netloc.lower()
-                and hp.path.rstrip("/").lower() == urlparse(board_root).path.rstrip("/").lower()
-                and h.rstrip("/") not in seen_pages
+        # Respect common total-count fields when exposed.
+        total = None
+        if isinstance(payload, dict):
+            for k in (
+                "Total", "total", "TotalCount", "totalCount",
+                "OpportunityCount", "opportunityCount",
             ):
-                queue.append(h)
+                try:
+                    if payload.get(k) is not None:
+                        total = int(payload.get(k))
+                        break
+                except Exception:
+                    pass
+        if total is not None and len(prior_ids) >= total:
+            break
+        if len(page_ids) < page_size:
+            break
+        skip += page_size
+
+    # Compatibility fallback: older tenants may still expose opportunity links
+    # in board HTML/application state. Keep this bounded so a broken board never
+    # slows the full crawl materially.
+    if not detail_urls:
+        start_url = board_root + "/?q=&o=postedDateDesc&w=&wc=&we=&wpst="
+        try:
+            r = req("GET", start_url)
+            raw = html.unescape(r.text or "").replace("\\/", "/")
+            soup = BeautifulSoup(r.text, "html.parser")
+
+            for a in soup.find_all("a", href=True):
+                h = urljoin(start_url, a["href"])
+                hp = urlparse(h)
+                if hp.netloc.lower() != urlparse(base).netloc.lower():
+                    continue
+                if "opportunitydetail" not in hp.path.lower():
+                    continue
+                oid = clean((parse_qs(hp.query).get("opportunityId") or [""])[0])
+                if re.fullmatch(r"[0-9a-f-]{36}", oid, re.I):
+                    detail_urls.add(
+                        f"{board_root}/OpportunityDetail?opportunityId={oid}"
+                    )
+
+            for m in re.finditer(
+                r'["\\'](?:opportunityId|OpportunityId)["\\']\\s*:\\s*["\\']([0-9a-f-]{36})["\\']',
+                raw,
+                re.I,
+            ):
+                detail_urls.add(
+                    f"{board_root}/OpportunityDetail?opportunityId={m.group(1)}"
+                )
+        except Exception:
+            pass
 
     out = []
     seen_ids = set()
@@ -3083,8 +3166,13 @@ def ukg(src):
                 seen_ids.add(j.id)
                 out.append(j)
         except Exception:
-            # One stale/closed opportunity should never abort the employer.
+            # Closed/stale opportunities must not abort the employer.
             continue
+
+    print(
+        f"UKG direct {src.get('Company','')}: "
+        f"details={len(detail_urls)} parsed={len(out)}"
+    )
     return out
 
 
