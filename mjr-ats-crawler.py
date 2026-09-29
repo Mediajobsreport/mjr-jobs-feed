@@ -1420,6 +1420,20 @@ def workday(src):
             if list_pd and list_pd < CUTOFF:
                 continue
 
+            # Large Workday boards also expose locationsText in the listing
+            # payload. Reject obvious international offices before spending a
+            # detail request; MJR carries only US/Canada jobs.
+            list_loc = clean(p.get("locationsText") or "")
+            if re.search(
+                r"\b(london|barcelona|berlin|tokyo|paris|madrid|amsterdam|"
+                r"dublin|singapore|sydney|melbourne|munich|frankfurt|rome|"
+                r"milan|lisbon|vienna|zurich|geneva|brussels|hong kong|"
+                r"united kingdom|england|germany|spain|france|italy|japan|"
+                r"australia|singapore|netherlands|ireland|switzerland)\b",
+                list_loc.lower(),
+            ):
+                continue
+
             try:
                 info = req(
                     "GET",
