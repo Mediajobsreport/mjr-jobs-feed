@@ -8398,7 +8398,7 @@ def connoisseur_paycor(src):
 
             # Keep only the actual iframe posting text. Paycor's body HTML
             # also contains application-form controls that polluted the feed.
-            desc_html = "<p>" + escape_xml(txt) + "</p>""
+            desc_html = "<p>" + escape_xml(txt) + "</p>"
             out.append(Job(
                 hashlib.sha1(stable_paycor_key.encode()).hexdigest()[:16],
                 direct_title, src["Company"], desc_html, pd, jt, cat,
@@ -8707,7 +8707,7 @@ def midwest_family_direct(src):
         "company", "services", "why join us", "our mission & vision",
         "job responsibilities", "responsibilities", "requirements",
         "qualifications", "benefits", "salary and benefits", "contact",
-        "position details", "description", "job description",,
+        "position details", "description", "job description",
         "about us", "bonus skills", "eeo statement", "experience",
         "pay range", "personal requirements", "salary",
         "we’re looking for", "we're looking for", "what you need",
