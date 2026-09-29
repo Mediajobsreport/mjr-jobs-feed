@@ -7486,19 +7486,19 @@ def nbcuniversal_v17(src):
             sloc = summary.get("location") or {}
             if not isinstance(sloc, dict):
                 sloc = {}
-            country_raw = clean(str(sloc.get("country") or "")).upper()
+            country_raw = clean(str(
+                sloc.get("countryCode")
+                or sloc.get("country")
+                or ""
+            )).upper()
             if country_raw in {"US", "USA", "UNITED STATES", "UNITED STATES OF AMERICA"}:
                 summary_country = "US"
             elif country_raw in {"CA", "CANADA"}:
                 summary_country = "CA"
             else:
-                summary_loc = clean(", ".join(
-                    str(x) for x in [
-                        sloc.get("city"), sloc.get("region"), sloc.get("country")
-                    ] if x
-                ))
-                summary_country = infer_country(summary_loc, src["Company"], "")
-            if summary_country not in {"US", "CA"}:
+                # SmartRecruiters supplies explicit country data. Do not let
+                # NBCUniversal's US employer identity turn an international
+                # city into a guessed US job.
                 foreign += 1
                 continue
 
@@ -7532,8 +7532,16 @@ def nbcuniversal_v17(src):
                     city, state, location_obj.get("country")
                 ] if x)
             ))
-            country = infer_country(full_location, src["Company"], "")
-            if country not in {"US", "CA"}:
+            detail_country_raw = clean(str(
+                location_obj.get("countryCode")
+                or location_obj.get("country")
+                or ""
+            )).upper()
+            if detail_country_raw in {"US", "USA", "UNITED STATES", "UNITED STATES OF AMERICA"}:
+                country = "US"
+            elif detail_country_raw in {"CA", "CANADA"}:
+                country = "CA"
+            else:
                 country = summary_country
 
             sections = ((detail.get("jobAd") or {}).get("sections") or {})
