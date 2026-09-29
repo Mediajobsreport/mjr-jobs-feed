@@ -8372,7 +8372,7 @@ def connoisseur_paycor(src):
         # board record plus the real iframe body, construct the job directly.
         if rendered and direct_title and txt and len(txt) >= 200:
             loc_matches = re.findall(
-                r"\\b([A-Z][A-Za-z .'-]{1,80}),\\s*([A-Z]{2})(?:\\s+\\d{5}(?:-\\d{4})?)?\\b",
+                r"([A-Z][A-Za-z .'-]{1,80}),[ ]*([A-Z]{2})(?:[ ]+[0-9]{5}(?:-[0-9]{4})?)?",
                 direct_card,
             )
             city, state = "", ""
@@ -8726,10 +8726,11 @@ def midwest_family_direct(src):
         # description text as direct siblings of the title heading.
         for box in soup.select("article, .post, .entry, .job, .career, [class*='job-'], [class*='career-'], [class*='post-']"):
             txt = clean(box.get_text(" "))
-            if len(txt) < 120 or not re.search(
-                r"\\b(apply|resume|employment|full[- ]?time|part[- ]?time|responsibilit|qualification|salary|compensation|position)\\b",
-                txt, re.I
-            ):
+            if len(txt) < 120 or not any(term in txt.lower() for term in (
+                "apply", "resume", "employment", "full-time", "full time",
+                "part-time", "part time", "responsibilit", "qualification",
+                "salary", "compensation", "position",
+            )):
                 continue
             head = box.find(["h1","h2","h3","h4","h5"])
             title = clean(head.get_text(" ") if head else "")
@@ -8758,7 +8759,10 @@ def midwest_family_direct(src):
                 ptxt = clean(parent.get_text(" "))
                 if 150 <= len(ptxt) <= 12000:
                     box = parent
-                    if re.search(r"\\b(apply|resume|employment|responsibilit|qualification|salary|position)\\b", ptxt, re.I):
+                    if any(term in ptxt.lower() for term in (
+                        "apply", "resume", "employment", "responsibilit",
+                        "qualification", "salary", "position",
+                    )):
                         break
                 else:
                     break
@@ -8771,10 +8775,11 @@ def midwest_family_direct(src):
             body = clean(box.get_text(" "))
             if len(body) < 120:
                 continue
-            if not re.search(
-                r"\\b(apply|resume|employment|full[- ]?time|part[- ]?time|responsibilit|qualification|salary|compensation|position)\\b",
-                body, re.I
-            ):
+            if not any(term in body.lower() for term in (
+                "apply", "resume", "employment", "full-time", "full time",
+                "part-time", "part time", "responsibilit", "qualification",
+                "salary", "compensation", "position",
+            )):
                 continue
 
             apply_url = final
@@ -8786,7 +8791,7 @@ def midwest_family_direct(src):
                 if (
                     re.search(r"/(?:job|jobs|career|careers|apply|employment)/", h, re.I)
                     or h.lower().endswith(".pdf")
-                    or re.search(r"\\b(apply|job description|details|learn more)\\b", label, re.I)
+                    or any(term in label for term in ("apply", "job description", "details", "learn more"))
                 ):
                     apply_url = h
                     break
