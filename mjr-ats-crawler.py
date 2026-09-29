@@ -10549,6 +10549,11 @@ def _company_test_key(value):
         "townsquare media inc": "townsquare",
         "townsquare interactive": "townsquare",
         "townsquare ignite": "townsquare",
+        "wsj/dow jones": "wsj/dow jones",
+        "wall street journal / dow jones": "wsj/dow jones",
+        "wall street journal/dow jones": "wsj/dow jones",
+        "dow jones": "wsj/dow jones",
+        "wall street journal": "wsj/dow jones",
     }
     # Future-proof Paramount source labels while keeping unrelated CBS rows
     # isolated unless they are explicitly part of the Paramount source row.
