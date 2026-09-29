@@ -2211,6 +2211,125 @@ def _dayforce_jobtype(title, item):
     return "Full Time"
 
 
+def _dayforce_modern_rendered(src):
+    """Enumerate a modern jobs.dayforcehcm.com board through its own UI.
+
+    Modern Dayforce boards use a CSRF-protected internal search request. Rather
+    than guessing tokens/endpoints or probing posting IDs, render the public
+    board briefly and capture job links exposed by the DOM and network traffic.
+    Individual posting pages are then parsed through the existing strict
+    JobPosting/detail parser. The browser work is bounded to keep full crawls
+    predictable.
+    """
+    if sync_playwright is None:
+        return []
+
+    start = src["URL"]
+    u = urlparse(start)
+    if u.netloc.lower() != "jobs.dayforcehcm.com":
+        return []
+
+    parts = [p for p in u.path.split("/") if p]
+    locale_re = re.compile(r"^[a-z]{2}-[A-Z]{2}$")
+    if parts and locale_re.match(parts[0]):
+        namespace = parts[1] if len(parts) > 1 else ""
+        board = parts[2] if len(parts) > 2 else "CANDIDATEPORTAL"
+    else:
+        namespace = parts[0] if parts else ""
+        board = parts[1] if len(parts) > 1 else "CANDIDATEPORTAL"
+    if not namespace:
+        return []
+
+    detail_urls = set()
+    response_texts = []
+
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1365, "height": 900})
+
+            def capture_response(resp):
+                try:
+                    low = resp.url.lower()
+                    if "/jobposting/search" in low or "/jobs/" in low:
+                        txt = resp.text()
+                        if txt:
+                            response_texts.append(txt[:5000000])
+                except Exception:
+                    pass
+
+            page.on("response", capture_response)
+            page.goto(start, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_timeout(5000)
+
+            # Trigger lazy loading without unbounded scrolling.
+            for _ in range(8):
+                page.mouse.wheel(0, 1800)
+                page.wait_for_timeout(600)
+
+            for a in page.locator("a[href]").all():
+                try:
+                    href = a.get_attribute("href") or ""
+                except Exception:
+                    continue
+                if re.search(r"/jobs/\d+", href, re.I):
+                    detail_urls.add(urljoin(page.url, href).split("#", 1)[0])
+
+            html_now = page.content()
+            response_texts.append(html_now[:5000000])
+            browser.close()
+    except Exception as e:
+        print(f"Modern Dayforce render unavailable for {src['Company']}: {type(e).__name__}: {clean(str(e))[:160]}")
+        return []
+
+    # Search responses and Next/React state can contain job URLs that are not
+    # currently visible in the first DOM viewport.
+    for raw in response_texts:
+        raw = html.unescape(raw or "").replace("\\/", "/")
+        for m in re.finditer(
+            rf'(?:https?://jobs\.dayforcehcm\.com)?(?:/[a-z]{{2}}-[A-Z]{{2}})?/{re.escape(namespace)}/{re.escape(board)}/+jobs/(\d+)',
+            raw,
+            re.I,
+        ):
+            jid = m.group(1)
+            detail_urls.add(
+                f"https://jobs.dayforcehcm.com/en-US/{namespace}/{board}/jobs/{jid}"
+            )
+
+    out = []
+    seen_ids = set()
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    def fetch_one(url):
+        try:
+            rr = _req_raw("GET", url, timeout=10, tries=2)
+            final = str(getattr(rr, "url", "") or url)
+            j = _job_from_detail(src, final, rr.text)
+            if not j:
+                j = _direct_board_job(src, final, rr.text)
+            return j
+        except Exception:
+            return None
+
+    # Current board discovery only; never scan guessed numeric IDs.
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        futures = [pool.submit(fetch_one, u) for u in sorted(detail_urls)[:700]]
+        for fut in as_completed(futures):
+            try:
+                j = fut.result()
+            except Exception:
+                j = None
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+
+    print(
+        f"Modern Dayforce rendered {src['Company']}: "
+        f"details={len(detail_urls)} parsed={len(out)}"
+    )
+    return out
+
+
 def dayforce(src):
     """Dedicated Dayforce collector using its anonymous external JobFeeds API."""
     tenants, board = _dayforce_candidates(src["URL"])
@@ -2255,6 +2374,13 @@ def dayforce(src):
     # If the external feed is disabled for a customer, preserve the existing
     # structured HTML/JSON-LD fallback rather than aborting the source.
     if not rows:
+        # Current jobs.dayforcehcm.com boards use a CSRF-protected search
+        # application rather than the legacy anonymous JobFeeds endpoint.
+        # Render the public board and capture only its own discovered jobs.
+        if "jobs.dayforcehcm.com" in urlparse(src["URL"]).netloc.lower():
+            modern = _dayforce_modern_rendered(src)
+            if modern:
+                return modern
         try:
             fallback = ats_html(src)
             if fallback:
