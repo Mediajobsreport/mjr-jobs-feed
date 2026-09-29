@@ -8423,7 +8423,13 @@ def connoisseur_paycor(src):
                 city = clean(city.split(",")[-1])
                 state = state.upper()
 
-            pd = _direct_board_date(txt) or TODAY
+            pd = _direct_board_date(txt)
+            if not pd:
+                stored = st.get(stable_paycor_key, {}).get("job", {}) if isinstance(st.get(stable_paycor_key), dict) else {}
+                try:
+                    pd = date.fromisoformat(str(stored.get("date") or ""))
+                except Exception:
+                    pd = TODAY
             jt = jobtype(direct_title, txt)
             cat = category(direct_title, txt, src["Industry"], src["Company"])
             _ct = direct_title.lower()
