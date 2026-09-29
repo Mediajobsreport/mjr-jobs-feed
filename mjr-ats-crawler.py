@@ -8574,7 +8574,7 @@ def connoisseur_direct(src):
 
 
 def midwest_family_direct(src):
-    """Collect Mid-West Family openings from its seven local market career pages."""
+    """Collect Mid-West Family openings from verified local market career pages."""
     markets = [
         ("Madison, WI", "https://www.midwestfamilymadison.com/careers/"),
         ("La Crosse, WI", "https://midwestfamilylacrosse.com/careers/"),
@@ -8596,99 +8596,103 @@ def midwest_family_direct(src):
         except Exception:
             return TODAY
 
+    skip_titles = {
+        "careers", "open positions", "explore opportunities", "contact us",
+        "company", "services", "why join us", "our mission & vision",
+        "job responsibilities", "responsibilities", "requirements",
+        "qualifications", "benefits", "salary and benefits", "contact",
+        "position details", "description", "job description",
+    }
+
     for market, page in markets:
         try:
-            r = _req_raw("GET", page, timeout=4, tries=1)
-        except Exception:
+            r = _req_raw("GET", page, timeout=6, tries=1)
+        except Exception as ex:
+            print("MIDWEST_FAMILY_PAGE_ERROR:", market, type(ex).__name__, str(ex)[:200])
             continue
+
         final = str(getattr(r, "url", "") or page)
         soup = BeautifulSoup(r.text, "html.parser")
+        candidates = []
 
-        headings = soup.find_all(["h1","h2","h3","h4"])
-        for node in headings:
-            title = clean(node.get_text(" "))
-            if not title or title.lower() in {
-                "careers","open positions","explore opportunities",
-                "apply through the links below.","our mission & vision",
-                "contact us","company","services","why join us",
-                "job responsibilities:","job responsibilities",
-                "salary and benefits","requirements:","requirements",
-                "contact:","contact","position details:","position details",
-                "qualifications:","qualifications","responsibilities:",
-                "responsibilities","benefits:","benefits",
-            }:
+        # First collect obvious job/card containers. Modern market sites wrap
+        # each opening in article/entry/post/card blocks rather than placing all
+        # description text as direct siblings of the title heading.
+        for box in soup.select("article, .post, .entry, .job, .career, [class*='job-'], [class*='career-'], [class*='post-']"):
+            txt = clean(box.get_text(" "))
+            if len(txt) < 120 or not re.search(
+                r"\\b(apply|resume|employment|full[- ]?time|part[- ]?time|responsibilit|qualification|salary|compensation|position)\\b",
+                txt, re.I
+            ):
                 continue
-
-            if re.match(r"^(?:job )?(?:responsibilities|requirements|qualifications|benefits|contact|position details|salary(?: and benefits)?)[ :]*$", title, re.I):
-                continue
-            chunks = []
-            start_level = int(node.name[1]) if getattr(node, "name", "") in {"h1","h2","h3","h4"} else 4
-            internal_heading = re.compile(
-                r"^(?:job )?(?:description|responsibilities|requirements|qualifications|"
-                r"benefits|contact|position details|salary(?: and benefits)?|experience|"
-                r"schedule|work schedule|what(?:'|’)s in it for you|we(?:'|’)re looking for|"
-                r"what you(?:'|’)ll do|what you need|bonus skills|why (?:join us|this role)|"
-                r"about us|personal requirements|additional qualifications|hard skills)[ :]*$",
-                re.I,
-            )
-            for sib in node.next_siblings:
-                sib_name = getattr(sib, "name", None)
-                if sib_name in {"h1","h2","h3","h4"}:
-                    sib_title = clean(sib.get_text(" "))
-                    sib_level = int(sib_name[1])
-                    body_so_far = clean(BeautifulSoup("".join(chunks), "html.parser").get_text(" "))
-                    # Mid-West Family uses headings inside each job description.
-                    # Stop only when a peer/higher heading plausibly begins a new
-                    # job after we have already accumulated a substantive block.
-                    if (
-                        sib_level <= start_level
-                        and len(body_so_far) >= 120
-                        and sib_title
-                        and not internal_heading.match(sib_title)
-                    ):
+            head = box.find(["h1","h2","h3","h4","h5"])
+            title = clean(head.get_text(" ") if head else "")
+            if not title or title.lower().rstrip(":") in skip_titles:
+                # An apply/details anchor often carries the role when the card
+                # has no useful heading.
+                for a in box.find_all("a", href=True):
+                    label = clean(a.get_text(" "))
+                    if label and len(label) < 180 and not re.match(r"^(apply|learn more|details|read more)$", label, re.I):
+                        title = label
                         break
-                chunks.append(str(sib))
-            raw = "".join(chunks)
-            body = clean(BeautifulSoup(raw, "html.parser").get_text(" "))
-            block_soup = BeautifulSoup(raw, "html.parser")
-            has_job_link = any(
-                re.search(r"/(?:job|jobs|career|careers|apply)/|\.pdf(?:$|\?)", urljoin(final, a.get("href", "")), re.I)
-                for a in block_soup.find_all("a", href=True)
-            )
-            if len(body) < 100 or not (
-                has_job_link or re.search(
-                    r"\b(job|position|full[- ]?time|part[- ]?time|resume|apply|salary|"
-                    r"compensation|responsibilit|qualification|opening|employment)\b", body, re.I
-                )
+            if title and title.lower().rstrip(":") not in skip_titles:
+                candidates.append((title, box))
+
+        # Fallback: use headings but climb to the nearest substantial parent
+        # instead of relying on direct next_siblings.
+        for head in soup.find_all(["h1","h2","h3","h4","h5"]):
+            title = clean(head.get_text(" "))
+            if not title or title.lower().rstrip(":") in skip_titles:
+                continue
+            box = head
+            for _ in range(5):
+                parent = getattr(box, "parent", None)
+                if not parent:
+                    break
+                ptxt = clean(parent.get_text(" "))
+                if 150 <= len(ptxt) <= 12000:
+                    box = parent
+                    if re.search(r"\\b(apply|resume|employment|responsibilit|qualification|salary|position)\\b", ptxt, re.I):
+                        break
+                else:
+                    break
+            candidates.append((title, box))
+
+        print("MIDWEST_FAMILY_CANDIDATES:", market, len(candidates))
+
+        for title, box in candidates:
+            raw = str(box)
+            body = clean(box.get_text(" "))
+            if len(body) < 120:
+                continue
+            if not re.search(
+                r"\\b(apply|resume|employment|full[- ]?time|part[- ]?time|responsibilit|qualification|salary|compensation|position)\\b",
+                body, re.I
             ):
                 continue
 
-            # Prefer an individual job/PDF link inside this job block.
             apply_url = final
-            for a in block_soup.find_all("a", href=True):
-                h = urljoin(final, a["href"]).split("#",1)[0]
-                lowh = h.lower()
+            for a in box.find_all("a", href=True):
+                h = urljoin(final, a["href"]).split("#", 1)[0]
                 label = clean(a.get_text(" ")).lower()
+                if not h.startswith("http") or h.rstrip("/") == final.rstrip("/"):
+                    continue
                 if (
-                    h.startswith("http")
-                    and h.rstrip("/") != final.rstrip("/")
-                    and (
-                        re.search(r"/(?:job|jobs|career|careers|apply)/", lowh)
-                        or lowh.endswith(".pdf")
-                        or label in {"apply","apply now","learn more","job description","details"}
-                    )
+                    re.search(r"/(?:job|jobs|career|careers|apply|employment)/", h, re.I)
+                    or h.lower().endswith(".pdf")
+                    or re.search(r"\\b(apply|job description|details|learn more)\\b", label, re.I)
                 ):
                     apply_url = h
                     break
 
             key = apply_url.rstrip("/").lower()
             if key == final.rstrip("/").lower():
-                key += "#" + re.sub(r"[^a-z0-9]+","-",title.lower()).strip("-")
+                key += "#" + re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
                 apply_url = key
             if key in seen:
                 continue
 
-            pd = _direct_board_date(raw) or _direct_board_date(title + " " + body[:1500])
+            pd = _direct_board_date(raw) or _direct_board_date(body[:2500])
             pd = stable_date(key, pd)
             jt = jobtype(title, body)
             probe = Job("", title, src["Company"], body, pd, jt, "", apply_url,
@@ -8696,19 +8700,29 @@ def midwest_family_direct(src):
             if not job_is_fresh(probe):
                 continue
 
-            locm = re.search(r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b", body)
+            locm = re.search(r"\\b([A-Z][A-Za-z .'-]+,\\s*[A-Z]{2})\\b", body)
             loc = clean(locm.group(1)) if locm else market
-            mm = re.match(r"(.+?),\s*([A-Z]{2})$", loc)
+            mm = re.match(r"(.+?),\\s*([A-Z]{2})$", loc)
             city, state = (clean(mm.group(1)), mm.group(2)) if mm else (loc, "")
 
             seen.add(key)
+            cat = category(title, body, src["Industry"], src["Company"])
+            # Mid-West Family is radio-first for programming/on-air/promotions.
+            if any(term in (title + " " + body[:1200]).lower() for term in (
+                "program director", "on-air", "on air", "air personality",
+                "promotions", "producer", "board operator", "morning show",
+            )):
+                if not any(term in title.lower() for term in ("sales", "account executive", "marketing")):
+                    cat = "Radio"
+
             out.append(Job(
                 hashlib.sha1(key.encode()).hexdigest()[:16], title, src["Company"],
-                format_description(raw), pd, jt,
-                category(title, body, src["Industry"], src["Company"]),
+                format_description(raw), pd, jt, cat,
                 apply_url, src["URL"], src["URL"], "",
                 normalize_work_arrangement(body, loc), city, state, "US",
             ))
+
+    print("MIDWEST_FAMILY_PARSED:", len(out))
     return out
 
 
