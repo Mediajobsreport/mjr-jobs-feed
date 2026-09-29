@@ -7519,6 +7519,21 @@ def _paylocity_rendered_v18(src, starts):
     return out
 
 
+def nrg_paylocity(src):
+    """NRG Media Paylocity collector.
+
+    NRG's current All board is not exposing detail cards to either the
+    server-rendered or Chromium v18 discovery path. Try Paylocity's public job
+    feed for the board GUID first; if that tenant has not enabled the feed,
+    preserve the full v18 server/rendered recovery path.
+    """
+    feed_jobs = paylocity(src)
+    if feed_jobs:
+        print(f"NRG Paylocity public feed: parsed={len(feed_jobs)}")
+        return feed_jobs
+    return paylocity_v18(src)
+
+
 def paylocity_v18(src):
     """Targeted Paylocity public-board crawler.
 
@@ -12975,11 +12990,12 @@ def main():
                 if "ashby" in a or "ashbyhq.com" in s.get("URL", "").lower()
                 else []
                 if company_key == "audacy"
+                else nrg_paylocity(s)
+                if company_key == "nrg media"
                 else paylocity_v18(s)
                 if company_key in {
                     "dick broadcasting company",
                     "hope media group",
-                    "nrg media",
                     "weigel",
                 }
                 else siriusxm_v17(s)
