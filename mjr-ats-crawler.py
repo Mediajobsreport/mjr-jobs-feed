@@ -7942,6 +7942,17 @@ def connoisseur_paycor(src):
     paycor_rendered = {}
     paycor_meta = {}
     paycor_board_meta = {}
+    def paycor_key(value):
+        """Stable Paycor identity independent of source/lang query noise."""
+        try:
+            pu = urlparse(clean(str(value or "")))
+            qu = parse_qs(pu.query)
+            cid = clean((qu.get("clientId") or [""])[0])
+            jid = clean((qu.get("id") or [""])[0])
+            return (cid + "|" + jid) if jid else clean(str(value or "")).split("#", 1)[0]
+        except Exception:
+            return clean(str(value or "")).split("#", 1)[0]
+
     try:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
@@ -8235,7 +8246,7 @@ def connoisseur_paycor(src):
                                     qj = parse_qs(pj.query)
                                     render_key = ((qj.get("clientId") or [""])[0] + "|" + (qj.get("id") or [""])[0])
                                     bm = paycor_board_meta.get(render_key) or paycor_board_meta.get(job_url) or {}
-                                    paycor_rendered[job_url] = (
+                                    paycor_rendered[render_key] = (
                                         rendered_html,
                                         rendered_text,
                                         clean(str(bm.get("title") or "")),
@@ -8252,7 +8263,7 @@ def connoisseur_paycor(src):
                                             return {title, location: loc ? norm(loc[1]) : ''};
                                         }""")
                                         if meta:
-                                            paycor_meta[job_url] = meta
+                                            paycor_meta[render_key] = meta
                                     except Exception:
                                         pass
                                 except Exception as ex:
@@ -8304,7 +8315,7 @@ def connoisseur_paycor(src):
     out = []
     for url in detail_urls[:300]:
         key = url.rstrip("/").lower()
-        rendered = paycor_rendered.get(url)
+        stable_paycor_key = paycor_key(url)\n        rendered = paycor_rendered.get(stable_paycor_key) or paycor_rendered.get(url)
         if rendered:
             raw_html, txt, rendered_title, rendered_card = rendered
             class _RenderedResponse:
@@ -8321,11 +8332,11 @@ def connoisseur_paycor(src):
         j = _job_from_detail(src, url, raw_html)
         if j:
             if rendered:
-                meta = paycor_meta.get(url) or {}
+                meta = paycor_meta.get(stable_paycor_key) or paycor_meta.get(url) or {}
                 pu = urlparse(url)
                 qu = parse_qs(pu.query)
                 meta_key = ((qu.get("clientId") or [""])[0] + "|" + (qu.get("id") or [""])[0])
-                board_meta = paycor_board_meta.get(meta_key) or paycor_board_meta.get(url) or {}
+                board_meta = paycor_board_meta.get(stable_paycor_key) or paycor_board_meta.get(meta_key) or paycor_board_meta.get(url) or {}
                 real_title = clean(str(rendered_title or board_meta.get("title") or meta.get("title") or ""))
                 # Paycor's document title is generically "Career Openings".
                 # Prefer the job-specific heading captured from the live board.
@@ -8338,13 +8349,16 @@ def connoisseur_paycor(src):
                 # fields blank.
                 card_lines = board_meta.get("card_lines") or []
                 card_text = " | ".join(card_lines) or clean(str(rendered_card or board_meta.get("card") or ""))
-                loc_match = re.search(
+                loc_matches = re.findall(
                     r"\\b([A-Z][A-Za-z .'-]{1,80}),\\s*([A-Z]{2})(?:\\s+\\d{5}(?:-\\d{4})?)?\\b",
                     card_text,
                 )
-                if loc_match:
-                    j.city = clean(loc_match.group(1))
-                    j.state = loc_match.group(2).upper()
+                if loc_matches:
+                    loc_city, loc_state = loc_matches[-1]
+                    # Address text can precede the final city; keep only the
+                    # final comma-delimited place component.
+                    j.city = clean(loc_city.split(",")[-1])
+                    j.state = loc_state.upper()
                     j.country = "US"
                     j.work_arrangement = normalize_work_arrangement(
                         txt, j.city + ", " + j.state
