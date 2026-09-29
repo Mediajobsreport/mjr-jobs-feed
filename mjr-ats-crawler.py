@@ -8127,9 +8127,12 @@ def connoisseur_paycor(src):
                         except Exception as ex:
                             print("CONNOISSEUR_HANDOFF_PAYCOR_RESOURCE_ERROR:", type(ex).__name__, str(ex)[:300])
                         try:
-                            fh = fr.locator("a[href]").evaluate_all(
-                                "els => els.map(e => ({text:(e.innerText || '').trim(), href:e.href || ''}))"
-                            )
+                            fh = fr.locator("a[href]").evaluate_all("""els => els.map(e => ({
+                                text:(e.innerText || '').trim(),
+                                href:e.href || '',
+                                parent:(e.parentElement?.innerText || '').trim(),
+                                grand:(e.parentElement?.parentElement?.innerText || '').trim()
+                            }))""")
                             # Pair each job anchor with its containing Paycor
                             # listing card text so we retain the board's location.
                             try:
@@ -8166,7 +8169,29 @@ def connoisseur_paycor(src):
                                     jid = (qh.get("id") or [""])[0]
                                     mk = cid + "|" + jid if jid else href
                                     existing = paycor_board_meta.get(mk) or {}
+                                    # Paycor often puts the clickable target on an
+                                    # empty/icon anchor while the title and address
+                                    # live in its parent container. Preserve that
+                                    # nearby listing text with the job ID itself.
+                                    nearby = str(item.get("parent") or "")
+                                    grand = str(item.get("grand") or "")
+                                    context_text = nearby if len(clean(nearby)) >= len(clean(title_text)) + 3 else grand
+                                    lines = [
+                                        clean(x) for x in re.split(r"[\\r\\n]+", context_text)
+                                        if clean(x)
+                                    ]
+                                    if not title_text:
+                                        for line in lines:
+                                            if (
+                                                len(line) <= 180
+                                                and not re.search(r"^(?:apply|view|details|career openings?)$", line, re.I)
+                                                and not re.match(r"^\\d{1,6}\\s+", line)
+                                            ):
+                                                title_text = line
+                                                break
                                     existing["title"] = title_text or existing.get("title", "")
+                                    existing["card"] = clean(context_text) or existing.get("card", "")
+                                    existing["card_lines"] = lines
                                     paycor_board_meta[mk] = existing
                                     paycor_found += 1
                                 print("CONNOISSEUR_HANDOFF_PAYCOR_LINK:", clean(str(item))[:4000])
