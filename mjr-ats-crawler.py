@@ -3922,7 +3922,21 @@ def jazzhr_active_board(src):
 
         # Use the normal detail parser whenever the page exposes a qualifying
         # source date.
-        j = _job_from_detail(src, url, raw)\n        if j:\n            # Beasley is radio-first. Apply this even when the generic\n            # structured-detail parser succeeds; the old early return bypassed it.\n            if clean(src.get("Company", "")).lower() == "beasley media group":\n                probe_text = j.title + " " + strip_html(j.description)[:1200]\n                if re.search(r"\\b(program(?:ming)?|program director|on[- ]?air|air talent|host|promotions?|producer|board operator|street team)\\b", probe_text, re.I):\n                    if not re.search(r"\\b(sales|account executive|market manager|general manager)\\b", j.title, re.I):\n                        j.category = "Radio"\n                if re.search(r"\\bchief engineer\\b", j.title, re.I):\n                    j.category = "Engineering"\n            out.append(j)\n            continue\n        pd = _direct_board_date(raw)
+        j = _job_from_detail(src, url, raw)
+        if j:
+            # Beasley is radio-first. Apply this even when the generic
+            # structured-detail parser succeeds; the old early return bypassed it.
+            if clean(src.get("Company", "")).lower() == "beasley media group":
+                probe_text = j.title + " " + strip_html(j.description)[:1200]
+                if re.search(r"\\b(program(?:ming)?|program director|on[- ]?air|air talent|host|promotions?|producer|board operator|street team)\\b", probe_text, re.I):
+                    if not re.search(r"\\b(sales|account executive|market manager|general manager)\\b", j.title, re.I):
+                        j.category = "Radio"
+                if re.search(r"\\bchief engineer\\b", j.title, re.I):
+                    j.category = "Engineering"
+            out.append(j)
+            continue
+
+        pd = _direct_board_date(raw)
         if not pd:
             stored = st.get(key, {}).get("job", {}) if isinstance(st.get(key), dict) else {}
             try:
