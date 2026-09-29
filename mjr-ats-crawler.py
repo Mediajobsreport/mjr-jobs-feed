@@ -8371,10 +8371,23 @@ def connoisseur_paycor(src):
                 meta_key = ((qu.get("clientId") or [""])[0] + "|" + (qu.get("id") or [""])[0])
                 board_meta = paycor_board_meta.get(stable_paycor_key) or paycor_board_meta.get(meta_key) or paycor_board_meta.get(url) or {}
                 real_title = clean(str(rendered_title or board_meta.get("title") or meta.get("title") or ""))
-                # Paycor's document title is generically "Career Openings".
-                # Prefer the job-specific heading captured from the live board.
-                if real_title and j.title.lower() in ("career openings", "careers", "job openings"):
+                # The Paycor iframe now supplies the true description,
+                # while the live board remains the authoritative title source.
+                if real_title:
                     j.title = real_title
+                    j.jobtype = jobtype(j.title, txt)
+                    j.category = category(j.title, txt, src["Industry"], src["Company"])
+                    _ct = j.title.lower()
+                    if "intern" in _ct:
+                        j.category = "Internships"
+                    elif any(x in _ct for x in ("account executive", "account manager", "sales executive", "sales director", "sales manager", "marketing consultant", "digital sales")):
+                        j.category = "Sales & Marketing"
+                    elif any(x in _ct for x in ("network administrator", "chief engineer", "remote technician")):
+                        j.category = "Engineering"
+                    elif "traffic coordinator" in _ct or "sales assistant" in _ct or "administrative" in _ct:
+                        j.category = "Business Office"
+                    elif any(x in _ct for x in ("on-air", "on air", "board operator", "program director", "news reporter", "street team", "promotions")):
+                        j.category = "Radio"
 
                 # The live Paycor listing carries the physical address even when
                 # JobIntroduction renders a generic shell. Bind city/state from
