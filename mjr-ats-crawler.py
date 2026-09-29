@@ -2300,7 +2300,7 @@ def _dayforce_modern_rendered(src):
                 kl = str(k).lower()
                 if (
                     isinstance(v, (str, int))
-                    and re.fullmatch(r"\\d{3,12}", str(v))
+                    and re.fullmatch(r"\d{3,12}", str(v))
                     and any(token in kl for token in (
                         "jobposting", "postingid", "jobid", "requisitionid",
                         "requisitionnumber", "referenceid"
