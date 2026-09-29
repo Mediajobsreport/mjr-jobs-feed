@@ -8777,6 +8777,9 @@ def midwest_family_direct(src):
         print("MIDWEST_FAMILY_CANDIDATES:", market, len(candidates))
 
         for title, box in candidates:
+            title_key = title.lower().strip().rstrip(":")
+            if "@" in title or title_key in skip_titles:
+                continue
             raw = str(box)
             body = clean(box.get_text(" "))
             if len(body) < 120:
