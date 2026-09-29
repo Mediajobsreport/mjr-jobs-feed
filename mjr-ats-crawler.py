@@ -6570,38 +6570,152 @@ def wbd_phenom(src):
 
 
 def gray_direct(src):
-    """Gray Media direct career-center fallback.
+    """Gray Media first-party careers collector.
 
-    Gray's corporate careers page currently exposes hundreds of openings and
-    filters publicly. Prefer those canonical employer pages over relying solely
-    on the legacy UKG board.
+    Gray's corporate careers page embeds a UKG-powered widget that exposes the
+    live inventory only after JavaScript runs. The legacy UKG listing endpoint
+    can return an empty set to automated clients even while individual public
+    OpportunityDetail pages remain fully accessible.
+
+    Render Gray's own careers page once, capture opportunity UUIDs from the DOM
+    and XHR/fetch responses, then parse canonical UKG detail pages. Discovery is
+    time-bounded and detail retrieval is concurrent so Gray cannot stall a full
+    crawl the way sequential requisition probing would.
     """
-    starts = [
-        "https://graymedia.com/careers/",
-        src["URL"],
+    parts = _ukg_parts(src["URL"])
+    if not parts:
+        return []
+
+    base, tenant, board = parts
+    board_root = f"{base}/{tenant}/JobBoard/{board}"
+    careers = "https://graymedia.com/careers/"
+    ids = set()
+
+    uuid_re = re.compile(
+        r"(?:opportunityId|OpportunityId)[^0-9a-f]{0,20}"
+        r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+        re.I,
+    )
+    url_uuid_re = re.compile(
+        r"OpportunityDetail[^\"'<>\\s]{0,300}?"
+        r"opportunityId(?:=|%3D)"
+        r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+        re.I,
+    )
+
+    def harvest(raw):
+        raw = html.unescape(str(raw or "")).replace("\\/", "/")
+        for rx in (uuid_re, url_uuid_re):
+            for m in rx.finditer(raw):
+                ids.add(m.group(1).lower())
+
+    if sync_playwright is not None:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(
+                    headless=True,
+                    args=["--disable-dev-shm-usage", "--no-sandbox"],
+                )
+                context = browser.new_context(
+                    user_agent=(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/152.0.0.0 Safari/537.36"
+                    ),
+                    viewport={"width": 1440, "height": 1200},
+                )
+                page = context.new_page()
+                page.set_default_timeout(12000)
+
+                def on_response(resp):
+                    try:
+                        if resp.request.resource_type not in ("xhr", "fetch"):
+                            return
+                        u = (resp.url or "").lower()
+                        if (
+                            "graymedia.com" not in u
+                            and "ultipro.com" not in u
+                            and "ukg" not in u
+                        ):
+                            return
+                        harvest(resp.text())
+                    except Exception:
+                        pass
+
+                page.on("response", on_response)
+                page.goto(careers, wait_until="domcontentloaded", timeout=30000)
+
+                # Give the careers widget a bounded window to hydrate. A few
+                # scrolls trigger lazy rendering without clicking/filtering.
+                for _ in range(6):
+                    page.wait_for_timeout(1000)
+                    try:
+                        harvest(page.content())
+                        hrefs = page.locator("a[href]").evaluate_all(
+                            "(els) => els.map(a => a.href).filter(Boolean)"
+                        )
+                        harvest("\n".join(str(x) for x in hrefs))
+                        page.mouse.wheel(0, 2200)
+                    except Exception:
+                        pass
+
+                print(
+                    f"Gray careers rendered: final={page.url} "
+                    f"opportunity_ids={len(ids)}"
+                )
+                browser.close()
+        except Exception as e:
+            print(
+                f"Gray careers browser failed: "
+                f"{type(e).__name__}: {clean(str(e))[:180]}"
+            )
+
+    # If the corporate widget did not expose IDs, retain the generic UKG route
+    # as a safe fallback. It is independently bounded.
+    if not ids:
+        try:
+            jobs = ukg(src)
+            if jobs:
+                return jobs
+        except Exception:
+            pass
+        print("Gray careers: no enumerable opportunity IDs")
+        return []
+
+    detail_urls = [
+        f"{board_root}/OpportunityDetail?opportunityId={oid}"
+        for oid in sorted(ids)
     ]
 
-    # First crawl Gray's own careers surface.
-    jobs = _crawl_rendered_job_board(
-        src,
-        starts,
-        allow_hosts={
-            "graymedia.com",
-            "www.graymedia.com",
-            "recruiting.ultipro.com",
-        },
-        max_pages=100,
-        max_jobs=3500,
-    )
-    if jobs:
-        return jobs
+    # Gray can have several hundred live postings. Fetch detail pages in a small
+    # bounded pool instead of serially. One failed/closed opportunity is ignored.
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
-    # If the corporate page links only to UKG opportunity details, use the
-    # existing UKG collector as a final fallback; it already fails safely.
-    try:
-        return ukg(src)
-    except Exception:
-        return []
+    def fetch_one(url):
+        try:
+            rr = _req_raw("GET", url, timeout=8, tries=2)
+            return _ukg_detail(src, url, rr.text)
+        except Exception:
+            return None
+
+    out = []
+    seen_ids = set()
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        futures = [pool.submit(fetch_one, u) for u in detail_urls[:700]]
+        for fut in as_completed(futures):
+            try:
+                j = fut.result()
+            except Exception:
+                j = None
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+
+    print(
+        f"Gray careers direct: discovered={len(ids)} "
+        f"details={len(detail_urls)} parsed={len(out)}"
+    )
+    return out
 
 
 V17_TARGETS = {
