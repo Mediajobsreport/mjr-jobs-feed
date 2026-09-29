@@ -8242,6 +8242,24 @@ def connoisseur_paycor(src):
                                     detail_page.wait_for_timeout(350)
                                     rendered_html = detail_page.content()
                                     rendered_text = clean(detail_page.locator("body").inner_text())
+                                    if n == 1:
+                                        print("CONNOISSEUR_PAYCOR_DETAIL_URL:", detail_page.url)
+                                        print("CONNOISSEUR_PAYCOR_DETAIL_TEXT:", rendered_text[:12000])
+                                        for _fr in detail_page.frames:
+                                            print("CONNOISSEUR_PAYCOR_DETAIL_FRAME:", _fr.url)
+                                            try:
+                                                _ft = clean(_fr.locator("body").inner_text())
+                                                if _ft and _ft != rendered_text:
+                                                    print("CONNOISSEUR_PAYCOR_DETAIL_FRAME_TEXT:", _ft[:12000])
+                                            except Exception:
+                                                pass
+                                        try:
+                                            _detail_links = detail_page.locator("a[href]").evaluate_all(
+                                                "els => els.map(a => ({text:(a.innerText||'').trim(), href:a.href||''})).filter(x => /job|description|position|apply|career/i.test(x.text+' '+x.href))"
+                                            )
+                                            print("CONNOISSEUR_PAYCOR_DETAIL_LINKS:", clean(str(_detail_links))[:12000])
+                                        except Exception:
+                                            pass
                                     pj = urlparse(job_url)
                                     qj = parse_qs(pj.query)
                                     render_key = ((qj.get("clientId") or [""])[0] + "|" + (qj.get("id") or [""])[0])
