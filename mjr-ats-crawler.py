@@ -8276,6 +8276,18 @@ def connoisseur_paycor(src):
                                     detail_page.wait_for_timeout(350)
                                     rendered_html = detail_page.content()
                                     rendered_text = clean(detail_page.locator("body").inner_text())
+                                    # Paycor intermittently redirects a detail request
+                                    # to Connoisseur's generic wrapper. Retry the exact
+                                    # Paycor job URL before treating that wrapper as a job.
+                                    wrapper_marker = "Connoisseur Media is an equal-opportunity employer"
+                                    if wrapper_marker in rendered_text and "Skip to content" in rendered_text:
+                                        for _detail_retry in range(2):
+                                            detail_page.goto(job_url, wait_until="domcontentloaded", timeout=15000)
+                                            detail_page.wait_for_timeout(900)
+                                            rendered_html = detail_page.content()
+                                            rendered_text = clean(detail_page.locator("body").inner_text())
+                                            if wrapper_marker not in rendered_text or "Skip to content" not in rendered_text:
+                                                break
                                     # The Connoisseur wrapper is generic; the actual
                                     # Paycor job description lives inside its iframe.
                                     for _job_frame in detail_page.frames:
@@ -8308,6 +8320,9 @@ def connoisseur_paycor(src):
                                             print("CONNOISSEUR_PAYCOR_DETAIL_LINKS:", clean(str(_detail_links))[:12000])
                                         except Exception:
                                             pass
+                                    if wrapper_marker in rendered_text and "Skip to content" in rendered_text:
+                                        print("CONNOISSEUR_PAYCOR_WRAPPER_SKIPPED:", n, job_url[:500])
+                                        continue
                                     pj = urlparse(job_url)
                                     qj = parse_qs(pj.query)
                                     render_key = ((qj.get("clientId") or [""])[0] + "|" + (qj.get("id") or [""])[0])
