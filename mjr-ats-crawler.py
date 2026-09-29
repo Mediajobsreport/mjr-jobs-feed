@@ -8396,7 +8396,9 @@ def connoisseur_paycor(src):
             elif any(x in _ct for x in ("on-air", "on air", "board operator", "program director", "news reporter", "street team", "promotions")):
                 cat = "Radio"
 
-            desc_html = format_description(raw_html)
+            # Keep only the actual iframe posting text. Paycor's body HTML
+            # also contains application-form controls that polluted the feed.
+            desc_html = "<p>" + html.escape(txt).replace("\\n", "</p><p>") + "</p>"
             out.append(Job(
                 hashlib.sha1(stable_paycor_key.encode()).hexdigest()[:16],
                 direct_title, src["Company"], desc_html, pd, jt, cat,
