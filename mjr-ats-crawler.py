@@ -3927,11 +3927,19 @@ def jazzhr_active_board(src):
             # Beasley is radio-first. Apply this even when the generic
             # structured-detail parser succeeds; the old early return bypassed it.
             if clean(src.get("Company", "")).lower() == "beasley media group":
-                probe_text = j.title + " " + strip_html(j.description)[:1200]
-                if re.search(r"\\b(program(?:ming)?|program director|on[- ]?air|air talent|host|promotions?|producer|board operator|street team)\\b", probe_text, re.I):
-                    if not re.search(r"\\b(sales|account executive|market manager|general manager)\\b", j.title, re.I):
+                probe_text = (j.title + " " + strip_html(j.description)[:1200]).lower()
+                radio_terms = (
+                    "program director", "programming", "on-air", "on air",
+                    "air talent", "host", "promotion", "producer",
+                    "board operator", "street team",
+                )
+                sales_terms = (
+                    "sales", "account executive", "market manager", "general manager",
+                )
+                if any(term in probe_text for term in radio_terms):
+                    if not any(term in j.title.lower() for term in sales_terms):
                         j.category = "Radio"
-                if re.search(r"\\bchief engineer\\b", j.title, re.I):
+                if "chief engineer" in j.title.lower():
                     j.category = "Engineering"
             out.append(j)
             continue
