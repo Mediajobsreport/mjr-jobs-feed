@@ -8707,7 +8707,13 @@ def midwest_family_direct(src):
         "company", "services", "why join us", "our mission & vision",
         "job responsibilities", "responsibilities", "requirements",
         "qualifications", "benefits", "salary and benefits", "contact",
-        "position details", "description", "job description",
+        "position details", "description", "job description",,
+        "about us", "bonus skills", "eeo statement", "experience",
+        "pay range", "personal requirements", "salary",
+        "we’re looking for", "we're looking for", "what you need",
+        "what you’ll do", "what you'll do", "what’s in it for you",
+        "what's in it for you", "why this role", "work schedule",
+        "hard skills", "additional qualifications"
     }
 
     for market, page in markets:
