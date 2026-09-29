@@ -2242,6 +2242,7 @@ def _dayforce_modern_rendered(src):
 
     detail_urls = set()
     response_texts = []
+    search_payloads = []
 
     try:
         with sync_playwright() as pw:
@@ -2251,7 +2252,15 @@ def _dayforce_modern_rendered(src):
             def capture_response(resp):
                 try:
                     low = resp.url.lower()
-                    if "/jobposting/search" in low or "/jobs/" in low:
+                    if "/jobposting/search" in low:
+                        txt = resp.text()
+                        if txt:
+                            response_texts.append(txt[:5000000])
+                            try:
+                                search_payloads.append(json.loads(txt))
+                            except Exception:
+                                pass
+                    elif "/jobs/" in low:
                         txt = resp.text()
                         if txt:
                             response_texts.append(txt[:5000000])
@@ -2281,6 +2290,32 @@ def _dayforce_modern_rendered(src):
     except Exception as e:
         print(f"Modern Dayforce render unavailable for {src['Company']}: {type(e).__name__}: {clean(str(e))[:160]}")
         return []
+
+    # Modern Dayforce search JSON commonly returns posting identifiers rather
+    # than fully-qualified detail URLs. Walk the captured first-party response
+    # and recover only IDs attached to job/posting/requisition-shaped keys.
+    def walk_search(value, parent_key=""):
+        if isinstance(value, dict):
+            for k, v in value.items():
+                kl = str(k).lower()
+                if (
+                    isinstance(v, (str, int))
+                    and re.fullmatch(r"\\d{3,12}", str(v))
+                    and any(token in kl for token in (
+                        "jobposting", "postingid", "jobid", "requisitionid",
+                        "requisitionnumber", "referenceid"
+                    ))
+                ):
+                    detail_urls.add(
+                        f"https://jobs.dayforcehcm.com/en-US/{namespace}/{board}/jobs/{v}"
+                    )
+                walk_search(v, kl)
+        elif isinstance(value, list):
+            for child in value:
+                walk_search(child, parent_key)
+
+    for payload in search_payloads:
+        walk_search(payload)
 
     # Search responses and Next/React state can contain job URLs that are not
     # currently visible in the first DOM viewport.
@@ -2325,6 +2360,7 @@ def _dayforce_modern_rendered(src):
 
     print(
         f"Modern Dayforce rendered {src['Company']}: "
+        f"search_payloads={len(search_payloads)} "
         f"details={len(detail_urls)} parsed={len(out)}"
     )
     return out
