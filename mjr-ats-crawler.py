@@ -8315,7 +8315,8 @@ def connoisseur_paycor(src):
     out = []
     for url in detail_urls[:300]:
         key = url.rstrip("/").lower()
-        stable_paycor_key = paycor_key(url)\n        rendered = paycor_rendered.get(stable_paycor_key) or paycor_rendered.get(url)
+        stable_paycor_key = paycor_key(url)
+        rendered = paycor_rendered.get(stable_paycor_key) or paycor_rendered.get(url)
         if rendered:
             raw_html, txt, rendered_title, rendered_card = rendered
             class _RenderedResponse:
