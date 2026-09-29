@@ -7200,13 +7200,13 @@ def tegna_v17(src):
 
 
 def cumulus_v17(src):
-    """Cumulus Jibe collector with indexed-ID recovery.
+    """Fast Cumulus collector.
 
-    Cumulus's public listing route is intermittently 403/empty to automated
-    clients while canonical /jobs/{id}?lang=en-us detail pages remain public.
-    Try the Jibe API first. If enumeration is blocked, probe a bounded recent
-    requisition-ID window and accept only pages that prove they are real,
-    currently open Cumulus job details with an explicit fresh posting date.
+    Cumulus's Jibe listing/API can be blocked to automated clients. Never probe
+    requisition IDs sequentially: that made targeted/full crawls unacceptably
+    slow. Try the bounded public API once, then the existing same-host discovery
+    path. If neither enumerates jobs, return zero and leave the source flagged
+    for review rather than delaying the entire crawl.
     """
     host = "https://jobs.cumulusmedia.com"
     api = host + "/api/jobs"
@@ -7214,7 +7214,7 @@ def cumulus_v17(src):
     prior_ids = set()
 
     try:
-        for page_num in range(1, 31):
+        for page_num in range(1, 6):
             rr = req(
                 "GET",
                 (
@@ -7253,44 +7253,6 @@ def cumulus_v17(src):
     except Exception as e:
         print(f"Cumulus Jibe API unavailable: {type(e).__name__}: {clean(str(e))[:160]}")
 
-    # Publicly indexed current Cumulus requisitions are presently in the low
-    # 4000s, with live IDs observed through at least the mid-4500s. When Jibe
-    # enumeration is blocked, probe only that bounded recent ID band. Missing
-    # IDs/404s are ignored; detail parsing and freshness rules remain mandatory.
-    if not detail_urls:
-        probe_start, probe_end = 3500, 4700
-        found = 0
-        for jid in range(probe_start, probe_end + 1):
-            url = f"{host}/jobs/{jid}?lang=en-us"
-            try:
-                rr = req("GET", url)
-                if getattr(rr, "status_code", 200) >= 400:
-                    continue
-                raw = rr.text or ""
-                # Fast rejection of generic/error shells before heavier parsing.
-                low = raw.lower()
-                if (
-                    "cumulus media" not in low
-                    or (
-                        "job description" not in low
-                        and '"@type":"jobposting"' not in low.replace(" ", "")
-                        and '"@type": "jobposting"' not in low
-                    )
-                ):
-                    continue
-                j = _job_from_detail(src, str(getattr(rr, "url", "") or url), raw)
-                if not j:
-                    j = _direct_board_job(src, str(getattr(rr, "url", "") or url), raw)
-                if j:
-                    detail_urls.add(url)
-                    found += 1
-            except Exception:
-                continue
-        print(
-            f"Cumulus bounded ID recovery: range={probe_start}-{probe_end} "
-            f"candidate_details={found}"
-        )
-
     out, seen_ids = [], set()
     for url in sorted(detail_urls):
         try:
@@ -7306,15 +7268,15 @@ def cumulus_v17(src):
             continue
 
     if out:
-        print(f"Cumulus direct recovery: details={len(detail_urls)} parsed={len(out)}")
+        print(f"Cumulus Jibe direct: details={len(detail_urls)} parsed={len(out)}")
         return out
 
     return _v17_samehost_details(
         src,
         [host + "/jobs", host + "/", src["URL"]],
         {"jobs.cumulusmedia.com"},
-        max_pages=160,
-        max_jobs=4000,
+        max_pages=20,
+        max_jobs=500,
     )
 
 
