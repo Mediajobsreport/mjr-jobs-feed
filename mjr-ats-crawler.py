@@ -8861,12 +8861,16 @@ def midwest_family_direct(src):
             if not job_is_fresh(probe):
                 continue
 
-            locm = re.search(r"\\b([A-Z][A-Za-z .'-]+,\\s*[A-Z]{2})\\b", body)
-            loc = clean(locm.group(1)) if locm else market
-            mm = re.match(r"(.+?),[ ]*([A-Z]{2})$", loc)
-            if not mm:
-                mm = re.match(r"(.+?),[ ]*([A-Z]{2})$", market)
-            city, state = (clean(mm.group(1)), mm.group(2)) if mm else (loc, "")
+            locm = re.search(r"([A-Z][A-Za-z .'-]+),[ ]*([A-Z]{2})", body)
+            market_match = re.match(r"(.+?),[ ]*([A-Z]{2})$", market)
+            if locm:
+                city, state = clean(locm.group(1)), locm.group(2)
+            elif market_match:
+                city, state = clean(market_match.group(1)), market_match.group(2)
+            else:
+                city, state = market, ""
+            loc = (city + ", " + state).strip(", ")
+
 
             seen.add(key)
             cat = category(title, body, src["Industry"], src["Company"])
@@ -8878,9 +8882,13 @@ def midwest_family_direct(src):
                 if not any(term in title.lower() for term in ("sales", "account executive", "marketing")):
                     cat = "Radio"
 
+            desc = format_description(raw)
+            if len(desc) > 12000:
+                desc = "<p>" + body[:10000].replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;") + "</p>"
+
             out.append(Job(
                 hashlib.sha1(key.encode()).hexdigest()[:16], title, src["Company"],
-                format_description(raw), pd, jt, cat,
+                desc, pd, jt, cat,
                 apply_url, src["URL"], src["URL"], "",
                 normalize_work_arrangement(body, loc), city, state, "US",
             ))
