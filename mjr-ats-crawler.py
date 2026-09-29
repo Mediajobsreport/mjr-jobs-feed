@@ -8559,9 +8559,31 @@ def midwest_family_direct(src):
             if re.match(r"^(?:job )?(?:responsibilities|requirements|qualifications|benefits|contact|position details|salary(?: and benefits)?)[ :]*$", title, re.I):
                 continue
             chunks = []
+            start_level = int(node.name[1]) if getattr(node, "name", "") in {"h1","h2","h3","h4"} else 4
+            internal_heading = re.compile(
+                r"^(?:job )?(?:description|responsibilities|requirements|qualifications|"
+                r"benefits|contact|position details|salary(?: and benefits)?|experience|"
+                r"schedule|work schedule|what(?:'|’)s in it for you|we(?:'|’)re looking for|"
+                r"what you(?:'|’)ll do|what you need|bonus skills|why (?:join us|this role)|"
+                r"about us|personal requirements|additional qualifications|hard skills)[ :]*$",
+                re.I,
+            )
             for sib in node.next_siblings:
-                if getattr(sib, "name", None) in {"h1","h2","h3","h4"}:
-                    break
+                sib_name = getattr(sib, "name", None)
+                if sib_name in {"h1","h2","h3","h4"}:
+                    sib_title = clean(sib.get_text(" "))
+                    sib_level = int(sib_name[1])
+                    body_so_far = clean(BeautifulSoup("".join(chunks), "html.parser").get_text(" "))
+                    # Mid-West Family uses headings inside each job description.
+                    # Stop only when a peer/higher heading plausibly begins a new
+                    # job after we have already accumulated a substantive block.
+                    if (
+                        sib_level <= start_level
+                        and len(body_so_far) >= 120
+                        and sib_title
+                        and not internal_heading.match(sib_title)
+                    ):
+                        break
                 chunks.append(str(sib))
             raw = "".join(chunks)
             body = clean(BeautifulSoup(raw, "html.parser").get_text(" "))
