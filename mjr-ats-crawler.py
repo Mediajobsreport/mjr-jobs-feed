@@ -8269,25 +8269,18 @@ def connoisseur_paycor(src):
                                 if "recruitingbypaycor.com/career/JobIntroduction.action" in u
                             ))
                             detail_page = context.new_page()
-                            detail_page.set_default_timeout(12000)
+                            detail_page.set_default_timeout(8000)
                             for n, job_url in enumerate(paycor_urls[:300], 1):
                                 try:
-                                    detail_page.goto(job_url, wait_until="domcontentloaded", timeout=15000)
+                                    detail_page.goto(job_url, wait_until="domcontentloaded", timeout=9000)
                                     detail_page.wait_for_timeout(350)
                                     rendered_html = detail_page.content()
                                     rendered_text = clean(detail_page.locator("body").inner_text())
-                                    # Paycor intermittently redirects a detail request
-                                    # to Connoisseur's generic wrapper. Retry the exact
-                                    # Paycor job URL before treating that wrapper as a job.
+                                    # Paycor occasionally returns Connoisseur's generic
+                                    # wrapper instead of the requested posting. Do not retry
+                                    # every bad detail here: skip it for this crawl and let
+                                    # normal state/retention preserve previously seen jobs.
                                     wrapper_marker = "Connoisseur Media is an equal-opportunity employer"
-                                    if wrapper_marker in rendered_text and "Skip to content" in rendered_text:
-                                        for _detail_retry in range(2):
-                                            detail_page.goto(job_url, wait_until="domcontentloaded", timeout=15000)
-                                            detail_page.wait_for_timeout(900)
-                                            rendered_html = detail_page.content()
-                                            rendered_text = clean(detail_page.locator("body").inner_text())
-                                            if wrapper_marker not in rendered_text or "Skip to content" not in rendered_text:
-                                                break
                                     # The Connoisseur wrapper is generic; the actual
                                     # Paycor job description lives inside its iframe.
                                     for _job_frame in detail_page.frames:
