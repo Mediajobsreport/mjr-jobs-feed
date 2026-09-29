@@ -1470,6 +1470,24 @@ def greenhouse(src):
         loc = clean((p.get("location") or {}).get("name"))
         url = p.get("absolute_url")
 
+        # Greenhouse returns a display location string rather than separate
+        # JBoard city/state fields. Preserve station/market labels such as
+        # "WFAA-TV Dallas" as city text, but split conventional
+        # "Charlotte, North Carolina, United States" locations cleanly.
+        city, state, country = "", "", infer_country(loc, src["Company"], desc)
+        loc_parts = [clean(x) for x in loc.split(",") if clean(x)]
+        if len(loc_parts) >= 2:
+            city = loc_parts[0]
+            state = loc_parts[1]
+            if len(loc_parts) >= 3:
+                ctry = loc_parts[-1].upper()
+                if ctry in {"UNITED STATES", "UNITED STATES OF AMERICA", "USA", "US"}:
+                    country = "US"
+                elif ctry in {"CANADA", "CA"}:
+                    country = "CA"
+        else:
+            city = loc
+
         out.append(
             Job(
                 str(p.get("id")),
@@ -1489,9 +1507,9 @@ def greenhouse(src):
                 src["URL"],
                 "",
                 normalize_work_arrangement(desc, loc),
-                loc,
-                "",
-                infer_country(loc, src["Company"], desc),
+                city,
+                state,
+                country,
             )
         )
 
