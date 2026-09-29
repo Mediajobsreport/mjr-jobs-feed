@@ -1363,7 +1363,7 @@ def workday(src):
                     ep,
                     json={
                         "appliedFacets": {},
-                        "limit": 100,
+                        "limit": 20,
                         "offset": 0,
                         "searchText": "",
                     },
@@ -1397,7 +1397,7 @@ def workday(src):
             ep,
             json={
                 "appliedFacets": {},
-                "limit": 100,
+                "limit": 20,
                 "offset": offset,
                 "searchText": "",
             },
