@@ -3146,7 +3146,7 @@ def ukg(src):
                     )
 
             for m in re.finditer(
-                r'["\\'](?:opportunityId|OpportunityId)["\\']\\s*:\\s*["\\']([0-9a-f-]{36})["\\']',
+                r"[\"'](?:opportunityId|OpportunityId)[\"']\\s*:\\s*[\"']([0-9a-f-]{36})[\"']",
                 raw,
                 re.I,
             ):
