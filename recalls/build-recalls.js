@@ -1417,16 +1417,46 @@ async function loadFDA() {
    ========================================================= */
 
 async function loadCPSC() {
-  const data =
-    await fetchJSON(
-      CPSC_API,
-      "CPSC API"
+  // The unfiltered legacy CPSC endpoint can return an incomplete result set.
+  // Retrieve the archive in yearly slices using CPSC's documented date filters,
+  // then deduplicate by RecallID/RecallNumber before mapping.
+  const currentYear = new Date().getUTCFullYear();
+  const allRows = [];
+  const seen = new Set();
+
+  for (let year = 1973; year <= currentYear; year++) {
+    const start = `${year}-01-01`;
+    const end = `${year}-12-31`;
+    const url =
+      `${CPSC_API}&RecallDateStart=${encodeURIComponent(start)}&RecallDateEnd=${encodeURIComponent(end)}`;
+
+    const data = await fetchJSON(
+      url,
+      `CPSC API ${year}`
     );
 
-  const rows =
-    Array.isArray(data)
-      ? data
-      : [];
+    const yearRows = Array.isArray(data) ? data : [];
+
+    for (const row of yearRows) {
+      const key =
+        clean(row.RecallID) ||
+        clean(row.RecallNumber) ||
+        [
+          clean(row.RecallDate),
+          clean(row.Title || row.RecallTitle)
+        ].join("|");
+
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      allRows.push(row);
+    }
+
+    console.log(`CPSC ${year}: ${yearRows.length} records`);
+  }
+
+  console.log(`CPSC yearly archive combined: ${allRows.length} unique records`);
+
+  const rows = allRows;
 
   return rows.map(row => {
     const products =
