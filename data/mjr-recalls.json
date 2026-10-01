@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-01T15:30:41.912Z",
+  "generated": "2026-10-01T21:05:08.531Z",
   "version": "2.4",
-  "newestDate": "2026-09-29",
+  "newestDate": "2026-10-01",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1050
+      "count": 1051
     },
     "CPSC": {
       "ok": true,
@@ -209,6 +209,22 @@
       "score": 143
     },
     {
+      "id": "FDA-2026-10-01-bettergoods-pasta-gias-foods-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Bettergoods Pasta Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Bettergoods",
+      "company": "Gias Foods, Inc.",
+      "product": "Pasta",
+      "date": "2026-10-01",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/boticelli-foods-recalls-bettergoods-pistachio-nut-butter-because-possible-health-risk",
+      "score": 115
+    },
+    {
       "id": "NHTSA-26V578000",
       "source": "NHTSA",
       "category": "consumer",
@@ -257,22 +273,6 @@
       "campaign": "26V559000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 132
-    },
-    {
-      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
-      "source": "FDA",
-      "category": "food",
-      "title": "Whole Foods Market Cheese Recalled",
-      "reason": "Undeclared Egg",
-      "brand": "Whole Foods Market",
-      "company": "Whole Foods Market",
-      "product": "Cheese",
-      "date": "2026-09-11",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/whole-foods-market-issues-allergy-alert-undeclared-egg-cabricharme-cheese",
-      "score": 91
     },
     {
       "id": "NHTSA-26V560000",
@@ -647,6 +647,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2026/KTM-North-America-Recalls-Off-Road-Motorcycles-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard",
       "score": 93
+    },
+    {
+      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
+      "source": "FDA",
+      "category": "food",
+      "title": "Whole Foods Market Cheese Recalled",
+      "reason": "Undeclared Egg",
+      "brand": "Whole Foods Market",
+      "company": "Whole Foods Market",
+      "product": "Cheese",
+      "date": "2026-09-11",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/whole-foods-market-issues-allergy-alert-undeclared-egg-cabricharme-cheese",
+      "score": 91
     },
     {
       "id": "CPSC-10972-sweet-cubby-recalls-children-s-loungewear-sets-due-to-risk-of-serious-",
@@ -2022,22 +2038,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-ready-eat-deli-style-salads-and-cream-cheese-because-possible-health",
-      "score": 45
-    },
-    {
-      "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Foods Alive Moringa Leaf Powder Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "Foods Alive",
-      "company": "Foods Alive Inc.",
-      "product": "Moringa Leaf Powder",
-      "date": "2026-09-04",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
       "score": 45
     }
   ]
