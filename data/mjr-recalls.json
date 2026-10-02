@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-02T14:47:46.228Z",
+  "generated": "2026-10-02T20:48:33.224Z",
   "version": "2.4",
-  "newestDate": "2026-10-01",
+  "newestDate": "2026-10-02",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1052
+      "count": 1053
     },
     "CPSC": {
       "ok": true,
-      "count": 9688
+      "count": 9723
     },
     "USDA": {
       "ok": true,
@@ -23,6 +23,22 @@
   },
   "count": 120,
   "items": [
+    {
+      "id": "FDA-2026-10-02-great-value-trader-joe-s-organic-blueberries-triple-berry-blend-and-mi",
+      "source": "FDA",
+      "category": "food",
+      "title": "Great Value, Trader Joe’s Organic Blueberries, Triple Berry Blend and Mixed Berry Blend Recalled",
+      "reason": "Potential E. Coli O145:H28 Contamination",
+      "brand": "Great Value, Trader Joe’s",
+      "company": "Frutas y Hortalizas del Sur S.A.",
+      "product": "Organic Blueberries, Triple Berry Blend and Mixed Berry Blend",
+      "date": "2026-10-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/frutas-y-hortalizas-del-sur-sa-expands-recalls-include-additional-lots-great-value-frozen-organic",
+      "score": 188
+    },
     {
       "id": "CPSC-10953-conair-expands-recall-of-cuisinart-grill-brushes-due-to-ingestion-haza",
       "source": "CPSC",
@@ -142,22 +158,6 @@
       "score": 118
     },
     {
-      "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
-      "source": "FDA",
-      "category": "food",
-      "title": "Northwest Naturals Chicken Recipe Pet Food Recalled",
-      "reason": "Potential contamination with Salmonella and/or Listeria monocytogenes",
-      "brand": "Northwest Naturals",
-      "company": "Northwest Naturals",
-      "product": "Chicken Recipe",
-      "date": "2026-08-28",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/panorama-produce-recalls-mangoes-due-possible-salmonella-contamination",
-      "score": 118
-    },
-    {
       "id": "CPSC-10991-zck01-recalls-kesyup-mattresses-due-to-risk-of-serious-injury-or-death",
       "source": "CPSC",
       "category": "consumer",
@@ -192,6 +192,22 @@
       "score": 132
     },
     {
+      "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
+      "source": "FDA",
+      "category": "food",
+      "title": "Northwest Naturals Chicken Recipe Pet Food Recalled",
+      "reason": "Potential contamination with Salmonella and/or Listeria monocytogenes",
+      "brand": "Northwest Naturals",
+      "company": "Northwest Naturals",
+      "product": "Chicken Recipe",
+      "date": "2026-08-28",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/panorama-produce-recalls-mangoes-due-possible-salmonella-contamination",
+      "score": 118
+    },
+    {
       "id": "CPSC-10982-esjay-us-recalls-toddler-busy-board-montessori-toys-due-to-risk-of-ser",
       "source": "CPSC",
       "category": "consumer",
@@ -207,22 +223,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Esjay-US-Recalls-Toddler-Busy-Board-Montessori-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Violates-Small-Parts-Ban",
       "score": 133
-    },
-    {
-      "id": "FDA-2026-10-01-bettergoods-pasta-gias-foods-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Bettergoods Pasta Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes",
-      "brand": "Bettergoods",
-      "company": "Gias Foods, Inc.",
-      "product": "Pasta",
-      "date": "2026-10-01",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/boticelli-foods-recalls-bettergoods-pistachio-nut-butter-because-possible-health-risk",
-      "score": 115
     },
     {
       "id": "NHTSA-26V559000",
@@ -242,20 +242,20 @@
       "score": 132
     },
     {
-      "id": "FDA-2026-09-29-sierra-nevada-graziers-monterey-jack-jalapeno-jack-medium-cheddar-and-",
+      "id": "FDA-2026-10-01-bettergoods-pasta-gias-foods-inc",
       "source": "FDA",
       "category": "food",
-      "title": "Sierra Nevada Graziers Monterey Jack, Jalapeno Jack, Medium Cheddar, and Sharp Cheddar raw milk…",
-      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (STEC)",
-      "brand": "Sierra Nevada Graziers",
-      "company": "Sierra Nevada Cheese Company",
-      "product": "Monterey Jack, Jalapeno Jack, Medium Cheddar, and Sharp Cheddar raw milk cheeses",
-      "date": "2026-09-29",
+      "title": "Bettergoods Pasta Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Bettergoods",
+      "company": "Gias Foods, Inc.",
+      "product": "Pasta",
+      "date": "2026-10-01",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/sierra-nevada-cheese-company-recalls-graziers-raw-milk-cheese-because-possible-health-risk",
-      "score": 103
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/boticelli-foods-recalls-bettergoods-pistachio-nut-butter-because-possible-health-risk",
+      "score": 115
     },
     {
       "id": "NHTSA-26V560000",
@@ -426,6 +426,22 @@
       "campaign": "26V584000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V584-2913.pdf",
       "score": 105
+    },
+    {
+      "id": "FDA-2026-09-29-sierra-nevada-graziers-monterey-jack-jalapeno-jack-medium-cheddar-and-",
+      "source": "FDA",
+      "category": "food",
+      "title": "Sierra Nevada Graziers Monterey Jack, Jalapeno Jack, Medium Cheddar, and Sharp Cheddar raw milk…",
+      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (STEC)",
+      "brand": "Sierra Nevada Graziers",
+      "company": "Sierra Nevada Cheese Company",
+      "product": "Monterey Jack, Jalapeno Jack, Medium Cheddar, and Sharp Cheddar raw milk cheeses",
+      "date": "2026-09-29",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/sierra-nevada-cheese-company-recalls-graziers-raw-milk-cheese-because-possible-health-risk",
+      "score": 103
     },
     {
       "id": "CPSC-10999-abc-trading-recalls-light-up-children-s-toys-due-to-risk-of-serious-in",
@@ -2001,7 +2017,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/sempio-food-services-inc--recalls-ready-eat-chicken-stew-products-imported-without",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/sempio-food-services-inc--recalls-ready-eat-chicken-stew-products-imported-without",
       "score": 42
     },
     {
@@ -2020,23 +2036,6 @@
       "campaign": "26V613000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V613-8644.pdf",
       "score": 42
-    },
-    {
-      "id": "CPSC-10967-guang-zhou-recalls-wantefully-hair-dryer-brushes-due-to-risk-of-seriou",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Guang Zhou Recalls Wantefully Hair Dryer Brushes Due to Risk of Serious Injury or Death from…",
-      "reason": "The recalled hair dryer brushes are in violation of federal regulations for hair dryers as they lack an integrated immersion protection device, which presents a substantial product hazard to consumers and the risk of…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from February 2026 through March 2026 for about $30.",
-      "product": "Wantefully Hair Dryer Brushes",
-      "date": "2026-09-10",
-      "units": 2295,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
-      "score": 40
     }
   ]
 }
