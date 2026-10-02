@@ -1430,10 +1430,31 @@ async function loadCPSC() {
     const url =
       `${CPSC_API}&RecallDateStart=${encodeURIComponent(start)}&RecallDateEnd=${encodeURIComponent(end)}`;
 
-    const data = await fetchJSON(
-      url,
-      `CPSC API ${year}`
-    );
+    let data;
+
+    try {
+      data = await fetchJSON(
+        url,
+        `CPSC API ${year}`
+      );
+    } catch (err) {
+      // A temporary outage for one old archive year should not make the
+      // entire CPSC source disappear. Recent years remain mandatory.
+      const recentCutoff = currentYear - 2;
+
+      if (year >= recentCutoff) {
+        throw new Error(
+          `CPSC recent year ${year} failed and cannot be skipped: ${err.message || err}`
+        );
+      }
+
+      console.warn(
+        `CPSC historical year ${year} unavailable after retries; skipping this year:`,
+        err.message || err
+      );
+
+      continue;
+    }
 
     const yearRows = Array.isArray(data) ? data : [];
 
