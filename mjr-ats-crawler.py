@@ -1916,11 +1916,21 @@ def _paylocity_detail_job(src, detail_url, posted_date=None):
     jid = m_id.group(1) if m_id else hashlib.sha1(detail_url.encode()).hexdigest()[:16]
 
     # Prefer headings, then URL slug as a last resort.
-    headings = [clean(h.get_text(" ")) for tag in ("h2", "h3", "h1") for h in soup.find_all(tag)]
+    headings = [clean(h.get_text(" ")) for tag in ("h1", "h2", "h3") for h in soup.find_all(tag) if not h.find_parent("noscript")]
     headings = [h for h in headings if h and h.lower() not in {"apply", "description", "requirements", "job type"}]
     title = ""
+    marker = re.search(r"window\.pageData\s*=\s*", r.text)
+    if marker:
+        try:
+            data, _ = json.JSONDecoder().raw_decode(r.text[marker.end():])
+            if isinstance(data, dict):
+                title = clean(data.get("jobTitle"))
+        except (ValueError, TypeError):
+            pass
     company_norm = re.sub(r"[^a-z0-9]+", " ", src["Company"].lower()).strip()
     for h in headings:
+        if title:
+            break
         h_norm = re.sub(r"[^a-z0-9]+", " ", h.lower()).strip()
         # Skip obvious employer/location headings. Prefer the job-title heading.
         if (company_norm and (company_norm in h_norm or h_norm in company_norm)):
@@ -1952,9 +1962,12 @@ def _paylocity_detail_job(src, detail_url, posted_date=None):
 
     # Prefer a semantic main/article container. Paylocity pages expose the
     # description and requirements in ordinary rendered HTML.
-    main = soup.find("main") or soup.find("article") or soup
-    desc = clean(main.get_text(" "))
-    if len(desc) < 200:
+    main = soup.select_one(".job-preview-details") or soup.find("main") or soup.find("article") or soup
+    content = BeautifulSoup(str(main), "html.parser")
+    for node in content.select("script, noscript, .mobile-apply-btn, .apply-link-marker"):
+        node.decompose()
+    desc = format_description(str(content))
+    if len(strip_html(desc)) < 200:
         return None
 
     # Location commonly sits near the title and is also visible in page text.
@@ -2002,6 +2015,9 @@ def _paylocity_detail_job(src, detail_url, posted_date=None):
     )
 
 
+PUBLIC_BOARD_ENUMERATION = {}
+
+
 def _paylocity_board_jobs(src, start_url=None):
     """Enumerate published jobs from Paylocity's public rendered board.
 
@@ -2011,6 +2027,51 @@ def _paylocity_board_jobs(src, start_url=None):
     start_url = start_url or src["URL"]
     r = req("GET", start_url)
     soup = BeautifulSoup(r.text, "html.parser")
+
+    # Current React boards embed their full listing inventory before rendering
+    # anchors. Read the employer's JSON instead of waiting for browser DOM links.
+    marker = re.search(r"window\.pageData\s*=\s*", r.text)
+    if marker:
+        try:
+            data, _ = json.JSONDecoder().raw_decode(r.text[marker.end():])
+        except (ValueError, TypeError):
+            data = None
+        if isinstance(data, dict) and isinstance(data.get("Jobs"), list):
+            rows = [row for row in data["Jobs"] if isinstance(row, dict) and row.get("IsInternal") is False]
+            candidates = {}
+            for row in rows:
+                identifier = str(row.get("JobId") or "")
+                posted = pdate(row.get("PublishedDate"))
+                title = clean(row.get("JobTitle"))
+                location = row.get("JobLocation") or {}
+                country = clean(location.get("Country")).upper()
+                if (
+                    not identifier.isdigit() or not title or not posted
+                    or not job_is_fresh_date(posted, jobtype(title))
+                    or country not in {"US", "USA", "CA", "CAN", "CANADA"}
+                ):
+                    continue
+                candidates[identifier] = (posted, row)
+            out = []
+            for identifier, (posted, row) in candidates.items():
+                url = f"https://recruiting.paylocity.com/recruiting/jobs/Details/{identifier}"
+                job = _paylocity_detail_job(src, url, posted)
+                if not job:
+                    raise RuntimeError(f"Paylocity fresh detail could not be validated: {identifier}")
+                if job.title != clean(row.get("JobTitle")):
+                    raise RuntimeError(f"Paylocity listing/detail title mismatch: {identifier}")
+                location = row.get("JobLocation") or {}
+                job.city = clean(location.get("City")) or job.city
+                job.state = clean(location.get("State")) or job.state
+                job.country = "CA" if clean(location.get("Country")).upper() in {"CA", "CAN", "CANADA"} else "US"
+                if row.get("IsRemote") is True:
+                    job.work_arrangement = "Remote"
+                if job.jobtype == "Internship":
+                    job.category = "Internships"
+                out.append(job)
+            PUBLIC_BOARD_ENUMERATION[clean(src["Company"]).lower()] = len(rows)
+            print(f"Paylocity embedded {src['Company']}: enumerated={len(rows)} eligible={len(out)}")
+            return out
 
     # If the configured source is one Details page (Hope Media currently is),
     # follow Paylocity's "View All Jobs"/List/All link first.
@@ -8319,8 +8380,8 @@ def nrg_paylocity(src):
     preserve the full v18 server/rendered recovery path.
     """
     feed_jobs = paylocity(src)
-    if feed_jobs:
-        print(f"NRG Paylocity public feed: parsed={len(feed_jobs)}")
+    if feed_jobs or clean(src["Company"]).lower() in PUBLIC_BOARD_ENUMERATION:
+        print(f"NRG Paylocity: parsed={len(feed_jobs)}")
         return feed_jobs
     return paylocity_v18(src)
 
@@ -13920,6 +13981,7 @@ def main():
             )
 
             icims_enumerated = 0
+            public_board_enumerated = company_key in PUBLIC_BOARD_ENUMERATION
 
             # v40: Audacy uses direct iCIMS enumeration with strict
             # ID/title/apply-link validation. Do not use the old wrapper path.
@@ -13950,19 +14012,19 @@ def main():
                 except Exception as e:
                     print(f"Salem diagnostic failed: {e}")
 
-            if not got:
+            if not got and not public_board_enumerated:
                 got = structured_jobs_v27(s)
 
-            if not got and company_key in V25_FAST_RADIO_TARGETS:
+            if not got and not public_board_enumerated and company_key in V25_FAST_RADIO_TARGETS:
                 if company_key == "educational media foundation":
                     got = emf_v26_narrow(s)
                 else:
                     got = radio_direct_v25(s)
 
-            if not got and company_key in V23_RADIO_TARGETS:
+            if not got and not public_board_enumerated and company_key in V23_RADIO_TARGETS:
                 got = radio_targeted_v23(s)
 
-            if not got and company_key in RADIO_RECOVERY_COMPANIES:
+            if not got and not public_board_enumerated and company_key in RADIO_RECOVERY_COMPANIES:
                 got = radio_recovery(s)
 
             scope_rejected = []
@@ -14003,13 +14065,14 @@ def main():
                         "ok"
                         if got
                         else "enumerated_no_fresh_jobs"
-                        if icims_enumerated
+                        if icims_enumerated or public_board_enumerated
                         else "zero_or_not_enumerable"
                     ),
                     len(got),
                     "; ".join(
                         part for part in [
-                            (
+                            f"enumerated_jobs={PUBLIC_BOARD_ENUMERATION[company_key]}"
+                            if public_board_enumerated else (
                                 f"enumerated_jobs={icims_enumerated}"
                                 if company_key == "audacy"
                                 else f"enumerated_detail_urls={icims_enumerated}"
