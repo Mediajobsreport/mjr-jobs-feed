@@ -1,20 +1,20 @@
 {
-  "generated": "2026-10-02T20:48:33.224Z",
+  "generated": "2026-10-03T05:23:47.504Z",
   "version": "2.4",
   "newestDate": "2026-10-02",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1053
+      "count": 1056
     },
     "CPSC": {
       "ok": true,
-      "count": 9723
+      "count": 9460
     },
     "USDA": {
       "ok": true,
-      "count": 2028
+      "count": 2029
     },
     "NHTSA": {
       "ok": true,
@@ -240,6 +240,22 @@
       "campaign": "26V559000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 132
+    },
+    {
+      "id": "FDA-2026-10-02-home-grown-green-sprouting-calabrese-broccoli-seeds-eak-distribution-l",
+      "source": "FDA",
+      "category": "food",
+      "title": "Home Grown Green Sprouting Calabrese Broccoli Seeds Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "Home Grown",
+      "company": "EAK Distribution LLC",
+      "product": "Green Sprouting Calabrese Broccoli Seeds",
+      "date": "2026-10-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eak-distribution-llc-recalls-home-grown-green-sprouting-calabrese-broccoli-seeds-8-oz-heirloom",
+      "score": 115
     },
     {
       "id": "FDA-2026-10-01-bettergoods-pasta-gias-foods-inc",
@@ -709,7 +725,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/wakefern-food-corp-voluntarily-recalls-wholesome-pantry-organic-unsweetened-apple-sauce",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 85
     },
     {
@@ -912,7 +928,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/berlin-seeds-recalls-alfalfa-sprouting-seed-because-possible-health-risk",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 75
     },
     {
@@ -1147,6 +1163,54 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/LANCHEZ-Pressure-Washers-Recalled-Due-to-Serious-Risk-of-Injury-or-Death-from-Shock-and-Electrocution-Hazards",
       "score": 71
+    },
+    {
+      "id": "FDA-2026-10-02-winco-foods-salsa-bean-dip-winco-foods-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "WinCo Foods Salsa Bean Dip Recalled",
+      "reason": "Potential pest inclusion",
+      "brand": "WinCo Foods",
+      "company": "WinCo Foods LLC",
+      "product": "Salsa Bean Dip",
+      "date": "2026-10-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/winco-foods-boise-id-recalling-following-salsa-bean-dip-trays-due-inclusion-recalled-peperoncini-gl",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-10-02-stewart-s-shops-ice-cream-stewart-s-shop-corp",
+      "source": "FDA",
+      "category": "food",
+      "title": "Stewart’s Shops Ice cream Recalled",
+      "reason": "Potential presence of metal",
+      "brand": "Stewart’s Shops",
+      "company": "Stewart’s Shop Corp",
+      "product": "Ice cream",
+      "date": "2026-10-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/stewarts-shop-corp-recalls-heavenly-medley-and-vanilla-chocolate-strawberry-due-possible-foreign",
+      "score": 70
+    },
+    {
+      "id": "USDA-2026-10-02-inexport-logistics-llc-recalls-ineligible-pork-cracklings-products-imp",
+      "source": "USDA",
+      "category": "food",
+      "title": "Inexport Logistics LLC Recalls Ineligible Pork Cracklings Products Imported From The Republic of Colombia",
+      "reason": "Import Violation",
+      "brand": "",
+      "company": "",
+      "product": "",
+      "date": "2026-10-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fsis.usda.gov/recalls-alerts/el-eden-import-distributor-corp-recalls-ineligible-pork-cracklings-products-imported",
+      "score": 70
     },
     {
       "id": "FDA-2026-10-01-greewich-glutathione-injection-greenwich-rx",
@@ -1971,71 +2035,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/GIHNJSI-Squeezy-Dumplings-Toys-Recalled-Due-to-Serious-Ingestion-Choking-and-Obstruction-Hazards-Sold-on-Amazon-by-Chenyuanhui",
       "score": 45
-    },
-    {
-      "id": "FDA-2026-08-29-everything-sprouts-robust-radish-mix-5oz-cups-everything-sprouts-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Everything Sprouts Robust Radish Mix, 5oz Cups Recalled",
-      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (STEC) or Salmonella.",
-      "brand": "Everything Sprouts",
-      "company": "Everything Sprouts, LLC",
-      "product": "Robust Radish Mix, 5oz Cups",
-      "date": "2026-08-29",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/everything-sprouts-llc-expands-voluntarily-recall-include-robust-radish-mix-due-potential-e-coli-and",
-      "score": 45
-    },
-    {
-      "id": "FDA-2026-08-22-everything-sprouts-calco-alfalfa-sprouts-everything-sprouts-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Everything Sprouts, Calco Alfalfa Sprouts Recalled",
-      "reason": "Potential to be contaminated with Salmonella and Shiga toxin-producing Escherichia coli (STEC)",
-      "brand": "Everything Sprouts, Calco",
-      "company": "Everything Sprouts, LLC",
-      "product": "Alfalfa Sprouts",
-      "date": "2026-08-22",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/everything-sprouts-llc-recalls-alfalfa-sprouts-due-potential-e-coli-and-salmonella-risk",
-      "score": 45
-    },
-    {
-      "id": "USDA-2026-09-25-sempio-food-services-inc-recalls-ready-to-eat-chicken-stew-products-im",
-      "source": "USDA",
-      "category": "food",
-      "title": "Sempio Food Services Inc. Recalls Ready-To-Eat Chicken Stew Products Imported Without the Benefit of…",
-      "reason": "Import Violation",
-      "brand": "",
-      "company": "",
-      "product": "",
-      "date": "2026-09-25",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fsis.usda.gov/recalls-alerts/sempio-food-services-inc--recalls-ready-eat-chicken-stew-products-imported-without",
-      "score": 42
-    },
-    {
-      "id": "NHTSA-26V613000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Land Rover Range Rover Sport Vehicles Recalled",
-      "reason": "Jaguar Land Rover North America, LLC (Land Rover) is recalling certain 2024-2026 Range Rover Sport vehicles. Cracks may develop in the rear subframe. 1,073 vehicles or units may be affected.",
-      "brand": "Land Rover",
-      "company": "Jaguar Land Rover North America, LLC",
-      "product": "Range Rover Sport",
-      "date": "2026-09-24",
-      "units": 1073,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V613000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V613-8644.pdf",
-      "score": 42
     }
   ]
 }
