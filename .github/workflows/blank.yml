@@ -55,6 +55,9 @@ jobs:
             echo "FULL PRODUCTION CRAWL"
           fi
 
+      - name: Check ATS date and AP parsing regressions
+        run: python -m unittest discover -s tests -v
+
       - name: Crawl ATS sources
         env:
           CAREERONESTOP_USER_ID: "${{ secrets.CAREERONESTOP_USER_ID }}"

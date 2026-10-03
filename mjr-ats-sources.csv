@@ -78,7 +78,7 @@ Journalism,NPR,Greenhouse,https://job-boards.greenhouse.io/nationalpublicradioin
 Journalism,Tampa Bay Times Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=8c64d493-1027-445e-9378-39c4e859f2b6&ccId=19000101_000001&lang=en_US,True
 Journalism,Tribune,Workday,https://myworkdaycenter.wd5.myworkdayjobs.com/TPCO,True
 Journalism,Woodward Communications,Paycom,https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=41E82EC60AAD792EC7018E3AB22DE8D2,True
-Journalism,Associated Press (AP),Company Career Site,https://careers.ap.org/go/View-All-Jobs/4304700/,True
+Journalism,Associated Press (AP),SAP SuccessFactors,https://careers.ap.org/go/View-All-Jobs/4304700/,True
 Journalism,NETA,Company Career Site,https://www.netaonline.org/careers-public-media,True
 Journalism,Vox Media,Company Career Site,https://www.voxmedia.com/jobs/,True
 Journalism,WSJ/Dow Jones,Workday,https://dowjones.wd1.myworkdayjobs.com/Dow_Jones_Career,True
@@ -117,5 +117,4 @@ Digital,Feld Entertainment,Lever,https://jobs.lever.co/feldinc,True
 Radio,Stephens Media Group,Company Career Site,https://cherryfm.com/smg-jobs/,True
 Radio,Pamal Broadcasting,Company Career Site,https://www.pamal.com/jobs1/jobs/,True
 ,Gray Television,Generic Structured,https://gray.tv/careers,True
-,Associated Press,Generic Structured,https://careers.ap.org/,True
 Radio,Mid-West Family of Companies,Company Career Site,https://midwestfamilyofcompanies.org/work-for-us/,True

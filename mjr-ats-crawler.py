@@ -192,7 +192,10 @@ def pdate(v):
         return None
 
     s = clean(v)
-    m = re.search(r"(\d+)\s+days?\s+ago", s, re.I)
+    # Workday's "30+ Days Ago" is a lower bound, not a calendar day.
+    # Fuzzy parsing can otherwise turn it into day 30 of this month and
+    # clamp that future date to TODAY, making stale jobs appear new.
+    m = re.search(r"(\d+)\s*\+?\s+days?\s+ago", s, re.I)
     if m:
         return TODAY - timedelta(days=int(m.group(1)))
 
@@ -1417,7 +1420,10 @@ def workday(src):
             # postings before the per-job detail request; large tenants can
             # otherwise exhaust the domain request cap on jobs MJR cannot use.
             list_pd = pdate(p.get("postedOn"))
-            if list_pd and list_pd < CUTOFF:
+            if list_pd and (
+                list_pd < CUTOFF
+                or (TODAY - list_pd).days >= INTERNSHIP_LIFE_DAYS
+            ):
                 continue
 
             # Large Workday boards also expose locationsText in the listing
@@ -1466,6 +1472,11 @@ def workday(src):
                 continue
 
             url = info.get("externalUrl") or f"https://{host}/{site}{ext}"
+            role_type = jobtype(title, info.get("timeType", ""))
+            job_category = (
+                "Internships" if role_type == "Internship"
+                else category(title, desc, src["Industry"], src["Company"])
+            )
 
             out.append(
                 Job(
@@ -1474,8 +1485,8 @@ def workday(src):
                     src["Company"],
                     desc,
                     pd,
-                    jobtype(title, info.get("timeType", "")),
-                    category(title, desc, src["Industry"], src["Company"]),
+                    role_type,
+                    job_category,
                     url,
                     src["URL"],
                     src["URL"],
@@ -10643,6 +10654,61 @@ def _v28_before_request(url):
 def _v28_backoff_seconds(attempt):
     return min(12.0, 1.5 * (2 ** attempt)) + random.uniform(0.0, 0.75)
 
+def associated_press(src):
+    """Read AP's public SuccessFactors board and JobPosting microdata."""
+    base = "https://careers.ap.org/go/View-All-Jobs/4304700/"
+    pages, seen_pages, detail_urls = [base], set(), set()
+    while pages and len(seen_pages) < 8:
+        page = pages.pop(0)
+        if page in seen_pages:
+            continue
+        seen_pages.add(page)
+        response = req("GET", page)
+        soup = BeautifulSoup(response.text, "html.parser")
+        for anchor in soup.find_all("a", href=True):
+            url = urljoin(base, anchor["href"]).split("#", 1)[0]
+            parsed = urlparse(url)
+            if parsed.netloc.lower() != "careers.ap.org":
+                continue
+            if re.fullmatch(r"/job/[^/]+/\d+/?", parsed.path):
+                detail_urls.add(url.split("?", 1)[0])
+            elif parsed.path.startswith("/go/View-All-Jobs/4304700/"):
+                if url not in seen_pages:
+                    pages.append(url)
+
+    out = []
+    for url in sorted(detail_urls)[:120]:
+        response = req("GET", url)
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        def field(name):
+            node = soup.select_one(f'[itemprop="{name}"]')
+            return clean(node.get("content") or node.get_text(" ", strip=True)) if node else ""
+
+        posted = pdate(field("datePosted"))
+        title = field("title")
+        country = field("addressCountry").upper()
+        node = soup.select_one('[itemprop="description"]')
+        description = format_description(str(node)) if node else ""
+        role_type = jobtype(title, strip_html(description))
+        if (
+            not posted or posted < CUTOFF
+            or (TODAY - posted).days >= retention_days(role_type)
+            or country not in {"US", "CA"}
+            or not title or len(strip_html(description)) < 200
+        ):
+            continue
+        identifier = re.search(r"/(\d+)/?$", urlparse(url).path).group(1)
+        out.append(Job(
+            identifier, title, src["Company"], description, posted, role_type,
+            category(title, description, src.get("Industry") or "Journalism", src["Company"]),
+            url, base, "https://www.ap.org/", "",
+            normalize_work_arrangement(description, field("addressLocality")),
+            field("addressLocality"), field("addressRegion"), country,
+        ))
+    return out
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -13686,7 +13752,9 @@ def main():
 
 
             got = (
-                connoisseur_paycor(s)
+                associated_press(s)
+                if company_key in {"associated press", "associated press (ap)"}
+                else connoisseur_paycor(s)
                 if company_key == "connoisseur media"
                 else midwest_family_direct(s)
                 if company_key == "mid-west family of companies"
