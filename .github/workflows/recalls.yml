@@ -8,12 +8,28 @@ on:
 permissions:
   contents: write
 
+# Serialize all workflows that write to main in this repository.
+# This avoids non-fast-forward push failures when the jobs feed or another
+# scheduled writer commits while the recall feed is running.
+concurrency:
+  group: mjr-main-writer
+  cancel-in-progress: false
+
 jobs:
   build-recalls:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Sync checkout to latest main
+        shell: bash
+        run: |
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -36,5 +52,24 @@ jobs:
             echo "No recall changes."
           else
             git commit -m "Update MJR recall feed"
-            git push
+
+            # A different writer may still have updated main after this run began.
+            # Rebase our single generated-file commit onto the newest main and retry.
+            for attempt in 1 2 3; do
+              git fetch origin main
+              if git rebase origin/main; then
+                if git push origin main; then
+                  exit 0
+                fi
+              else
+                git rebase --abort || true
+                echo "Recall feed rebase conflicted; regenerating from latest main is safer."
+                exit 1
+              fi
+              echo "Push race on attempt $attempt; retrying..."
+              sleep $((attempt * 5))
+            done
+
+            echo "Unable to publish recall feed after 3 attempts."
+            exit 1
           fi
