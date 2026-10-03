@@ -17,7 +17,7 @@ permissions:
 # Only one production/test crawl may use this workflow at a time. This prevents
 # two runs from generating and publishing the same state/feed files concurrently.
 concurrency:
-  group: mjr-jobs-feed-writer
+  group: mjr-main-writer
   cancel-in-progress: false
 
 jobs:
