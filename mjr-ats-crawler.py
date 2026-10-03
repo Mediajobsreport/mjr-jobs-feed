@@ -217,20 +217,22 @@ def pdate(v):
 
 
 def _req_raw(method, url, **kw):
+    timeout = kw.pop("timeout", 15)
+    tries = max(1, min(4, int(kw.pop("tries", 4))))
     last_retryable = None
-    for n in range(4):
+    for n in range(tries):
         try:
-            r = SESSION.request(method, url, timeout=15, **kw)
+            r = SESSION.request(method, url, timeout=timeout, **kw)
             if r.status_code in (429, 500, 502, 503, 504):
                 last_retryable = RuntimeError(f"HTTP {r.status_code} for {url}")
-                if n < 3:
+                if n < tries - 1:
                     time.sleep(2**n)
                     continue
                 raise last_retryable
             r.raise_for_status()
             return r
         except requests.RequestException:
-            if n == 3:
+            if n == tries - 1:
                 raise
             time.sleep(2**n)
 
@@ -3156,6 +3158,18 @@ def _ukg_location(text):
 
 def _ukg_detail(src, url, raw):
     """Parse one public UKG Pro Recruiting OpportunityDetail page."""
+    # UKG embeds the complete public job as JSON in its Knockout constructor.
+    # Its HTML headings/description are placeholders until JavaScript runs.
+    embedded = re.search(
+        r"new\s+US\.Opportunity\.CandidateOpportunityDetail\s*\(\s*", raw
+    )
+    if embedded:
+        try:
+            payload, _ = json.JSONDecoder().raw_decode(raw[embedded.end():])
+        except (ValueError, TypeError):
+            return None
+        return _ukg_embedded_job(src, url, payload)
+
     soup = BeautifulSoup(raw, "html.parser")
     pd = _ukg_posted_date(raw, soup)
     if not pd or pd < CUTOFF:
@@ -6807,153 +6821,153 @@ def wbd_phenom(src):
     )
 
 
+def _ukg_embedded_job(src, url, payload):
+    """Validate employer-provided UKG data without executing JavaScript."""
+    if not isinstance(payload, dict) or payload.get("OpportunityIsClosed") is True:
+        return None
+    parts = _ukg_parts(url)
+    oid = (parse_qs(urlparse(url).query).get("opportunityId") or [""])[0]
+    if not parts or clean(payload.get("Id")).lower() != oid.lower():
+        return None
+    membership = next((
+        item for item in payload.get("JobBoardMemberships", [])
+        if isinstance(item, dict)
+        and clean(item.get("JobBoardId")).lower() == parts[2].lower()
+        and item.get("PublishedExternal") is True
+    ), None)
+    if not membership:
+        return None
+    posted = pdate(membership.get("ExternalPostedDate") or payload.get("PostedDate"))
+    title = clean(payload.get("Title"))
+    desc = format_description(payload.get("Description"))
+    employment = (
+        "Full Time" if payload.get("FullTime") is True
+        else "Part Time" if payload.get("FullTime") is False else ""
+    )
+    role_type = jobtype(title, employment)
+    if (
+        not posted or posted < CUTOFF or not title
+        or not job_is_fresh_date(posted, role_type)
+        or len(strip_html(desc)) < 200
+    ):
+        return None
+    address, location_name = None, ""
+    for location in payload.get("Locations") or []:
+        candidate = location.get("Address") or {}
+        country = clean((candidate.get("Country") or {}).get("Code")).upper()
+        if country in {"US", "USA", "CA", "CAN"}:
+            address = candidate
+            location_name = clean(location.get("LocalizedName"))
+            break
+    if address is None:
+        return None
+    country = clean((address.get("Country") or {}).get("Code")).upper()
+    city = clean(address.get("City"))
+    if not city and location_name.lower() in {"nationwide", "remote", "multiple locations"}:
+        city = location_name
+    state = clean((address.get("State") or {}).get("Code"))
+    location_type = payload.get("JobLocationType")
+    if not isinstance(location_type, str):
+        location_type = ""
+    return Job(
+        clean(payload.get("RequisitionNumber")) or oid, title, src["Company"],
+        desc, posted, role_type,
+        "Internships" if role_type == "Internship"
+        else category(title, desc, src.get("Industry", ""), src["Company"]),
+        url.split("#", 1)[0], src["URL"], src["URL"], "",
+        normalize_work_arrangement(desc, location_type),
+        city, state, "CA" if country in {"CA", "CAN"} else "US",
+    )
+
+
+def job_is_fresh_date(posted, role_type):
+    return 0 <= (TODAY - posted).days < retention_days(role_type)
+
+
 def gray_direct(src):
-    """Gray Media first-party careers collector.
-
-    Gray's corporate careers page embeds a UKG-powered widget that exposes the
-    live inventory only after JavaScript runs. The legacy UKG listing endpoint
-    can return an empty set to automated clients even while individual public
-    OpportunityDetail pages remain fully accessible.
-
-    Render Gray's own careers page once, capture opportunity UUIDs from the DOM
-    and XHR/fetch responses, then parse canonical UKG detail pages. Discovery is
-    time-bounded and detail retrieval is concurrent so Gray cannot stall a full
-    crawl the way sequential requisition probing would.
-    """
-    parts = _ukg_parts(src["URL"])
-    if not parts:
-        return []
-
-    base, tenant, board = parts
-    board_root = f"{base}/{tenant}/JobBoard/{board}"
-    careers = "https://graymedia.com/careers/"
-    ids = set()
-
-    uuid_re = re.compile(
-        r"(?:opportunityId|OpportunityId)[^0-9a-f]{0,20}"
-        r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
-        re.I,
-    )
-    url_uuid_re = re.compile(
-        r"OpportunityDetail[^\"'<>\\s]{0,300}?"
-        r"opportunityId(?:=|%3D)"
-        r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
-        re.I,
-    )
-
-    def harvest(raw):
-        raw = html.unescape(str(raw or "")).replace("\\/", "/")
-        for rx in (uuid_re, url_uuid_re):
-            for m in rx.finditer(raw):
-                ids.add(m.group(1).lower())
-
-    if sync_playwright is not None:
-        try:
-            with sync_playwright() as p:
-                browser = p.chromium.launch(
-                    headless=True,
-                    args=["--disable-dev-shm-usage", "--no-sandbox"],
-                )
-                context = browser.new_context(
-                    user_agent=(
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/152.0.0.0 Safari/537.36"
-                    ),
-                    viewport={"width": 1440, "height": 1200},
-                )
-                page = context.new_page()
-                page.set_default_timeout(12000)
-
-                def on_response(resp):
-                    try:
-                        if resp.request.resource_type not in ("xhr", "fetch"):
-                            return
-                        u = (resp.url or "").lower()
-                        if (
-                            "graymedia.com" not in u
-                            and "ultipro.com" not in u
-                            and "ukg" not in u
-                        ):
-                            return
-                        harvest(resp.text())
-                    except Exception:
-                        pass
-
-                page.on("response", on_response)
-                page.goto(careers, wait_until="domcontentloaded", timeout=30000)
-
-                # Give the careers widget a bounded window to hydrate. A few
-                # scrolls trigger lazy rendering without clicking/filtering.
-                for _ in range(6):
-                    page.wait_for_timeout(1000)
-                    try:
-                        harvest(page.content())
-                        hrefs = page.locator("a[href]").evaluate_all(
-                            "(els) => els.map(a => a.href).filter(Boolean)"
-                        )
-                        harvest("\n".join(str(x) for x in hrefs))
-                        page.mouse.wheel(0, 2200)
-                    except Exception:
-                        pass
-
-                print(
-                    f"Gray careers rendered: final={page.url} "
-                    f"opportunity_ids={len(ids)}"
-                )
-                browser.close()
-        except Exception as e:
-            print(
-                f"Gray careers browser failed: "
-                f"{type(e).__name__}: {clean(str(e))[:180]}"
-            )
-
-    # If the corporate widget did not expose IDs, retain the generic UKG route
-    # as a safe fallback. It is independently bounded.
-    if not ids:
-        try:
-            jobs = ukg(src)
-            if jobs:
-                return jobs
-        except Exception:
-            pass
-        print("Gray careers: no enumerable opportunity IDs")
-        return []
-
-    detail_urls = [
-        f"{board_root}/OpportunityDetail?opportunityId={oid}"
-        for oid in sorted(ids)
-    ]
-
-    # Gray can have several hundred live postings. Fetch detail pages in a small
-    # bounded pool instead of serially. One failed/closed opportunity is ignored.
+    """Use Gray's public widget API, then verify each fresh UKG detail."""
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
+    parts = _ukg_parts(src["URL"])
+    if not parts:
+        raise RuntimeError("Gray UKG board not inferable")
+    base, tenant, board = parts
+    board_root = f"{base}/{tenant}/JobBoard/{board}"
+    payload = req("GET", "https://graymedia.com/careers/careers_api_v2.php", params={
+        "limit": 0, "offset": 0, "sort_order": "desc", "searchWhat": "",
+        "searchWhere": "", "searchJobLocation": "", "searchJobCategory": "",
+        "searchSchedule": "", "searchJobLocationType": "",
+    }).json()
+    if not isinstance(payload, list):
+        raise RuntimeError("Gray careers API returned an unexpected inventory")
+
+    candidates, arrangements = {}, {}
+    for row in payload:
+        if not isinstance(row, dict) or row.get("status") != "Published":
+            continue
+        oid = clean(row.get("external_id"))
+        if not re.fullmatch(r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}", oid, re.I):
+            continue
+        posted = pdate(row.get("external_posted_date"))
+        role_type = jobtype(clean(row.get("title")))
+        if not posted or not job_is_fresh_date(posted, role_type):
+            continue
+        published_here = any(
+            item.get("is_published_external") is True
+            and _ukg_parts(clean(item.get("recruiting_apply_url"))) == parts
+            for item in row.get("job_boards") or [] if isinstance(item, dict)
+        )
+        if published_here:
+            candidates[oid.lower()] = f"{board_root}/OpportunityDetail?opportunityId={oid}"
+            explicit_type = row.get("job_location_type")
+            if explicit_type in {"remote", "hybrid", "on-site"}:
+                arrangements[oid.lower()] = {
+                    "remote": "Remote", "hybrid": "Hybrid", "on-site": "On-Site",
+                }[explicit_type]
+    if len(candidates) > 400:
+        raise RuntimeError(f"Gray fresh inventory exceeds bounded detail budget: {len(candidates)}")
+
     def fetch_one(url):
-        try:
-            rr = _req_raw("GET", url, timeout=8, tries=2)
-            return _ukg_detail(src, url, rr.text)
-        except Exception:
-            return None
+        response = _req_raw("GET", url, timeout=12, tries=2)
+        return _ukg_detail(src, url, response.text)
 
-    out = []
-    seen_ids = set()
-    with ThreadPoolExecutor(max_workers=10) as pool:
-        futures = [pool.submit(fetch_one, u) for u in detail_urls[:700]]
-        for fut in as_completed(futures):
+    jobs, failed_urls = [], []
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        futures = {pool.submit(fetch_one, url): url for url in candidates.values()}
+        for future in as_completed(futures):
             try:
-                j = fut.result()
+                job = future.result()
+                if job:
+                    jobs.append(job)
             except Exception:
-                j = None
-            if j and j.id not in seen_ids:
-                seen_ids.add(j.id)
-                out.append(j)
+                failed_urls.append(futures[future])
+    # Retry only failed details once with a longer timeout and smaller pool.
+    failures = 0
+    if failed_urls:
+        def retry_one(url):
+            response = _req_raw("GET", url, timeout=20, tries=2)
+            return _ukg_detail(src, url, response.text)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            futures = [pool.submit(retry_one, url) for url in failed_urls]
+            for future in as_completed(futures):
+                try:
+                    job = future.result()
+                    if job:
+                        jobs.append(job)
+                except Exception:
+                    failures += 1
+    print(f"Gray API: inventory={len(payload)} fresh={len(candidates)} parsed={len(jobs)} request_failures={failures}")
+    if failures:
+        raise RuntimeError(f"Gray detail collection incomplete: {failures} unresolved requests")
+    if candidates and not jobs:
+        raise RuntimeError("Gray fresh postings could not be validated from UKG details")
+    for job in jobs:
+        oid = (parse_qs(urlparse(job.url).query).get("opportunityId") or [""])[0].lower()
+        if oid in arrangements:
+            job.work_arrangement = arrangements[oid]
+    return sorted(jobs, key=lambda job: job.id)
 
-    print(
-        f"Gray careers direct: discovered={len(ids)} "
-        f"details={len(detail_urls)} parsed={len(out)}"
-    )
-    return out
+
 
 
 V17_TARGETS = {
