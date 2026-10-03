@@ -2426,8 +2426,78 @@ def _dayforce_modern_rendered(src):
     return out
 
 
+def dayforce_public_search(src):
+    """Read the anonymous search API used by modern Dayforce career boards."""
+    parsed = urlparse(src["URL"])
+    parts = [part for part in parsed.path.split("/") if part]
+    if len(parts) < 3:
+        raise RuntimeError("Modern Dayforce namespace/board not inferable")
+    culture, namespace, board = parts[:3]
+    origin = f"https://{parsed.netloc}"
+    token = req("GET", origin + "/api/auth/csrf").json().get("csrfToken")
+    if not token:
+        raise RuntimeError("Dayforce anonymous search CSRF token unavailable")
+    out, seen = [], set()
+    offset = 0
+    for _ in range(40):
+        payload = req("POST", f"{origin}/api/geo/{namespace}/jobposting/search", json={
+            "clientNamespace": namespace, "jobBoardCode": board,
+            "cultureCode": culture, "paginationStart": offset,
+        }, headers={"X-CSRF-TOKEN": token, "Referer": src["URL"]}).json()
+        if not isinstance(payload, dict) or not isinstance(payload.get("jobPostings"), list):
+            raise RuntimeError("Dayforce returned an unexpected search inventory")
+        rows = payload["jobPostings"]
+        if not rows:
+            if offset < int(payload.get("maxCount") or 0):
+                raise RuntimeError("Dayforce search ended before its reported total")
+            return out
+        page_ids = {str(row.get("jobPostingId")) for row in rows if isinstance(row, dict)}
+        if page_ids.issubset(seen):
+            raise RuntimeError("Dayforce search repeated a page")
+        for row in rows:
+            if not isinstance(row, dict) or row.get("clientNamespace", "").lower() != namespace.lower():
+                continue
+            identifier = str(row.get("jobPostingId") or "")
+            if not identifier.isdigit() or identifier in seen:
+                continue
+            seen.add(identifier)
+            title = clean(row.get("jobTitle"))
+            desc = format_description(row.get("jobDescription"))
+            posted = pdate(row.get("postingStartTimestampUTC"))
+            role_type = jobtype(title, strip_html(desc))
+            if not title or not posted or not job_is_fresh_date(posted, role_type) or len(strip_html(desc)) < 200:
+                continue
+            expires = row.get("postingExpiryTimestampUTC")
+            if expires and dtparser.parse(expires) <= datetime.now(ZoneInfo("UTC")):
+                continue
+            locations = [location for location in row.get("postingLocations") or []
+                if location.get("isoCountryCode") in {"US", "CA"}]
+            if not locations:
+                continue
+            location = next((item for item in locations if clean(item.get("cityName"))), locations[0])
+            city = clean(location.get("cityName"))
+            if not city and row.get("hasVirtualLocation") is True:
+                city = "Remote"
+            url = f"{origin}/{culture}/{namespace}/{board}/jobs/{identifier}"
+            out.append(Job(
+                identifier, title, src["Company"], desc, posted, role_type,
+                "Internships" if role_type == "Internship"
+                else category(title, desc, src.get("Industry", ""), src["Company"]),
+                url, src["URL"], src["URL"], "",
+                normalize_work_arrangement(desc, "Remote" if row.get("hasVirtualLocation") is True else ""),
+                city, clean(location.get("stateCode")), location["isoCountryCode"],
+            ))
+        offset += len(rows)
+        if offset >= int(payload.get("maxCount") or offset):
+            print(f"Dayforce public {src['Company']}: enumerated={len(seen)} eligible={len(out)}")
+            return out
+    raise RuntimeError("Dayforce search exceeded bounded pagination")
+
+
 def dayforce(src):
     """Dedicated Dayforce collector using its anonymous external JobFeeds API."""
+    if urlparse(src["URL"]).netloc.lower() == "jobs.dayforcehcm.com":
+        return dayforce_public_search(src)
     tenants, board = _dayforce_candidates(src["URL"])
     if not tenants:
         raise RuntimeError("Dayforce tenant not inferable")
