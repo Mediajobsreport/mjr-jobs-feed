@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-04T14:08:57.250Z",
+  "generated": "2026-10-04T19:42:14.213Z",
   "version": "2.4",
   "newestDate": "2026-10-03",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1074
+      "count": 1057
     },
     "CPSC": {
       "ok": true,
@@ -1145,7 +1145,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/saint-francis-apizza-llc-issues-voluntary-recall-its-frozen-pizzas-missing-sub-ingredients-label-soy",
       "score": 70
     },
     {
