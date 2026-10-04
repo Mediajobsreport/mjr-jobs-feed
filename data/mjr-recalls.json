@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-03T23:15:47.007Z",
+  "generated": "2026-10-04T05:59:26.480Z",
   "version": "2.4",
   "newestDate": "2026-10-03",
   "stale": false,
@@ -10,7 +10,7 @@
     },
     "CPSC": {
       "ok": true,
-      "count": 9653
+      "count": 10027
     },
     "USDA": {
       "ok": true,
