@@ -304,7 +304,7 @@ function build(yearData,years,debug){
   return {
     generated_at:new Date().toISOString(),
     source:"U.S. Census Bureau Monthly Retail Trade; MJR analysis",
-    methodology:"MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available and averages those monthly shares. Following the RAB example, a hot month averages at least 8.6% of annual category sales. Categories can appear in multiple action windows so separate strong selling periods remain visible: Sell Now (current month), Start Prospecting (about 30 days ahead), On Deck (about 60–90 days ahead), or Watch Ahead (four or more months ahead). If no category reaches the hot-month mark in a window, MJR shows the strongest available month there as a clearly labeled planning prompt. National historical patterns are planning signals; local conditions can differ.",
+    methodology:"MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available and averages those monthly shares. Following the RAB example, a hot month averages at least 8.6% of annual category sales. Categories can appear in multiple action windows so separate strong selling periods remain visible: Sell Now (current month), Start Prospecting (about 30 days ahead), On Deck (about 60–90 days ahead), or Watch Ahead (four or more months ahead). If no category reaches the hot-month mark in a window, MJR shows the strongest available month there as a clearly labeled planning prompt.",
     years_requested:years,
     current_month:monthNames[currentMonth],
     hot_month_share_threshold:HOT_MONTH_SHARE,
