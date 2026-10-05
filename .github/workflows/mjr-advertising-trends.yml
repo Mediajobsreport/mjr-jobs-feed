@@ -2,6 +2,9 @@ name: MJR Advertising Trends
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/mjr-advertising-trends.yml
   schedule:
     # 4:20 AM and 3:20 PM Eastern during EDT; harmless if DST shifts by an hour.
     - cron: "20 8 * * *"
@@ -41,3 +44,51 @@ jobs:
             git commit -m "Update MJR advertising trends"
             git push
           fi
+
+      - name: Upload feed to MJR cPanel over FTPS
+        env:
+          MJR_CPANEL_HOST: ${{ secrets.MJR_CPANEL_HOST }}
+          MJR_CPANEL_USERNAME: ${{ secrets.MJR_CPANEL_USERNAME }}
+          MJR_CPANEL_PASSWORD: ${{ secrets.MJR_CPANEL_PASSWORD }}
+          MJR_CPANEL_DESTINATION: ${{ secrets.MJR_CPANEL_DESTINATION }}
+        run: |
+          set -euo pipefail
+          : "${MJR_CPANEL_HOST:?Add MJR_CPANEL_HOST to repository Actions secrets}"
+          : "${MJR_CPANEL_USERNAME:?Add MJR_CPANEL_USERNAME to repository Actions secrets}"
+          : "${MJR_CPANEL_PASSWORD:?Add MJR_CPANEL_PASSWORD to repository Actions secrets}"
+          destination="${MJR_CPANEL_DESTINATION:-public_html/images}"
+          destination="${destination#/}"
+          destination="${destination%/}"
+          curl --fail --show-error --silent --ftp-ssl-reqd \
+            --user "$MJR_CPANEL_USERNAME:$MJR_CPANEL_PASSWORD" \
+            --upload-file mjr-advertising-trends.json \
+            "ftp://$MJR_CPANEL_HOST/$destination/mjr-advertising-trends.json"
+
+      - name: Verify live MJR feed
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+
+          const expected = JSON.parse(fs.readFileSync("mjr-advertising-trends.json", "utf8"));
+          const url = "https://www.mediajobsreport.com/images/mjr-advertising-trends.json";
+          let lastError;
+
+          for (let attempt = 1; attempt <= 6; attempt++) {
+            try {
+              const response = await fetch(`${url}?verify=${Date.now()}`, { cache: "no-store" });
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              const live = await response.json();
+              if (live.generated_at !== expected.generated_at) {
+                throw new Error(`Live generated_at ${live.generated_at ?? "missing"} does not match uploaded ${expected.generated_at}`);
+              }
+              console.log(`Live feed verified: ${live.generated_at}`);
+              process.exit(0);
+            } catch (error) {
+              lastError = error;
+              if (attempt < 6) await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+          }
+
+          console.error(`Live feed verification failed: ${lastError}`);
+          process.exit(1);
+          NODE
