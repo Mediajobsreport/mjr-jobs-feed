@@ -1,7 +1,7 @@
 {
   "generated_at": "2026-10-05T15:05:58.451Z",
   "source": "U.S. Census Bureau Monthly Retail Trade; MJR analysis",
-  "methodology": "This immediate refresh groups each category's four highest average monthly sales shares into their separate upcoming action windows, so seasonal opportunities can appear more than once per year. The monthly Census workflow has been updated to use the RAB-style 8.6% hot-month threshold on its next scheduled data rebuild. Sell Now is the current month, Start Prospecting is about 30 days ahead, On Deck is about 60–90 days ahead, and Watch Ahead is four or more months ahead. Historical category patterns are national planning signals; local conditions can differ.",
+  "methodology": "This immediate refresh groups each category's four highest average monthly sales shares into their separate upcoming action windows, so seasonal opportunities can appear more than once per year. The monthly Census workflow has been updated to use the RAB-style 8.6% hot-month threshold on its next scheduled data rebuild. Sell Now is the current month, Start Prospecting is about 30 days ahead, On Deck is about 60–90 days ahead, and Watch Ahead is four or more months ahead.",
   "years_requested": [
     2025,
     2024,
