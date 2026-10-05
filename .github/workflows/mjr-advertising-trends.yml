@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - .github/workflows/mjr-advertising-trends.yml
+      - generate-advertising-trends.js
   schedule:
     # Refresh once on the first of each month, after the calendar rolls over.
     - cron: "20 8 1 * *"
