@@ -193,6 +193,13 @@ function build(yearData,years,debug){
     const hotMonthNames=hot.slice().sort((a,b)=>a.month-b.month).map(x=>monthNames[x.month]);
     const sequences=[];
 
+    for(const point of ranked){
+      monthlyCandidates.push({
+        code,meta,month:point.month,share:point.share,
+        ahead:monthsAhead(currentMonth,point.month),currentRank,completeYears,hotMonthNames
+      });
+    }
+
     for(const point of selected.map(x=>({...x,ahead:monthsAhead(currentMonth,x.month)})).sort((a,b)=>a.ahead-b.ahead)){
       const action=actionForAhead(point.ahead);
       const previous=sequences[sequences.length-1];
@@ -201,7 +208,6 @@ function build(yearData,years,debug){
       }else{
         sequences.push({signal:action.signal,lead:action.lead,points:[point]});
       }
-      monthlyCandidates.push({code,meta,month:point.month,share:point.share,ahead:point.ahead,currentRank,completeYears,hotMonthNames});
     }
 
     const windowSummary={sell_now:[],start_prospecting:[],on_deck:[],watch_ahead:[]};
