@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-05T17:12:27.872Z",
+  "generated": "2026-10-06T01:20:42.343Z",
   "version": "2.4",
   "newestDate": "2026-10-05",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1058
+      "count": 1075
     },
     "CPSC": {
       "ok": true,
@@ -693,7 +693,7 @@
       "units": 4200,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/Designs-Direct-Recalls-Cupcakes-and-Cashmere-Brand-Three-Light-Floor-Lamps-Due-to-Risk-of-Serious-Injury-from-Fire-and-Burn-Hazards",
+      "url": "https://cpsc.gov/Recalls/2027/Designs-Direct-Recalls-Cupcakes-and-Cashmere-Brand-Three-Light-Floor-Lamps-Due-to-Risk-of-Serious-Injury-from-Fire-and-Burn-Hazards",
       "score": 87
     },
     {
@@ -958,7 +958,7 @@
       "brand": "",
       "company": "",
       "retailers": "Sold At: Easy Wholesale in San Jose, California in July 2026 for about $10.",
-      "product": "Mochi Malrang Mystery Dumpling Toys, Mochi Malrang Mystery Dumpling Toys",
+      "product": "Mochi Malrang Mystery Dumpling Toys",
       "date": "2026-10-01",
       "units": 480,
       "pet": false,
