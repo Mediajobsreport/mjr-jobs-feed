@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-06T18:26:33.128Z",
+  "generated": "2026-10-06T23:52:46.479Z",
   "version": "2.4",
-  "newestDate": "2026-10-05",
+  "newestDate": "2026-10-06",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1075
+      "count": 1059
     },
     "CPSC": {
       "ok": true,
@@ -1218,6 +1218,22 @@
       "score": 71
     },
     {
+      "id": "FDA-2026-10-06-nova-biomedical-statstrip-statstrip-glucose-hospital-meter-system-nova",
+      "source": "FDA",
+      "category": "health",
+      "title": "Nova Biomedical StatStrip StatStrip Glucose Hospital Meter System Recalled",
+      "reason": "Software issue may cause a glucose result to be associated to the wrong patient",
+      "brand": "Nova Biomedical StatStrip",
+      "company": "Nova Biomedical",
+      "product": "StatStrip Glucose Hospital Meter System",
+      "date": "2026-10-06",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/nova-biomedicalr-announces-global-medical-device-correction-statstripr-glucose-hospital-meter",
+      "score": 70
+    },
+    {
       "id": "NHTSA-26E066000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1768,16 +1784,16 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fsis.usda.gov/recalls-alerts/el-eden-import-distributor-corp-recalls-ineligible-pork-cracklings-products-imported",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/inexport-logistics-llc-recalls-ineligible-pork-cracklings-products-imported-republic",
       "score": 50
     },
     {
-      "id": "FDA-2026-10-01-greewich-glutathione-injection-greenwich-rx",
+      "id": "FDA-2026-10-01-greenwich-glutathione-injection-greenwich-rx",
       "source": "FDA",
       "category": "health",
-      "title": "Greewich Glutathione Injection Recalled",
+      "title": "Greenwich Glutathione Injection Recalled",
       "reason": "Potential elevated endotoxin levels",
-      "brand": "Greewich",
+      "brand": "Greenwich",
       "company": "Greenwich Rx",
       "product": "Glutathione Injection",
       "date": "2026-10-01",
@@ -1851,7 +1867,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/g-l-mezzetta-inc-announces-recall-mezzetta-brand-golden-greek-peperoncini-medium-heat-due-presence",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 48
     },
     {
@@ -2019,22 +2035,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-ready-eat-deli-style-salads-and-cream-cheese-because-possible-health",
-      "score": 45
-    },
-    {
-      "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Foods Alive Moringa Leaf Powder Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "Foods Alive",
-      "company": "Foods Alive Inc.",
-      "product": "Moringa Leaf Powder",
-      "date": "2026-09-04",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
       "score": 45
     }
   ]
