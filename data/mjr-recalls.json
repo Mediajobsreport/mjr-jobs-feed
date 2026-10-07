@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-06T23:52:46.479Z",
+  "generated": "2026-10-07T06:08:41.874Z",
   "version": "2.4",
   "newestDate": "2026-10-06",
   "stale": false,
@@ -14,7 +14,7 @@
     },
     "USDA": {
       "ok": true,
-      "count": 2029
+      "count": 2030
     },
     "NHTSA": {
       "ok": true,
@@ -1234,6 +1234,22 @@
       "score": 70
     },
     {
+      "id": "USDA-2026-10-06-fsis-issues-public-health-alert-for-ineligible-chicken-vienna-style-sa",
+      "source": "USDA",
+      "category": "food",
+      "title": "FSIS Issues Public Health Alert for Ineligible Chicken Vienna-Style Sausage Products Illegally Imported…",
+      "reason": "Produced Without Benefit of Inspection",
+      "brand": "",
+      "company": "",
+      "product": "",
+      "date": "2026-10-06",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-ineligible-meat-and-poultry-products-illegally",
+      "score": 70
+    },
+    {
       "id": "NHTSA-26E066000",
       "source": "NHTSA",
       "category": "consumer",
@@ -2019,22 +2035,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/fi-recalls-supplements-dogs-because-possible-salmonella-contamination",
-      "score": 45
-    },
-    {
-      "id": "FDA-2026-09-06-made-fresh-salads-northside-ready-to-eat-deli-style-salads-and-cream-c",
-      "source": "FDA",
-      "category": "food",
-      "title": "Made Fresh Salads, Northside Ready to Eat Deli Style Salads and cream cheese Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes",
-      "brand": "Made Fresh Salads, Northside",
-      "company": "Made Fresh Salads Inc.",
-      "product": "Ready to Eat Deli Style Salads and cream cheese",
-      "date": "2026-09-06",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-ready-eat-deli-style-salads-and-cream-cheese-because-possible-health",
       "score": 45
     }
   ]
