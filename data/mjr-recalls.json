@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-07T15:36:20.850Z",
+  "generated": "2026-10-07T21:21:39.269Z",
   "version": "2.4",
   "newestDate": "2026-10-07",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1077
+      "count": 1061
     },
     "CPSC": {
       "ok": true,
@@ -1235,6 +1235,22 @@
       "score": 70
     },
     {
+      "id": "FDA-2026-10-07-babies-magic-tea-babies-magic-tea-brand-baby-sleep-gripe-water-4-oz-bo",
+      "source": "FDA",
+      "category": "health",
+      "title": "Babies' Magic Tea Babies' Magic Tea brand Baby Sleep Gripe Water 4 oz bottle Recalled",
+      "reason": "Product contains undeclared ethanol, methanol, and isopropanol",
+      "brand": "Babies' Magic Tea",
+      "company": "Pacific Health Sciences",
+      "product": "Babies' Magic Tea brand Baby Sleep Gripe Water 4 oz bottle",
+      "date": "2026-10-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water",
+      "score": 70
+    },
+    {
       "id": "FDA-2026-10-06-nova-biomedical-statstrip-statstrip-glucose-hospital-meter-system-nova",
       "source": "FDA",
       "category": "health",
@@ -2023,23 +2039,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Excel-Industries-Recalls-Accessory-LED-Light-Kits-Due-to-Risk-of-Serious-Injury-from-Fire-Hazard",
       "score": 47
-    },
-    {
-      "id": "CPSC-10992-5color-recalls-children-s-bicycle-helmet-and-pads-sets-due-to-risk-of-",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "5Color Recalls Children’s Bicycle Helmet and Pads Sets Due to Risk of Serious Injury or Death from Head…",
-      "reason": "The helmets in the recalled sets violate the mandatory safety standard for bicycle helmets because the helmets do not comply with the impact attenuation, retention system, positional stability, labeling and…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com in May 2026 for between $25 and $26., Hengqin Guangwei Consulting Co., Ltd., dba. 5Color, of China",
-      "product": "5Color Children’s Bike Helmet and Pads Sets",
-      "date": "2026-09-24",
-      "units": 324,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/5Color-Recalls-Childrens-Bicycle-Helmet-and-Pads-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Head-Injury-Violate-Mandatory-Standard-for-Bicycle-Helmets",
-      "score": 46
     }
   ]
 }
