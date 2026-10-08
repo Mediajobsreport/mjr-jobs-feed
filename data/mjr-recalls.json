@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-07T21:21:39.269Z",
+  "generated": "2026-10-08T06:11:50.260Z",
   "version": "2.4",
   "newestDate": "2026-10-07",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1061
+      "count": 1079
     },
     "CPSC": {
       "ok": true,
@@ -242,6 +242,22 @@
       "score": 132
     },
     {
+      "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "EDEN BROTHERS Broccoli Seeds - Calabrese Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "EDEN BROTHERS",
+      "company": "Eden Brothers LLC",
+      "product": "Broccoli Seeds - Calabrese",
+      "date": "2026-10-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
+      "score": 115
+    },
+    {
       "id": "NHTSA-26V559000",
       "source": "NHTSA",
       "category": "consumer",
@@ -257,22 +273,6 @@
       "campaign": "26V559000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 132
-    },
-    {
-      "id": "FDA-2026-10-02-home-grown-green-sprouting-calabrese-broccoli-seeds-eak-distribution-l",
-      "source": "FDA",
-      "category": "food",
-      "title": "Home Grown Green Sprouting Calabrese Broccoli Seeds Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "Home Grown",
-      "company": "EAK Distribution LLC",
-      "product": "Green Sprouting Calabrese Broccoli Seeds",
-      "date": "2026-10-02",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eak-distribution-llc-recalls-home-grown-green-sprouting-calabrese-broccoli-seeds-8-oz-heirloom",
-      "score": 95
     },
     {
       "id": "NHTSA-26V547000",
@@ -494,6 +494,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/GBYMIUY-Recalls-Magnetic-Stick-Figure-Toy-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Magnet-Ingestion-Violate-Mandatory-Standard-for-Toys",
       "score": 100
+    },
+    {
+      "id": "FDA-2026-10-02-home-grown-green-sprouting-calabrese-broccoli-seeds-eak-distribution-l",
+      "source": "FDA",
+      "category": "food",
+      "title": "Home Grown Green Sprouting Calabrese Broccoli Seeds Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "Home Grown",
+      "company": "EAK Distribution LLC",
+      "product": "Green Sprouting Calabrese Broccoli Seeds",
+      "date": "2026-10-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eak-distribution-llc-recalls-home-grown-green-sprouting-calabrese-broccoli-seeds-8-oz-heirloom",
+      "score": 95
     },
     {
       "id": "CPSC-10975-jkmax-recalls-heated-blankets-and-heating-pads-due-to-fire-and-burn-ha",
@@ -1219,22 +1235,6 @@
       "score": 71
     },
     {
-      "id": "FDA-2026-10-07-rapture-preworkout-dietary-supplement-powder-leader-formulas-llc",
-      "source": "FDA",
-      "category": "health",
-      "title": "RAPTURE Preworkout Dietary Supplement Powder Recalled",
-      "reason": "Product contains 1,3-Dimethylamylamine (DMAA)",
-      "brand": "RAPTURE",
-      "company": "Leader Formulas, LLC.",
-      "product": "Preworkout Dietary Supplement Powder",
-      "date": "2026-10-07",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/leader-formulas-llc-issues-voluntary-nationwide-recall-rapture-preworkout-due-presence-13",
-      "score": 70
-    },
-    {
       "id": "FDA-2026-10-07-babies-magic-tea-babies-magic-tea-brand-baby-sleep-gripe-water-4-oz-bo",
       "source": "FDA",
       "category": "health",
@@ -1248,6 +1248,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-10-07-rapture-preworkout-dietary-supplement-powder-leader-formulas-llc",
+      "source": "FDA",
+      "category": "health",
+      "title": "RAPTURE Preworkout Dietary Supplement Powder Recalled",
+      "reason": "Product contains 1,3-Dimethylamylamine (DMAA)",
+      "brand": "RAPTURE",
+      "company": "Leader Formulas, LLC.",
+      "product": "Preworkout Dietary Supplement Powder",
+      "date": "2026-10-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/leader-formulas-llc-issues-voluntary-nationwide-recall-rapture-preworkout-due-presence-13",
       "score": 70
     },
     {
@@ -1271,7 +1287,7 @@
       "source": "USDA",
       "category": "food",
       "title": "FSIS Issues Public Health Alert for Ineligible Chicken Vienna-Style Sausage Products Illegally Imported…",
-      "reason": "Produced Without Benefit of Inspection",
+      "reason": "Import Violation",
       "brand": "",
       "company": "",
       "product": "",
@@ -2021,23 +2037,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Daikin-Comfort-Technologies-Manufacturing-Recalls-Amana-Through-The-Wall-Air-Conditioners-and-Heat-Pumps-Due-to-Risk-of-Serious-Injury-from-Fire",
-      "score": 47
-    },
-    {
-      "id": "CPSC-10952-excel-industries-recalls-accessory-led-light-kits-due-to-risk-of-serio",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Excel Industries Recalls Accessory LED Light Kits Due to Risk of Serious Injury from Fire Hazard",
-      "reason": "The light bars can overheat or produce flames, posing a risk of serious injury from a fire hazard.",
-      "brand": "Excel Industries LLC, of Hesston, Kansas",
-      "company": "Excel Industries LLC, of Hesston, Kansas",
-      "retailers": "Sold At: Hustler and BigDog dealerships nationwide or online at www.hustlerturf.com/law-mower-accessories or www.bigdogmower.com/accessories from April 2020 through July 2026 for between $180 and $330.",
-      "product": "Accessory LED Light Kits used with certain ride-on mowers",
-      "date": "2026-08-27",
-      "units": 1800,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Excel-Industries-Recalls-Accessory-LED-Light-Kits-Due-to-Risk-of-Serious-Injury-from-Fire-Hazard",
       "score": 47
     }
   ]
