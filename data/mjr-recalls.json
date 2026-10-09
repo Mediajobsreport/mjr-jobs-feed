@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-08T22:02:13.192Z",
+  "generated": "2026-10-09T06:15:19.207Z",
   "version": "2.4",
   "newestDate": "2026-10-08",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1062
+      "count": 1063
     },
     "CPSC": {
       "ok": true,
@@ -205,7 +205,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V578000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V578000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V578-3276.pdf",
       "score": 132
     },
     {
@@ -240,6 +240,22 @@
       "campaign": "26V559000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V559-2706.pdf",
       "score": 132
+    },
+    {
+      "id": "FDA-2026-10-08-gardeners-basics-broccoli-sprouting-seeds-gardeners-basics",
+      "source": "FDA",
+      "category": "food",
+      "title": "Gardeners Basics Broccoli Sprouting Seeds Recalled",
+      "reason": "Product may be contaminated with Salmonella",
+      "brand": "Gardeners Basics",
+      "company": "Gardeners Basics",
+      "product": "Broccoli Sprouting Seeds",
+      "date": "2026-10-08",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gardeners-basics-recalls-waltham-29-broccoli-sprouting-seeds-due-possible-salmonella-contamination",
+      "score": 115
     },
     {
       "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
@@ -790,7 +806,7 @@
       "reason": "The lithium-ion battery and electrical components in the recalled hand warmers can overheat and ignite, posing a risk of serious injury from fire and burn hazards.",
       "brand": "",
       "company": "",
-      "retailers": "Sold Online At: GobiHeat.com from October 2024 through August 2026 for between $20 and $40., Dragon Gear Inc., dba Gobi Heat, of Severance, Colorado",
+      "retailers": "Sold Online At: GobiHeat.com from October 2024 through August 2026 for between $20 and $40.",
       "product": "Gobi Heat Rechargeable Hand Warmers",
       "date": "2026-10-01",
       "units": 5500,
@@ -2024,23 +2040,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 53
-    },
-    {
-      "id": "CPSC-10962-ricky-joy-recalls-more-than-2-3-million-sour-crush-candy-bottles-due-t",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Ricky Joy Recalls More Than 2.3 Million Sour Crush Candy Bottles Due to Risk of Serious Injury or Death…",
-      "reason": "The rolling ball on the recalled candy bottles can detach, posing a risk of serious injury or death from choking hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold At: H-E-B, Forman Mill and other candy stores nationwide and online at Walmart.com, CandyFunHouse.com, RickyJoy.com and other online retailers from January 2023 through May 2026 for about $3 for the bottle and for between $13 and $32 for the pack.",
-      "product": "Ricky Joy Sour Crush Rolling Liquid Candy Bottles",
-      "date": "2026-09-10",
-      "units": 2.3,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Ricky-Joy-Recalls-More-Than-2-3-Million-Sour-Crush-Candy-Bottles-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Hazard",
       "score": 53
     }
   ]
