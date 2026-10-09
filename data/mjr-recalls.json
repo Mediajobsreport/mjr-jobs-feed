@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-09T15:21:21.876Z",
+  "generated": "2026-10-09T21:39:25.405Z",
   "version": "2.4",
-  "newestDate": "2026-10-08",
+  "newestDate": "2026-10-09",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1080
+      "count": 1066
     },
     "CPSC": {
       "ok": true,
-      "count": 10047
+      "count": 9918
     },
     "USDA": {
       "ok": true,
@@ -31,7 +31,7 @@
       "reason": "Small metal wire bristles can detach from the brushes and stick to the grill or food, posing an ingestion hazard and risk of serious internal injuries that could require surgery.",
       "brand": "",
       "company": "",
-      "retailers": "Sold At: Walmart and online including Walmart.com from January 2021 through August 2026 for between $1 and $28.",
+      "retailers": "Sold At: Walmart and online, including Walmart.com from January 2021 through August 2026 for between $1 and $28.",
       "product": "Metal Wire Bristle Grill Brushes",
       "date": "2026-10-01",
       "units": 4477655,
@@ -87,7 +87,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/frutas-y-hortalizas-del-sur-sa-expands-recalls-include-additional-lots-great-value-frozen-organic",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 160
     },
     {
@@ -242,6 +242,22 @@
       "score": 132
     },
     {
+      "id": "FDA-2026-10-09-starfish-seafood-cold-smoked-salmon-halibut-and-trout-krasnyi-oktyabr-",
+      "source": "FDA",
+      "category": "food",
+      "title": "Starfish Seafood Cold Smoked Salmon, Halibut, and Trout Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Starfish Seafood",
+      "company": "Krasnyi Oktyabr Inc.",
+      "product": "Cold Smoked Salmon, Halibut, and Trout",
+      "date": "2026-10-09",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-trio-because-possible-health-risk",
+      "score": 115
+    },
+    {
       "id": "FDA-2026-10-08-gardeners-basics-broccoli-sprouting-seeds-gardeners-basics",
       "source": "FDA",
       "category": "food",
@@ -256,22 +272,6 @@
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gardeners-basics-recalls-waltham-29-broccoli-sprouting-seeds-due-possible-salmonella-contamination",
       "score": 115
-    },
-    {
-      "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "EDEN BROTHERS Broccoli Seeds - Calabrese Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "EDEN BROTHERS",
-      "company": "Eden Brothers LLC",
-      "product": "Broccoli Seeds - Calabrese",
-      "date": "2026-10-07",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
-      "score": 109
     },
     {
       "id": "CPSC-11017-snow-peak-recalls-propane-fireplace-inserts-and-lava-rocks-due-to-risk",
@@ -476,6 +476,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/ONTHEWEI-Recalls-Baby-Bath-Seats-Due-to-Risk-of-Serious-Injury-or-Death-to-Children-from-Drowning-Violate-Mandatory-Standard-for-Infant-Bath-Seats",
       "score": 110
+    },
+    {
+      "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "EDEN BROTHERS Broccoli Seeds - Calabrese Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "EDEN BROTHERS",
+      "company": "Eden Brothers LLC",
+      "product": "Broccoli Seeds - Calabrese",
+      "date": "2026-10-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
+      "score": 109
     },
     {
       "id": "CPSC-11007-kobayashi-recalls-rechargeable-hand-warmers-due-to-risk-of-serious-inj",
@@ -748,6 +764,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/ZMC-Group-Expands-Recall-of-Light-Up-Childrens-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
       "score": 90
+    },
+    {
+      "id": "FDA-2026-10-09-par-pharmaceutical-brevital-sodium-500-mg-vial-for-injection-par-healt",
+      "source": "FDA",
+      "category": "health",
+      "title": "Par Pharmaceutical Brevital Sodium 500 mg/vial for Injection Recalled",
+      "reason": "Presence of particulate matter identified as cellulose",
+      "brand": "Par Pharmaceutical",
+      "company": "Par Health",
+      "product": "Brevital Sodium 500 mg/vial for Injection",
+      "date": "2026-10-09",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-two-lots-brevitalr-sodium-500-mgvial-civ-methohexital",
+      "score": 88
     },
     {
       "id": "CPSC-11006-gbymiuy-recalls-magnetic-stick-figure-toy-sets-due-to-risk-of-serious-",
@@ -1334,6 +1366,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Xinan-Home-Recalls-WinxMatrs-Mattresses-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Mattress-Flammability",
       "score": 71
+    },
+    {
+      "id": "FDA-2026-10-09-riad-s-oliva-to-go-baba-ghanouj-spicy-baba-ghanouj-and-hummus-oliva-ll",
+      "source": "FDA",
+      "category": "food",
+      "title": "Riad's Oliva to Go Baba Ghanouj, Spicy Baba Ghanouj, and Hummus Recalled",
+      "reason": "Undeclared sesame allergen",
+      "brand": "Riad's Oliva to Go",
+      "company": "Oliva LLC.",
+      "product": "Baba Ghanouj, Spicy Baba Ghanouj, and Hummus",
+      "date": "2026-10-09",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/oliva-llc-issues-allergy-alert-undeclared-sesame-baba-ghanouj-spicy-baba-ghanouj-and-hummus",
+      "score": 70
     },
     {
       "id": "CPSC-11008-agrish-reannounces-and-expands-recall-of-adult-portable-bed-rails-due-",
@@ -1991,56 +2039,6 @@
       "campaign": "26V641000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V641-3817.pdf",
       "score": 54
-    },
-    {
-      "id": "FDA-2026-09-23-berlin-seeds-alfalfa-sprouting-seeds-berlin-seeds",
-      "source": "FDA",
-      "category": "food",
-      "title": "Berlin Seeds Alfalfa sprouting seeds Recalled",
-      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (STEC) and/or Salmonella",
-      "brand": "Berlin Seeds",
-      "company": "Berlin Seeds",
-      "product": "Alfalfa sprouting seeds",
-      "date": "2026-09-23",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 53
-    },
-    {
-      "id": "CPSC-10962-ricky-joy-recalls-more-than-2-3-million-sour-crush-candy-bottles-due-t",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Ricky Joy Recalls More Than 2.3 Million Sour Crush Candy Bottles Due to Risk of Serious Injury or Death…",
-      "reason": "The rolling ball on the recalled candy bottles can detach, posing a risk of serious injury or death from choking hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold At: H-E-B, Forman Mill and other candy stores nationwide and online at Walmart.com, CandyFunHouse.com, RickyJoy.com and other online retailers from January 2023 through May 2026 for about $3 for the bottle and for between $13 and $32 for the pack.",
-      "product": "Ricky Joy Sour Crush Rolling Liquid Candy Bottles",
-      "date": "2026-09-10",
-      "units": 2.3,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Ricky-Joy-Recalls-More-Than-2-3-Million-Sour-Crush-Candy-Bottles-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Hazard",
-      "score": 53
-    },
-    {
-      "id": "CPSC-10938-shein-distribution-corporation-recalls-spiral-toys-due-to-risk-of-seri",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "SHEIN Distribution Corporation Recalls Spiral Toys Due to Risk of Serious Injury or Death from Choking…",
-      "reason": "The toys violate the small ball ban because they contain small balls and are intended for children under three years of age, posing a deadly choking hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: SHEIN.com from September 2025 through May 2026 for between $6 to $16.",
-      "product": "Spiral Toy",
-      "date": "2026-09-03",
-      "units": 963,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/SHEIN-Distribution-Corporation-Recalls-Spiral-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Hazard-Violate-Small-Ball-Ban",
-      "score": 53
     }
   ]
 }
