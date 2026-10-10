@@ -1382,7 +1382,7 @@ def workday(src):
                     break
             except Exception as e:
                 if company == "pbs":
-                    print(f"PBS_WORKDAY_CANDIDATE_ERROR url={ep} {type(e).__name__}: {e}")
+                    print(f"PBS_WORKDAY_CANDIDATE_ERROR url={ep} {type(e).__name__}: {e} body={getattr(getattr(e, 'response', None), 'text', '')[:1000]}")
                 last_error = e
         if chosen:
             break
