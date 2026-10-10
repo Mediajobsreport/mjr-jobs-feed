@@ -8015,6 +8015,8 @@ def cumulus_v17(src):
             )
             payload = rr.json()
             rows = payload.get("jobs") or [] if isinstance(payload, dict) else []
+            if page_num == 1 and rows:
+                print("CUMULUS_SAMPLE_ROW:", repr(rows[0])[:2500])
             ids = set()
             for item in rows:
                 if not isinstance(item, dict):
