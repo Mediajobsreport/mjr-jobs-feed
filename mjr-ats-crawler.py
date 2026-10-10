@@ -6889,8 +6889,37 @@ def bell_phenom_diagnostic(src):
             json=body,
             headers={"Content-Type": "application/json", "Accept": "application/json"},
         )
-        print(f"BELL_PHENOM_DIAGNOSTIC status={getattr(r, 'status_code', '')} content_type={r.headers.get('content-type', '')}")
-        print("BELL_PHENOM_PAYLOAD:", (r.text or "")[:6000])
+        payload = r.json()
+        ref = payload.get("refineSearch") or {}
+        data = ref.get("data") or {}
+        jobs = data.get("jobs") or []
+        print(
+            f"BELL_PHENOM_DIAGNOSTIC status={getattr(r, 'status_code', '')} "
+            f"hits={ref.get('hits')} totalHits={ref.get('totalHits')} "
+            f"jobs={len(jobs)} data_keys={sorted(data.keys())}"
+        )
+        if jobs:
+            print("BELL_PHENOM_JOB_KEYS:", sorted(jobs[0].keys()))
+            categories = {}
+            for item in jobs:
+                for category_name in item.get("multi_category") or []:
+                    categories[category_name] = categories.get(category_name, 0) + 1
+            print("BELL_PHENOM_CATEGORIES:", json.dumps(categories, ensure_ascii=False))
+            for item in jobs:
+                cats = item.get("multi_category") or []
+                if "Media" in cats:
+                    fields = {
+                        key: item.get(key)
+                        for key in (
+                            "title", "jobTitle", "jobId", "reqId", "reqIdDisplay",
+                            "multi_category", "multi_location", "city", "state",
+                            "country", "postedDate", "postedOn", "datePosted",
+                            "postingDate", "employmentType", "jobType", "siteType",
+                            "externalUrl", "applyUrl", "jobUrl", "url", "descriptionTeaser",
+                        )
+                        if item.get(key) is not None
+                    }
+                    print("BELL_PHENOM_MEDIA_JOB:", json.dumps(fields, ensure_ascii=False))
     except Exception as e:
         print(f"BELL_PHENOM_DIAGNOSTIC_ERROR: {type(e).__name__}: {e}")
     return []
