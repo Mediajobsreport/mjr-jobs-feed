@@ -11158,7 +11158,28 @@ def amazon_music_jobs(src):
                     if len(strip_html(description)) < 200:
                         continue
                     location = clean(row.get("location", ""))
+                    if not location:
+                        location_node = detail.select_one("div.association.location-icon")
+                        if location_node:
+                            location = clean(location_node.get_text(" ", strip=True))
                     posted = row["date"]
+
+                    city, state = "", ""
+                    country = infer_country(location, src["Company"], description)
+                    parts = [clean(part) for part in location.split(",") if clean(part)]
+                    if parts:
+                        if parts[0].upper() in {"USA", "US", "UNITED STATES"}:
+                            city = parts[-1]
+                            state = parts[1] if len(parts) > 2 else ""
+                        elif parts[-1].upper() in {"USA", "US", "UNITED STATES"}:
+                            city = parts[0]
+                            state = parts[1] if len(parts) > 2 else ""
+                        elif len(parts) >= 2:
+                            city = parts[0]
+                            state = parts[1] if len(parts) > 2 else ""
+                        else:
+                            city = parts[0]
+
                     out.append(Job(
                         row["id"],
                         title,
@@ -11172,9 +11193,9 @@ def amazon_music_jobs(src):
                         listing_url,
                         "",
                         normalize_work_arrangement(description, location, title),
-                        location,
-                        "",
-                        infer_country(location, src["Company"], description),
+                        city,
+                        state,
+                        country,
                     ))
                 except Exception as exc:
                     print(f"Amazon Music detail skipped {row.get('url')}: {exc}")
