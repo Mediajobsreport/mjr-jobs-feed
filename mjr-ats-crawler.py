@@ -6866,6 +6866,36 @@ def disney_public(src):
     )
 
 
+def bell_phenom_diagnostic(src):
+    """Temporary inspection of Bell's Phenom jobs widget response."""
+    host = "https://jobs.bell.ca"
+    body = {
+        "lang": "en_ca",
+        "deviceType": "desktop",
+        "country": "ca",
+        "pageName": "search-results",
+        "ddoKey": "refineSearch",
+        "sortBy": "Most relevant",
+        "subsearch": "",
+        "from": 0,
+        "jobs": True,
+        "all_fields": ["category", "location", "brand"],
+        "size": 100,
+    }
+    try:
+        r = req(
+            "POST",
+            host + "/widgets",
+            json=body,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
+        )
+        print(f"BELL_PHENOM_DIAGNOSTIC status={getattr(r, 'status_code', '')} content_type={r.headers.get('content-type', '')}")
+        print("BELL_PHENOM_PAYLOAD:", (r.text or "")[:6000])
+    except Exception as e:
+        print(f"BELL_PHENOM_DIAGNOSTIC_ERROR: {type(e).__name__}: {e}")
+    return []
+
+
 def wbd_phenom(src):
     """Warner Bros. Discovery / CNN Phenom People collector.
 
@@ -13937,6 +13967,8 @@ def main():
                 if company_route_key == "fox"
                 else disney_public(s)
                 if company_route_key in {"disney/abc", "espn"}
+                else bell_phenom_diagnostic(s)
+                if company_key == "bell media"
                 else wbd_phenom(s)
                 if company_key == "cnn"
                 else gray_direct(s)
