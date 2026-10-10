@@ -5112,7 +5112,7 @@ def isolved(src):
 
     out = []
     seen_ids = set()
-    for url in sorted(details):
+    for detail_index, url in enumerate(sorted(details)):
         try:
             rr = req("GET", url)
             final_url = str(getattr(rr, "url", "") or url)
