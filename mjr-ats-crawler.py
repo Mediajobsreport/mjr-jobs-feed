@@ -10854,6 +10854,80 @@ def associated_press(src):
     return out
 
 
+def stingray_jobs(src):
+    """Collect jobs linked from Stingray's live open-positions board."""
+    response = req("GET", src["URL"])
+    soup = BeautifulSoup(response.text, "html.parser")
+    origin = urlparse(src["URL"]).netloc.lower()
+    job_urls = set()
+    for anchor in soup.find_all("a", href=True):
+        url = urljoin(src["URL"], anchor["href"])
+        parsed = urlparse(url)
+        if (
+            parsed.netloc.lower() == origin
+            and re.fullmatch(r"/job/[^/]+/?", parsed.path, re.I)
+        ):
+            job_urls.add(url)
+
+    out = []
+    for url in sorted(job_urls):
+        try:
+            page = req("GET", url)
+            detail = BeautifulSoup(page.text, "html.parser")
+            headings = [clean(h.get_text(" ")) for h in detail.find_all(["h1", "h2", "h3"])]
+            title = next(
+                (h for h in headings if h and h.lower() != "open position at stingray"),
+                "",
+            )
+            if not title and detail.title:
+                title = clean(detail.title.get_text(" ")).split(" – ")[0]
+            if not title:
+                continue
+            main = detail.find("main") or detail.find("article") or detail
+            description = format_description(str(main))
+            plain = clean(main.get_text(" "))
+            if len(strip_html(description)) < 200:
+                continue
+            location_match = re.search(
+                r"Department\s+(.+?)\s+Location\s+(Montreal|New York|Remote\s*\(USA\))(?=\s|$)",
+                plain,
+                re.I,
+            )
+            location = clean(location_match.group(2)) if location_match else ""
+            country = infer_country(location, src["Company"], description)
+            city, state = "", ""
+            if location.lower() == "montreal":
+                city, state, country = "Montreal", "Quebec", "CA"
+            elif location.lower() == "new york":
+                city, state, country = "New York", "New York", "US"
+            elif location.lower() == "remote (usa)":
+                city, state, country = "Remote", "", "US"
+            # This URL is included in Stingray's active open-position board.
+            # The board does not expose posting dates, so use the crawl date.
+            posted = TODAY
+            out.append(
+                Job(
+                    hashlib.sha1(url.encode()).hexdigest()[:16],
+                    title,
+                    src["Company"],
+                    description,
+                    posted,
+                    jobtype(title, description),
+                    category(title, description, src["Industry"], src["Company"]),
+                    url,
+                    src["URL"],
+                    src["URL"],
+                    "",
+                    normalize_work_arrangement(description, description),
+                    city,
+                    state,
+                    country,
+                )
+            )
+        except (ValueError, requests.RequestException):
+            continue
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -13945,6 +14019,8 @@ def main():
                 if "workday" in a
                 else greenhouse(s)
                 if "greenhouse" in a
+                else stingray_jobs(s)
+                if company_key == "stingray"
                 else paylocity(s)
                 if "paylocity" in a
                 else hubbard_adp_cx(s)
