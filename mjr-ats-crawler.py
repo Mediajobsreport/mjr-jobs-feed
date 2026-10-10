@@ -4269,7 +4269,7 @@ def paycom(src):
 
     out = []
     seen_ids = set()
-    for url in sorted(details):
+    for detail_index, url in enumerate(sorted(details)):
         try:
             rr = req("GET", url)
             j = _paycom_detail(src, url, rr.text)
@@ -5047,6 +5047,7 @@ def isolved(src):
     details = set()
     current_listing_details = set()
 
+    is_zimmer_source = clean(src.get("Company", "")).lower() == "zimmer"
     while queue and len(seen_pages) < 80 and len(details) < 2500:
         page = queue.pop(0)
         key = page.rstrip("/")
@@ -5063,6 +5064,12 @@ def isolved(src):
             re.search(r"Current Job Listings", page_text, re.I)
             and re.search(r"current openings", page_text, re.I)
         )
+        if is_zimmer_source and len(seen_pages) <= 3:
+            print(
+                f"Zimmer iSolved page: {page} title={clean(soup.title.get_text(' ') if soup.title else '')!r} "
+                f"chars={len(r.text or '')} links={len(soup.find_all('a', href=True))} "
+                f"current_listing={is_current_listing} text={page_text[:180]!r}"
+            )
         for a in soup.find_all("a", href=True):
             h = urljoin(page, a["href"])
             hp = urlparse(h)
@@ -5125,9 +5132,21 @@ def isolved(src):
             if j and j.id not in seen_ids:
                 seen_ids.add(j.id)
                 out.append(j)
-        except Exception:
+            if is_zimmer_source and detail_index < 8:
+                print(
+                    f"Zimmer iSolved detail: {url} active={url in current_listing_details} "
+                    f"final={final_url} accepted={bool(j)}"
+                )
+        except Exception as e:
+            if is_zimmer_source and detail_index < 8:
+                print(f"Zimmer iSolved detail failed: {url} {type(e).__name__}")
             continue
 
+    if is_zimmer_source:
+        print(
+            f"Zimmer iSolved summary: pages={len(seen_pages)} details={len(details)} "
+            f"current={len(current_listing_details)} fresh={len(out)}"
+        )
     return out
 
 
