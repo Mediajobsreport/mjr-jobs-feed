@@ -10043,6 +10043,119 @@ def townsquare_v23(src):
     return out
 
 
+def npg_adp_cx_rendered(src):
+    """Collect NPG openings through ADP's public rendered career-center UI."""
+    if sync_playwright is None:
+        return []
+
+    out = []
+    seen = set()
+    start = src["URL"]
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1365, "height": 900})
+            page.goto(start, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_timeout(3500)
+
+            # ADP's CX board does not populate the results until Search is
+            # submitted, even when all search fields are blank.
+            search = page.get_by_role("button", name=re.compile(r"^Search$", re.I))
+            if search.count():
+                search.first.click()
+            page.get_by_text(re.compile(r"Search results loaded|jobs found", re.I)).wait_for(timeout=30000)
+            page.wait_for_timeout(1000)
+
+            for page_number in range(1, 6):
+                items = page.get_by_role("listitem")
+                cards = []
+                for idx in range(items.count()):
+                    item = items.nth(idx)
+                    try:
+                        heading = item.get_by_role("heading").first
+                        title = clean(heading.inner_text(timeout=1000))
+                        if title and item.get_by_role("button", name=title, exact=True).count():
+                            cards.append(title)
+                    except Exception:
+                        continue
+
+                for title in cards:
+                    try:
+                        page.get_by_role("button", name=title, exact=True).first.click(timeout=5000)
+                        detail = page.locator(".cx-job-details-page")
+                        detail.wait_for(timeout=12000)
+                        detail_text = clean(detail.inner_text(timeout=5000))
+                        detail_url = page.url
+                        req_match = re.search(r"[?&]reqId=([^&]+)", detail_url, re.I)
+                        if not req_match or detail_url in seen:
+                            back = page.get_by_role("button", name=re.compile(r"^Back$", re.I))
+                            if back.count():
+                                back.first.click()
+                                page.wait_for_timeout(500)
+                            continue
+                        seen.add(detail_url)
+
+                        title_node = detail.get_by_role("heading").first
+                        actual_title = clean(title_node.inner_text(timeout=2000)) if title_node.count() else title
+                        lines = [clean(x) for x in detail_text.splitlines() if clean(x)]
+                        loc = ""
+                        for i, line in enumerate(lines):
+                            if line.lower().rstrip(":") in {"location", "job location"} and i + 1 < len(lines):
+                                loc = lines[i + 1]
+                                break
+                        if not loc:
+                            mloc = re.search(r"(?im)^Location\s*:\s*(.+)$", detail_text)
+                            loc = clean(mloc.group(1)) if mloc else ""
+                        description = detail_text
+                        if len(description) < 200:
+                            back = page.get_by_role("button", name=re.compile(r"^Back$", re.I))
+                            if back.count():
+                                back.first.click()
+                            continue
+
+                        key = detail_url.rstrip("/").lower()
+                        previous = load_state().get(key, {}).get("job", {})
+                        posted = pdate(previous.get("date")) or TODAY
+                        city, state, country = _split_adp_location(loc)
+                        if not country:
+                            country = infer_country(loc, src["Company"], description)
+                        jt = jobtype(actual_title, description)
+                        out.append(Job(
+                            req_match.group(1), actual_title, src["Company"], description,
+                            posted, jt, category(actual_title, description, src["Industry"], src["Company"]),
+                            detail_url, src["URL"], detail_url, "",
+                            normalize_work_arrangement(description, loc, actual_title),
+                            city, state, country,
+                        ))
+                        back = page.get_by_role("button", name=re.compile(r"^Back$", re.I))
+                        if back.count():
+                            back.first.click()
+                            page.wait_for_timeout(500)
+                    except Exception:
+                        try:
+                            back = page.get_by_role("button", name=re.compile(r"^Back$", re.I))
+                            if back.count():
+                                back.first.click()
+                                page.wait_for_timeout(500)
+                        except Exception:
+                            pass
+
+                if page_number >= 4:
+                    break
+                next_page = page.get_by_role("button", name=f"Page {page_number + 1}", exact=True)
+                if not next_page.count():
+                    break
+                next_page.click()
+                page.wait_for_timeout(1200)
+            browser.close()
+    except Exception as e:
+        print(f"NPG ADP CX render unavailable: {type(e).__name__}: {clean(str(e))[:160]}")
+        return out
+
+    print(f"NPG ADP CX rendered board: {len(out)} detail postings collected")
+    return out
+
+
 def hubbard_adp_cx(src):
     """Recover Hubbard jobs from its ADP CX board.
 
@@ -13947,6 +14060,8 @@ def main():
                 if "greenhouse" in a
                 else paylocity(s)
                 if "paylocity" in a
+                else npg_adp_cx_rendered(s)
+                if company_key == "npg"
                 else hubbard_adp_cx(s)
                 if company_key == "hubbard broadcasting"
                 else adp(s)
