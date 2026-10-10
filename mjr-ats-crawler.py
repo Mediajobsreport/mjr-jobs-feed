@@ -1578,6 +1578,123 @@ def greenhouse(src):
 
 
 
+
+def lever(src):
+    """Read published jobs from Lever's public postings API."""
+    source_url = clean(src.get("URL", ""))
+    parsed = urlparse(source_url)
+    parts = [p for p in parsed.path.split("/") if p]
+    site = parts[0].lower() if parts else ""
+    if not site:
+        raise RuntimeError("Lever site missing")
+
+    api_host = "api.eu.lever.co" if parsed.netloc.lower().startswith("jobs.eu.") else "api.lever.co"
+    endpoint = f"https://{api_host}/v0/postings/{site}"
+    out = []
+    skip = 0
+    page_size = 100
+
+    while True:
+        response = req(
+            "GET",
+            endpoint,
+            params={"mode": "json", "limit": str(page_size), "skip": str(skip)},
+        )
+        rows = response.json()
+        if not isinstance(rows, list):
+            raise RuntimeError("Lever postings API returned a non-list response")
+
+        for row in rows:
+            title = clean(row.get("text") or row.get("title") or "")
+            categories = row.get("categories") or {}
+            location = clean(categories.get("location") or "")
+            all_locations = categories.get("allLocations") or []
+            if not location and all_locations:
+                location = clean(", ".join(
+                    clean(x.get("name") if isinstance(x, dict) else x)
+                    for x in all_locations
+                    if clean(x.get("name") if isinstance(x, dict) else x)
+                ))
+
+            description_html = row.get("description") or ""
+            if not description_html:
+                pieces = [row.get("opening") or "", row.get("descriptionBody") or ""]
+                for block in row.get("lists") or []:
+                    heading = clean(block.get("text") or "")
+                    content = block.get("content") or ""
+                    if heading:
+                        pieces.append(f"<h3>{html.escape(heading)}</h3>")
+                    if content:
+                        pieces.append(f"<ul>{content}</ul>" if "<li" in content.lower() else content)
+                if row.get("additional"):
+                    pieces.append(row["additional"])
+                description_html = "".join(pieces)
+
+            description = format_description(description_html)
+            if len(strip_html(description)) < 200:
+                continue
+
+            raw_date = row.get("createdAt") or row.get("created_at")
+            posted = None
+            if raw_date:
+                try:
+                    numeric = float(raw_date)
+                    if numeric > 100000000000:
+                        numeric /= 1000.0
+                    posted = datetime.fromtimestamp(numeric, tz=ZoneInfo("UTC")).date()
+                except (TypeError, ValueError, OSError, OverflowError):
+                    posted = pdate(raw_date)
+            # Lever's documented public API omits posting dates. A job that
+            # remains published in this endpoint is treated as currently open.
+            if not posted:
+                posted = TODAY
+            if posted < CUTOFF:
+                continue
+
+            url = clean(row.get("hostedUrl") or row.get("applyUrl") or "")
+            if not url:
+                continue
+
+            city, state = "", ""
+            loc_parts = [clean(x) for x in location.split(",") if clean(x)]
+            if len(loc_parts) >= 2:
+                city, state = loc_parts[0], loc_parts[1]
+            else:
+                city = location
+
+            country = clean(row.get("country") or "").upper()
+            if country not in {"US", "CA"}:
+                country = infer_country(location, src["Company"], description)
+
+            out.append(
+                Job(
+                    str(row.get("id") or hashlib.sha1(url.encode()).hexdigest()[:16]),
+                    title,
+                    src["Company"],
+                    description,
+                    posted,
+                    jobtype(title, description),
+                    category(title, description, src["Industry"], src["Company"]),
+                    url,
+                    source_url,
+                    source_url,
+                    "",
+                    normalize_work_arrangement(
+                        description, location, title=title, current=""
+                    ),
+                    city,
+                    state,
+                    country,
+                )
+            )
+
+        skip += len(rows)
+        if len(rows) < page_size:
+            break
+
+    return out
+
+
 def _deep_values(obj, keys):
     """Yield values for matching dict keys anywhere in a JSON-like object."""
     wanted = {k.lower() for k in keys}
@@ -13945,6 +14062,8 @@ def main():
                 if "workday" in a
                 else greenhouse(s)
                 if "greenhouse" in a
+                else lever(s)
+                if "lever" in a or "jobs.lever.co" in s.get("URL", "").lower()
                 else paylocity(s)
                 if "paylocity" in a
                 else hubbard_adp_cx(s)
