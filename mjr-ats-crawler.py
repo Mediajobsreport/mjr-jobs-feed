@@ -5003,6 +5003,10 @@ def _isolved_detail(src, url, raw, allow_undated_current_listing=False):
         if m:
             jid = clean(m.group(1))
     if not jid:
+        m = re.search(r"/iframe/\d+/(\d+)\.html$", url, re.I)
+        if m:
+            jid = clean(m.group(1))
+    if not jid:
         jid = hashlib.sha1(url.encode()).hexdigest()[:16]
 
     canonical = url.split("#",1)[0]
