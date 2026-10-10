@@ -4786,7 +4786,7 @@ def adams_radio_group(src):
                         break
             pd = pdate(date_value) if date_value else None
             if not pd:
-                m = re.search(r"\b([A-Za-z]+\s+\d{1,2},\s+20\d{2})\b", text[:1000])
+                m = re.search(r"\b([A-Za-z]+\s+\d{1,2},\s+20\d{2})\b", text[:6000])
                 pd = pdate(m.group(1)) if m else None
             if not pd or pd < CUTOFF:
                 continue
