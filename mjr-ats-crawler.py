@@ -4747,10 +4747,10 @@ def adams_radio_group(src):
 
     # The careers page is WordPress-based; its public feed can expose posts
     # when the landing page omits a link from the server-rendered HTML.
-    for feed_url in (urljoin(start, "feed/"), urljoin(start, "/feed/")):
+    for feed_url in (urljoin(start, "/feed/"),):
         try:
             raw = req("GET", feed_url).text or ""
-            for match in re.finditer(r"https?://[^<\s\"']+/20\d{2}/\d{1,2}/\d{1,2}/[^<\s\"']+", raw, re.I):
+            for match in re.finditer(r"https?://[^/<\s\"']+/20\d{2}/\d{1,2}/\d{1,2}/[^<\s\"']+", raw, re.I):
                 detail_urls.add(html.unescape(match.group(0)).rstrip(".,)"))
         except Exception:
             pass
