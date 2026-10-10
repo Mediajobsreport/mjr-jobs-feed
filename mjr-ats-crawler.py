@@ -10976,7 +10976,7 @@ def graham_media_jobs(src):
     response = req("GET", src["URL"])
     soup = BeautifulSoup(response.text, "html.parser")
     post_urls = set()
-    pattern = re.compile(r"/gmg-careers/(20\\d{2})/(\\d{1,2})/(\\d{1,2})/[^/?#]+", re.I)
+    pattern = re.compile(r"/gmg-careers/(20\d{2})/(\d{1,2})/(\d{1,2})/[^/?#]+", re.I)
     for anchor in soup.find_all("a", href=True):
         url = urljoin(src["URL"], anchor["href"])
         parsed = urlparse(url)
