@@ -257,6 +257,4878 @@ def req(method, url, **kw):
                 time.sleep(_v28_backoff_seconds(attempt))
                 continue
             return r
+        except Exception as e:
+            last = e
+            msg = str(e).lower()
+            transient = any(x in msg for x in (
+                "429","timed out","timeout","temporarily unavailable",
+                "connection reset","502","503","504"
+            ))
+            if transient and attempt < 2:
+                time.sleep(_v28_backoff_seconds(attempt))
+                continue
+            raise
+    if last:
+        raise last
+@dataclass
+class Job:
+    id: str
+    title: str
+    company: str
+    description: str
+    date: date
+    jobtype: str
+    category: str
+    url: str
+    source: str
+    company_website: str = ""
+    logo: str = ""
+    work_arrangement: str = "Not Specified"
+    city: str = ""
+    state: str = ""
+    country: str = "US"
+    employer_deadline: date | None = None
+
+    @property
+    def expiration(self):
+        life = retention_days(self.jobtype)
+        days = max(1, life - (TODAY - self.date).days)
+
+        if self.employer_deadline:
+            d = (self.employer_deadline - TODAY).days
+            if 1 <= d < days:
+                days = d
+
+        return days
+
+
+def jobtype(title, text=""):
+    t = clean(title).lower()
+    raw = strip_html(text or "")
+
+    # Internship must be indicated by the job title itself. Employer boilerplate
+    # often mentions interns/internships and must not reclassify normal jobs.
+    if re.search(
+        r"\b(intern|internship|internships|student intern|summer intern|"
+        r"fall intern|spring intern|co-op intern)\b",
+        t,
+        re.I,
+    ):
+        return "Internship"
+
+    # v73: employment type must come from an explicit phrase, not from the
+    # unrelated words "part" and "time" appearing somewhere in a long
+    # description. Title signals are strongest.
+    if re.search(r"\bpart[ -]?time\b|\bparttime\b", t, re.I):
+        return "Part Time"
+    if re.search(r"\bfull[ -]?time\b|\bfulltime\b", t, re.I):
+        return "Full Time"
+    if re.search(r"\btemporary\b|\btemp\b", t, re.I):
+        return "Temporary"
+    if re.search(r"\bcontract(?:or)?\b", t, re.I):
+        return "Contract"
+
+    # Prefer structured labels near the beginning of the posting. This handles
+    # iCIMS labels such as "Type: Full Time Employee" and
+    # "Employment Type: Full-Time" while avoiding benefits boilerplate later.
+    opening = raw[:2200]
+    structured_patterns = [
+        (r"(?:employment|position)\s*type\s*[:\-]?\s*(?:regular\s+)?part[ -]?time", "Part Time"),
+        (r"(?:employment|position)\s*type\s*[:\-]?\s*(?:regular\s+)?full[ -]?time", "Full Time"),
+        (r"\btype\s*[:\-]?\s*(?:regular\s+)?part[ -]?time(?:\s+employee)?\b", "Part Time"),
+        (r"\btype\s*[:\-]?\s*(?:regular\s+)?full[ -]?time(?:\s+employee)?\b", "Full Time"),
+    ]
+    for pat, value in structured_patterns:
+        if re.search(pat, opening, re.I):
+            return value
+
+    # Fall back to explicit employment phrases in the opening portion only.
+    # If both occur, use whichever explicit phrase appears first.
+    signals = []
+    for pat, value in [
+        (r"\bpart[ -]?time(?:\s+employee)?\b|\bparttime\b", "Part Time"),
+        (r"\bfull[ -]?time(?:\s+employee)?\b|\bfulltime\b", "Full Time"),
+    ]:
+        m = re.search(pat, opening, re.I)
+        if m:
+            signals.append((m.start(), value))
+    if signals:
+        signals.sort(key=lambda x: x[0])
+        return signals[0][1]
+
+    if re.search(r"\btemporary\b|\btemp\b", opening, re.I):
+        return "Temporary"
+    if re.search(r"\bcontract(?:or)?\b", opening, re.I):
+        return "Contract"
+
+    return "Full Time"
+
+
+def category(title, desc, industry, company):
+    """
+    MJR job-category classifier.
+
+    Rule:
+      1. Classify by definitive job-title function first.
+      2. Use employer/media context to resolve platform-specific titles such as Producer.
+      3. Use description context only when the title remains ambiguous.
+      4. If still ambiguous, fall back to the employer/source media type (Radio,
+         Television, Journalism, Music Industry, or Public Media / Higher Ed).
+    """
+
+    t = clean(title).lower()
+    d = strip_html(desc).lower()
+    c = clean(company).lower()
+    ind = clean(industry).lower()
+
+    # Sinclair targeted category corrections.
+    if re.search(r"\bsenior paid search strategist\b", title, re.I):
+        return "Digital"
+    if re.search(r"\bdigital media coordinator\b", title, re.I):
+        return "Digital"
+
+
+
+    # A short description slice is enough for fallback context without allowing
+    # generic employer boilerplate to dominate the classification.
+    d_short = d[:2500]
+    td = f" {t} {d_short} "
+
+    # Employer/media context is used for platform-specific roles and the final
+    # fallback only. Functional titles such as Sales, Engineering, HR, etc.
+    # continue to override employer type.
+    radio_context = (
+        ind == "radio"
+        or any(x in c for x in [
+            "audacy", "beasley", "bonneville", "cumulus", "iheart",
+            "lotus communications", "stingray", "pattison", "evanov",
+            "urban one", "siriusxm", "sun broadcasting", "good karma"
+        ])
+        or re.search(r"\b(radio station|radio group|fm station|am station|broadcast radio)\b", d_short)
+    )
+    television_context = (
+        ind == "television"
+        or any(x in c for x in [
+            "paramount", "cbs", "fox television", "fox entertainment", "fox tv stations",
+            "nexstar", "sinclair", "televisaunivision", "qvc", "hearst television",
+            "gray television", "weigel", "telemundo", "disney", "abc"
+        ])
+        or re.search(r"\b(television station|tv station|newscast|television studio|local television|broadcast television)\b", d_short)
+    )
+
+    # ------------------------------------------------------------------
+    # 1) INTERNSHIPS
+    # ------------------------------------------------------------------
+    if re.search(r"\b(intern|internship|fellow|fellowship|trainee program|summer trainee|rotation trainee|praktikant|becario)\b", t):
+        return "Internships"
+
+    # Voice performance belongs in MJR's Voiceover category. Keep the match
+    # title-first so ordinary audio engineering, speech testing and AI data
+    # validation jobs are not mislabeled as voice talent opportunities.
+    if re.search(
+        r"\b(voice[ -]?over artist|voice actor|voice actress|voice talent|"
+        r"audiobook narrator|audio book narrator|dubbing artist|dubbing actor|"
+        r"narration artist|professional narrator)\b",
+        t,
+    ):
+        return "Voiceover"
+
+    # ------------------------------------------------------------------
+    # 1A) DEFINITIVE TITLE-FIRST OVERRIDES
+    # These titles should not be displaced by broad words in descriptions.
+    # ------------------------------------------------------------------
+    if re.search(r"\b(sales associate|associate,? sales|sales account associate|account associate,? sales|sales representative)\b", t):
+        return "Sales & Marketing"
+
+    # Any clear Sales-department title should remain Sales & Marketing.
+    if re.search(r"\bsales\b", t) and not re.search(r"\bsalesforce\b", t):
+        return "Sales & Marketing"
+
+    if re.search(r"\b(morning show personality|radio personality|air personality|on[- ]air personality)\b", t):
+        return "Radio"
+
+    # Generic Program Director is Radio when the posting clearly identifies
+    # a radio/public-radio operation. This must precede description fallbacks
+    # because public-media fundraising language can otherwise look like Sales.
+    if re.search(r"\bprogram director\b", t) and re.search(
+        r"\b(public radio|radio station|radio programming|on[- ]air|broadcast programming|fm station|am station|radio network)\b",
+        d_short,
+    ):
+        return "Radio"
+
+    if re.search(r"\b(business supervisor|business director|director,? business|supervisor,? business)\b", t):
+        return "Business Office"
+
+    # Master Control is a television operations function in the MJR taxonomy,
+    # not Engineering.
+    if re.search(r"\b(master control|master control operator|master control supervisor|master control coordinator)\b", t):
+        return "Television"
+
+    # Weather/on-air meteorology is a platform role, not generic Journalism.
+    if re.search(r"\b(meteorologist|weather anchor|weather reporter|weathercaster|weather forecaster)\b", t):
+        if television_context or re.search(r"\b(tv|television|newscast|on-camera|on camera)\b", td):
+            return "Television"
+        if radio_context or re.search(r"\b(radio|on-air radio|audio broadcast)\b", td):
+            return "Radio"
+        return "Television"
+
+    # Promotions is a station/platform programming function for MJR.
+    if re.search(r"\b(promotions?|promotion)\b", t):
+        if television_context or re.search(r"\b(tv|television|newscast|television station)\b", td):
+            return "Television"
+        if radio_context or re.search(r"\b(radio|fm station|am station|radio station)\b", td):
+            return "Radio"
+
+    # Television/studio/broadcast operations identified directly by title.
+    if re.search(r"\b(studio tech|studio technician|audio tech|audio technician|ticker operator|broadcasting assistant|broadcast assistant)\b", t):
+        if television_context or re.search(r"\b(tv|television|video|studio|broadcasting)\b", td):
+            return "Television"
+
+    # Print-production and physical newspaper operations belong in Business Office.
+    if re.search(r"\b(warehouse worker|mailroom inserter|mailroom|inserter|packaging team lead|packaging|press operator)\b", t):
+        return "Business Office"
+
+    # Production technicians at television operations belong in Television.
+    if re.search(r"\bproduction technician\b", t) and television_context:
+        return "Television"
+
+    # Assignment-desk jobs at television operations are Television rather than
+    # generic Journalism.
+    if re.search(r"\bassignment desk(?: assistant| editor| manager| coordinator)?\b", t) and television_context:
+        return "Television"
+
+    # Print/digital newsroom editing and news-design titles are Journalism.
+    # Keep this title-first so generic business/product language in newspaper
+    # descriptions does not push editorial jobs into Business Office.
+    if ind == "journalism" and re.search(
+        r"\b(news designer|newsroom designer|news editor|editor,? the |"
+        r"assignment editor|photo assignment editor|copy editor|visual editor)\b",
+        t,
+    ):
+        return "Journalism"
+
+    # ------------------------------------------------------------------
+    # 2) ENGINEERING / IT / SOFTWARE / PROGRAMMING / TECHNICAL SYSTEMS
+    #
+    # MJR rule: software engineering, computer programming/development, IT,
+    # infrastructure, systems, networking, cybersecurity, technical support,
+    # data engineering and broadcast engineering all belong in Engineering.
+    # This block intentionally runs before Sales, Business Office and Digital.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"software engineer|software engineering|software developer|software development|"
+        r"application developer|applications developer|web developer|frontend developer|"
+        r"front-end developer|backend developer|back-end developer|full stack developer|"
+        r"full-stack developer|mobile developer|computer programmer|software programmer|programmer|"
+        r"developer advocate|development engineer|qa engineer|quality assurance engineer|"
+        r"data engineer|data scientist|machine learning engineer|ml engineer|ai engineer|"
+        r"devops|site reliability|site reliability engineer|sre|"
+        r"cybersecurity|cyber security|information security|application security|app security|"
+        r"security engineer|security analyst|security architect|security operations|soc analyst|"
+        r"cloud engineer|cloud architect|cloud infrastructure|"
+        r"ai architect|ai lead architect|artificial intelligence architect|machine learning architect|"
+        r"technology architect|platform architect|software and platforms architecture|"
+        r"solutions architect|solution architect|software architect|platform architect|"
+        r"enterprise architect|data architect|technical architect|systems architect|"
+        r"information technology|information systems|\bit manager\b|\bit director\b|"
+        r"it engineer|it technician|it support|desktop support|help desk|service desk|"
+        r"systems engineer|system engineer|systems administrator|system administrator|"
+        r"network engineer|network administrator|network operations|networking engineer|"
+        r"infrastructure engineer|infrastructure manager|infrastructure architect|"
+        r"database administrator|database engineer|dba|"
+        r"salesforce developer|salesforce administrator|salesforce admin|salesforce engineer|"
+        r"salesforce business analyst|business systems analyst|systems analyst|technical analyst|"
+        r"technology innovation|agile technical coach|agile delivery lead|"
+        r"broadcast engineer|chief engineer|maintenance engineer|rf engineer|audio engineer|"
+        r"video engineer|studio engineer|field engineer|transmission engineer|"
+        r"broadcast technician|studio technician|maintenance technician|maintenance tech|"
+        r"audio technician|broadcast audio|technical maintenance|technical director|"
+        r"technical operations|transmission|transmitter|"
+        r"systems technician|av technician|audiovisual technician|electronics technician"
+        r")\b",
+        t,
+    ):
+        return "Engineering"
+
+    # Any engineer/engineering title is Engineering under MJR's category rules.
+    if re.search(r"\bengineer(?:ing)?\b", t):
+        return "Engineering"
+
+    # MJR treats programming/development roles as Engineering. Internship and
+    # fellowship titles have already been handled above.
+    if re.search(r"\bdeveloper\b", t):
+        return "Engineering"
+
+    # Vague IT/technical titles can use a small amount of description context.
+    if re.search(r"\b(technician|analyst|administrator|architect|specialist|manager|director|scrum master|agile coach)\b", t) and re.search(
+        r"\b("
+        r"information technology|information systems|software development|software engineering|"
+        r"computer programming|network infrastructure|networking|cybersecurity|cyber security|"
+        r"cloud infrastructure|systems administration|technical support|help desk|service desk|"
+        r"broadcast systems|broadcasting systems|production systems|transmitter|transmission|"
+        r"database administration|application development|systems engineering|"
+        r"technology innovation|enterprise applications|technical architecture|"
+        r"cloud-native|cloud native|devops|kubernetes|terraform|software platforms?"
+        r")\b",
+        d_short,
+    ):
+        return "Engineering"
+
+    # ------------------------------------------------------------------
+    # 2) SALES / MARKETING / PROMOTIONS / REVENUE
+
+    # Strong title-first Sales & Marketing rules.
+    # "Digital" does not override the core function when the job is sales,
+    # advertising, marketing, account management, partnerships or revenue.
+    if re.search(
+        r"\b("
+        r"digital sales|digital media sales|digital advertising sales|digital ad sales|"
+        r"digital sales consultant|digital sales manager|digital sales executive|"
+        r"digital marketing consultant|digital marketing manager|digital marketing coordinator|"
+        r"digital marketing specialist|digital marketing strategist|"
+        r"digital account executive|digital account manager|digital client partner|"
+        r"integrated marketing|integrated sales|media sales|advertising sales|ad sales|"
+        r"account executive|account manager|sales executive|sales manager|sales consultant|"
+        r"sales coordinator|account coordinator|business development|revenue|"
+        r"sponsorship sales|sponsorships|partnership sales|client partner|client services|"
+        r"customer success|brand marketing|performance marketing|paid media|"
+        r"advertising operations|ad operations|commercial sales|commercial partnerships"
+        r")\b",
+        t,
+    ):
+        return "Sales & Marketing"
+
+    # Sales-function titles must resolve before generic coordinator/admin rules.
+    # Handles both "Sales Coordinator" and ATS-style "Coordinator, Sales" titles.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"account executive|account manager|account coordinator|"
+        r"sales executive|sales manager|sales director|sales assistant|"
+        r"sales representative|sales consultant|sales coordinator|sales development representative|"
+        r"sales operations analyst|head of ad sales|podcast ad sales|paid media partnerships|advertising operations|ad product commercialization|"
+        r"physical sales coordinator|media consultant|marketing consultant|"
+        r"advertising consultant|advertising coordinator|ad sales coordinator|"
+        r"media sales|advertising sales|digital sales|local sales|national sales|"
+        r"business development|business development coordinator|"
+        r"revenue manager|revenue director|revenue operations|revenue coordinator|"
+        r"marketing|growth marketing|performance marketing|product marketing|"
+        r"marketing manager|marketing director|marketing coordinator|"
+        r"marketing specialist|marketing assistant|brand marketing|brand manager|"
+        r"brand ambassador|"
+        r"event marketing|event marketing coordinator|field marketing|"
+        r"affiliate sales|partnership sales|partnerships coordinator|"
+        r"sponsorship sales|sponsorship manager|sponsorship coordinator|"
+        r"client services|client services coordinator|client success|"
+        r"customer success|customer success coordinator|digital client partner|"
+        r"visual sales lead|gerente comercial ventas|accounts executive"
+        r")\b",
+        t,
+    ):
+        return "Sales & Marketing"
+
+    # ATS titles frequently put "Coordinator" first, followed by the function.
+    if re.search(
+        r"\bcoordinator\s*,?\s*("
+        r"sales|physical sales|marketing|digital marketing|advertising|"
+        r"business development|revenue|sponsorships?|"
+        r"partnerships?|client services|customer success|account"
+        r")\b",
+        t,
+    ):
+        return "Sales & Marketing"
+
+    # Strategy/insights roles tied directly to audience, brand, campaigns or
+    # marketing are Sales & Marketing rather than Journalism or a platform fallback.
+    if re.search(r"\b(strategy|strategic|insights?)\b", t) and re.search(
+        r"\b(marketing|consumer insights?|audience insights?|brand strategy|campaigns?|advertising|market research|go-to-market)\b",
+        d_short,
+    ):
+        return "Sales & Marketing"
+
+    # ------------------------------------------------------------------
+    # 3) BUSINESS OFFICE / ADMIN / FINANCE / HR / LEGAL / SCHEDULING
+    # ------------------------------------------------------------------
+    # People/HR functions should never fall through to Journalism just because
+    # their descriptions discuss communications, engagement, or internal content.
+    if re.search(
+        r"\b("
+        r"organizational development|organisation development|employee engagement|"
+        r"people & culture|people and culture|total rewards|compensation and benefits|"
+        r"benefits manager|benefits specialist|hr specialist|human resources specialist|"
+        r"hr service|hr services|hr service representative|human resources service|human resources services|"
+        r"talent management|workforce planning|learning and development|learning & development"
+        r")\b",
+        t,
+    ):
+        return "Business Office"
+
+    # Physical/corporate security belongs in Business Office. Cyber/information
+    # security is already captured by the Engineering block above.
+    if re.search(
+        r"\b(security officer|security guard|corporate security|physical security|security supervisor)\b",
+        t,
+    ):
+        return "Business Office"
+
+    # Broadcast commercial traffic/continuity is a business-office function.
+    # Do not use the word 'traffic' alone: Traffic Anchor/Reporter is handled
+    # later as an on-air Radio role.
+    if re.search(
+        r"\b("
+        r"traffic assistant|traffic coordinator|traffic co-ordinator|traffic director|"
+        r"traffic specialist|continuity assistant|continuity coordinator|"
+        r"continuity co-ordinator|continuity director|continuity specialist"
+        r")\b",
+        t,
+    ):
+        return "Business Office"
+
+    if re.search(
+        r"\b("
+        r"accountant|accounting|accounts payable|accounts receivable|"
+        r"finance|financial|controller|payroll|bookkeeper|treasury|tax|"
+        r"human resources|hr coordinator|hr manager|hr business partner|"
+        r"people operations|people partner|talent acquisition|recruiter|recruiting|"
+        r"administrative assistant|administrative coordinator|administrator|"
+        r"executive assistant|office assistant|office coordinator|office manager|"
+        r"legal|attorney|counsel|paralegal|business affairs|contracts|compliance|"
+        r"procurement|purchasing|facilities|receptionist|billing|credit|collections|audit,? risk|risk and advisory|"
+        r"operations coordinator|business operations|"
+        r"assignment coordinator|assignment co-ordinator|"
+        r"scheduling coordinator|schedule coordinator|scheduler|"
+        r"resource coordinator|program coordinator|project coordinator"
+        r")\b",
+        t,
+    ):
+        return "Business Office"
+
+    # ------------------------------------------------------------------
+    # Engineering/IT classification is handled above before Sales/Business Office.
+    # ------------------------------------------------------------------
+
+    # ------------------------------------------------------------------
+    # 5) PUBLIC RELATIONS / CORPORATE COMMUNICATIONS
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"public relations|publicist|publicity|media relations|press relations|"
+        r"corporate communications|communications manager|communications director|"
+        r"communications specialist|communications coordinator|"
+        r"communications officer|public affairs|press secretary|"
+        r"external communications|internal communications"
+        r")\b",
+        t,
+    ):
+        return "Public Relations"
+
+    # ------------------------------------------------------------------
+    # 6) DIGITAL / PRODUCT / UX / DIGITAL CONTENT
+    #
+    # Technical IT, software, computer programming, cybersecurity, systems
+    # and engineering roles are handled above as Engineering.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"product manager|product owner|digital product|technology product|"
+        r"ux|ui|user experience|user interface|"
+        r"digital programming|youtube programming|youtube editor|digital insights|digital business|"
+        r"digital social|social content creator|digital & social|digital and social|"
+        r"label analytics|crm manager|digital analyst|video partnerships|youtube"
+        r")\b",
+        t,
+    ):
+        return "Digital"
+
+    # Traffic Anchor/Reporter is an on-air role and must resolve before the
+    # generic Journalism reporter rule. Use posting context to distinguish TV
+    # from radio; default to Radio when no television evidence is present.
+    if re.search(r"\b(traffic anchor|traffic reporter)\b", t):
+        if re.search(
+            r"\b(television|tv station|tv newscast|newscast|on camera|on-camera|video broadcast)\b",
+            d_short,
+        ):
+            return "Television"
+        return "Radio"
+
+    # Exact newsroom photography title; television employer context wins.
+    if t == "photographer":
+        return "Television" if television_context else "Journalism"
+
+    # Platform-specific editorial/production titles. Generic Producer should
+    # follow the actual media operation instead of defaulting to Journalism.
+    if re.search(r"\b(assignment editor|assignment manager)\b", t):
+        if television_context:
+            return "Television"
+        if radio_context:
+            return "Radio"
+        return "Journalism"
+
+    if re.search(r"\b(producer|associate producer|executive producer|show producer|line producer|segment producer)\b", t):
+        # Specialized digital/podcast/streaming producers are handled by their
+        # explicit functional wording later; resolve only generic platform roles here.
+        if not re.search(r"\b(digital|web|social|podcast|streaming)\b", t):
+            if television_context:
+                return "Television"
+            if radio_context:
+                return "Radio"
+            if ind == "journalism":
+                return "Journalism"
+
+    # 7) JOURNALISM / NEWS / EDITORIAL
+    # Place Journalism before platform production so photojournalists,
+    # assignment editors, managing editors, etc. do not become Television.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"reporter|journalist|news anchor|anchor/reporter|anchor reporter|"
+        r"multimedia journalist|mmj|correspondent|investigative reporter|"
+        r"investigative journalist|bureau chief|"
+        r"news editor|managing editor|copy editor|editorial editor|"
+        r"news writer|newsroom editor|news director|digital journalist|"
+        r"breaking news|photojournalist|news photographer|sports reporter|"
+        r"sports anchor|"
+        r"fact checker|fact-checker|contributing editor|photo editor|editorial page assistant editor|senior editor"
+        r")\b",
+        t,
+    ):
+        return "Journalism"
+
+    # ------------------------------------------------------------------
+    # 7) RADIO / ON-AIR / RADIO PROGRAMMING
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"board operator|on[- ]air|air personality|air talent|"
+        r"radio host|radio personality|radio announcer|announcer operator|"
+        r"talk host|talk/news host|news/talk host|talk show host|"
+        r"morning host|morning show host|afternoon host|midday host|night host|"
+        r"music director|radio program director|assistant program director|"
+        r"radio producer|radio news host|radio news anchor|"
+        r"traffic reporter|traffic anchor|traffic producer|update anchor|part[- ]time talent|play[- ]by[- ]play|sports talk host|"
+        r"disc jockey|radio dj|radio presenter"
+        r")\b",
+        t,
+    ):
+        return "Radio"
+
+    # If the title simply says "host", require radio/audio evidence.
+    if re.search(r"\bhost\b", t) and re.search(
+        r"\b(radio|audio program|on air|on-air|broadcast radio|radio program)\b",
+        td,
+    ):
+        return "Radio"
+
+    # Generic content creators inherit a television employer/platform unless
+    # the title explicitly says digital/social, which is handled as Digital.
+    if re.search(r"\bcontent creator\b", t):
+        if re.search(r"\b(digital|social|web|youtube)\b", t):
+            return "Digital"
+        if television_context:
+            return "Television"
+        if radio_context:
+            return "Radio"
+
+    # Media coordinators tied to a television employer/platform are Television.
+    if re.search(r"\bmedia coordinator\b", t) and television_context:
+        return "Television"
+
+    # Project/seasonal broadcast-assistant and ticker roles are television operations.
+    if re.search(r"\b(project employee,? )?(broadcasting assistant|broadcast assistant|ticker operator)\b", t):
+        return "Television"
+
+    # ------------------------------------------------------------------
+    # 8) TELEVISION / VIDEO PRODUCTION / STUDIO PRODUCTION
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"tv producer|television producer|newscast producer|executive producer|"
+        r"associate producer|show producer|line producer|segment producer|"
+        r"technical producer|studio manager|studio crew|camera operator|"
+        r"videographer|director of photography|video editor|"
+        r"production assistant|production coordinator|production manager|"
+        r"broadcast director|newscast director|floor director|"
+        r"graphics operator|character generator|cg operator|"
+        r"control room operator|studio operator"
+        r")\b",
+        t,
+    ):
+        return "Television"
+
+    # ------------------------------------------------------------------
+    # 9) DIGITAL / WEB / SOCIAL / DESIGN / PRODUCT / PODCAST / STREAMING
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"digital producer|digital editor|digital content|digital writer|"
+        r"web producer|web editor|web developer|web designer|"
+        r"social media|social producer|social editor|audience development|"
+        r"seo|newsletter|podcast producer|podcast editor|podcast manager|"
+        r"streaming producer|streaming editor|streaming manager|"
+        r"product manager|product owner|mobile product|app product|"
+        r"ux|ui|content strategist|digital strategist|ecommerce|e-commerce|"
+        r"graphic designer|graphics designer|visual designer|motion designer|"
+        r"digital designer|creative designer|multimedia designer|"
+        r"content designer|interactive designer|website manager"
+        r")\b",
+        t,
+    ):
+        return "Digital"
+
+    # Legacy safety net; software/data engineering should already resolve to Engineering above.
+    if re.search(
+        r"\b("
+        r"software engineer|software developer|data engineer|data scientist|"
+        r"machine learning engineer|frontend engineer|front-end engineer|"
+        r"backend engineer|back-end engineer|full stack engineer|full-stack engineer|"
+        r"mobile engineer|web engineer"
+        r")\b",
+        t,
+    ):
+        return "Digital"
+
+    # ------------------------------------------------------------------
+    # 10) MUSIC INDUSTRY FUNCTIONS
+    # Specific music-business functions should beat generic management.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"a&r|artist relations|artist development|artist services|"
+        r"record label|label manager|label operations|music publishing|"
+        r"publishing administration|music licensing|sync licensing|"
+        r"rights management|rights administration|royalties|royalty|"
+        r"repertoire|catalog manager|catalog management|music supervisor|"
+        r"music coordinator|music operations|music partnerships|"
+        r"songwriter relations|writer relations|creative music"
+        r")\b",
+        t,
+    ):
+        return "Music Industry"
+
+    # ------------------------------------------------------------------
+    # 11) MANAGEMENT
+    # Only after functional VP/director titles have had their chance above.
+    # ------------------------------------------------------------------
+    if re.search(
+        r"\b("
+        r"general manager|market manager|station manager|regional manager|"
+        r"president|chief executive officer|ceo|chief operating officer|coo|"
+        r"chief content officer|cco|chief revenue officer|cro|"
+        r"chief financial officer|cfo|chief marketing officer|cmo|"
+        r"vice president|vp|senior vice president|svp|"
+        r"executive vice president|evp|head of"
+        r")\b",
+        t,
+    ):
+        return "Management"
+
+    # ------------------------------------------------------------------
+    # 12) DESCRIPTION FALLBACKS FOR VAGUE TITLES
+    # These are intentionally ordered by job function and kept narrow.
+    # ------------------------------------------------------------------
+
+    # ATS shell titles such as "Company Careers" are not real functional titles;
+    # use the employer media type rather than incidental newsroom wording.
+    if re.search(r"\b(careers?|career opportunities|job opportunities)\b", t):
+        if television_context:
+            return "Television"
+        if radio_context:
+            return "Radio"
+
+    # Finance/HR/admin/scheduling.
+    if re.search(
+        r"\b("
+        r"accounts payable|accounts receivable|financial reporting|payroll|"
+        r"human resources|talent acquisition|recruiting|administrative support|"
+        r"weekly schedules?|staff scheduling|scheduling conflicts|"
+        r"commercial inventory|spot placement|commercial logs?|continuity|affidavits?|"
+        r"contracts administration|legal services|procurement"
+        r")\b",
+        d_short,
+    ):
+        return "Business Office"
+
+    # Engineering/technical systems.
+    if re.search(
+        r"\b("
+        r"broadcasting systems?|broadcast systems?|production systems?|"
+        r"transmitter|transmission systems?|technical systems?|"
+        r"networking|electronics|audiovisual|telecommunications|"
+        r"studio equipment|technical infrastructure"
+        r")\b",
+        d_short,
+    ) and re.search(
+        r"\b(maintain|maintenance|repair|troubleshoot|install|commission|technical|technician)\b",
+        d_short,
+    ):
+        return "Engineering"
+
+    # Sales/marketing/promotions.
+    if re.search(
+        r"\b("
+        r"sales revenue|sales cycle|new business development|advertising sales|"
+        r"marketing campaigns?|brand activations?|promotional material|"
+        r"community events?|sponsorship sales|client relationships?"
+        r")\b",
+        d_short,
+    ):
+        return "Sales & Marketing"
+
+    # Journalism.
+    if re.search(
+        r"\b("
+        r"reporting|journalism|journalistic|newsroom|newsgathering|"
+        r"investigative reporting|editorial judgment|fact-checking|"
+        r"writes? news|news coverage|reporter"
+        r")\b",
+        d_short,
+    ):
+        return "Journalism"
+
+    # Radio.
+    if re.search(
+        r"\b("
+        r"radio program|radio station|on-air host|on air host|"
+        r"radio news|control board|broadcast automation|playlist|"
+        r"audio programming|radio programming"
+        r")\b",
+        d_short,
+    ):
+        return "Radio"
+
+    # Television/video production.
+    if re.search(
+        r"\b("
+        r"television production|tv production|newscast production|"
+        r"control room|camera operation|video production|studio production|"
+        r"direct live broadcasts?|television studio"
+        r")\b",
+        d_short,
+    ):
+        return "Television"
+
+    # Digital/web/social/design.
+    if re.search(
+        r"\b("
+        r"digital content|social media|website content|web publishing|"
+        r"streaming content|podcast production|seo strategy|"
+        r"graphic design|visual design|user experience|digital product"
+        r")\b",
+        d_short,
+    ):
+        return "Digital"
+
+    # PR / communications.
+    if re.search(
+        r"\b("
+        r"media relations|press releases?|public relations|"
+        r"corporate communications|external communications|public affairs"
+        r")\b",
+        d_short,
+    ):
+        return "Public Relations"
+
+    # ------------------------------------------------------------------
+    # 13) NARROW EMPLOYER / SOURCE FALLBACKS
+    # No generic Radio or Television fallback. That was the source of the
+    # CBC/Radio-Canada misclassifications in the previous feed.
+    # ------------------------------------------------------------------
+
+    music_company = any(
+        x in c
+        for x in [
+            "sony music",
+            "warner music",
+            "universal music",
+            "atlantic records",
+            "republic records",
+            "capitol records",
+            "columbia records",
+            "rca records",
+            "epic records",
+            "interscope",
+            "def jam",
+            "motown",
+            "ascap",
+            "bmi",
+            "sesac",
+            "onerpm",
+            "reservoir media",
+            "recording academy",
+            "music group",
+            "records",
+            "music entertainment",
+        ]
+    )
+
+    if music_company or ind == "music industry":
+        return "Music Industry"
+
+    public_media = any(
+        x in c
+        for x in [
+            "npr",
+            "pbs",
+            "american public media",
+            "public broadcasting",
+            "public radio",
+            "public media",
+            "university",
+            "college",
+            "state university",
+        ]
+    )
+
+    if public_media or ind in {
+        "public media",
+        "higher ed",
+        "public media / higher ed",
+    }:
+        return "Public Media / Higher Ed"
+
+    # Final employer/media-type fallbacks. These run only after functional
+    # categories such as Sales, Engineering, Business Office, Digital and PR
+    # have already had a chance to classify the job.
+    if ind == "journalism":
+        return "Journalism"
+
+    if ind == "digital":
+        return "Digital"
+
+    if television_context or ind == "television":
+        return "Television"
+
+    if radio_context or ind == "radio":
+        return "Radio"
+
+    return "Business Office"
+
+
+def infer_country(location, company="", description=""):
+    """
+    Infer country conservatively from explicit location text.
+    Default remains US, but Canadian province/territory abbreviations and
+    well-known Canadian place names are mapped to CA.
+    """
+    loc = clean(location)
+    s = f" {loc.lower()} {strip_html(description)[:1200].lower()} "
+
+    canadian_abbr = re.search(
+        r"(?:^|[, /-])(?:ab|bc|mb|nb|nl|ns|nt|nu|on|pe|qc|sk|yt)(?:$|[, /-])",
+        loc.lower(),
+    )
+
+    canadian_names = any(
+        name in s
+        for name in [
+            "alberta",
+            "british columbia",
+            "manitoba",
+            "new brunswick",
+            "newfoundland",
+            "labrador",
+            "nova scotia",
+            "northwest territories",
+            "nunavut",
+            "ontario",
+            "prince edward island",
+            "quebec",
+            "saskatchewan",
+            "yukon",
+            "montreal",
+            "montréal",
+            "toronto",
+            "ottawa",
+            "vancouver",
+            "calgary",
+            "edmonton",
+            "winnipeg",
+            "halifax",
+            "regina",
+            "saskatoon",
+            "sherbrooke",
+            "moncton",
+            "rankin inlet",
+        ]
+    )
+
+    if canadian_abbr or canadian_names:
+        return "CA"
+
+    return "US"
+
+
+def normalize_work_arrangement(description, location, title="", current=""):
+    """
+    Conservative MJR work-arrangement classifier.
+
+    Remote only when THIS JOB is explicitly remote, or a structured location
+    value itself is Remote. Hybrid only when THIS JOB is explicitly hybrid or
+    requires a recurring office/remote mix. Otherwise default On-Site.
+    """
+    desc = strip_html(description).lower()
+    loc = clean(location).lower()
+    title_low = clean(title).lower()
+    s = f" {desc} "
+
+    # A work model stated in the title is the most specific signal available.
+    # This fixes titles such as "(Telework/Hybrid)" and "(On-site)" even when
+    # employer boilerplate elsewhere mentions other arrangements.
+    if re.search(r"\b(?:telework\s*/\s*hybrid|hybrid\s*/\s*telework|hybrid)\b", title_low):
+        return "Hybrid"
+    if re.search(r"\b(?:on[- ]site|onsite|in[- ]person)\b", title_low):
+        return "On-Site"
+    if re.search(r"\b(?:fully |100% )?remote\b", title_low):
+        return "Remote"
+
+    loc_compact = re.sub(r"\s+", " ", loc).strip()
+    if re.search(
+        r"^(?:remote|remote[- /](?:us|usa|united states)|us[- /]remote|"
+        r"united states[- /]remote|remote,?\s*(?:us|usa|united states))$",
+        loc_compact,
+        re.I,
+    ):
+        return "Remote"
+    if re.search(r"^(?:hybrid|hybrid[- /].+|.+[- /]hybrid)$", loc_compact, re.I):
+        return "Hybrid"
+
+    # Explicit labelled fields beat free-form prose. iCIMS commonly uses
+    # "Work Arrangement: Hybrid" near the beginning of the description.
+    labelled = re.search(
+        r"\bwork\s*(?:arrangement|model|configuration|location|type)\s*:?\s*"
+        r"(hybrid|remote|on[- ]?site|onsite|in[- ]person)\b",
+        desc[:2600],
+        re.I,
+    )
+    if labelled:
+        value = labelled.group(1).lower()
+        if "hybrid" in value:
+            return "Hybrid"
+        if "remote" in value:
+            return "Remote"
+        return "On-Site"
+
+    # Direct job-level hybrid statements must be evaluated before broader
+    # on-site phrases because a hybrid role necessarily mentions an office.
+    hybrid_patterns = [
+        r"\bthis (?:role|position|job) is hybrid\b",
+        r"\bthis is (?:a )?hybrid (?:role|position|job)\b",
+        r"\bhybrid (?:role|position|job|schedule|arrangement)\b",
+        r"\btelework\s*/\s*hybrid\b",
+        r"\bhybrid\s*/\s*telework\b",
+        r"\bhybrid work (?:model|schedule|arrangement)\b",
+        r"\b(?:work|working) (?:a )?hybrid in[- ]office schedule\b",
+        r"\bmix of in[- ]office and remote work\b",
+        r"\bcombining remote work and office presence\b",
+        r"\bcombination of remote work and office presence\b",
+        r"\bpartly remote\b",
+        r"\bpartially remote\b",
+        r"\b(?:\d+|two|three|four)\s+days? (?:per|a) week in (?:the )?office\b",
+    ]
+    if any(re.search(p, s) for p in hybrid_patterns):
+        return "Hybrid"
+
+    negative_remote_patterns = [
+        r"\bnot (?:a )?remote (?:role|position|job)\b",
+        r"\bnot remote\b",
+        r"\bno remote\b",
+        r"\bremote work (?:is )?not (?:available|offered|permitted|allowed)\b",
+        r"\bremote (?:work|option|arrangement) (?:is )?not (?:available|offered|permitted|allowed)\b",
+        r"\bmust work (?:on[- ]?site|onsite|in[- ]person)\b",
+        r"\brequired to work (?:on[- ]?site|onsite|in[- ]person)\b",
+        r"\bmust be (?:on[- ]?site|onsite|in[- ]person)\b",
+        r"\bno (?:work from home|work[- ]from[- ]home|telework|telecommuting)\b",
+    ]
+    if any(re.search(p, s) for p in negative_remote_patterns):
+        return "On-Site"
+
+    onsite_patterns = [
+        r"\brequires? full[- ]time on[- ]site presence\b",
+        r"\brequires? full time on site presence\b",
+        r"\bthis role requires? full[- ]time on[- ]site\b",
+        r"\bthis role requires? full time on site\b",
+        r"\bthis (?:position|role|job) is (?:an? )?on[- ]site\b",
+        r"\bthis (?:position|role|job) is onsite\b",
+        r"\bon[- ]site role\b",
+        r"\bon site role\b",
+        r"\bonsite role\b",
+        r"\bin[- ]person role\b",
+        r"\bin person role\b",
+        r"\bwork(?:ing)? on[- ]site\b",
+        r"\bwork(?:ing)? onsite\b",
+        r"\breport(?:s|ing)? (?:daily )?to (?:our|the) .{0,80}(?:office|studio|station|facility)\b",
+    ]
+    if any(re.search(p, s) for p in onsite_patterns):
+        return "On-Site"
+
+    remote_patterns = [
+        r"\bthis (?:role|position|job) is (?:fully |100% )?remote\b",
+        r"\bthis is (?:a )?(?:fully |100% )?remote (?:role|position|job)\b",
+        r"\b(?:role|position|job) is (?:fully |100% )?remote\b",
+        r"\b(?:fully |100% )?remote (?:role|position|job)\b",
+        r"\bcan be performed (?:fully )?remotely\b",
+        r"\bmay be performed (?:fully )?remotely\b",
+        r"\bwill be performed (?:fully )?remotely\b",
+        r"\bwork remotely from\b",
+        r"\bworking remotely from\b",
+        r"\bremote[- ]based (?:role|position|job)\b",
+        r"\bhome[- ]based (?:role|position|job)\b",
+        r"\bthis (?:role|position|job) (?:allows|offers) (?:full[- ]time )?remote work\b",
+        r"\beligible to work fully remotely\b",
+    ]
+    if any(re.search(p, s) for p in remote_patterns):
+        return "Remote"
+
+    # During final feed reconciliation, preserve a structured ATS result when
+    # the title/description supplies no stronger contradictory statement.
+    if current in {"Remote", "Hybrid", "On-Site"}:
+        return current
+    return "On-Site"
+
+
+def _discover_workday_endpoint(src_url):
+    """Return (host, tenant, site) from a Workday public career URL.
+
+    Handles ordinary tenant hosts plus `myworkdaycenter` aliases by inspecting
+    the public landing page for the actual /wday/cxs/{tenant}/{site}/ endpoint.
+    """
+    u = urlparse(src_url)
+    host = u.netloc
+    parts = [
+        p for p in u.path.split("/")
+        if p and p not in ("en-US", "en-CA", "en-GB", "jobs", "details")
+    ]
+    site = parts[0] if parts else ""
+    tenant = host.split(".")[0] if host else ""
+
+    # Normal Workday tenant host.
+    if tenant and tenant != "myworkdaycenter" and site:
+        return host, tenant, site
+
+    # Alias hosts such as Tribune's myworkdaycenter do not expose the tenant
+    # in the hostname. The real cxs tenant is commonly embedded in page state.
+    try:
+        r = req("GET", src_url)
+        raw = html.unescape(r.text or "").replace("\\/", "/")
+        pats = [
+            r"/wday/cxs/([^/\"'<>\s]+)/([^/\"'<>\s]+)/jobs",
+            r'["\']tenant["\']\s*:\s*["\']([^"\']+)["\']',
+        ]
+        m = re.search(pats[0], raw, re.I)
+        if m:
+            return host, clean(m.group(1)), clean(m.group(2))
+
+        tm = re.search(pats[1], raw, re.I)
+        if tm and site:
+            return host, clean(tm.group(1)), site
+    except Exception:
+        pass
+
+    return host, tenant, site
+
+
+def _workday_hosts(host):
+    """Candidate Workday public hosts for site migrations."""
+    out = [host]
+    # PBS has moved between wd5 and wd115 while keeping PBSCareers. Trying the
+    # sibling host is safe because the tenant/site is still validated by cxs.
+    if ".wd115.myworkdayjobs.com" in host:
+        out.append(host.replace(".wd115.myworkdayjobs.com", ".wd5.myworkdayjobs.com"))
+    elif ".wd5.myworkdayjobs.com" in host:
+        out.append(host.replace(".wd5.myworkdayjobs.com", ".wd115.myworkdayjobs.com"))
+    return list(dict.fromkeys(out))
+
+
+def workday(src):
+    host, tenant, site = _discover_workday_endpoint(src["URL"])
+
+    if not host or not site:
+        raise RuntimeError("Workday tenant/site not inferable")
+
+    # For alias hosts, if tenant could not be discovered, try a small set of
+    # source-specific known tenant aliases before declaring the source invalid.
+    tenant_candidates = [tenant] if tenant and tenant != "myworkdaycenter" else []
+    company = clean(src.get("Company", "")).lower()
+    if company == "tribune":
+        tenant_candidates += ["tribpub", "tpco", "tribunepublishing"]
+    if company == "pbs":
+        tenant_candidates += ["vhr-pbs", "pbs"]
+    tenant_candidates = list(dict.fromkeys(x for x in tenant_candidates if x))
+
+    last_error = None
+    chosen = None
+
+    for h in _workday_hosts(host):
+        for ten in tenant_candidates:
+            ep = f"https://{h}/wday/cxs/{ten}/{site}/jobs"
+            try:
+                probe = req(
+                    "POST",
+                    ep,
+                    json={
+                        "appliedFacets": {},
+                        "limit": 20,
+                        "offset": 0,
+                        "searchText": "",
+                    },
+                    headers={"Content-Type": "application/json"},
+                ).json()
+                if isinstance(probe, dict) and ("jobPostings" in probe or "total" in probe):
+                    chosen = (h, ten, ep, probe)
+                    break
+            except Exception as e:
+                last_error = e
+        if chosen:
+            break
+
+    if not chosen:
+        # A valid Workday landing page that no longer exposes a working cxs
+        # endpoint should not take down the entire feed.
+        if company in {"tribune", "pbs"}:
+            return generic(src)
+        if last_error:
+            raise last_error
+        raise RuntimeError("Workday tenant/site not inferable")
+
+    host, tenant, ep, first_payload = chosen
+    out = []
+    offset = 0
+    payload = first_payload
+
+    while True:
+        d = payload if offset == 0 else req(
+            "POST",
+            ep,
+            json={
+                "appliedFacets": {},
+                "limit": 20,
+                "offset": offset,
+                "searchText": "",
+            },
+            headers={"Content-Type": "application/json"},
+        ).json()
+
+        posts = d.get("jobPostings") or []
+        if not posts:
+            break
+
+        for p in posts:
+            ext = p.get("externalPath") or ""
+            if not ext:
+                continue
+
+            # Workday list payloads already include postedOn. Reject stale
+            # postings before the per-job detail request; large tenants can
+            # otherwise exhaust the domain request cap on jobs MJR cannot use.
+            list_pd = pdate(p.get("postedOn"))
+            if list_pd and (
+                list_pd < CUTOFF
+                or (TODAY - list_pd).days >= INTERNSHIP_LIFE_DAYS
+            ):
+                continue
+
+            # Large Workday boards also expose locationsText in the listing
+            # payload. Reject obvious international offices before spending a
+            # detail request; MJR carries only US/Canada jobs.
+            list_loc = clean(p.get("locationsText") or "")
+            if re.search(
+                r"\b(london|barcelona|berlin|tokyo|paris|madrid|amsterdam|"
+                r"dublin|singapore|sydney|melbourne|munich|frankfurt|rome|"
+                r"milan|lisbon|vienna|zurich|geneva|brussels|hong kong|"
+                r"united kingdom|england|germany|spain|france|italy|japan|"
+                r"australia|singapore|netherlands|ireland|switzerland)\b",
+                list_loc.lower(),
+            ):
+                continue
+
+            try:
+                info = req(
+                    "GET",
+                    f"https://{host}/wday/cxs/{tenant}/{site}{ext}",
+                ).json().get("jobPostingInfo", {})
+            except Exception:
+                continue
+
+            pd = pdate(info.get("postedOn")) or list_pd
+            if not pd or pd < CUTOFF:
+                continue
+
+            title = clean(info.get("title") or p.get("title"))
+            desc = format_description(info.get("jobDescription"))
+            loc = clean(info.get("location") or p.get("locationsText"))
+
+            # Workday often supplies only a display location, with no country
+            # code. Do not let a US-based employer cause obvious international
+            # offices to be inferred as US jobs.
+            loc_low = loc.lower()
+            foreign_workday = re.search(
+                r"\b(london|barcelona|berlin|tokyo|paris|madrid|amsterdam|"
+                r"dublin|singapore|sydney|melbourne|munich|frankfurt|rome|"
+                r"milan|lisbon|vienna|zurich|geneva|brussels|hong kong|"
+                r"united kingdom|england|germany|spain|france|italy|japan|"
+                r"australia|singapore|netherlands|ireland|switzerland)\b",
+                loc_low,
+            )
+            if foreign_workday:
+                continue
+
+            url = info.get("externalUrl") or f"https://{host}/{site}{ext}"
+            role_type = jobtype(title, info.get("timeType", ""))
+            job_category = (
+                "Internships" if role_type == "Internship"
+                else category(title, desc, src["Industry"], src["Company"])
+            )
+
+            out.append(
+                Job(
+                    info.get("jobReqId") or hashlib.sha1(url.encode()).hexdigest()[:16],
+                    title,
+                    src["Company"],
+                    desc,
+                    pd,
+                    role_type,
+                    job_category,
+                    url,
+                    src["URL"],
+                    src["URL"],
+                    "",
+                    normalize_work_arrangement(desc, loc),
+                    loc,
+                    "",
+                    infer_country(loc, src["Company"], desc),
+                )
+            )
+
+        offset += len(posts)
+        if offset >= int(d.get("total") or offset):
+            break
+
+    return out
+
+def greenhouse(src):
+    parts = [p for p in urlparse(src["URL"]).path.split("/") if p]
+    board = parts[0] if parts else ""
+
+    if not board:
+        raise RuntimeError("Greenhouse board missing")
+
+    d = req(
+        "GET",
+        f"https://boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true",
+    ).json()
+
+    out = []
+
+    for p in d.get("jobs", []):
+        pd = pdate(p.get("created_at")) or pdate(p.get("updated_at"))
+        if not pd or pd < CUTOFF:
+            continue
+
+        title = clean(p.get("title"))
+        desc = format_description(p.get("content"))
+        loc = clean((p.get("location") or {}).get("name"))
+        url = p.get("absolute_url")
+
+        # Greenhouse returns a display location string rather than separate
+        # JBoard city/state fields. Preserve station/market labels such as
+        # "WFAA-TV Dallas" as city text, but split conventional
+        # "Charlotte, North Carolina, United States" locations cleanly.
+        city, state, country = "", "", infer_country(loc, src["Company"], desc)
+        loc_parts = [clean(x) for x in loc.split(",") if clean(x)]
+        if len(loc_parts) >= 2:
+            city = loc_parts[0]
+            state = loc_parts[1]
+            if len(loc_parts) >= 3:
+                ctry = loc_parts[-1].upper()
+                if ctry in {"UNITED STATES", "UNITED STATES OF AMERICA", "USA", "US"}:
+                    country = "US"
+                elif ctry in {"CANADA", "CA"}:
+                    country = "CA"
+        else:
+            city = loc
+
+        out.append(
+            Job(
+                str(p.get("id")),
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title),
+                category(
+                    title,
+                    desc,
+                    src["Industry"],
+                    src["Company"],
+                ),
+                url,
+                src["URL"],
+                src["URL"],
+                "",
+                normalize_work_arrangement(desc, loc),
+                city,
+                state,
+                country,
+            )
+        )
+
+    return out
+
+
+
+
+def _deep_values(obj, keys):
+    """Yield values for matching dict keys anywhere in a JSON-like object."""
+    wanted = {k.lower() for k in keys}
+    stack = [obj]
+    while stack:
+        cur = stack.pop()
+        if isinstance(cur, dict):
+            for k, v in cur.items():
+                if str(k).lower() in wanted:
+                    yield v
+                if isinstance(v, (dict, list)):
+                    stack.append(v)
+        elif isinstance(cur, list):
+            stack.extend(cur)
+
+
+def _first_deep(obj, keys, default=""):
+    for v in _deep_values(obj, keys):
+        if v not in (None, "", [], {}):
+            if isinstance(v, dict):
+                # ADP frequently wraps text in codeValue/shortName/longName.
+                for k in ("longName", "shortName", "codeValue", "name", "value"):
+                    if v.get(k) not in (None, ""):
+                        return v.get(k)
+            if not isinstance(v, (dict, list)):
+                return v
+    return default
+
+
+def _adp_location(obj):
+    """Best-effort public ADP location extraction."""
+    locs = []
+    for v in _deep_values(obj, {"requisitionLocations", "locations", "jobLocations"}):
+        if not isinstance(v, list):
+            continue
+        for loc in v:
+            if not isinstance(loc, dict):
+                continue
+            parts = []
+            # Common ADP public API structures include nameCode and address.
+            nc = loc.get("nameCode")
+            if isinstance(nc, dict):
+                parts.append(clean(nc.get("longName") or nc.get("shortName") or nc.get("codeValue") or ""))
+            elif nc:
+                parts.append(clean(str(nc)))
+            for k in ("name", "locationName", "shortName"):
+                if loc.get(k):
+                    parts.append(clean(str(loc[k])))
+            addr = loc.get("address") or loc.get("physicalAddress")
+            if isinstance(addr, dict):
+                for k in ("cityName", "city", "stateProvinceName", "stateProvinceCode", "countryName", "countryCode"):
+                    if addr.get(k):
+                        val = addr[k]
+                        if isinstance(val, dict):
+                            val = val.get("codeValue") or val.get("shortName") or val.get("longName") or ""
+                        parts.append(clean(str(val)))
+            text = ", ".join(dict.fromkeys(x for x in parts if x))
+            if text:
+                locs.append(text)
+    if locs:
+        return " / ".join(dict.fromkeys(locs))
+
+    # Some ADP tenants put the address directly on a nested object instead of
+    # under requisitionLocations. Walk nested dictionaries and recover only
+    # explicit city/state/country fields supplied by ADP.
+    found = []
+    def walk(v):
+        if isinstance(v, dict):
+            city = clean(str(v.get("cityName") or v.get("city") or ""))
+            region = v.get("stateProvinceCode") or v.get("stateProvinceName") or v.get("state") or ""
+            country = v.get("countryCode") or v.get("countryName") or v.get("country") or ""
+            def scalar(x):
+                if isinstance(x, dict):
+                    return clean(str(x.get("codeValue") or x.get("shortName") or x.get("longName") or ""))
+                return clean(str(x or ""))
+            region = scalar(region)
+            country = scalar(country)
+            if city:
+                value = ", ".join(x for x in [city, region, country] if x)
+                if value:
+                    found.append(value)
+            for child in v.values():
+                walk(child)
+        elif isinstance(v, list):
+            for child in v:
+                walk(child)
+    walk(obj)
+    if found:
+        return " / ".join(dict.fromkeys(found))
+
+    # Final scalar fallbacks used by some public career-center payload variants.
+    val = _first_deep(obj, {
+        "location", "locationName", "workLocation", "requisitionLocation",
+        "formattedAddress", "addressLineOne"
+    }, "")
+    if isinstance(val, dict):
+        for k in ("longName", "shortName", "codeValue", "name"):
+            if val.get(k):
+                return clean(str(val[k]))
+        return ""
+    return clean(str(val))
+
+
+def _adp_description(obj):
+    candidates = []
+    for v in _deep_values(obj, {
+        "requisitionDescription", "jobDescription", "description",
+        "requisitionDescriptionText", "jobDescriptionText",
+        "postingDescription", "externalDescription"
+    }):
+        if isinstance(v, str):
+            t = format_description(v)
+            if t:
+                candidates.append(t)
+        elif isinstance(v, dict):
+            for k in ("longName", "shortName", "codeValue", "text", "value"):
+                if isinstance(v.get(k), str):
+                    t = format_description(v[k])
+                    if t:
+                        candidates.append(t)
+    return max(candidates, key=lambda x: len(strip_html(x)), default="")
+
+
+def _adp_apply_url(src_url, job_id, detail=None):
+    """Create a public ADP job-specific career-center URL without inventing a host."""
+    u = urlparse(src_url)
+    q = parse_qs(u.query, keep_blank_values=True)
+    q["jobId"] = [str(job_id)]
+    # Keep the external career-center identity already supplied by the employer.
+    q.setdefault("ccId", ["19000101_000001"])
+    q.setdefault("lang", ["en_US"])
+    q.setdefault("type", ["JS"])
+
+    # Some ADP payloads expose a job-worker/career-center posting id. Preserve it
+    # when available because ADP often emits it as jwId on canonical detail URLs.
+    if detail:
+        jw = _first_deep(detail, {"jwId", "jobWorkerID", "jobWorkerId", "jobPostingID", "jobPostingId"}, "")
+        if jw:
+            q["jwId"] = [str(jw)]
+
+    query = urlencode([(k, x) for k, vals in q.items() for x in vals])
+    # Always point at ADP's public recruitment shell for the same tenant path.
+    path = u.path
+    if "/mdf/recruitment/" not in path:
+        path = "/mascsr/default/mdf/recruitment/recruitment.html"
+    return urlunparse((u.scheme or "https", u.netloc or "workforcenow.adp.com", path, "", query, ""))
+
+
+
+def _split_adp_location(value):
+    """Split an explicit ADP location string into city/state/country fields."""
+    raw = clean(value)
+    if not raw:
+        return "", "", ""
+    # Multiple locations remain a display string; do not guess a single city.
+    if " / " in raw:
+        return raw, "", infer_country(raw, "", "")
+    parts = [clean(x) for x in raw.split(",") if clean(x)]
+    city = parts[0] if parts else ""
+    state = parts[1] if len(parts) > 1 else ""
+    country = parts[2] if len(parts) > 2 else ""
+    if country.upper() in {"USA", "UNITED STATES", "UNITED STATES OF AMERICA"}:
+        country = "US"
+    elif country.upper() == "CANADA":
+        country = "CA"
+    if not country:
+        country = infer_country(raw, "", "")
+    return city, state, country
+
+
+def adp(src):
+    """Dedicated ADP Workforce Now public career-center collector.
+
+    ADP's public recruitment UI is JavaScript-rendered, but the career center
+    exposes public staffing/v1/job-requisitions endpoints keyed by the `cid`
+    already present in employer career URLs. This collector enumerates those
+    requisitions, fetches details, and emits job-specific public apply URLs.
+    """
+    u = urlparse(src["URL"])
+    qs = parse_qs(u.query)
+    cid = clean((qs.get("cid") or [""])[0])
+    if not cid:
+        # myjobs.adp.com and branded ADP pages occasionally carry the career
+        # center id in initial application state rather than the URL.
+        landing = req("GET", src["URL"])
+        text = html.unescape(landing.text or "").replace("\\/", "/")
+        m = re.search(r'(?i)["\']?cid["\']?\s*[:=]\s*["\']([0-9a-f-]{20,})', text)
+        if not m:
+            m = re.search(r'(?i)[?&]cid=([0-9a-f-]{20,})', text)
+        if m:
+            cid = m.group(1)
+    if not cid:
+        # Newer branded ADP CX sites such as Hubbard use
+        # myjobs.adp.com/{tenant}/cx/job-listing and do not expose a Workforce
+        # Now `cid`. Use strict public-page discovery rather than treating the
+        # employer as a crawler error.
+        if "myjobs.adp.com" in u.netloc.lower():
+            return generic(src)
+        raise RuntimeError("ADP career-center cid not inferable")
+
+    # Workforce Now public endpoint. The endpoint is public and distinct from
+    # ADP's authenticated developer APIs used for internal HR integrations.
+    api_host = "https://workforcenow.adp.com"
+    base = api_host + "/mascsr/default/careercenter/public/events/staffing/v1/job-requisitions"
+    out = []
+    skip = 1
+    top = 20
+    seen_ids = set()
+
+    while skip <= 5000:
+        payload = req("GET", base, params={"cid": cid, "$skip": skip, "$top": top}).json()
+        posts = payload.get("jobRequisitions") or payload.get("requisitions") or []
+        if not posts:
+            break
+
+        new_count = 0
+        for p in posts:
+            if not isinstance(p, dict):
+                continue
+            jid = clean(str(p.get("itemID") or p.get("jobId") or p.get("clientRequisitionID") or ""))
+            if not jid or jid in seen_ids:
+                continue
+            seen_ids.add(jid)
+            new_count += 1
+
+            pd = pdate(p.get("postDate") or p.get("postingDate") or p.get("datePosted") or _first_deep(p, {"postDate", "postingDate", "datePosted"}, ""))
+            # Fetching old details is unnecessary and materially slows the feed.
+            if pd and pd < CUTOFF:
+                continue
+
+            try:
+                detail = req("GET", f"{base}/{jid}", params={"cid": cid}).json()
+            except Exception:
+                detail = p
+
+            pd = pd or pdate(_first_deep(detail, {"postDate", "postingDate", "datePosted", "postedDate"}, ""))
+            if not pd or pd < CUTOFF:
+                continue
+
+            title = clean(str(
+                p.get("requisitionTitle")
+                or p.get("title")
+                or _first_deep(detail, {"requisitionTitle", "jobTitle", "title"}, "")
+            ))
+            if not title:
+                continue
+
+            desc = _adp_description(detail)
+            if len(desc) < 200:
+                # Some detail variants keep the richer text in the list payload.
+                desc = max(desc, _adp_description(p), key=len)
+            if len(desc) < 200:
+                continue
+
+            loc = _adp_location(detail) or _adp_location(p)
+            city, state, country = _split_adp_location(loc)
+            work_level = clean(str(
+                _first_deep(detail, {"workLevelCode", "employmentType", "workerType", "timeType"}, "")
+                or _first_deep(p, {"workLevelCode", "employmentType", "workerType", "timeType"}, "")
+            ))
+            url = _adp_apply_url(src["URL"], jid, detail)
+
+            out.append(Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, work_level),
+                category(title, desc, src["Industry"], src["Company"]),
+                url,
+                src["URL"],
+                src["URL"],
+                "",
+                normalize_work_arrangement(desc, loc),
+                city,
+                state,
+                country or infer_country(loc, src["Company"], desc),
+            ))
+
+        total = payload.get("meta", {}).get("totalNumber") if isinstance(payload.get("meta"), dict) else None
+        if total is not None:
+            try:
+                if skip - 1 + len(posts) >= int(total):
+                    break
+            except Exception:
+                pass
+        if len(posts) < top or new_count == 0:
+            break
+        skip += len(posts)
+
+    return out
+
+
+def _paylocity_board_guid(src_url):
+    """Infer the Paylocity public job-feed GUID from a board/detail URL."""
+    m = re.search(
+        r"(?i)/recruiting/jobs/(?:all|list)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:/|$)",
+        src_url,
+    )
+    if m:
+        return m.group(1)
+
+    # Some master rows point at a single Details page. Paylocity commonly
+    # exposes the parent All/List board URL in the rendered HTML or script state.
+    landing = req("GET", src_url)
+    raw = html.unescape(landing.text or "").replace("\\/", "/")
+    patterns = [
+        r"(?i)/recruiting/jobs/(?:all|list)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:/|[?\"'])",
+        r"(?i)[\"'](?:guid|jobFeedGuid|jobBoardGuid|careerSiteGuid)[\"']\s*[:=]\s*[\"']([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+    ]
+    for pat in patterns:
+        m = re.search(pat, raw)
+        if m:
+            return m.group(1)
+    return ""
+
+
+def _paylocity_jobtype(title, item):
+    vals = item.get("jobTypesArray") or item.get("JobTypesArray") or []
+    if isinstance(vals, str):
+        vals = [vals]
+    joined = " ".join(str(x) for x in vals if x)
+    joined += " " + clean(str(item.get("jobTypes") or item.get("JobTypes") or ""))
+    return jobtype(title, joined)
+
+
+def _paylocity_detail_job(src, detail_url, posted_date=None):
+    """Parse one public Paylocity Details page into an MJR Job."""
+    r = req("GET", detail_url)
+    soup = BeautifulSoup(r.text, "html.parser")
+    txt = clean(soup.get_text(" "))
+
+    # Paylocity detail URLs contain the stable numeric requisition ID.
+    m_id = re.search(r"(?i)/Jobs/Details/(\d+)(?:/|$)", detail_url)
+    jid = m_id.group(1) if m_id else hashlib.sha1(detail_url.encode()).hexdigest()[:16]
+
+    # Prefer headings, then URL slug as a last resort.
+    headings = [clean(h.get_text(" ")) for tag in ("h1", "h2", "h3") for h in soup.find_all(tag) if not h.find_parent("noscript")]
+    headings = [h for h in headings if h and h.lower() not in {"apply", "description", "requirements", "job type"}]
+    title = ""
+    marker = re.search(r"window\.pageData\s*=\s*", r.text)
+    if marker:
+        try:
+            data, _ = json.JSONDecoder().raw_decode(r.text[marker.end():])
+            if isinstance(data, dict):
+                title = clean(data.get("jobTitle"))
+        except (ValueError, TypeError):
+            pass
+    company_norm = re.sub(r"[^a-z0-9]+", " ", src["Company"].lower()).strip()
+    for h in headings:
+        if title:
+            break
+        h_norm = re.sub(r"[^a-z0-9]+", " ", h.lower()).strip()
+        # Skip obvious employer/location headings. Prefer the job-title heading.
+        if (company_norm and (company_norm in h_norm or h_norm in company_norm)):
+            continue
+        if h_norm in {"apply", "description", "requirements", "job type"}:
+            continue
+        if len(h) <= 180:
+            title = h
+            break
+    if not title:
+        parts = [p for p in urlparse(detail_url).path.split("/") if p]
+        if parts:
+            title = clean(parts[-1].replace("-", " "))
+    if not title:
+        return None
+
+    # Job-posting date is most reliable on the board listing. If a direct
+    # Details source is used, accept an explicit date from the detail page.
+    pd = posted_date
+    if not pd:
+        m = re.search(
+            r"(?i)(?:post(?:ed)?\s*date|date\s*posted|posted)\s*[:\-]?\s*"
+            r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2})",
+            txt,
+        )
+        pd = pdate(m.group(1)) if m else None
+    if not pd or pd < CUTOFF:
+        return None
+
+    # Prefer a semantic main/article container. Paylocity pages expose the
+    # description and requirements in ordinary rendered HTML.
+    main = soup.select_one(".job-preview-details") or soup.find("main") or soup.find("article") or soup
+    content = BeautifulSoup(str(main), "html.parser")
+    for node in content.select("script, noscript, .mobile-apply-btn, .apply-link-marker"):
+        node.decompose()
+    desc = format_description(str(content))
+    if len(strip_html(desc)) < 200:
+        return None
+
+    # Location commonly sits near the title and is also visible in page text.
+    city = state = ""
+    loc = ""
+    loc_match = None
+    for piece in soup.stripped_strings:
+        piece = clean(piece)
+        mloc = re.fullmatch(
+            r"([A-Z][A-Za-z.'-]*(?:\s+[A-Z][A-Za-z.'-]*){0,3}),\s*([A-Z]{2})",
+            piece,
+        )
+        if mloc:
+            loc_match = mloc
+            break
+    if loc_match:
+        city, state = clean(loc_match.group(1)), loc_match.group(2)
+        loc = f"{city}, {state}"
+
+    jt_text = ""
+    jt_match = re.search(
+        r"(?i)job\s*type\s*(?:[:\-])?\s*"
+        r"(full[- ]?time|part[- ]?time|internship|temporary|contract)",
+        txt,
+    )
+    if jt_match:
+        jt_text = jt_match.group(1)
+
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, jt_text),
+        category(title, desc, src["Industry"], src["Company"]),
+        detail_url,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc),
+        city or loc,
+        state,
+        infer_country(loc, src["Company"], desc),
+    )
+
+
+PUBLIC_BOARD_ENUMERATION = {}
+
+
+def _paylocity_board_jobs(src, start_url=None):
+    """Enumerate published jobs from Paylocity's public rendered board.
+
+    The public All/List board exposes job detail links and posted dates even
+    when the optional Job Feed API key is not available to us.
+    """
+    start_url = start_url or src["URL"]
+    r = req("GET", start_url)
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    # Current React boards embed their full listing inventory before rendering
+    # anchors. Read the employer's JSON instead of waiting for browser DOM links.
+    marker = re.search(r"window\.pageData\s*=\s*", r.text)
+    if marker:
+        try:
+            data, _ = json.JSONDecoder().raw_decode(r.text[marker.end():])
+        except (ValueError, TypeError):
+            data = None
+        if isinstance(data, dict) and isinstance(data.get("Jobs"), list):
+            rows = [row for row in data["Jobs"] if isinstance(row, dict) and row.get("IsInternal") is False]
+            candidates = {}
+            for row in rows:
+                identifier = str(row.get("JobId") or "")
+                posted = pdate(row.get("PublishedDate"))
+                title = clean(row.get("JobTitle"))
+                location = row.get("JobLocation") or {}
+                country = clean(location.get("Country")).upper()
+                if (
+                    not identifier.isdigit() or not title or not posted
+                    or not job_is_fresh_date(posted, jobtype(title))
+                    or country not in {"US", "USA", "CA", "CAN", "CANADA"}
+                ):
+                    continue
+                candidates[identifier] = (posted, row)
+            out = []
+            for identifier, (posted, row) in candidates.items():
+                url = f"https://recruiting.paylocity.com/recruiting/jobs/Details/{identifier}"
+                job = _paylocity_detail_job(src, url, posted)
+                if not job:
+                    raise RuntimeError(f"Paylocity fresh detail could not be validated: {identifier}")
+                if job.title != clean(row.get("JobTitle")):
+                    raise RuntimeError(f"Paylocity listing/detail title mismatch: {identifier}")
+                location = row.get("JobLocation") or {}
+                job.city = clean(location.get("City")) or job.city
+                job.state = clean(location.get("State")) or job.state
+                job.country = "CA" if clean(location.get("Country")).upper() in {"CA", "CAN", "CANADA"} else "US"
+                if row.get("IsRemote") is True:
+                    job.work_arrangement = "Remote"
+                if job.jobtype == "Internship":
+                    job.category = "Internships"
+                out.append(job)
+            PUBLIC_BOARD_ENUMERATION[clean(src["Company"]).lower()] = len(rows)
+            print(f"Paylocity embedded {src['Company']}: enumerated={len(rows)} eligible={len(out)}")
+            return out
+
+    # If the configured source is one Details page (Hope Media currently is),
+    # follow Paylocity's "View All Jobs"/List/All link first.
+    if re.search(r"(?i)/Jobs/Details/\d+", start_url):
+        board_url = ""
+        for a in soup.find_all("a", href=True):
+            h = urljoin(start_url, a["href"])
+            label = clean(a.get_text(" ")).lower()
+            if re.search(r"(?i)/recruiting/jobs/(?:all|list)/", h) or "view all jobs" in label:
+                board_url = h
+                break
+        if board_url:
+            r = req("GET", board_url)
+            soup = BeautifulSoup(r.text, "html.parser")
+            start_url = board_url
+
+    candidates = {}
+    date_re = re.compile(r"\b(\d{1,2}/\d{1,2}/20\d{2})\b")
+
+    for a in soup.find_all("a", href=True):
+        h = urljoin(start_url, a["href"])
+        if not re.search(r"(?i)/recruiting/jobs/details/\d+", h):
+            continue
+
+        # Locate the smallest nearby container that includes the board's posted
+        # date. This pairs each detail URL with its listing date.
+        pd = None
+        node = a
+        for _ in range(7):
+            node = getattr(node, "parent", None)
+            if node is None:
+                break
+            chunk = clean(node.get_text(" "))
+            dm = date_re.search(chunk)
+            if dm:
+                pd = pdate(dm.group(1))
+                break
+
+        # Avoid pulling old jobs when the board provides a date.
+        if pd and pd < CUTOFF:
+            continue
+        candidates[h] = pd
+
+    # Script/application state sometimes contains detail URLs even when links
+    # are dynamically inserted. Add those as candidates too.
+    raw = html.unescape(r.text or "").replace("\\/", "/")
+    for m in re.finditer(
+        r'https?://recruiting\.paylocity\.com/recruiting/jobs/details/\d+/[^"\'<>\\s]+',
+        raw,
+        re.I,
+    ):
+        candidates.setdefault(m.group(0).rstrip(".,;)"), None)
+
+    out = []
+    for detail_url, pd in list(candidates.items())[:500]:
+        try:
+            j = _paylocity_detail_job(src, detail_url, pd)
+            if j:
+                out.append(j)
+        except Exception:
+            continue
+
+    # Direct Details source with no discoverable board: at least parse that job.
+    if not out and re.search(r"(?i)/Jobs/Details/\d+", src["URL"]):
+        try:
+            j = _paylocity_detail_job(src, src["URL"], None)
+            if j:
+                out.append(j)
+        except Exception:
+            pass
+
+    return out
+
+
+def paylocity(src):
+    """Paylocity collector: feed when available, rendered public board fallback."""
+    guid = _paylocity_board_guid(src["URL"])
+    feed_posts = []
+
+    # The documented Job Feed requires a GUID API key. Some public board GUIDs
+    # happen to work, others do not, so treat the feed as an optimization only.
+    if guid:
+        endpoints = [
+            f"https://recruiting.paylocity.com/recruiting/v2/api/feed/jobs/{guid}",
+            f"https://recruiting.paylocity.com/recruiting/api/feed/jobs/{guid}",
+        ]
+        for endpoint in endpoints:
+            try:
+                r = req("GET", endpoint, headers={"Accept": "application/json"})
+                payload = r.json()
+                if isinstance(payload, dict):
+                    feed_posts = payload.get("jobs") or payload.get("Jobs") or []
+                elif isinstance(payload, list):
+                    feed_posts = payload
+                if feed_posts:
+                    break
+            except Exception:
+                continue
+
+    out = []
+    for p in feed_posts:
+        if not isinstance(p, dict):
+            continue
+        pd = pdate(p.get("publishedDate") or p.get("PublishedDate") or p.get("createdUtc") or p.get("CreatedUtc"))
+        if not pd or pd < CUTOFF:
+            continue
+        jid = clean(str(p.get("jobId") or p.get("JobId") or ""))
+        title = clean(str(p.get("title") or p.get("Title") or ""))
+        if not jid or not title:
+            continue
+        desc = format_description(str(p.get("description") or p.get("Description") or ""))
+        requirements = format_description(str(p.get("requirements") or p.get("Requirements") or ""))
+        if requirements and strip_html(requirements).lower() not in strip_html(desc).lower():
+            desc = (desc + "<h3>Requirements</h3>" + requirements).strip()
+        if len(desc) < 200:
+            continue
+        jl = p.get("jobLocation") or p.get("JobLocation") or {}
+        if not isinstance(jl, dict):
+            jl = {}
+        city = clean(str(jl.get("city") or jl.get("City") or ""))
+        state = clean(str(jl.get("state") or jl.get("State") or ""))
+        loc_name = clean(str(jl.get("locationDisplayName") or jl.get("LocationDisplayName") or jl.get("name") or jl.get("Name") or ""))
+        loc = ", ".join(x for x in [city, state] if x) or loc_name
+        detail_url = clean(str(p.get("displayUrl") or p.get("DisplayUrl") or ""))
+        apply_url = clean(str(p.get("applyUrl") or p.get("ApplyUrl") or ""))
+        url = detail_url or apply_url
+        if not url:
+            continue
+        out.append(Job(
+            jid, title, src["Company"], desc, pd, _paylocity_jobtype(title, p),
+            category(title, desc, src["Industry"], src["Company"]), url,
+            src["URL"], src["URL"], "", normalize_work_arrangement(desc, loc),
+            city or loc, state, infer_country(loc, src["Company"], desc),
+        ))
+
+    if out:
+        return out
+    return _paylocity_board_jobs(src)
+
+
+def _dayforce_candidates(src_url):
+    """Infer Dayforce tenant/company identifiers and career-site board code."""
+    u = urlparse(src_url)
+    host = (u.netloc or "").lower()
+    parts = [p for p in u.path.split("/") if p]
+
+    tenants = []
+    board = ""
+
+    # Legacy tenant hosts such as can241.dayforcehcm.com are often the API
+    # CompanyName even when the public career-site path contains another slug.
+    if host.endswith(".dayforcehcm.com"):
+        sub = host.split(".")[0]
+        if sub not in {"www", "jobs", "careers"}:
+            tenants.append(sub)
+
+    # New career URLs normally look like:
+    # /en-US/<tenant>/<board> or /<tenant>/<board>
+    locale_re = re.compile(r"^[a-z]{2}-[A-Z]{2}$")
+    for i, part in enumerate(parts):
+        if locale_re.match(part) and i + 1 < len(parts):
+            tenants.append(parts[i + 1])
+            if i + 2 < len(parts) and parts[i + 2].lower() != "site":
+                board = parts[i + 2]
+            break
+
+    # Older CandidatePortal form:
+    # /CandidatePortal/en-US/<tenant>/Site/<board>
+    for i, part in enumerate(parts):
+        if part.lower() == "candidateportal" and i + 2 < len(parts):
+            maybe_locale = parts[i + 1]
+            if locale_re.match(maybe_locale) and i + 2 < len(parts):
+                tenants.append(parts[i + 2])
+        if part.lower() == "site" and i + 1 < len(parts):
+            board = parts[i + 1]
+
+    # Common current form without a locale prefix.
+    if not tenants and len(parts) >= 2:
+        if parts[0].lower() not in {"candidateportal", "en-us", "fr-ca"}:
+            tenants.append(parts[0])
+            board = board or parts[1]
+
+    # Board code can usually be read from the last path segment.
+    if not board and parts:
+        tail = parts[-1]
+        if tail.lower() not in {"candidateportal", "jobs", "site"}:
+            board = tail
+
+    ded = []
+    for t in tenants:
+        t = clean(t)
+        if t and t.lower() not in {x.lower() for x in ded}:
+            ded.append(t)
+    return ded, clean(board)
+
+
+def _dayforce_payload_rows(r):
+    """Parse Dayforce JobFeeds JSON or XML response into dictionaries."""
+    ctype = (r.headers.get("Content-Type") or "").lower()
+    text = r.text or ""
+
+    if "json" in ctype or text.lstrip().startswith(("[", "{")):
+        data = r.json()
+        if isinstance(data, list):
+            return [x for x in data if isinstance(x, dict)]
+        if isinstance(data, dict):
+            for key in ("JobPostings", "jobPostings", "Jobs", "jobs", "Items", "items"):
+                v = data.get(key)
+                if isinstance(v, list):
+                    return [x for x in v if isinstance(x, dict)]
+            return [data] if data else []
+
+    rows = []
+    try:
+        root = ET.fromstring(text)
+    except Exception:
+        return rows
+
+    # Dayforce XML feeds have historically used JobPosting elements, with or
+    # without namespaces. Convert each element's direct children to a dict.
+    for elem in root.iter():
+        tag = elem.tag.split("}")[-1].lower()
+        if tag not in {"jobposting", "job", "item"}:
+            continue
+        row = {}
+        for child in list(elem):
+            k = child.tag.split("}")[-1]
+            row[k] = "".join(child.itertext()).strip()
+        if row:
+            rows.append(row)
+    return rows
+
+
+def _dayforce_get(d, *names):
+    if not isinstance(d, dict):
+        return ""
+    lower = {str(k).lower(): v for k, v in d.items()}
+    for n in names:
+        v = lower.get(n.lower())
+        if v not in (None, ""):
+            return v
+    return ""
+
+
+def _dayforce_jobtype(title, item):
+    raw = clean(str(_dayforce_get(
+        item, "EmploymentIndicator", "EmploymentType", "JobType", "PayClass", "PayType"
+    )))
+    s = f" {title} {raw} ".lower()
+    if "intern" in s:
+        return "Internship"
+    if re.search(r"\bpart[- ]?time\b", s):
+        return "Part Time"
+    if re.search(r"\b(temp|temporary|seasonal)\b", s):
+        return "Temporary"
+    if re.search(r"\b(contract|contractor)\b", s):
+        return "Contract"
+    return "Full Time"
+
+
+def _dayforce_modern_rendered(src):
+    """Enumerate a modern jobs.dayforcehcm.com board through its own UI.
+
+    Modern Dayforce boards use a CSRF-protected internal search request. Rather
+    than guessing tokens/endpoints or probing posting IDs, render the public
+    board briefly and capture job links exposed by the DOM and network traffic.
+    Individual posting pages are then parsed through the existing strict
+    JobPosting/detail parser. The browser work is bounded to keep full crawls
+    predictable.
+    """
+    if sync_playwright is None:
+        return []
+
+    start = src["URL"]
+    u = urlparse(start)
+    if u.netloc.lower() != "jobs.dayforcehcm.com":
+        return []
+
+    parts = [p for p in u.path.split("/") if p]
+    locale_re = re.compile(r"^[a-z]{2}-[A-Z]{2}$")
+    if parts and locale_re.match(parts[0]):
+        namespace = parts[1] if len(parts) > 1 else ""
+        board = parts[2] if len(parts) > 2 else "CANDIDATEPORTAL"
+    else:
+        namespace = parts[0] if parts else ""
+        board = parts[1] if len(parts) > 1 else "CANDIDATEPORTAL"
+    if not namespace:
+        return []
+
+    detail_urls = set()
+    response_texts = []
+    search_payloads = []
+
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1365, "height": 900})
+
+            def capture_response(resp):
+                try:
+                    low = resp.url.lower()
+                    if "/jobposting/search" in low:
+                        txt = resp.text()
+                        if txt:
+                            response_texts.append(txt[:5000000])
+                            try:
+                                search_payloads.append(json.loads(txt))
+                            except Exception:
+                                pass
+                    elif "/jobs/" in low:
+                        txt = resp.text()
+                        if txt:
+                            response_texts.append(txt[:5000000])
+                except Exception:
+                    pass
+
+            page.on("response", capture_response)
+            page.goto(start, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_timeout(5000)
+
+            # Trigger lazy loading without unbounded scrolling.
+            for _ in range(8):
+                page.mouse.wheel(0, 1800)
+                page.wait_for_timeout(600)
+
+            for a in page.locator("a[href]").all():
+                try:
+                    href = a.get_attribute("href") or ""
+                except Exception:
+                    continue
+                if re.search(r"/jobs/\d+", href, re.I):
+                    detail_urls.add(urljoin(page.url, href).split("#", 1)[0])
+
+            html_now = page.content()
+            response_texts.append(html_now[:5000000])
+            browser.close()
+    except Exception as e:
+        print(f"Modern Dayforce render unavailable for {src['Company']}: {type(e).__name__}: {clean(str(e))[:160]}")
+        return []
+
+    # Modern Dayforce search JSON commonly returns posting identifiers rather
+    # than fully-qualified detail URLs. Walk the captured first-party response
+    # and recover only IDs attached to job/posting/requisition-shaped keys.
+    def walk_search(value, parent_key=""):
+        if isinstance(value, dict):
+            for k, v in value.items():
+                kl = str(k).lower()
+                if (
+                    isinstance(v, (str, int))
+                    and re.fullmatch(r"\d{3,12}", str(v))
+                    and any(token in kl for token in (
+                        "jobposting", "postingid", "jobid", "requisitionid",
+                        "requisitionnumber", "referenceid"
+                    ))
+                ):
+                    detail_urls.add(
+                        f"https://jobs.dayforcehcm.com/en-US/{namespace}/{board}/jobs/{v}"
+                    )
+                walk_search(v, kl)
+        elif isinstance(value, list):
+            for child in value:
+                walk_search(child, parent_key)
+
+    for payload in search_payloads:
+        walk_search(payload)
+
+    # Search responses and Next/React state can contain job URLs that are not
+    # currently visible in the first DOM viewport.
+    for raw in response_texts:
+        raw = html.unescape(raw or "").replace("\\/", "/")
+        for m in re.finditer(
+            rf'(?:https?://jobs\.dayforcehcm\.com)?(?:/[a-z]{{2}}-[A-Z]{{2}})?/{re.escape(namespace)}/{re.escape(board)}/+jobs/(\d+)',
+            raw,
+            re.I,
+        ):
+            jid = m.group(1)
+            detail_urls.add(
+                f"https://jobs.dayforcehcm.com/en-US/{namespace}/{board}/jobs/{jid}"
+            )
+
+    out = []
+    seen_ids = set()
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    def fetch_one(url):
+        try:
+            rr = _req_raw("GET", url, timeout=10, tries=2)
+            final = str(getattr(rr, "url", "") or url)
+            j = _job_from_detail(src, final, rr.text)
+            if not j:
+                j = _direct_board_job(src, final, rr.text)
+            return j
+        except Exception:
+            return None
+
+    # Current board discovery only; never scan guessed numeric IDs.
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        futures = [pool.submit(fetch_one, u) for u in sorted(detail_urls)[:700]]
+        for fut in as_completed(futures):
+            try:
+                j = fut.result()
+            except Exception:
+                j = None
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+
+    print(
+        f"Modern Dayforce rendered {src['Company']}: "
+        f"search_payloads={len(search_payloads)} "
+        f"details={len(detail_urls)} parsed={len(out)}"
+    )
+    return out
+
+
+def dayforce_public_search(src):
+    """Read the anonymous search API used by modern Dayforce career boards."""
+    parsed = urlparse(src["URL"])
+    parts = [part for part in parsed.path.split("/") if part]
+    if len(parts) < 3:
+        raise RuntimeError("Modern Dayforce namespace/board not inferable")
+    culture, namespace, board = parts[:3]
+    origin = f"https://{parsed.netloc}"
+    token = req("GET", origin + "/api/auth/csrf").json().get("csrfToken")
+    if not token:
+        raise RuntimeError("Dayforce anonymous search CSRF token unavailable")
+    out, seen = [], set()
+    offset = 0
+    for _ in range(40):
+        payload = req("POST", f"{origin}/api/geo/{namespace}/jobposting/search", json={
+            "clientNamespace": namespace, "jobBoardCode": board,
+            "cultureCode": culture, "paginationStart": offset,
+        }, headers={"X-CSRF-TOKEN": token, "Referer": src["URL"]}).json()
+        if not isinstance(payload, dict) or not isinstance(payload.get("jobPostings"), list):
+            raise RuntimeError("Dayforce returned an unexpected search inventory")
+        rows = payload["jobPostings"]
+        if not rows:
+            if offset < int(payload.get("maxCount") or 0):
+                raise RuntimeError("Dayforce search ended before its reported total")
+            return out
+        page_ids = {str(row.get("jobPostingId")) for row in rows if isinstance(row, dict)}
+        if page_ids.issubset(seen):
+            raise RuntimeError("Dayforce search repeated a page")
+        for row in rows:
+            if not isinstance(row, dict) or row.get("clientNamespace", "").lower() != namespace.lower():
+                continue
+            identifier = str(row.get("jobPostingId") or "")
+            if not identifier.isdigit() or identifier in seen:
+                continue
+            seen.add(identifier)
+            title = clean(row.get("jobTitle"))
+            desc = format_description(row.get("jobDescription"))
+            posted = pdate(row.get("postingStartTimestampUTC"))
+            role_type = jobtype(title, strip_html(desc))
+            if not title or not posted or not job_is_fresh_date(posted, role_type) or len(strip_html(desc)) < 200:
+                continue
+            expires = row.get("postingExpiryTimestampUTC")
+            if expires and dtparser.parse(expires) <= datetime.now(ZoneInfo("UTC")):
+                continue
+            locations = [location for location in row.get("postingLocations") or []
+                if location.get("isoCountryCode") in {"US", "CA"}]
+            if not locations:
+                continue
+            location = next((item for item in locations if clean(item.get("cityName"))), locations[0])
+            city = clean(location.get("cityName"))
+            if not city and row.get("hasVirtualLocation") is True:
+                city = "Remote"
+            url = f"{origin}/{culture}/{namespace}/{board}/jobs/{identifier}"
+            out.append(Job(
+                identifier, title, src["Company"], desc, posted, role_type,
+                "Internships" if role_type == "Internship"
+                else category(title, desc, src.get("Industry", ""), src["Company"]),
+                url, src["URL"], src["URL"], "",
+                normalize_work_arrangement(desc, "Remote" if row.get("hasVirtualLocation") is True else ""),
+                city, clean(location.get("stateCode")), location["isoCountryCode"],
+            ))
+        offset += len(rows)
+        if offset >= int(payload.get("maxCount") or offset):
+            print(f"Dayforce public {src['Company']}: enumerated={len(seen)} eligible={len(out)}")
+            return out
+    raise RuntimeError("Dayforce search exceeded bounded pagination")
+
+
+def dayforce(src):
+    """Dedicated Dayforce collector using its anonymous external JobFeeds API."""
+    if urlparse(src["URL"]).netloc.lower() == "jobs.dayforcehcm.com":
+        return dayforce_public_search(src)
+    tenants, board = _dayforce_candidates(src["URL"])
+    if not tenants:
+        raise RuntimeError("Dayforce tenant not inferable")
+
+    rows = []
+    last_error = None
+    used_tenant = ""
+
+    # Official Dayforce external job-board feed. Try inferred tenant candidates
+    # because legacy branded URLs can expose both a host tenant and site slug.
+    for tenant in tenants:
+        endpoint = f"https://www.dayforcehcm.com/api/{tenant}/V1/JobFeeds"
+        param_sets = []
+        if board:
+            param_sets.append({
+                "includeActivePostingOnly": "true",
+                "internalJobBoardCode": board,
+            })
+        param_sets.append({"includeActivePostingOnly": "true"})
+
+        for params in param_sets:
+            try:
+                r = req(
+                    "GET",
+                    endpoint,
+                    params=params,
+                    headers={"Accept": "application/json, application/xml, text/xml;q=0.9"},
+                )
+                candidate_rows = _dayforce_payload_rows(r)
+                if candidate_rows:
+                    rows = candidate_rows
+                    used_tenant = tenant
+                    break
+            except Exception as e:
+                last_error = e
+                continue
+        if rows:
+            break
+
+    # If the external feed is disabled for a customer, preserve the existing
+    # structured HTML/JSON-LD fallback rather than aborting the source.
+    if not rows:
+        # Current jobs.dayforcehcm.com boards use a CSRF-protected search
+        # application rather than the legacy anonymous JobFeeds endpoint.
+        # Render the public board and capture only its own discovered jobs.
+        if "jobs.dayforcehcm.com" in urlparse(src["URL"]).netloc.lower():
+            modern = _dayforce_modern_rendered(src)
+            if modern:
+                return modern
+        try:
+            fallback = ats_html(src)
+            if fallback:
+                return fallback
+        except Exception:
+            pass
+        if last_error:
+            return []
+        return []
+
+    out = []
+    seen = set()
+    for item in rows:
+        pd = pdate(_dayforce_get(item, "DatePosted", "PostedDate", "DateCreated", "LastUpdated"))
+        if not pd or pd < CUTOFF:
+            continue
+
+        title = clean(str(_dayforce_get(item, "Title", "JobTitle")))
+        if not title:
+            continue
+
+        desc_raw = str(_dayforce_get(item, "Description", "JobDescription", "PostingDescription"))
+        desc = format_description(desc_raw)
+        if len(desc) < 80:
+            continue
+
+        city = clean(str(_dayforce_get(item, "City")))
+        state = clean(str(_dayforce_get(item, "State", "StateProvince")))
+        country = clean(str(_dayforce_get(item, "Country")))
+        postal = clean(str(_dayforce_get(item, "PostalCode", "ZipCode")))
+        loc = ", ".join(x for x in [city, state] if x)
+        if not loc:
+            loc = clean(str(_dayforce_get(item, "Location", "LocationName")))
+
+        details_url = clean(str(_dayforce_get(item, "JobDetailsUrl", "JobDetailUrl", "DisplayUrl")))
+        apply_url = clean(str(_dayforce_get(item, "ApplyUrl", "ApplicationUrl")))
+
+        # Never emit the localhost placeholder shown in Dayforce's sample data.
+        url = details_url if details_url and "localhost" not in details_url.lower() else apply_url
+        if not url:
+            continue
+        if url.startswith("/"):
+            url = urljoin(src["URL"], url)
+
+        jid = clean(str(_dayforce_get(
+            item, "ReferenceNumber", "JobPostingId", "JobId", "RequisitionId", "ParentRequisitionCode"
+        )))
+        if not jid:
+            m = re.search(r"(?i)(?:jobId=|/Posting/View/|/jobs?/)([A-Za-z0-9_-]+)", url)
+            jid = m.group(1) if m else hashlib.sha1(url.encode()).hexdigest()[:16]
+
+        ded_key = (jid, url)
+        if ded_key in seen:
+            continue
+        seen.add(ded_key)
+
+        jt = _dayforce_jobtype(title, item)
+        country_out = country or infer_country(loc, src["Company"], desc)
+
+        out.append(Job(
+            jid,
+            title,
+            src["Company"],
+            desc,
+            pd,
+            jt,
+            category(title, desc, src["Industry"], src["Company"]),
+            url,
+            src["URL"],
+            src["URL"],
+            "",
+            normalize_work_arrangement(desc, loc),
+            city or loc,
+            state,
+            country_out,
+        ))
+
+    return out
+
+def _jsonld_jobs(soup):
+    """Return JobPosting JSON-LD objects found on a detail page."""
+    found = []
+    for tag in soup.find_all("script", attrs={"type": re.compile(r"ld\+json", re.I)}):
+        raw = tag.string or tag.get_text() or ""
+        if not raw.strip():
+            continue
+        try:
+            data = json.loads(raw)
+        except Exception:
+            continue
+
+        stack = data if isinstance(data, list) else [data]
+        while stack:
+            obj = stack.pop()
+            if isinstance(obj, list):
+                stack.extend(obj)
+                continue
+            if not isinstance(obj, dict):
+                continue
+            graph = obj.get("@graph")
+            if isinstance(graph, list):
+                stack.extend(graph)
+            typ = obj.get("@type")
+            types = typ if isinstance(typ, list) else [typ]
+            if any(str(x).lower() == "jobposting" for x in types if x):
+                found.append(obj)
+    return found
+
+
+def _location_from_jsonld(jp):
+    locs = jp.get("jobLocation") or []
+    if isinstance(locs, dict):
+        locs = [locs]
+    parts = []
+    for loc in locs:
+        if not isinstance(loc, dict):
+            continue
+        addr = loc.get("address") or {}
+        if not isinstance(addr, dict):
+            continue
+        bits = [
+            clean(addr.get("addressLocality")),
+            clean(addr.get("addressRegion")),
+            clean(addr.get("addressCountry")),
+        ]
+        val = ", ".join(x for x in bits if x)
+        if val:
+            parts.append(val)
+    if parts:
+        return " / ".join(dict.fromkeys(parts))
+
+    applicant = jp.get("applicantLocationRequirements")
+    if isinstance(applicant, dict):
+        applicant = [applicant]
+    if isinstance(applicant, list):
+        vals = []
+        for x in applicant:
+            if isinstance(x, dict):
+                vals.append(clean(x.get("name")))
+        vals = [x for x in vals if x]
+        if vals:
+            return " / ".join(vals)
+    return ""
+
+
+def _employment_text(jp):
+    et = jp.get("employmentType") or ""
+    if isinstance(et, list):
+        et = " ".join(str(x) for x in et)
+    return clean(str(et))
+
+
+def _job_from_detail(src, url, html_text):
+    """Parse a detail page, preferring schema.org JobPosting."""
+    soup = BeautifulSoup(html_text, "html.parser")
+    json_jobs = _jsonld_jobs(soup)
+
+    if json_jobs:
+        jp = json_jobs[0]
+        title = clean(jp.get("title") or "")
+        desc_html = jp.get("description") or ""
+        desc = format_description(desc_html)
+        pd = pdate(jp.get("datePosted"))
+        valid_through = pdate(jp.get("validThrough"))
+        loc = _location_from_jsonld(jp)
+        canonical = clean(jp.get("url") or "")
+        apply_url = canonical if canonical.startswith("http") else url
+        ident = jp.get("identifier") or {}
+        jid = ""
+        if isinstance(ident, dict):
+            jid = clean(str(ident.get("value") or ident.get("name") or ""))
+        elif ident:
+            jid = clean(str(ident))
+
+        if not title:
+            h1 = soup.find("h1")
+            title = clean(h1.get_text(" ") if h1 else "")
+        if not desc:
+            main = soup.find("main") or soup.find("article") or soup
+            desc = clean(main.get_text(" "))
+
+        if pd and pd >= CUTOFF and title and len(desc) >= 200:
+            return Job(
+                jid or hashlib.sha1(apply_url.encode()).hexdigest()[:16],
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, _employment_text(jp)),
+                category(title, desc, src["Industry"], src["Company"]),
+                apply_url,
+                src["URL"],
+                src["URL"],
+                "",
+                normalize_work_arrangement(desc, loc),
+                loc,
+                "",
+                infer_country(loc, src["Company"], desc),
+                valid_through,
+            )
+
+    # HTML fallback for ATS pages that do not expose JSON-LD.
+    txt = clean(soup.get_text(" "))
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else (soup.title.get_text(" ") if soup.title else ""))
+
+    date_patterns = [
+        r"(?:date posted|posted date|posted|posting date|published)\s*:?\s*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|"
+        r"\d{4}-\d{2}-\d{2}|\d+\s+days?\s+ago)",
+    ]
+    pd = None
+    for pat in date_patterns:
+        m = re.search(pat, txt, re.I)
+        if m:
+            pd = pdate(m.group(1))
+            if pd:
+                break
+    if not pd or pd < CUTOFF:
+        return None
+
+    main = (
+        soup.find("main")
+        or soup.find("article")
+        or soup.find(attrs={"class": re.compile(r"(job.?description|job.?detail|posting)", re.I)})
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if not title or len(desc) < 200:
+        return None
+
+    return Job(
+        hashlib.sha1(url.encode()).hexdigest()[:16],
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]),
+        url,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, txt),
+        "",
+        "",
+        infer_country(txt, src["Company"], desc),
+    )
+
+
+ATS_JOB_HINTS = {
+    "paylocity": [
+        r"/recruiting/jobs/details/\d+", r"/Recruiting/Jobs/Details/\d+",
+        r"/recruiting/jobs/\d+", r"jobId=\d+",
+    ],
+    "icims": [
+        r"/jobs/\d+/", r"/jobs/\d+$", r"/jobs/\d+/.+?/job",
+        r"jobid=\d+",
+    ],
+    "jazzhr": [
+        r"/apply/[A-Za-z0-9_-]+/",
+        r"/apply/[A-Za-z0-9_-]+$",
+    ],
+    "applytojob": [
+        r"/apply/[A-Za-z0-9_-]+/",
+        r"/apply/[A-Za-z0-9_-]+$",
+    ],
+    "dayforce": [
+        r"/job/", r"/jobs/", r"/CandidatePortal/.+?/jobs/",
+        r"/candidateportal/.+?/job/", r"jobPostingId=",
+    ],
+    "ukg": [
+        r"/JobBoard/.+?/OpportunityDetail\?opportunityId=",
+        r"/JobBoard/.+?/JobDetail/", r"opportunityId=[0-9a-f-]+",
+        r"/job/",
+    ],
+    "ultipro": [
+        r"/JobBoard/.+?/OpportunityDetail\?opportunityId=",
+        r"/JobBoard/.+?/JobDetail/",
+        r"/job/",
+    ],
+    "adp": [
+        r"/cx/job-details", r"/job-details", r"/cx/job-detail",
+        r"reqId=[A-Za-z0-9_-]+", r"requisitionId=[A-Za-z0-9_-]+",
+        r"[?&]r=\d+",
+    ],
+    "oracle": [
+        r"/job/", r"/jobs/", r"/requisitions/",
+        r"/sites/.+?/job/", r"/sites/.+?/requisitions/",
+        r"requisitionId=",
+    ],
+    "taleo": [
+        r"jobdetail",
+        r"job=",
+        r"/job/",
+    ],
+    "breezy": [
+        r"/p/[A-Za-z0-9_-]+/",
+        r"/p/[A-Za-z0-9_-]+$",
+    ],
+    "paycom": [
+        r"/jobs/\d+",
+        r"jobid=\d+",
+        r"job=\d+",
+    ],
+    "rippling": [
+        r"/jobs/",
+        r"/job/",
+    ],
+    "jobscore": [
+        r"/jobs/",
+        r"/job/",
+    ],
+    "paycor": [
+        r"career/JobIntroduction\.action",
+        r"jobId=",
+        r"/job/",
+    ],
+    "isolved": [
+        r"/jobs/\d+",
+        r"/job/",
+    ],
+    "betterteam": [
+        # Betterteam tenant boards use root-level slugs for individual jobs,
+        # e.g. /bilingual-sales-consultant-26, not /job/... paths.
+        r"/jobs/",
+        r"/job/",
+        r"betterteam\.com/[A-Za-z0-9][A-Za-z0-9_-]+/?(?:[?#].*)?$",
+    ],
+}
+
+
+def _ats_family(src):
+    a = clean(src.get("ATS", "")).lower()
+    u = clean(src.get("URL", "")).lower()
+    joined = a + " " + u
+    if "paylocity" in joined:
+        return "paylocity"
+    if "icims" in joined:
+        return "icims"
+    if "applytojob" in joined or "jazzhr" in joined:
+        return "jazzhr"
+    if "dayforce" in joined:
+        return "dayforce"
+    if "ultipro" in joined or "ukg" in joined:
+        return "ukg"
+    if "adp" in joined:
+        return "adp"
+    if "oracle" in joined:
+        return "oracle"
+    if "taleo" in joined:
+        return "taleo"
+    if "breezy" in joined:
+        return "breezy"
+    if "paycom" in joined:
+        return "paycom"
+    if "rippling" in joined:
+        return "rippling"
+    if "jobscore" in joined:
+        return "jobscore"
+    if "paycor" in joined:
+        return "paycor"
+    if "isolved" in joined:
+        return "isolved"
+    if "betterteam" in joined:
+        return "betterteam"
+    return ""
+
+
+KNOWN_ATS_HOST_TOKENS = (
+    "adp.com", "paylocity.com", "dayforcehcm.com", "dayforce.com",
+    "icims.com", "ultipro.com", "ukg.com", "oraclecloud.com",
+    "taleo.net", "breezy.hr", "applytojob.com", "jazz.co",
+    "paycomonline.net", "rippling-ats.com", "jobscore.com",
+    "recruitingbypaycor.com", "isolvedhire.com", "betterteam.com",
+    "myworkdayjobs.com", "greenhouse.io",
+)
+
+
+def _known_ats_url(url):
+    host = (urlparse(url).netloc or "").lower()
+    return any(tok in host for tok in KNOWN_ATS_HOST_TOKENS)
+
+
+def _candidate_urls_from_text(base, raw, patterns):
+    """Extract absolute and escaped/relative ATS job URLs embedded in scripts."""
+    found = set()
+    text = html.unescape(raw or "").replace("\\/", "/")
+
+    # Absolute URLs, including JSON-escaped strings after slash normalization.
+    for m in re.finditer(r'https?://[^"\'<>\s]+', text):
+        u = m.group(0).rstrip("\\,;)")
+        if any(re.search(p, u, re.I) for p in patterns):
+            found.add(u)
+
+    # Relative URLs are common in React/Angular state blobs.
+    for m in re.finditer(r'(?P<q>["\'])(?P<u>/[^"\']{4,500})(?P=q)', text):
+        rel = m.group("u")
+        u = urljoin(base, rel)
+        if any(re.search(p, u, re.I) for p in patterns):
+            found.add(u)
+
+    return found
+
+
+def _listing_next_links(page, soup):
+    out = set()
+    for a in soup.find_all("a", href=True):
+        h = urljoin(page, a["href"])
+        label = clean(a.get_text(" ")).lower()
+        low = h.lower()
+        if (
+            re.search(r"\b(next|more jobs|load more|older)\b", label)
+            or re.search(r"[?&](page|p|start|offset|from)=\d+", low)
+            or re.search(r"/page/\d+", low)
+        ):
+            out.add(h)
+    return out
+
+
+
+def _icims_date_from_html(soup, raw):
+    """Find an explicit iCIMS posting date without guessing from requisition ID."""
+    # Structured/meta attributes used by different iCIMS career-center themes.
+    attrs_to_check = (
+        ("meta", {"itemprop": re.compile(r"datePosted", re.I)}, "content"),
+        ("meta", {"property": re.compile(r"datePosted|published_time", re.I)}, "content"),
+        ("meta", {"name": re.compile(r"datePosted|date_posted|posted", re.I)}, "content"),
+        ("time", {"datetime": True}, "datetime"),
+    )
+    for tag, attrs, attr in attrs_to_check:
+        for node in soup.find_all(tag, attrs=attrs):
+            val = clean(node.get(attr) or node.get_text(" "))
+            d = pdate(val)
+            if d:
+                return d
+
+    # Hydrated application state / inline scripts can expose the date even when
+    # the visible iCIMS template does not print it.
+    normalized = html.unescape(raw or "").replace("\\/", "/")
+    patterns = [
+        r'["\'](?:datePosted|date_posted|postedDate|postingDate|createdDate)["\']\s*:\s*["\']([^"\']+)["\']',
+        r'(?:Date Posted|Posted Date|Posting Date)\s*</?[^>]*>?\s*:?\s*'
+        r'([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})',
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, normalized, re.I):
+            d = pdate(m.group(1))
+            if d:
+                return d
+    return None
+
+
+def _icims_detail(src, url, raw):
+    """Parse an iCIMS detail page, requiring an explicit qualifying post date."""
+    # First use the shared schema.org parser. Many iCIMS tenants expose
+    # JobPosting JSON-LD even when the date is not visible in page text.
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+
+    soup = BeautifulSoup(raw, "html.parser")
+    pd = _icims_date_from_html(soup, raw)
+    if not pd or pd < CUTOFF:
+        return None
+
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        title_node = soup.find(attrs={"class": re.compile(r"(iCIMS_Header|job.?title|title)", re.I)})
+        title = clean(title_node.get_text(" ") if title_node else "")
+    if not title:
+        return None
+
+    # iCIMS commonly labels location/type/ID in the header/profile fields.
+    txt = clean(soup.get_text(" "))
+    loc = ""
+    loc_node = soup.find(string=re.compile(r"Job Locations?", re.I))
+    if loc_node:
+        parent = loc_node.parent
+        if parent:
+            block = clean(parent.parent.get_text(" ") if parent.parent else parent.get_text(" "))
+            m = re.search(r"Job Locations?\s+(.+?)(?:\s+ID\b|\s+Category\b|\s+Type\b|$)", block, re.I)
+            if m:
+                loc = clean(m.group(1))
+
+    jid = ""
+    m = re.search(r"\bID\s+((?:20\d{2}-)?\d{3,})\b", txt, re.I)
+    if m:
+        jid = clean(m.group(1))
+    if not jid:
+        m = re.search(r"/jobs/(\d+)", url, re.I)
+        if m:
+            jid = m.group(1)
+
+    main = (
+        soup.find(id=re.compile(r"(iCIMS_JobContent|job.?content|job.?description)", re.I))
+        or soup.find(attrs={"class": re.compile(r"(iCIMS_JobContent|job.?description|job.?detail)", re.I)})
+        or soup.find("main")
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 200:
+        return None
+
+    canonical = url.split("#", 1)[0]
+    return Job(
+        jid or hashlib.sha1(canonical.encode()).hexdigest()[:16],
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or txt),
+        loc,
+        "",
+        infer_country(loc or txt, src["Company"], desc),
+    )
+
+
+def icims(src):
+    """Dedicated public iCIMS Career Center collector.
+
+    iCIMS search pages are server-rendered and paginated with `pr=`. We
+    enumerate those pages directly, then parse each real /jobs/<id>/.../job
+    detail page. We never infer a posting date from the requisition number.
+    """
+    start = src["URL"]
+    parsed = urlparse(start)
+    base = f"{parsed.scheme}://{parsed.netloc}"
+    # Force the public search view while preserving tenant-specific query args.
+    if "/jobs/search" not in parsed.path.lower():
+        start = base + "/jobs/search?ss=1"
+
+    queue = [start]
+    seen_pages = set()
+    links = set()
+
+    while queue and len(seen_pages) < 60 and len(links) < 2500:
+        page = queue.pop(0)
+        if page in seen_pages:
+            continue
+        seen_pages.add(page)
+
+        try:
+            r = req("GET", page)
+        except Exception:
+            # A broken iSolved board must not create a crawler-wide error.
+            continue
+
+        final_url = str(getattr(r, "url", "") or page)
+        final_host = urlparse(final_url).netloc.lower()
+        final_path = urlparse(final_url).path.lower()
+
+        # Some retired/public iSolved boards redirect crawlers to the admin
+        # portal or /Help. Those destinations are not job boards and should be
+        # treated as non-enumerable rather than followed or surfaced as errors.
+        if (
+            "admin.isolvedhire.com" in final_host
+            or final_path.startswith("/help")
+            or "/help/" in final_path
+        ):
+            continue
+
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            hp = urlparse(h)
+            if hp.netloc.lower() != parsed.netloc.lower():
+                continue
+            if re.search(r"/jobs/\d+/.+?/job(?:[/?#]|$)", h, re.I):
+                links.add(h.split("#", 1)[0])
+                continue
+            # iCIMS pagination uses pr=0, pr=1, ... rather than page=.
+            if "/jobs/search" in hp.path.lower() and re.search(r"[?&]pr=\d+", h, re.I):
+                if h not in seen_pages:
+                    queue.append(h)
+
+        # Some tenants hydrate links into scripts.
+        links.update(
+            u for u in _candidate_urls_from_text(
+                page, r.text, [r"/jobs/\d+/.+?/job(?:[/?#]|$)"]
+            )
+            if urlparse(u).netloc.lower() == parsed.netloc.lower()
+        )
+
+    out = []
+    for url in sorted(links):
+        try:
+            rr = req("GET", url)
+            j = _icims_detail(src, url, rr.text)
+            if j:
+                out.append(j)
+        except Exception:
+            # One closed iCIMS requisition must not abort the employer.
+            continue
+    return out
+
+
+def _ukg_parts(url):
+    """Return (base, tenant, board) for a public UKG/UltiPro Recruiting board."""
+    p = urlparse(url)
+    m = re.search(
+        r"^/([^/]+)/JobBoard/([0-9a-f-]{36})(?:/|$)",
+        p.path,
+        re.I,
+    )
+    if not m:
+        return None
+    base = f"{p.scheme or 'https'}://{p.netloc}"
+    return base, m.group(1), m.group(2)
+
+
+def _ukg_posted_date(raw, soup=None):
+    """Extract UKG's explicit Posted date; never substitute Updated."""
+    s = html.unescape(raw or "").replace("\\/", "/")
+    patterns = [
+        r"Opportunity\.OpportunityDetail\.PostedLabel\s*:?\s*"
+        r"(?:</?[^>]+>\s*)*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+        r"(?:Posted|Date Posted|Posted Date)\s*:?\s*"
+        r"(?:</?[^>]+>\s*)*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})",
+        r'["\'](?:postedDate|datePosted|postingDate)["\']\s*:\s*["\']([^"\']+)["\']',
+    ]
+    for pat in patterns:
+        m = re.search(pat, s, re.I)
+        if m:
+            d = pdate(strip_html(m.group(1)))
+            if d:
+                return d
+
+    if soup:
+        # Some tenants render the resource key as a label followed by a sibling.
+        for node in soup.find_all(string=re.compile(r"PostedLabel|Date Posted|Posted Date", re.I)):
+            parent = node.parent
+            if not parent:
+                continue
+            candidates = []
+            if parent.next_sibling:
+                candidates.append(str(parent.next_sibling))
+            if parent.parent:
+                candidates.append(parent.parent.get_text(" "))
+            for val in candidates:
+                m = re.search(
+                    r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})",
+                    clean(val),
+                    re.I,
+                )
+                if m:
+                    d = pdate(m.group(1))
+                    if d:
+                        return d
+    return None
+
+
+def _ukg_location(text):
+    """Best-effort location from UKG's Locations block."""
+    t = clean(text)
+    # Prefer a conventional city/state pair from the location block.
+    m = re.search(r"\b([A-Za-z .'\-]+),\s*([A-Z]{2})\s+\d{5}(?:-\d{4})?\b", t)
+    if m:
+        return clean(f"{m.group(1)}, {m.group(2)}")
+    m = re.search(r"\b([A-Za-z .'\-]+),\s*([A-Z]{2})\b", t)
+    if m:
+        return clean(f"{m.group(1)}, {m.group(2)}")
+    if re.search(r"\bRemote\b", t, re.I):
+        return "Remote"
+    if re.search(r"\bNationwide\b", t, re.I):
+        return "Nationwide"
+    return ""
+
+
+def _ukg_detail(src, url, raw):
+    """Parse one public UKG Pro Recruiting OpportunityDetail page."""
+    # UKG embeds the complete public job as JSON in its Knockout constructor.
+    # Its HTML headings/description are placeholders until JavaScript runs.
+    embedded = re.search(
+        r"new\s+US\.Opportunity\.CandidateOpportunityDetail\s*\(\s*", raw
+    )
+    if embedded:
+        try:
+            payload, _ = json.JSONDecoder().raw_decode(raw[embedded.end():])
+        except (ValueError, TypeError):
+            return None
+        return _ukg_embedded_job(src, url, payload)
+
+    soup = BeautifulSoup(raw, "html.parser")
+    pd = _ukg_posted_date(raw, soup)
+    if not pd or pd < CUTOFF:
+        return None
+
+    # UKG detail pages put the actual title in H1.
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        title_node = soup.find(attrs={"class": re.compile(r"(job.?title|opportunity.?title|title)", re.I)})
+        title = clean(title_node.get_text(" ") if title_node else "")
+    if not title or "pagetitle" in title.lower():
+        # Resource-key templates sometimes leave the H1 untranslated in raw HTML.
+        m = re.search(r'<h1[^>]*>\s*([^<]{3,200})\s*</h1>', raw, re.I | re.S)
+        title = clean(strip_html(m.group(1))) if m else title
+    if not title or "pagetitle" in title.lower():
+        return None
+
+    full_text = clean(soup.get_text(" "))
+
+    # Requisition number is stable and preferable to the opportunity GUID.
+    jid = ""
+    m = re.search(
+        r"Opportunity\.Opportunities\.RequisitionNumber\s*:?\s*"
+        r"([A-Z0-9_-]{4,})",
+        full_text,
+        re.I,
+    )
+    if m:
+        jid = clean(m.group(1))
+    if not jid:
+        q = parse_qs(urlparse(url).query)
+        jid = clean((q.get("opportunityId") or [""])[0])
+    if not jid:
+        jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+
+    # Description is usually under JobDetails/Description; use the relevant
+    # content container when identifiable and otherwise the main page.
+    main = (
+        soup.find(attrs={"class": re.compile(r"(opportunity.?detail|job.?details|job.?description)", re.I)})
+        or soup.find(id=re.compile(r"(opportunity.?detail|job.?details|job.?description)", re.I))
+        or soup.find("main")
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 200:
+        return None
+
+    # Pull location from the Locations block when possible, then fall back.
+    loc_text = ""
+    loc_key = soup.find(string=re.compile(r"CompanyInformation\.Locations|Job Locations?", re.I))
+    if loc_key and loc_key.parent and loc_key.parent.parent:
+        loc_text = clean(loc_key.parent.parent.get_text(" "))
+    loc = _ukg_location(loc_text or full_text)
+
+    jt_context = full_text
+    canonical = url.split("#", 1)[0]
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, jt_context),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or jt_context),
+        loc,
+        "",
+        infer_country(loc or jt_context, src["Company"], desc),
+    )
+
+
+def ukg(src):
+    """Dedicated UKG Pro Recruiting / UltiPro public-board collector.
+
+    UKG boards enumerate opportunities through the public POST endpoint:
+      /JobBoardView/LoadSearchResults
+    using opportunitySearch Top/Skip pagination. Detail pages remain canonical
+    public OpportunityDetail URLs and are parsed by the existing strict parser.
+    """
+    parts = _ukg_parts(src["URL"])
+    if not parts:
+        return ats_html(src)
+
+    base, tenant, board = parts
+    board_root = f"{base}/{tenant}/JobBoard/{board}"
+    list_url = board_root + "/JobBoardView/LoadSearchResults"
+    detail_urls = set()
+
+    # Current UKG Pro public board contract. Keep the body deliberately minimal;
+    # filters/search are empty because MJR wants every public opportunity.
+    skip = 0
+    page_size = 50
+    prior_ids = set()
+
+    while skip < 5000:
+        body = {
+            "opportunitySearch": {
+                "Top": page_size,
+                "Skip": skip,
+                "QueryString": "",
+                "OrderBy": [
+                    {
+                        "Value": "postedDateDesc",
+                        "PropertyName": "PostedDate",
+                        "Ascending": False,
+                    }
+                ],
+                "Filters": [
+                    {
+                        "t": "TermsSearchFilterDto",
+                        "fieldName": 4,
+                        "extra": None,
+                        "values": [],
+                    },
+                    {
+                        "t": "TermsSearchFilterDto",
+                        "fieldName": 5,
+                        "extra": None,
+                        "values": [],
+                    },
+                    {
+                        "t": "TermsSearchFilterDto",
+                        "fieldName": 6,
+                        "extra": None,
+                        "values": [],
+                    },
+                ],
+            },
+            "matchCriteria": {
+                "PreferredJobs": [],
+                "Educations": [],
+                "LicenseAndCertifications": [],
+                "Skills": [],
+                "hasNoLicenses": False,
+                "SkippedSkills": [],
+            },
+        }
+
+        try:
+            r = req(
+                "POST",
+                list_url,
+                json=body,
+                headers={
+                    "Accept": "application/json, text/plain, */*",
+                    "Content-Type": "application/json;charset=UTF-8",
+                    "Referer": board_root + "/",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            )
+            payload = r.json()
+        except Exception as e:
+            print(
+                f"UKG list API failed {src.get('Company','')}: "
+                f"{type(e).__name__}: {clean(str(e))[:160]}"
+            )
+            break
+
+        # UKG deployments have used several wrappers. Recursively collect only
+        # dictionaries that contain a real opportunity GUID.
+        rows = []
+
+        # The canonical UKG response contains an "opportunities" array. Feed
+        # those rows directly to the generic recursive walker below while still
+        # tolerating alternate wrappers used by older tenants.
+        canonical = payload.get("opportunities") if isinstance(payload, dict) else None
+        if isinstance(canonical, list):
+            for item in canonical:
+                if not isinstance(item, dict):
+                    continue
+                oid = clean(str(
+                    item.get("Id")
+                    or item.get("id")
+                    or item.get("OpportunityId")
+                    or item.get("opportunityId")
+                    or ""
+                ))
+                if re.fullmatch(r"[0-9a-f-]{36}", oid, re.I):
+                    rows.append((oid, item))
+
+        def walk(obj):
+            if isinstance(obj, dict):
+                oid = clean(str(
+                    obj.get("OpportunityId")
+                    or obj.get("opportunityId")
+                    or obj.get("Id")
+                    or obj.get("id")
+                    or ""
+                ))
+                if re.fullmatch(r"[0-9a-f-]{36}", oid, re.I):
+                    rows.append((oid, obj))
+                for v in obj.values():
+                    if isinstance(v, (dict, list)):
+                        walk(v)
+            elif isinstance(obj, list):
+                for v in obj:
+                    walk(v)
+        walk(payload)
+
+        page_ids = set()
+        for oid, row in rows:
+            if oid in page_ids:
+                continue
+            page_ids.add(oid)
+            detail_urls.add(
+                f"{board_root}/OpportunityDetail?opportunityId={oid}"
+            )
+
+        print(
+            f"UKG list {src.get('Company','')}: skip={skip} "
+            f"rows={len(page_ids)}"
+        )
+
+        if not page_ids or page_ids.issubset(prior_ids):
+            break
+        prior_ids |= page_ids
+
+        # Respect common total-count fields when exposed.
+        total = None
+        if isinstance(payload, dict):
+            for k in (
+                "Total", "total", "TotalCount", "totalCount",
+                "OpportunityCount", "opportunityCount",
+            ):
+                try:
+                    if payload.get(k) is not None:
+                        total = int(payload.get(k))
+                        break
+                except Exception:
+                    pass
+        if total is not None and len(prior_ids) >= total:
+            break
+        if len(page_ids) < page_size:
+            break
+        skip += page_size
+
+    # Compatibility fallback: older tenants may still expose opportunity links
+    # in board HTML/application state. Keep this bounded so a broken board never
+    # slows the full crawl materially.
+    if not detail_urls:
+        start_url = board_root + "/?q=&o=postedDateDesc&w=&wc=&we=&wpst="
+        try:
+            r = req("GET", start_url)
+            raw = html.unescape(r.text or "").replace("\\/", "/")
+            soup = BeautifulSoup(r.text, "html.parser")
+
+            for a in soup.find_all("a", href=True):
+                h = urljoin(start_url, a["href"])
+                hp = urlparse(h)
+                if hp.netloc.lower() != urlparse(base).netloc.lower():
+                    continue
+                if "opportunitydetail" not in hp.path.lower():
+                    continue
+                oid = clean((parse_qs(hp.query).get("opportunityId") or [""])[0])
+                if re.fullmatch(r"[0-9a-f-]{36}", oid, re.I):
+                    detail_urls.add(
+                        f"{board_root}/OpportunityDetail?opportunityId={oid}"
+                    )
+
+            for m in re.finditer(
+                r"[\"'](?:opportunityId|OpportunityId)[\"']\\s*:\\s*[\"']([0-9a-f-]{36})[\"']",
+                raw,
+                re.I,
+            ):
+                detail_urls.add(
+                    f"{board_root}/OpportunityDetail?opportunityId={m.group(1)}"
+                )
+        except Exception:
+            pass
+
+    out = []
+    seen_ids = set()
+    for url in sorted(detail_urls):
+        try:
+            rr = req("GET", url)
+            j = _ukg_detail(src, url, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            # Closed/stale opportunities must not abort the employer.
+            continue
+
+    print(
+        f"UKG direct {src.get('Company','')}: "
+        f"details={len(detail_urls)} parsed={len(out)}"
+    )
+    return out
+
+
+def _oracle_parts(url):
+    """Return (origin, siteNumber) for an Oracle Fusion Candidate Experience URL."""
+    p = urlparse(url)
+    m = re.search(
+        r"/hcmUI/CandidateExperience/(?:[a-z]{2}(?:-[A-Z]{2})?/)?sites/([^/]+)/",
+        p.path,
+        re.I,
+    )
+    if not m:
+        m = re.search(
+            r"/hcmUI/CandidateExperience/(?:[a-z]{2}(?:-[A-Z]{2})?/)?sites/([^/?#]+)",
+            p.path,
+            re.I,
+        )
+    if not m:
+        return None
+    origin = f"{p.scheme or 'https'}://{p.netloc}"
+    return origin, m.group(1)
+
+
+def _oracle_items(payload):
+    """Yield requisition rows across the common Oracle CE response shapes."""
+    if not isinstance(payload, dict):
+        return []
+
+    rows = []
+
+    # Common response: items[0].requisitionList[]
+    for top in payload.get("items") or []:
+        if not isinstance(top, dict):
+            continue
+        rl = top.get("requisitionList")
+        if isinstance(rl, list):
+            rows.extend(x for x in rl if isinstance(x, dict))
+        elif isinstance(rl, dict):
+            rows.extend(x for x in (rl.get("items") or []) if isinstance(x, dict))
+
+        # Some releases expose the requisition object itself as an item.
+        if any(
+            k in top
+            for k in (
+                "Id",
+                "RequisitionId",
+                "RequisitionNumber",
+                "Title",
+                "ExternalTitle",
+                "PostedDate",
+                "PostedDateTime",
+            )
+        ):
+            rows.append(top)
+
+    # Defensive fallback for alternate wrappers.
+    for key in ("requisitionList", "RequisitionList", "results", "jobs"):
+        val = payload.get(key)
+        if isinstance(val, list):
+            rows.extend(x for x in val if isinstance(x, dict))
+        elif isinstance(val, dict):
+            rows.extend(x for x in (val.get("items") or []) if isinstance(x, dict))
+
+    # De-dupe by likely Oracle job ID while preserving first occurrence.
+    out = []
+    seen = set()
+    for row in rows:
+        rid = clean(
+            str(
+                row.get("Id")
+                or row.get("id")
+                or row.get("SearchId")
+                or row.get("RequisitionId")
+                or row.get("requisitionId")
+                or row.get("RequisitionNumber")
+                or row.get("requisitionNumber")
+                or ""
+            )
+        )
+        key = rid or hashlib.sha1(
+            json.dumps(row, sort_keys=True, default=str).encode()
+        ).hexdigest()
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(row)
+    return out
+
+
+def _oracle_value(row, *names):
+    """First non-empty Oracle field, case-insensitive."""
+    if not isinstance(row, dict):
+        return ""
+    lower = {str(k).lower(): v for k, v in row.items()}
+    for name in names:
+        v = row.get(name)
+        if v not in (None, "", [], {}):
+            return v
+        v = lower.get(name.lower())
+        if v not in (None, "", [], {}):
+            return v
+    return ""
+
+
+def _oracle_date(row):
+    """Oracle public CE posting date. Do not substitute unrelated update dates."""
+    for name in (
+        "PostedDate",
+        "postedDate",
+        "PostedDateTime",
+        "postedDateTime",
+        "PostingStartDate",
+        "postingStartDate",
+        "ExternalPostedStartDate",
+        "externalPostedStartDate",
+    ):
+        d = pdate(str(_oracle_value(row, name) or ""))
+        if d:
+            return d
+    return None
+
+
+def _oracle_location(row):
+    for name in (
+        "PrimaryLocation",
+        "primaryLocation",
+        "PrimaryLocationName",
+        "primaryLocationName",
+        "Location",
+        "location",
+        "LocationName",
+        "locationName",
+    ):
+        val = _oracle_value(row, name)
+        if isinstance(val, dict):
+            for k in ("Name", "name", "DisplayName", "displayName"):
+                if val.get(k):
+                    return clean(str(val[k]))
+        if val:
+            return clean(str(val))
+
+    # Some Oracle responses expose city/state/country as independent fields.
+    city = clean(str(_oracle_value(row, "City", "city") or ""))
+    state = clean(str(_oracle_value(row, "State", "state", "Region", "region") or ""))
+    country = clean(str(_oracle_value(row, "Country", "country", "CountryName", "countryName") or ""))
+    return clean(", ".join(x for x in (city, state, country) if x))
+
+
+def _oracle_description(row):
+    """Return Oracle description HTML without flattening source structure."""
+    parts = []
+    seen_text = set()
+    for name in (
+        "ExternalDescriptionStr",
+        "externalDescriptionStr",
+        "ExternalDescription",
+        "externalDescription",
+        "Description",
+        "description",
+        "ShortDescription",
+        "shortDescription",
+        "Responsibilities",
+        "responsibilities",
+        "Qualifications",
+        "qualifications",
+    ):
+        val = _oracle_value(row, name)
+        if not val:
+            continue
+        if isinstance(val, (dict, list)):
+            val = json.dumps(val, ensure_ascii=False)
+        formatted = format_description(str(val))
+        text_key = strip_html(formatted)
+        if text_key and text_key not in seen_text:
+            seen_text.add(text_key)
+            parts.append(formatted)
+    return "\n".join(parts).strip()
+
+
+def _oracle_detail_api(origin, site, rid):
+    """Fetch a public Oracle CE detail object when available."""
+    rid = clean(str(rid))
+    if not rid:
+        return {}
+
+    endpoints = [
+        (
+            f"{origin}/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails",
+            {
+                "expand": "all",
+                "onlyData": "true",
+                "finder": f'ById;Id="{rid}",siteNumber={site}',
+            },
+        ),
+        (
+            f"{origin}/hcmRestApi/resources/latest/recruitingCEJobRequisitions/{rid}",
+            {"onlyData": "true"},
+        ),
+    ]
+
+    for url, params in endpoints:
+        try:
+            r = req(
+                "GET",
+                url,
+                params=params,
+                headers={
+                    "Accept": "application/json, application/vnd.oracle.adf.resourcecollection+json",
+                    "Ora-Irc-Language": "en",
+                },
+            )
+            data = r.json()
+            if isinstance(data, dict):
+                items = data.get("items")
+                if isinstance(items, list) and items and isinstance(items[0], dict):
+                    return items[0]
+                return data
+        except Exception:
+            continue
+    return {}
+
+
+def _oracle_job(src, origin, site, row):
+    rid = clean(
+        str(
+            _oracle_value(
+                row,
+                "Id",
+                "id",
+                "SearchId",
+                "searchId",
+                "RequisitionId",
+                "requisitionId",
+                "RequisitionNumber",
+                "requisitionNumber",
+            )
+            or ""
+        )
+    )
+    if not rid:
+        return None
+
+    pd = _oracle_date(row)
+    detail = {}
+
+    # Listing rows may be intentionally compact. Fetch detail only when needed.
+    title = clean(
+        str(
+            _oracle_value(
+                row,
+                "Title",
+                "title",
+                "ExternalTitle",
+                "externalTitle",
+                "RequisitionTitle",
+                "requisitionTitle",
+            )
+            or ""
+        )
+    )
+    desc = _oracle_description(row)
+    loc = _oracle_location(row)
+
+    if not pd or not title or len(desc) < 200:
+        detail = _oracle_detail_api(origin, site, rid)
+        if detail:
+            if not pd:
+                pd = _oracle_date(detail)
+            if not title:
+                title = clean(
+                    str(
+                        _oracle_value(
+                            detail,
+                            "Title",
+                            "title",
+                            "ExternalTitle",
+                            "externalTitle",
+                            "RequisitionTitle",
+                            "requisitionTitle",
+                        )
+                        or ""
+                    )
+                )
+            if len(desc) < 200:
+                desc = _oracle_description(detail)
+            if not loc:
+                loc = _oracle_location(detail)
+
+    if not pd or pd < CUTOFF or not title:
+        return None
+
+    combined = dict(row)
+    if isinstance(detail, dict):
+        combined.update({k: v for k, v in detail.items() if v not in (None, "", [], {})})
+
+    # If API detail still lacks prose, use the real public job page as a final
+    # structured fallback. This remains the canonical apply/detail URL.
+    job_url = f"{origin}/hcmUI/CandidateExperience/en/sites/{site}/job/{rid}"
+    if len(desc) < 200:
+        try:
+            rr = req("GET", job_url)
+            soup = BeautifulSoup(rr.text, "html.parser")
+            jld = _job_from_detail(src, job_url, rr.text)
+            if jld:
+                # Preserve Oracle's explicit listing/API posting date when present.
+                jld.date = pd
+                return jld
+            main = soup.find("main") or soup
+            page_desc = clean(main.get_text(" "))
+            if len(page_desc) >= 200:
+                desc = page_desc
+        except Exception:
+            pass
+
+    if len(desc) < 200:
+        return None
+
+    reqnum = clean(
+        str(
+            _oracle_value(
+                combined,
+                "RequisitionNumber",
+                "requisitionNumber",
+                "JobNumber",
+                "jobNumber",
+            )
+            or ""
+        )
+    )
+    jid = reqnum or rid
+
+    jt_text = " ".join(
+        clean(str(_oracle_value(combined, x) or ""))
+        for x in (
+            "JobType",
+            "jobType",
+            "WorkerType",
+            "workerType",
+            "RegularOrTemporary",
+            "regularOrTemporary",
+            "FullPartTime",
+            "fullPartTime",
+            "WorkplaceType",
+            "workplaceType",
+        )
+    )
+
+    workplace = clean(
+        str(_oracle_value(combined, "WorkplaceType", "workplaceType") or "")
+    )
+    arrangement_context = clean(f"{workplace} {loc} {desc}")
+
+    country_hint = clean(
+        str(
+            _oracle_value(
+                combined,
+                "Country",
+                "country",
+                "CountryName",
+                "countryName",
+                "CountryCode",
+                "countryCode",
+            )
+            or ""
+        )
+    )
+
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, jt_text),
+        category(title, desc, src["Industry"], src["Company"]),
+        job_url,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, arrangement_context),
+        loc,
+        "",
+        infer_country(country_hint or loc, src["Company"], desc),
+    )
+
+
+def oracle_recruiting(src):
+    """Dedicated Oracle Fusion Recruiting Candidate Experience collector.
+
+    Oracle's public CE job site calls recruitingCEJobRequisitions with the
+    findReqs finder. `expand=requisitionList` is required to receive the actual
+    posting rows. We page by limit/offset and construct the real Candidate
+    Experience job URL from the returned requisition ID.
+    """
+    parts = _oracle_parts(src["URL"])
+    if not parts:
+        return ats_html(src)
+
+    origin, site = parts
+    endpoint = f"{origin}/hcmRestApi/resources/latest/recruitingCEJobRequisitions"
+
+    limit = 200
+    offset = 0
+    max_pages = 25
+    rows = []
+
+    headers = {
+        "Accept": "application/json, application/vnd.oracle.adf.resourcecollection+json",
+        "Ora-Irc-Language": "en",
+    }
+
+    for _ in range(max_pages):
+        params = {
+            "onlyData": "true",
+            "expand": "requisitionList",
+            "finder": f"findReqs;siteNumber={site},limit={limit},offset={offset}",
+        }
+
+        try:
+            r = req("GET", endpoint, params=params, headers=headers)
+            payload = r.json()
+        except Exception:
+            # Some Oracle releases accept limit/offset only as regular query args.
+            params = {
+                "onlyData": "true",
+                "expand": "requisitionList",
+                "finder": f"findReqs;siteNumber={site}",
+                "limit": limit,
+                "offset": offset,
+            }
+            r = req("GET", endpoint, params=params, headers=headers)
+            payload = r.json()
+
+        page_rows = _oracle_items(payload)
+        if not page_rows:
+            break
+
+        rows.extend(page_rows)
+
+        # Oracle can return total count in several locations.
+        total = None
+        candidates = [payload]
+        if isinstance(payload, dict):
+            candidates += [
+                x for x in (payload.get("items") or []) if isinstance(x, dict)
+            ]
+        for obj in candidates:
+            for key in (
+                "TotalJobsCount",
+                "totalJobsCount",
+                "TotalResults",
+                "totalResults",
+                "count",
+            ):
+                try:
+                    val = int(obj.get(key))
+                    if val >= 0:
+                        total = val
+                        break
+                except Exception:
+                    pass
+            if total is not None:
+                break
+
+        offset += limit
+        if total is not None and offset >= total:
+            break
+        if len(page_rows) < limit:
+            # Some Oracle responses wrap all rows inside one requisitionList
+            # item, so only stop here when there is no indication of more data.
+            has_more = bool(payload.get("hasMore")) if isinstance(payload, dict) else False
+            if not has_more:
+                break
+
+    out = []
+    seen = set()
+    for row in rows:
+        try:
+            j = _oracle_job(src, origin, site, row)
+            if j and j.id not in seen:
+                seen.add(j.id)
+                out.append(j)
+        except Exception:
+            # One stale or malformed Oracle requisition must not abort employer.
+            continue
+    return out
+
+
+def _paycom_parts(url):
+    """Return (origin, clientkey) for public Paycom ATS URLs."""
+    p = urlparse(url)
+    q = parse_qs(p.query)
+    ck = clean((q.get("clientkey") or q.get("clientKey") or [""])[0])
+    if not ck:
+        m = re.search(r"[?&]clientkey=([A-F0-9]+)", url, re.I)
+        if m:
+            ck = m.group(1)
+    if not ck:
+        return None
+    return f"{p.scheme or 'https'}://{p.netloc}", ck
+
+
+def _paycom_date_from_text(raw):
+    s = html.unescape(raw or "").replace("\\/", "/")
+    patterns = [
+        r"(?:Posted|Date Posted|Posting Date)\s*:?\s*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2}|\d{4}-\d{2}-\d{2})",
+        r'["\'](?:datePosted|postedDate|postingDate|createdDate)["\']\s*:\s*["\']([^"\']+)["\']',
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, s, re.I):
+            d = pdate(strip_html(m.group(1)))
+            if d:
+                return d
+    return None
+
+
+def _paycom_job_links(base_url, raw):
+    """Recover real Paycom job-detail links from HTML/scripts."""
+    raw2 = html.unescape(raw or "").replace("\\/", "/")
+    out = set()
+
+    # Common Paycom detail/link shapes.
+    pats = [
+        r'https?://[^"\'<>\s]+paycomonline\.net[^"\'<>\s]+',
+        r'/(?:v4/)?ats/web\.php/jobs/ViewJobDetails\?[^"\'<>\s]+',
+        r'/(?:v4/)?ats/web\.php/jobs\?[^"\'<>\s]*(?:job|jpt|id)=[^"\'<>\s&]+[^"\'<>\s]*',
+    ]
+
+    for pat in pats:
+        for m in re.finditer(pat, raw2, re.I):
+            u = urljoin(base_url, m.group(0))
+            if "paycomonline.net" in urlparse(u).netloc.lower():
+                out.add(u.split("#",1)[0])
+
+    return out
+
+
+def _paycom_detail(src, url, raw):
+    # Prefer schema.org when present.
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+
+    soup = BeautifulSoup(raw, "html.parser")
+    pd = _paycom_date_from_text(raw)
+    if not pd or pd < CUTOFF:
+        return None
+
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        title_node = soup.find(attrs={"class": re.compile(r"(job.?title|position.?title|title)", re.I)})
+        title = clean(title_node.get_text(" ") if title_node else "")
+    if not title:
+        return None
+
+    full_text = clean(soup.get_text(" "))
+    loc = ""
+    m = re.search(
+        r"(?:Location|Job Location)\s*:?\s*([A-Za-z0-9 .,'\-/]+?)(?:\s{2,}|Department|Job Type|Category|$)",
+        full_text,
+        re.I,
+    )
+    if m:
+        loc = clean(m.group(1))
+
+    jid = ""
+    q = parse_qs(urlparse(url).query)
+    for k in ("job", "jobid", "jobId", "id", "jpt"):
+        if q.get(k):
+            jid = clean(q[k][0])
+            break
+    if not jid:
+        m = re.search(r"\b(?:Job ID|Requisition)\s*:?\s*([A-Z0-9_-]{3,})", full_text, re.I)
+        if m:
+            jid = m.group(1)
+    if not jid:
+        jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+
+    main = (
+        soup.find(attrs={"class": re.compile(r"(job.?description|job.?details|position.?details)", re.I)})
+        or soup.find(id=re.compile(r"(job.?description|job.?details|position.?details)", re.I))
+        or soup.find("main")
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 200:
+        return None
+
+    canonical = url.split("#",1)[0]
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, full_text),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or full_text),
+        loc,
+        "",
+        infer_country(loc or full_text, src["Company"], desc),
+    )
+
+
+def paycom(src):
+    """Dedicated Paycom public ATS collector.
+
+    Paycom boards are server-rendered enough to expose job links either as
+    anchors or hydrated script URLs. Enumerate the board, follow bounded
+    pagination, and parse each actual job-detail page. Posting dates must be
+    explicit and within the MJR window.
+    """
+    parts = _paycom_parts(src["URL"])
+    if not parts:
+        return ats_html(src)
+
+    origin, clientkey = parts
+    start = src["URL"]
+
+    queue = [start]
+    seen_pages = set()
+    details = set()
+
+    while queue and len(seen_pages) < 80 and len(details) < 3000:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        r = req("GET", page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # Visible job links.
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            hp = urlparse(h)
+            if "paycomonline.net" not in hp.netloc.lower():
+                continue
+
+            q = parse_qs(hp.query)
+            if (
+                "viewjobdetails" in hp.path.lower()
+                or any(k.lower() in ("job", "jobid", "id", "jpt") for k in q)
+            ):
+                details.add(h.split("#",1)[0])
+                continue
+
+            # Follow same-client listing/pagination links.
+            hq = parse_qs(hp.query)
+            hck = clean((hq.get("clientkey") or [""])[0])
+            if hck and hck.lower() == clientkey.lower():
+                if h.rstrip("/") not in seen_pages:
+                    queue.append(h)
+
+        # Hydrated/scripted links.
+        details.update(_paycom_job_links(page, r.text))
+
+        # Generic pagination controls constrained to Paycom/clientkey.
+        for h in _listing_next_links(page, soup):
+            hp = urlparse(h)
+            if "paycomonline.net" not in hp.netloc.lower():
+                continue
+            hq = parse_qs(hp.query)
+            hck = clean((hq.get("clientkey") or [""])[0])
+            if hck and hck.lower() == clientkey.lower() and h.rstrip("/") not in seen_pages:
+                queue.append(h)
+
+    out = []
+    seen_ids = set()
+    for url in sorted(details):
+        try:
+            rr = req("GET", url)
+            j = _paycom_detail(src, url, rr.text)
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
+        except Exception:
+            continue
+    return out
+
+
+def betterteam_active_board(src):
+    """Collect active Betterteam postings using a stable first-seen date.
+
+    Betterteam employer boards expose active jobs and locations but commonly
+    omit datePosted. For those pages, use the date already stored for the same
+    canonical URL; only a genuinely new active URL receives TODAY once.
+    """
+    try:
+        r = req("GET", src["URL"])
+    except Exception:
+        return []
+
+    base = str(getattr(r, "url", "") or src["URL"])
+    host = (urlparse(base).netloc or "").lower()
+    soup = BeautifulSoup(r.text, "html.parser")
+    detail_urls = set()
+
+    for a in soup.find_all("a", href=True):
+        h = urljoin(base, a["href"]).split("#", 1)[0]
+        u = urlparse(h)
+        if (u.netloc or "").lower() != host:
+            continue
+        path = u.path.strip("/")
+        if not path:
+            continue
+        # Betterteam tenant jobs are root-level slugs. Exclude obvious utility
+        # routes while requiring a job-like anchor label or slug.
+        label = clean(a.get_text(" "))
+        low = path.lower()
+        if low in {"about", "contact", "privacy", "terms", "jobs", "careers"}:
+            continue
+        if label and label.lower() not in {"apply", "view", "learn more"}:
+            detail_urls.add(h.rstrip("/"))
+
+    st = load_state()
+    out, seen = [], set()
+    state_names = {
+        "alabama":"AL","alaska":"AK","arizona":"AZ","arkansas":"AR","california":"CA",
+        "colorado":"CO","connecticut":"CT","delaware":"DE","florida":"FL","georgia":"GA",
+        "hawaii":"HI","idaho":"ID","illinois":"IL","indiana":"IN","iowa":"IA",
+        "kansas":"KS","kentucky":"KY","louisiana":"LA","maine":"ME","maryland":"MD",
+        "massachusetts":"MA","michigan":"MI","minnesota":"MN","mississippi":"MS",
+        "missouri":"MO","montana":"MT","nebraska":"NE","nevada":"NV",
+        "new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY",
+        "north carolina":"NC","north dakota":"ND","ohio":"OH","oklahoma":"OK",
+        "oregon":"OR","pennsylvania":"PA","rhode island":"RI","south carolina":"SC",
+        "south dakota":"SD","tennessee":"TN","texas":"TX","utah":"UT","vermont":"VT",
+        "virginia":"VA","washington":"WA","west virginia":"WV","wisconsin":"WI",
+        "wyoming":"WY","district of columbia":"DC",
+    }
+
+    for url in sorted(detail_urls)[:100]:
+        key = url.rstrip("/").lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+        ss = BeautifulSoup(rr.text, "html.parser")
+        text = clean(ss.get_text(" "))
+
+        headings = [clean(x.get_text(" ")) for x in ss.find_all(["h1","h2","h3"])]
+        headings = [x for x in headings if x and x.lower() != clean(src["Company"]).lower()]
+        title = headings[0] if headings else ""
+        if not title or title.lower() in {"about the job", "current positions"}:
+            continue
+
+        # Betterteam prints "City, State • Full-time" immediately under title.
+        city = state = ""
+        m = re.search(
+            r"([A-Z][A-Za-z .'-]{1,60}),\s*([A-Z][A-Za-z ]{2,30})\s*[•·|]\s*"
+            r"(Full[- ]?time|Part[- ]?time|Temporary|Contract|Internship)",
+            text, re.I,
+        )
+        employment = ""
+        if m:
+            city = clean(m.group(1))
+            region = clean(m.group(2))
+            state = state_names.get(region.lower(), region.upper() if len(region) == 2 else "")
+            employment = clean(m.group(3))
+
+        main = ss.find("main") or ss.find("article") or ss
+        desc = format_description(str(main))
+        if len(strip_html(desc)) < 200:
+            continue
+
+        # Prefer a real source date if Betterteam adds one later.
+        pd = None
+        for jp in _jsonld_jobs(ss):
+            pd = pdate(jp.get("datePosted") or "")
+            if pd:
+                break
+        if not pd:
+            stored = st.get(key, {}).get("job", {}) if isinstance(st.get(key), dict) else {}
+            try:
+                pd = date.fromisoformat(str(stored.get("date") or ""))
+            except Exception:
+                pd = TODAY
+
+        jt = jobtype(title, employment + " " + text)
+        out.append(Job(
+            hashlib.sha1(url.encode()).hexdigest()[:16],
+            title,
+            src["Company"],
+            desc,
+            pd,
+            jt,
+            category(title, desc, src["Industry"], src["Company"]),
+            url,
+            src["URL"],
+            src["URL"],
+            "",
+            normalize_work_arrangement(desc, ", ".join(x for x in [city, state] if x), title),
+            city,
+            state,
+            infer_country(", ".join(x for x in [city, state] if x), src["Company"], desc),
+        ))
+    return out
+
+
+
+def jazzhr_active_board(src):
+    """Collect an actively enumerated ApplyToJob/JazzHR board.
+
+    Explicit source dates win. If JazzHR omits a posting date, reuse the
+    canonical URL's stored first-seen date; only a genuinely new active URL
+    receives TODAY once. This never refreshes an evergreen opening daily.
+    """
+    start = clean(src.get("URL", ""))
+    if not start:
+        return []
+    try:
+        r = req("GET", start)
+    except Exception:
+        return []
+
+    final = str(getattr(r, "url", "") or start)
+    soup = BeautifulSoup(r.text, "html.parser")
+    host = (urlparse(final).netloc or "").lower()
+    links = []
+    for a in soup.find_all("a", href=True):
+        h = urljoin(final, a["href"]).split("#", 1)[0]
+        if (urlparse(h).netloc or "").lower() != host:
+            continue
+        path = urlparse(h).path or ""
+        # JazzHR boards use both /apply/<id>/<slug> and /apply/<id> forms.
+        # Require a non-empty identifier after /apply/ but exclude the board root.
+        if re.match(r"^/apply/[^/]+(?:/.*)?/?$", path, re.I):
+            if path.rstrip("/").lower() != "/apply":
+                links.append(h)
+    links = list(dict.fromkeys(links))
+
+    st = load_state()
+    out = []
+    for url in links[:500]:
+        key = url.rstrip("/").lower()
+        try:
+            rr = req("GET", url)
+        except Exception:
+            continue
+        raw = rr.text
+        ss = BeautifulSoup(raw, "html.parser")
+        txt = clean(ss.get_text(" "))
+
+        # Use the normal detail parser whenever the page exposes a qualifying
+        # source date.
+        j = _job_from_detail(src, url, raw)
+        if j:
+            # Beasley is radio-first. Apply this even when the generic
+            # structured-detail parser succeeds; the old early return bypassed it.
+            if clean(src.get("Company", "")).lower() == "beasley media group":
+                probe_text = (j.title + " " + strip_html(j.description)[:1200]).lower()
+                radio_terms = (
+                    "program director", "programming", "on-air", "on air",
+                    "air talent", "host", "promotion", "producer",
+                    "board operator", "street team",
+                )
+                sales_terms = (
+                    "sales", "account executive", "market manager", "general manager",
+                )
+                if any(term in probe_text for term in radio_terms):
+                    if not any(term in j.title.lower() for term in sales_terms):
+                        j.category = "Radio"
+                if "chief engineer" in j.title.lower():
+                    j.category = "Engineering"
+            out.append(j)
+            continue
+
+        pd = _direct_board_date(raw)
+        if not pd:
+            stored = st.get(key, {}).get("job", {}) if isinstance(st.get(key), dict) else {}
+            try:
+                pd = date.fromisoformat(str(stored.get("date") or ""))
+            except Exception:
+                pd = TODAY
+
+        h1 = ss.find("h1")
+        title = clean(h1.get_text(" ") if h1 else "")
+        if not title:
+            # JazzHR pages can put the role in og:title/page title.
+            og = ss.find("meta", attrs={"property": "og:title"})
+            title = clean(og.get("content") if og else "")
+        if not title and ss.title:
+            title = clean(ss.title.get_text(" "))
+            title = re.sub(r"\s*[-|]\s*(?:Beasley Media Group|Career Page).*$", "", title, flags=re.I)
+
+        main = (
+            ss.find("div", class_=re.compile(r"(job|description|posting)", re.I))
+            or ss.find("main")
+            or ss.find("article")
+            or ss
+        )
+        desc = format_description(str(main))
+        plain = clean(main.get_text(" "))
+        if not title or len(strip_html(desc)) < 200:
+            continue
+
+        jt = jobtype(title, txt)
+        probe = Job("", title, src["Company"], desc, pd, jt, "", url,
+                    src["URL"], src["URL"], "", "", "", "")
+        if not job_is_fresh(probe):
+            continue
+
+        city = state = ""
+        loc = ""
+        m = re.search(r"\b([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\b", txt)
+        if m:
+            city, state = clean(m.group(1)), m.group(2)
+            loc = city + ", " + state
+
+        cat = category(title, plain, src["Industry"], src["Company"])
+        if clean(src.get("Company", "")).lower() == "beasley media group":
+            if re.search(r"\b(program(?:ming)?|program director|on[- ]?air|air talent|host|promotions?|producer|board operator)\b", title + " " + plain[:1200], re.I):
+                if not re.search(r"\b(sales|account executive|market manager|general manager)\b", title, re.I):
+                    cat = "Radio"
+        out.append(Job(
+            hashlib.sha1(key.encode()).hexdigest()[:16],
+            title, src["Company"], desc, pd, jt, cat,
+            url, src["URL"], src["URL"], "",
+            normalize_work_arrangement(txt, loc), city, state, "US",
+        ))
+
+    print(f"JazzHR active board {src['Company']}: enumerated={len(links)} parsed={len(out)}")
+    return out
+
+
+def ats_html(src):
+    """Enhanced multi-ATS public-page adapter.
+
+    Enumerates job-detail URLs from anchors, script/application state, JSON-LD,
+    and server-side pagination. It deliberately keeps the final apply URL on
+    the actual discovered job-detail page and still requires a qualifying
+    recent posting date when the detail page is parsed.
+    """
+    family = _ats_family(src)
+    patterns = ATS_JOB_HINTS.get(family, [])
+    if not patterns:
+        return generic(src)
+
+    start = src["URL"]
+    start_host = (urlparse(start).netloc or "").lower()
+    queue = [start]
+    seen_pages = set()
+    job_links = set()
+
+    while queue and len(seen_pages) < 40 and len(job_links) < 2000:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        r = req("GET", page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # Some source rows are already a job detail.
+        if any(re.search(p, page, re.I) for p in patterns):
+            job_links.add(page)
+
+        # Normal links. Permit a same-host URL or another recognized ATS host;
+        # company career sites frequently redirect/link to a separate ATS host.
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            host = (urlparse(h).netloc or "").lower()
+            if any(re.search(p, h, re.I) for p in patterns):
+                if host == start_host or _known_ats_url(h):
+                    job_links.add(h)
+                    continue
+
+        # URLs inside script state / hydrated JSON.
+        for h in _candidate_urls_from_text(page, r.text, patterns):
+            host = (urlparse(h).netloc or "").lower()
+            if host == start_host or _known_ats_url(h):
+                job_links.add(h)
+
+        # JSON-LD often exposes the canonical detail URL even when the visible
+        # listing is rendered client-side.
+        for jp in _jsonld_jobs(soup):
+            h = clean(jp.get("url") or jp.get("sameAs") or "")
+            if h:
+                h = urljoin(page, h)
+                if any(re.search(p, h, re.I) for p in patterns) or _known_ats_url(h):
+                    job_links.add(h)
+
+        # Follow bounded pagination/search result pages.
+        for h in _listing_next_links(page, soup):
+            host = (urlparse(h).netloc or "").lower()
+            if host == start_host and h.rstrip("/") not in seen_pages:
+                queue.append(h)
+
+    out = []
+    seen_job_urls = set()
+    for url in list(job_links)[:2000]:
+        canon = url.split("#", 1)[0]
+        if canon in seen_job_urls:
+            continue
+        seen_job_urls.add(canon)
+        try:
+            rr = req("GET", canon)
+            j = _job_from_detail(src, canon, rr.text)
+            if j:
+                out.append(j)
+        except Exception:
+            continue
+
+    return out
+
+
+def federated_media(src):
+    """Federated Media job fallback using its WordPress job-listing content.
+
+    Their public careers landing page can redirect inconsistently, while actual
+    job posts live under /job/{slug}/. Try WordPress REST and feeds first,
+    preserving only explicit recent postings.
+    """
+    bases = [
+        "https://federatedmedia.com",
+        "https://www.federatedmedia.com",
+    ]
+    detail_urls = set()
+
+    # WP Job Manager commonly exposes a job_listing post type.
+    api_paths = [
+        "/wp-json/wp/v2/job_listing?per_page=100&page=1",
+        "/wp-json/wp/v2/jobs?per_page=100&page=1",
+    ]
+
+    for base in bases:
+        for api_path in api_paths:
+            try:
+                r = req("GET", base + api_path)
+                data = r.json()
+                if not isinstance(data, list):
+                    continue
+                for item in data:
+                    if not isinstance(item, dict):
+                        continue
+                    link = clean(str(item.get("link") or ""))
+                    if link and "/job/" in link:
+                        detail_urls.add(link)
+            except Exception:
+                pass
+
+        # RSS/feed fallback.
+        for feed_url in (
+            base + "/feed/?post_type=job_listing",
+            base + "/careers/feed/",
+        ):
+            try:
+                r = req("GET", feed_url)
+                raw = html.unescape(r.text or "")
+                for m in re.finditer(r"https?://[^<\"'\s]+/job/[^<\"'\s]+", raw, re.I):
+                    detail_urls.add(m.group(0).rstrip(".,)"))
+            except Exception:
+                pass
+
+    out = []
+    seen = set()
+    for url in sorted(detail_urls):
+        try:
+            rr = req("GET", url)
+            soup = BeautifulSoup(rr.text, "html.parser")
+            txt = clean(soup.get_text(" "))
+
+            # Prefer schema.org JobPosting if provided.
+            j = _job_from_detail(src, url, rr.text)
+            if j:
+                if j.url not in seen:
+                    seen.add(j.url)
+                    out.append(j)
+                continue
+
+            pd = None
+            m = re.search(
+                r"(?:Posted|Date Posted|Posted Date)\s*:?\s*"
+                r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|"
+                r"\d{1,2}/\d{1,2}/20\d{2}|"
+                r"\d+\s+days?\s+ago|today|yesterday)",
+                txt,
+                re.I,
+            )
+            if m:
+                pd = pdate(m.group(1))
+            if not pd or pd < CUTOFF:
+                continue
+
+            h1 = soup.find("h1")
+            title = clean(h1.get_text(" ") if h1 else "")
+            main = soup.find("main") or soup.find("article") or soup
+            desc = clean(main.get_text(" "))
+            if not title or len(desc) < 250:
+                continue
+
+            loc = ""
+            mloc = re.search(
+                r"(?:Location|Job Location)\s*:?\s*"
+                r"([A-Za-z .,'/-]+?)(?:\s+Posted|\s+Full Time|\s+Part Time|$)",
+                txt,
+                re.I,
+            )
+            if mloc:
+                loc = clean(mloc.group(1))
+
+            jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+            out.append(Job(
+                jid,
+                title,
+                src["Company"],
+                desc,
+                pd,
+                jobtype(title, txt),
+                category(title, desc, src["Industry"], src["Company"]),
+                url,
+                src["URL"],
+                src["URL"],
+                "",
+                normalize_work_arrangement(desc, loc or txt),
+                loc,
+                "",
+                infer_country(loc or txt, src["Company"], desc),
+            ))
+            seen.add(url)
+        except Exception:
+            continue
+
+    return out
+
+
+def connoisseur_media(src):
+    """Direct collector for Connoisseur Media's current WordPress careers site.
+
+    The employer now publishes openings at /career-opportunity/ with individual
+    /career-opportunity/{slug}/ detail/application pages. These pages are the
+    canonical application destinations, so do not route applicants through an
+    obsolete third-party ATS URL.
+    """
+    listing_urls = [
+        "https://connoisseurmedia.com/career-opportunity/",
+        "https://connoisseurmedia.com/careers/",
+    ]
+
+    detail_urls = set()
+
+    for listing_url in listing_urls:
+        try:
+            r = req("GET", listing_url)
+            soup = BeautifulSoup(r.text, "html.parser")
+
+            for a in soup.find_all("a", href=True):
+                h = urljoin(listing_url, a["href"])
+                hp = urlparse(h)
+                if hp.netloc.lower().replace("www.", "") != "connoisseurmedia.com":
+                    continue
+                path = hp.path.rstrip("/") + "/"
+                if path.startswith("/career-opportunity/") and path != "/career-opportunity/":
+                    detail_urls.add(h.split("#", 1)[0])
+
+            # WordPress/script state can contain cards not rendered as anchors.
+            raw = html.unescape(r.text or "").replace("\\/", "/")
+            for m in re.finditer(
+                r'https?://(?:www\.)?connoisseurmedia\.com/career-opportunity/[^"\'<>\s?#]+/?',
+                raw,
+                re.I,
+            ):
+                h = m.group(0)
+                if h.rstrip("/") != "https://connoisseurmedia.com/career-opportunity":
+                    detail_urls.add(h)
+        except Exception:
+            continue
+
+    out = []
+    seen = set()
+
+    for url in sorted(detail_urls):
+        try:
+            rr = req("GET", url)
+            soup = BeautifulSoup(rr.text, "html.parser")
+            txt = clean(soup.get_text(" "))
+
+            h1 = soup.find("h1")
+            title = clean(h1.get_text(" ") if h1 else "")
+            if not title:
+                continue
+
+            # Do not infer a posting date from unrelated page/news timestamps.
+            # First prefer JobPosting JSON-LD if the employer publishes one.
+            schema_job = _job_from_detail(src, url, rr.text)
+            if schema_job:
+                if schema_job.date >= CUTOFF and schema_job.url not in seen:
+                    seen.add(schema_job.url)
+                    out.append(schema_job)
+                continue
+
+            pd = None
+
+            # Look only for explicit job-posting date labels in visible text.
+            patterns = [
+                r"(?:Date Posted|Posted Date|Posted)\s*:?\s*"
+                r"([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+                r"(?:Date Posted|Posted Date|Posted)\s*:?\s*"
+                r"(\d{1,2}/\d{1,2}/20\d{2})",
+                r"(?:Date Posted|Posted Date|Posted)\s*:?\s*"
+                r"(20\d{2}-\d{2}-\d{2})",
+            ]
+            for pat in patterns:
+                m = re.search(pat, txt, re.I)
+                if m:
+                    pd = pdate(m.group(1))
+                    if pd:
+                        break
+
+            # WordPress may expose the actual publish date in article metadata.
+            # Accept it only when this is clearly a career-opportunity post.
+            if not pd:
+                for meta in soup.find_all("meta"):
+                    prop = (meta.get("property") or meta.get("name") or "").lower()
+                    if prop in {
+                        "article:published_time",
+                        "date",
+                        "datepublished",
+                    }:
+                        d = pdate(meta.get("content") or "")
+                        if d:
+                            pd = d
+                            break
+
+            if not pd or pd < CUTOFF:
+                continue
+
+            # Prefer the central content area and strip application boilerplate
+            # only by choosing the article/main container, not by truncating text.
+            main = (
+                soup.find("main")
+                or soup.find("article")
+                or soup.find(attrs={"class": re.compile(r"(entry-content|post-content|job-content)", re.I)})
+                or soup
+            )
+            desc = clean(main.get_text(" "))
+            if len(desc) < 250:
+                continue
+
+            # Infer location only from explicit location labels when available.
+            loc = ""
+            for pat in (
+                r"(?:Job Location|Location)\s*:?\s*([A-Za-z0-9 .,'/\-&]+?)(?=\s+(?:Job Type|Employment Type|Category|Apply|Description)\b|$)",
+                r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
+            ):
+                m = re.search(pat, txt)
+                if m:
+                    loc = clean(m.group(1))
+                    break
+
+            # The page itself contains "Apply for this position", so the detail
+            # URL is also the live application URL.
+            canonical = url.split("#", 1)[0]
+            jid = hashlib.sha1(canonical.encode()).hexdigest()[:16]
+
+            out.append(
+                Job(
+                    jid,
+                    title,
+                    src["Company"],
+                    desc,
+                    pd,
+                    jobtype(title, txt),
+                    category(title, desc, src["Industry"], src["Company"]),
+                    canonical,
+                    canonical,
+                    "https://connoisseurmedia.com/",
+                    "",
+                    normalize_work_arrangement(desc, loc or txt),
+                    loc,
+                    "",
+                    infer_country(loc or txt, src["Company"], desc),
+                )
+            )
+            seen.add(canonical)
+
+        except Exception:
+            continue
+
+    return out
+
+
+def _isolved_parts(url):
+    """Return (origin, company slug) for common iSolved Hire URLs."""
+    p = urlparse(url)
+    host = p.netloc.lower()
+    parts = [x for x in p.path.split("/") if x]
+
+    # Common patterns:
+    # https://jobs.ourcareerpages.com/job/...  (iSolved legacy)
+    # https://recruiting2.ultipro... is not iSolved and should not match.
+    if "ourcareerpages.com" in host:
+        slug = ""
+        q = parse_qs(p.query)
+        for key in ("ccp", "company", "client", "cid"):
+            if q.get(key):
+                slug = clean(q[key][0])
+                break
+        return f"{p.scheme or 'https'}://{p.netloc}", slug
+
+    if "isolvedhire.com" in host or "isolved.com" in host:
+        slug = parts[0] if parts else ""
+        return f"{p.scheme or 'https'}://{p.netloc}", slug
+
+    return None
+
+
+def _isolved_date(raw):
+    s = html.unescape(raw or "").replace("\\/", "/")
+    for pat in (
+        r"(?:Posted|Date Posted|Posting Date)\s*:?\s*"
+        r"([A-Za-z]+\s+\d{1,2},\s+20\d{2})",
+        r"(?:Posted|Date Posted|Posting Date)\s*:?\s*"
+        r"(\d{1,2}/\d{1,2}/20\d{2})",
+        r'["\'](?:datePosted|postedDate|postingDate)["\']\s*:\s*["\']([^"\']+)["\']',
+    ):
+        m = re.search(pat, s, re.I)
+        if m:
+            d = pdate(strip_html(m.group(1)))
+            if d:
+                return d
+    return None
+
+
+def _isolved_job_links(base_url, raw):
+    raw2 = html.unescape(raw or "").replace("\\/", "/")
+    out = set()
+    patterns = [
+        r'https?://[^"\'<>\s]+ourcareerpages\.com/job/[^"\'<>\s]+',
+        r'https?://[^"\'<>\s]+isolvedhire\.com/[^"\'<>\s]+',
+        r'/job/[^"\'<>\s]+',
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, raw2, re.I):
+            u = urljoin(base_url, m.group(0))
+            host = urlparse(u).netloc.lower()
+            if "ourcareerpages.com" in host or "isolvedhire.com" in host:
+                out.add(u.split("#",1)[0])
+    return out
+
+
+def _isolved_detail(src, url, raw, allow_undated_current_listing=False):
+    # Prefer structured JobPosting when available.
+    j = _job_from_detail(src, url, raw)
+    if j:
+        return j
+
+    soup = BeautifulSoup(raw, "html.parser")
+    txt = clean(soup.get_text(" "))
+
+    pd = _isolved_date(raw)
+    # Some iSolved current-list boards omit post dates. Only assign the crawl
+    # date when this detail was explicitly linked from a live "Current Job
+    # Listings" page, which is an affirmative active-status signal.
+    if allow_undated_current_listing and (not pd or pd < CUTOFF):
+        # The live current listings board is the active status signal; detail pages may retain old dates.
+        pd = TODAY
+    if not pd or pd < CUTOFF:
+        return None
+
+    h1 = soup.find("h1")
+    title = clean(h1.get_text(" ") if h1 else "")
+    if not title:
+        node = soup.find(attrs={"class": re.compile(r"(job.?title|position.?title)", re.I)})
+        title = clean(node.get_text(" ") if node else "")
+    if not title and soup.title:
+        title = clean(soup.title.get_text(" "))
+        title = re.sub(r"\s*[-|]\s*(?:Zimmer Communications )?Jobs?\s*$", "", title, flags=re.I)
+    if not title:
+        return None
+
+    main = (
+        soup.find(attrs={"class": re.compile(r"(job.?description|job.?details|position.?details)", re.I)})
+        or soup.find("main")
+        or soup.find("article")
+        or soup
+    )
+    desc = clean(main.get_text(" "))
+    if len(desc) < 200:
+        return None
+
+    loc = ""
+    for pat in (
+        r"(?:Location|Job Location)\s*:?\s*([A-Za-z0-9 .,'/\-&]+?)(?=\s+(?:Job Type|Employment Type|Category|Department|Posted|$))",
+        r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
+    ):
+        m = re.search(pat, txt)
+        if m:
+            loc = clean(m.group(1))
+            break
+
+    jid = ""
+    q = parse_qs(urlparse(url).query)
+    for k in ("jobid", "jobId", "id", "job"):
+        if q.get(k):
+            jid = clean(q[k][0])
+            break
+    if not jid:
+        m = re.search(r"/job/([^/?#]+)", url, re.I)
+        if m:
+            jid = clean(m.group(1))
+    if not jid:
+        m = re.search(r"/iframe/\d+/(\d+)\.html$", url, re.I)
+        if m:
+            jid = clean(m.group(1))
+    if not jid:
+        jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+
+    canonical = url.split("#",1)[0]
+
+    return Job(
+        jid,
+        title,
+        src["Company"],
+        desc,
+        pd,
+        jobtype(title, txt),
+        category(title, desc, src["Industry"], src["Company"]),
+        canonical,
+        src["URL"],
+        src["URL"],
+        "",
+        normalize_work_arrangement(desc, loc or txt),
+        loc,
+        "",
+        infer_country(loc or txt, src["Company"], desc),
+    )
+
+
+def isolved(src):
+    """Dedicated iSolved/OurCareerPages collector.
+
+    Enumerates public job-detail URLs from listing pages and embedded state,
+    follows same-host pagination, and only emits jobs with an explicit posting
+    date inside the MJR window.
+    """
+    parts = _isolved_parts(src["URL"])
+    if not parts:
+        return ats_html(src)
+
+    origin, slug = parts
+    queue = [src["URL"]]
+    seen_pages = set()
+    details = set()
+    current_listing_details = set()
+
+    while queue and len(seen_pages) < 80 and len(details) < 2500:
+        page = queue.pop(0)
+        key = page.rstrip("/")
+        if key in seen_pages:
+            continue
+        seen_pages.add(key)
+
+        r = req("GET", page)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # Visible detail links.
+        page_text = clean(soup.get_text(" "))
+        is_current_listing = bool(
+            re.search(r"Current Job Listings", page_text, re.I)
+            and re.search(r"current openings", page_text, re.I)
+        )
+        for a in soup.find_all("a", href=True):
+            h = urljoin(page, a["href"])
+            hp = urlparse(h)
+            host = hp.netloc.lower()
+            if not ("ourcareerpages.com" in host or "isolvedhire.com" in host):
+                continue
+
+            is_iframe_detail = bool(re.search(r"/iframe/\d+/\d+\.html$", hp.path, re.I))
+            if "/job/" in hp.path.lower() or is_iframe_detail:
+                detail_url = h.split("#",1)[0]
+                details.add(detail_url)
+                if is_current_listing:
+                    current_listing_details.add(detail_url)
+                continue
+
+            # Follow listing/pagination links on same platform.
+            hp2 = urlparse(h)
+            if (
+                "admin.isolvedhire.com" in hp2.netloc.lower()
+                or hp2.path.lower().startswith("/help")
+                or "/help/" in hp2.path.lower()
+            ):
+                continue
+            if h.rstrip("/") not in seen_pages:
+                queue.append(h)
+
+        details.update(_isolved_job_links(page, r.text))
+
+        for h in _listing_next_links(page, soup):
+            hp = urlparse(h)
+            host = hp.netloc.lower()
+            if (
+                ("ourcareerpages.com" in host or "isolvedhire.com" in host)
+                and "admin.isolvedhire.com" not in host
+                and not hp.path.lower().startswith("/help")
+                and "/help/" not in hp.path.lower()
+                and h.rstrip("/") not in seen_pages
+            ):
+                queue.append(h)
+
+    out = []
+    seen_ids = set()
+    for detail_index, url in enumerate(sorted(details)):
+        try:
+            rr = req("GET", url)
+            final_url = str(getattr(rr, "url", "") or url)
+            fu = urlparse(final_url)
+            if (
+                "admin.isolvedhire.com" in fu.netloc.lower()
+                or fu.path.lower().startswith("/help")
+                or "/help/" in fu.path.lower()
+            ):
+                continue
+            j = _isolved_detail(
+                src,
+                final_url,
+                rr.text,
+                allow_undated_current_listing=final_url.split("#", 1)[0] in current_listing_details,
+            )
+            if j and j.id not in seen_ids:
+                seen_ids.add(j.id)
+                out.append(j)
         except Exception:
             continue
 
