@@ -28,9 +28,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '' && github.ref || 'main' }}
 
       - name: Sync checkout to latest main
+        if: ${{ !(github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '') }}
         shell: bash
         run: |
           git fetch origin main
