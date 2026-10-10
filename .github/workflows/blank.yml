@@ -25,17 +25,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
+      - name: Check out selected test branch
         uses: actions/checkout@v4
         with:
-          ref: main
-
-      - name: Sync checkout to latest main
-        shell: bash
-        run: |
-          git fetch origin main
-          git checkout main
-          git reset --hard origin/main
+          ref: ${{ github.ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
