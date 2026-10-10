@@ -4731,6 +4731,91 @@ def federated_media(src):
     return out
 
 
+def adams_radio_group(src):
+    """Collect Adams Radio Group's dated WordPress career posts."""
+    start = src["URL"]
+    detail_urls = set()
+    try:
+        r = req("GET", start)
+        soup = BeautifulSoup(r.text, "html.parser")
+        for a in soup.find_all("a", href=True):
+            url = urljoin(start, a["href"]).split("#", 1)[0]
+            if re.search(r"/20\d{2}/\d{1,2}/\d{1,2}/[^/]+/?$", url):
+                detail_urls.add(url)
+    except Exception as e:
+        print(f"Adams Radio careers listing failed: {type(e).__name__}")
+
+    # The careers page is WordPress-based; its public feed can expose posts
+    # when the landing page omits a link from the server-rendered HTML.
+    for feed_url in (urljoin(start, "/feed/"),):
+        try:
+            raw = req("GET", feed_url).text or ""
+            for match in re.finditer(r"https?://[^/<\s\"']+/20\d{2}/\d{1,2}/\d{1,2}/[^<\s\"']+", raw, re.I):
+                detail_urls.add(html.unescape(match.group(0)).rstrip(".,)"))
+        except Exception:
+            pass
+
+    out, seen = [], set()
+    for url in sorted(detail_urls):
+        try:
+            rr = req("GET", url)
+            soup = BeautifulSoup(rr.text, "html.parser")
+            job = _job_from_detail(src, url, rr.text)
+            if job:
+                if job.url not in seen:
+                    seen.add(job.url)
+                    out.append(job)
+                continue
+
+            article = soup.find("article") or soup.find("main") or soup
+            text = clean(article.get_text(" "))
+            title_node = article.find("h1") or soup.find("h1")
+            title = clean(title_node.get_text(" ") if title_node else "")
+            if not title or len(text) < 250:
+                continue
+
+            date_value = ""
+            for candidate in (
+                soup.find("meta", property="article:published_time"),
+                soup.find("meta", attrs={"name": "date"}),
+                soup.find("time", attrs={"datetime": True}),
+            ):
+                if candidate:
+                    date_value = candidate.get("content") or candidate.get("datetime") or candidate.get_text(" ")
+                    if date_value:
+                        break
+            pd = pdate(date_value) if date_value else None
+            if not pd:
+                m = re.search(r"\b([A-Za-z]+\s+\d{1,2},\s+20\d{2})\b", text[:6000])
+                pd = pdate(m.group(1)) if m else None
+            # Socast WordPress permalinks include the publication date even when
+            # the rendered page omits machine-readable date metadata.
+            if not pd:
+                path_date = re.search(r"/(20\d{2})/(\d{1,2})/(\d{1,2})/", url)
+                if path_date:
+                    pd = pdate("-".join(path_date.groups()))
+            if not pd or pd < CUTOFF:
+                continue
+
+            loc_match = re.search(r"\b([A-Z][A-Z .'-]+,\s*[A-Z]{2})\b", text[:700])
+            loc = clean(loc_match.group(1).title()) if loc_match else ""
+            desc = clean(article.get_text(" ", strip=True))
+            jid = hashlib.sha1(url.encode()).hexdigest()[:16]
+            out.append(Job(
+                jid, title, src["Company"], desc, pd, jobtype(title, desc),
+                category(title, desc, src["Industry"], src["Company"]),
+                url, url, start, "",
+                normalize_work_arrangement(desc, loc or text), loc, "",
+                infer_country(loc or text, src["Company"], desc),
+            ))
+            seen.add(url)
+        except Exception:
+            continue
+
+    print(f"Adams Radio careers: details={len(detail_urls)} fresh={len(out)}")
+    return out
+
+
 def connoisseur_media(src):
     """Direct collector for Connoisseur Media's current WordPress careers site.
 
@@ -13909,6 +13994,8 @@ def main():
                 if company_key == "renda media"
                 else ashby(s)
                 if "ashby" in a or "ashbyhq.com" in s.get("URL", "").lower()
+                else adams_radio_group(s)
+                if company_key == "adams radio group"
                 else []
                 if company_key == "audacy"
                 else nrg_paylocity(s)
