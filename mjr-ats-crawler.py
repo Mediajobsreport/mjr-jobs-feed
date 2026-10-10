@@ -6935,7 +6935,7 @@ def bell_phenom(src):
                 country=country,
             ))
     except Exception as e:
-        print(f"Bell Media Phenom error: {type(e).__name__}: {e}")
+        import traceback; traceback.print_exc(); print(f"Bell Media Phenom error: {type(e).__name__}: {e}")
     return out
 
 def wbd_phenom(src):
