@@ -4221,6 +4221,7 @@ def paycom(src):
     queue = [start]
     seen_pages = set()
     details = set()
+    current_listing_details = set()
 
     while queue and len(seen_pages) < 80 and len(details) < 3000:
         page = queue.pop(0)
@@ -4946,7 +4947,7 @@ def _isolved_job_links(base_url, raw):
     return out
 
 
-def _isolved_detail(src, url, raw):
+def _isolved_detail(src, url, raw, allow_undated_current_listing=False):
     # Prefer structured JobPosting when available.
     j = _job_from_detail(src, url, raw)
     if j:
@@ -4956,6 +4957,11 @@ def _isolved_detail(src, url, raw):
     txt = clean(soup.get_text(" "))
 
     pd = _isolved_date(raw)
+    # Some iSolved current-list boards omit post dates. Only assign the crawl
+    # date when this detail was explicitly linked from a live "Current Job
+    # Listings" page, which is an affirmative active-status signal.
+    if not pd and allow_undated_current_listing:
+        pd = TODAY
     if not pd or pd < CUTOFF:
         return None
 
@@ -5048,6 +5054,11 @@ def isolved(src):
         soup = BeautifulSoup(r.text, "html.parser")
 
         # Visible detail links.
+        page_text = clean(soup.get_text(" "))
+        is_current_listing = bool(
+            re.search(r"Current Job Listings", page_text, re.I)
+            and re.search(r"current openings", page_text, re.I)
+        )
         for a in soup.find_all("a", href=True):
             h = urljoin(page, a["href"])
             hp = urlparse(h)
@@ -5055,8 +5066,12 @@ def isolved(src):
             if not ("ourcareerpages.com" in host or "isolvedhire.com" in host):
                 continue
 
-            if "/job/" in hp.path.lower():
-                details.add(h.split("#",1)[0])
+            is_iframe_detail = bool(re.search(r"/iframe/\d+/\d+\.html$", hp.path, re.I))
+            if "/job/" in hp.path.lower() or is_iframe_detail:
+                detail_url = h.split("#",1)[0]
+                details.add(detail_url)
+                if is_current_listing:
+                    current_listing_details.add(detail_url)
                 continue
 
             # Follow listing/pagination links on same platform.
@@ -5097,7 +5112,12 @@ def isolved(src):
                 or "/help/" in fu.path.lower()
             ):
                 continue
-            j = _isolved_detail(src, final_url, rr.text)
+            j = _isolved_detail(
+                src,
+                final_url,
+                rr.text,
+                allow_undated_current_listing=final_url.split("#", 1)[0] in current_listing_details,
+            )
             if j and j.id not in seen_ids:
                 seen_ids.add(j.id)
                 out.append(j)
