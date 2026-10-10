@@ -5163,7 +5163,7 @@ def _direct_board_candidate_links(base_url, raw):
         r"/job/", r"/jobs/", r"/job-detail", r"/jobdetails",
         r"/career-opportunity/", r"/positions?/", r"/opportunity/",
         r"/job-openings?/", r"/careers/jobs/",
-        r"/(?:uncategorized|careers)/20\\d{2}/\\d{1,2}/",
+        r"/(?:uncategorized|careers)/20[0-9]{2}/[0-9]{1,2}/",
     )
 
     for a in soup.find_all("a", href=True):
