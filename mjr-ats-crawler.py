@@ -5113,6 +5113,7 @@ BATCH_DIRECT_COMPANIES = {
     "bmi",
     "associated press (ap)",
     "christian music broadcasters (cmb)",
+    "blackburn media",
 }
 
 
@@ -5133,6 +5134,22 @@ def _direct_board_date(raw):
             d = pdate(strip_html(m.group(1)))
             if d:
                 return d
+
+    soup = BeautifulSoup(raw or "", "html.parser")
+    for attrs in (
+        {"property": "article:published_time"},
+        {"name": "datePublished"},
+        {"property": "datePublished"},
+    ):
+        node = soup.find("meta", attrs=attrs)
+        if node and node.get("content"):
+            d = pdate(node["content"])
+            if d:
+                return d
+    for node in soup.find_all("time"):
+        d = pdate(node.get("datetime") or node.get_text(" "))
+        if d:
+            return d
     return None
 
 
@@ -5146,6 +5163,7 @@ def _direct_board_candidate_links(base_url, raw):
         r"/job/", r"/jobs/", r"/job-detail", r"/jobdetails",
         r"/career-opportunity/", r"/positions?/", r"/opportunity/",
         r"/job-openings?/", r"/careers/jobs/",
+        r"/(?:uncategorized|careers)/20\\d{2}/\\d{1,2}/",
     )
 
     for a in soup.find_all("a", href=True):
