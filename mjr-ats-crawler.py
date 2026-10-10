@@ -11161,7 +11161,12 @@ def amazon_music_jobs(src):
                     if not location:
                         location_node = detail.select_one("div.association.location-icon")
                         if location_node:
-                            location = clean(location_node.get_text(" ", strip=True))
+                            location_lines = [
+                                clean(value)
+                                for value in location_node.get_text("\n", strip=True).splitlines()
+                                if clean(value)
+                            ]
+                            location = location_lines[0] if location_lines else ""
                     posted = row["date"]
 
                     city, state = "", ""
