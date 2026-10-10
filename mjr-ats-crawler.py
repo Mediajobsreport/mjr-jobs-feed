@@ -11011,9 +11011,23 @@ def graham_media_jobs(src):
                     page.goto(url, wait_until="domcontentloaded", timeout=60000)
                     page.wait_for_timeout(500)
                     detail = BeautifulSoup(page.content(), "html.parser")
-                    heading = detail.find("h1")
-                    title = clean(heading.get_text(" ")) if heading else ""
+                    title = next(
+                        (
+                            clean(heading.get_text(" "))
+                            for heading in detail.find_all(["h1", "h2", "h3"])
+                            if clean(heading.get_text(" "))
+                            and clean(heading.get_text(" ")).lower() not in {
+                                "graham media group", "careers", "our careers"
+                            }
+                        ),
+                        "",
+                    )
                     if not title:
+                        print(
+                            f"Graham Media missing title: url={url}, "
+                            f"page_url={page.url}, page_title={page.title()!r}, "
+                            f"text={clean(detail.get_text(' '))[:180]!r}"
+                        )
                         continue
                     main = detail.find("article") or detail.find("main") or detail
                     description = format_description(str(main))
