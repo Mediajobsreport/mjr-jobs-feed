@@ -10971,6 +10971,60 @@ def associated_press(src):
     return out
 
 
+def graham_media_jobs(src):
+    """Enumerate dated job-post articles on Graham Media's Squarespace careers page."""
+    response = req("GET", src["URL"])
+    soup = BeautifulSoup(response.text, "html.parser")
+    post_urls = set()
+    pattern = re.compile(r"/gmg-careers/(20\\d{2})/(\\d{1,2})/(\\d{1,2})/[^/?#]+", re.I)
+    for anchor in soup.find_all("a", href=True):
+        url = urljoin(src["URL"], anchor["href"])
+        parsed = urlparse(url)
+        match = pattern.search(parsed.path)
+        if parsed.netloc.lower() == urlparse(src["URL"]).netloc.lower() and match:
+            post_urls.add(url)
+
+    out = []
+    for url in sorted(post_urls):
+        try:
+            match = pattern.search(urlparse(url).path)
+            posted = date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            if posted < CUTOFF:
+                continue
+            page = req("GET", url)
+            detail = BeautifulSoup(page.text, "html.parser")
+            heading = detail.find("h1")
+            title = clean(heading.get_text(" ")) if heading else ""
+            if not title:
+                continue
+            main = detail.find("article") or detail.find("main") or detail
+            description = format_description(str(main))
+            if len(strip_html(description)) < 200:
+                continue
+            out.append(
+                Job(
+                    hashlib.sha1(url.encode()).hexdigest()[:16],
+                    title,
+                    src["Company"],
+                    description,
+                    posted,
+                    jobtype(title, description),
+                    category(title, description, src["Industry"], src["Company"]),
+                    url,
+                    src["URL"],
+                    src["URL"],
+                    "",
+                    normalize_work_arrangement(description, description),
+                    "",
+                    "",
+                    infer_country(description, src["Company"], description),
+                )
+            )
+        except (ValueError, requests.RequestException):
+            continue
+    return out
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -14064,6 +14118,8 @@ def main():
                 if "greenhouse" in a
                 else lever(s)
                 if "lever" in a or "jobs.lever.co" in s.get("URL", "").lower()
+                else graham_media_jobs(s)
+                if company_key == "graham media"
                 else paylocity(s)
                 if "paylocity" in a
                 else hubbard_adp_cx(s)
