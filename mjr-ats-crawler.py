@@ -10977,11 +10977,13 @@ def graham_media_jobs(src):
     soup = BeautifulSoup(response.text, "html.parser")
     post_urls = set()
     pattern = re.compile(r"/gmg-careers/(20\d{2})/(\d{1,2})/(\d{1,2})/[^/?#]+", re.I)
+    source_host = (urlparse(src["URL"]).hostname or "").lower().removeprefix("www.")
     for anchor in soup.find_all("a", href=True):
         url = urljoin(src["URL"], anchor["href"])
         parsed = urlparse(url)
+        linked_host = (parsed.hostname or "").lower().removeprefix("www.")
         match = pattern.search(parsed.path)
-        if parsed.netloc.lower() == urlparse(src["URL"]).netloc.lower() and match:
+        if linked_host == source_host and match:
             post_urls.add(url)
 
     out = []
