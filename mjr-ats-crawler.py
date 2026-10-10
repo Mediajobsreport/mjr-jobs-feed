@@ -10788,6 +10788,12 @@ def _v28_before_request(url):
     if host == "eevd.fa.us6.oraclecloud.com":
         host_cap = max(host_cap, int(os.getenv("MJR_HEARST_ORACLE_REQUEST_CAP", "400")))
 
+    # Dow Jones has a large Workday board. The collector filters listings by
+    # postedOn before requesting details, so permit enough requests for the
+    # current window without changing the default cap for other tenants.
+    if host == "dowjones.wd1.myworkdayjobs.com":
+        host_cap = max(host_cap, int(os.getenv("MJR_DOWJONES_WORKDAY_REQUEST_CAP", "350")))
+
     if count >= host_cap:
         raise RuntimeError(f"v28 domain request cap reached for {host}: {host_cap}")
     _v28_domain_counts[host] = count + 1
