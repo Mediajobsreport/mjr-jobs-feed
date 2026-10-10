@@ -4788,6 +4788,12 @@ def adams_radio_group(src):
             if not pd:
                 m = re.search(r"\b([A-Za-z]+\s+\d{1,2},\s+20\d{2})\b", text[:6000])
                 pd = pdate(m.group(1)) if m else None
+            # Socast WordPress permalinks include the publication date even when
+            # the rendered page omits machine-readable date metadata.
+            if not pd:
+                path_date = re.search(r"/(20\d{2})/(\d{1,2})/(\d{1,2})/", url)
+                if path_date:
+                    pd = pdate("-".join(path_date.groups()))
             if not pd or pd < CUTOFF:
                 continue
 
