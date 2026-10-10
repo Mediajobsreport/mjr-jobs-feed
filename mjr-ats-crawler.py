@@ -4740,7 +4740,7 @@ def adams_radio_group(src):
         soup = BeautifulSoup(r.text, "html.parser")
         for a in soup.find_all("a", href=True):
             url = urljoin(start, a["href"]).split("#", 1)[0]
-            if re.search(r"/20\\d{2}/\\d{1,2}/\\d{1,2}/[^/]+/?$", url):
+            if re.search(r"/20\d{2}/\d{1,2}/\d{1,2}/[^/]+/?$", url):
                 detail_urls.add(url)
     except Exception as e:
         print(f"Adams Radio careers listing failed: {type(e).__name__}")
@@ -4750,7 +4750,7 @@ def adams_radio_group(src):
     for feed_url in (urljoin(start, "feed/"), urljoin(start, "/feed/")):
         try:
             raw = req("GET", feed_url).text or ""
-            for match in re.finditer(r"https?://[^<\\s\"']+/20\\d{2}/\\d{1,2}/\\d{1,2}/[^<\\s\"']+", raw, re.I):
+            for match in re.finditer(r"https?://[^<\s\"']+/20\d{2}/\d{1,2}/\d{1,2}/[^<\s\"']+", raw, re.I):
                 detail_urls.add(html.unescape(match.group(0)).rstrip(".,)"))
         except Exception:
             pass
@@ -4786,12 +4786,12 @@ def adams_radio_group(src):
                         break
             pd = pdate(date_value) if date_value else None
             if not pd:
-                m = re.search(r"\\b([A-Za-z]+\\s+\\d{1,2},\\s+20\\d{2})\\b", text[:1000])
+                m = re.search(r"\b([A-Za-z]+\s+\d{1,2},\s+20\d{2})\b", text[:1000])
                 pd = pdate(m.group(1)) if m else None
             if not pd or pd < CUTOFF:
                 continue
 
-            loc_match = re.search(r"\\b([A-Z][A-Z .'-]+,\\s*[A-Z]{2})\\b", text[:700])
+            loc_match = re.search(r"\b([A-Z][A-Z .'-]+,\s*[A-Z]{2})\b", text[:700])
             loc = clean(loc_match.group(1).title()) if loc_match else ""
             desc = clean(article.get_text(" ", strip=True))
             jid = hashlib.sha1(url.encode()).hexdigest()[:16]
