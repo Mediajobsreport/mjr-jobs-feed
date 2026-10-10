@@ -4970,6 +4970,9 @@ def _isolved_detail(src, url, raw, allow_undated_current_listing=False):
     if not title:
         node = soup.find(attrs={"class": re.compile(r"(job.?title|position.?title)", re.I)})
         title = clean(node.get_text(" ") if node else "")
+    if not title and soup.title:
+        title = clean(soup.title.get_text(" "))
+        title = re.sub(r"\s*[-|]\s*(?:Zimmer Communications )?Jobs?\s*$", "", title, flags=re.I)
     if not title:
         return None
 
