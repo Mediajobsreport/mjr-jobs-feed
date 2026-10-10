@@ -10058,94 +10058,85 @@ def npg_adp_cx_rendered(src):
             page.goto(start, wait_until="domcontentloaded", timeout=45000)
             page.wait_for_timeout(3500)
 
-            # ADP's CX board does not populate the results until Search is
-            # submitted, even when all search fields are blank.
+            # ADP's CX board does not populate results until Search is submitted.
             search = page.get_by_role("button", name=re.compile(r"^Search$", re.I))
             if search.count():
                 search.first.click()
             page.get_by_text(re.compile(r"Search results loaded|jobs found", re.I)).wait_for(timeout=30000)
             page.wait_for_timeout(1000)
 
-            for page_number in range(1, 6):
-                items = page.get_by_role("listitem")
+            for page_number in range(1, 5):
+                # ADP renders one title button per result card; headings in the
+                # detail panel are excluded because they have no same-title button.
+                headings = page.get_by_role("heading")
                 cards = []
-                for idx in range(items.count()):
-                    item = items.nth(idx)
+                occurrences = {}
+                for idx in range(headings.count()):
                     try:
-                        heading = item.get_by_role("heading").first
-                        title = clean(heading.inner_text(timeout=1000))
-                        if title and item.get_by_role("button", name=title, exact=True).count():
-                            cards.append(title)
+                        title = clean(headings.nth(idx).inner_text(timeout=1000))
+                        matches = page.get_by_role("button", name=title, exact=True)
+                        if title and matches.count():
+                            occurrence = occurrences.get(title, 0)
+                            cards.append((title, occurrence))
+                            occurrences[title] = occurrence + 1
                     except Exception:
                         continue
+                print(f"NPG ADP CX page {page_number}: {len(cards)} result cards")
 
-                for title in cards:
+                for title, occurrence in cards:
+                    opened = False
                     try:
-                        page.get_by_role("button", name=title, exact=True).first.click(timeout=5000)
+                        page.get_by_role("button", name=title, exact=True).nth(occurrence).click(timeout=10000)
+                        opened = True
                         detail = page.locator(".cx-job-details-page")
-                        detail.wait_for(timeout=12000)
+                        detail.wait_for(state="visible", timeout=15000)
                         detail_text = clean(detail.inner_text(timeout=5000))
                         detail_url = page.url
                         req_match = re.search(r"[?&]reqId=([^&]+)", detail_url, re.I)
-                        if not req_match or detail_url in seen:
-                            back = page.get_by_role("button", name=re.compile(r"^Back$", re.I))
-                            if back.count():
-                                back.first.click()
-                                page.wait_for_timeout(500)
-                            continue
-                        seen.add(detail_url)
-
-                        title_node = detail.get_by_role("heading").first
-                        actual_title = clean(title_node.inner_text(timeout=2000)) if title_node.count() else title
-                        lines = [clean(x) for x in detail_text.splitlines() if clean(x)]
-                        loc = ""
-                        for i, line in enumerate(lines):
-                            if line.lower().rstrip(":") in {"location", "job location"} and i + 1 < len(lines):
-                                loc = lines[i + 1]
-                                break
-                        if not loc:
-                            mloc = re.search(r"(?im)^Location\s*:\s*(.+)$", detail_text)
-                            loc = clean(mloc.group(1)) if mloc else ""
-                        description = detail_text
-                        if len(description) < 200:
-                            back = page.get_by_role("button", name=re.compile(r"^Back$", re.I))
-                            if back.count():
-                                back.first.click()
-                            continue
-
-                        key = detail_url.rstrip("/").lower()
-                        previous = load_state().get(key, {}).get("job", {})
-                        posted = pdate(previous.get("date")) or TODAY
-                        city, state, country = _split_adp_location(loc)
-                        if not country:
-                            country = infer_country(loc, src["Company"], description)
-                        jt = jobtype(actual_title, description)
-                        out.append(Job(
-                            req_match.group(1), actual_title, src["Company"], description,
-                            posted, jt, category(actual_title, description, src["Industry"], src["Company"]),
-                            detail_url, src["URL"], detail_url, "",
-                            normalize_work_arrangement(description, loc, actual_title),
-                            city, state, country,
-                        ))
-                        back = page.get_by_role("button", name=re.compile(r"^Back$", re.I))
-                        if back.count():
-                            back.first.click()
-                            page.wait_for_timeout(500)
-                    except Exception:
+                        if req_match and detail_url not in seen and len(detail_text) >= 200:
+                            seen.add(detail_url)
+                            title_node = detail.get_by_role("heading").first
+                            actual_title = clean(title_node.inner_text(timeout=2000)) if title_node.count() else title
+                            lines = [clean(x) for x in detail_text.splitlines() if clean(x)]
+                            loc = ""
+                            for i, line in enumerate(lines):
+                                if line.lower().rstrip(":") in {"location", "job location"} and i + 1 < len(lines):
+                                    loc = lines[i + 1]
+                                    break
+                            if not loc:
+                                mloc = re.search(r"(?im)^Location\s*:\s*(.+)$", detail_text)
+                                loc = clean(mloc.group(1)) if mloc else ""
+                            oldjob = load_state().get(detail_url.rstrip("/").lower(), {}).get("job", {})
+                            posted = pdate(oldjob.get("date")) or TODAY
+                            city, state, country = _split_adp_location(loc)
+                            if not country:
+                                country = infer_country(loc, src["Company"], detail_text)
+                            jt = jobtype(actual_title, detail_text)
+                            out.append(Job(
+                                req_match.group(1), actual_title, src["Company"], detail_text,
+                                posted, jt, category(actual_title, detail_text, src["Industry"], src["Company"]),
+                                detail_url, src["URL"], detail_url, "",
+                                normalize_work_arrangement(detail_text, loc, actual_title),
+                                city, state, country,
+                            ))
+                    except Exception as e:
+                        print(f"NPG ADP CX detail skipped ({title[:70]}): {type(e).__name__}")
+                    finally:
+                        # Opening a job detail uses browser history, with no
+                        # in-page Back button in this ADP tenant.
                         try:
-                            back = page.get_by_role("button", name=re.compile(r"^Back$", re.I))
-                            if back.count():
-                                back.first.click()
-                                page.wait_for_timeout(500)
+                            if opened:
+                                page.go_back(wait_until="domcontentloaded", timeout=15000)
+                                page.wait_for_timeout(700)
                         except Exception:
                             pass
 
                 if page_number >= 4:
                     break
                 next_page = page.get_by_role("button", name=f"Page {page_number + 1}", exact=True)
-                if not next_page.count():
+                if not next_page.count() or not next_page.is_enabled():
                     break
-                next_page.click()
+                next_page.click(timeout=10000)
                 page.wait_for_timeout(1200)
             browser.close()
     except Exception as e:
