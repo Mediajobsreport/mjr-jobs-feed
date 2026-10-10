@@ -11379,7 +11379,6 @@ def write_quality_report(
         ):
             add("category_conflict", "warning", j, "Sales title may belong in Sales & Marketing")
 
-    print("BELL_QA_ROWS", json.dumps([row for row in rows if row[2] == "Bell Media"], ensure_ascii=False))
     rows.sort(key=lambda x: (x[1], x[0], x[2].lower(), x[3].lower()))
     with QUALITY_FILE.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
