@@ -10972,59 +10972,78 @@ def associated_press(src):
 
 
 def graham_media_jobs(src):
-    """Enumerate dated job-post articles on Graham Media's Squarespace careers page."""
-    response = req("GET", src["URL"])
-    soup = BeautifulSoup(response.text, "html.parser")
-    post_urls = set()
-    pattern = re.compile(r"/gmg-careers/(20\d{2})/(\d{1,2})/(\d{1,2})/[^/?#]+", re.I)
-    source_host = (urlparse(src["URL"]).hostname or "").lower().removeprefix("www.")
-    for anchor in soup.find_all("a", href=True):
-        url = urljoin(src["URL"], anchor["href"])
-        parsed = urlparse(url)
-        linked_host = (parsed.hostname or "").lower().removeprefix("www.")
-        match = pattern.search(parsed.path)
-        if linked_host == source_host and match:
-            post_urls.add(url)
+    """Collect dated job articles from Graham Media's rendered careers page."""
+    if sync_playwright is None:
+        raise RuntimeError("Playwright is required for Graham Media's rendered careers page")
 
-    out = []
-    for url in sorted(post_urls):
+    source_host = (urlparse(src["URL"]).hostname or "").lower().removeprefix("www.")
+    pattern = re.compile(r"/gmg-careers/(20\d{2})/(\d{1,2})/(\d{1,2})/[^/?#]+", re.I)
+    post_urls = set()
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+        page = browser.new_page(
+            user_agent=SESSION.headers.get(
+                "User-Agent",
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130 Safari/537.36",
+            ),
+            viewport={"width": 1365, "height": 1000},
+        )
         try:
-            match = pattern.search(urlparse(url).path)
-            posted = date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
-            if posted < CUTOFF:
-                continue
-            page = req("GET", url)
-            detail = BeautifulSoup(page.text, "html.parser")
-            heading = detail.find("h1")
-            title = clean(heading.get_text(" ")) if heading else ""
-            if not title:
-                continue
-            main = detail.find("article") or detail.find("main") or detail
-            description = format_description(str(main))
-            if len(strip_html(description)) < 200:
-                continue
-            out.append(
-                Job(
-                    hashlib.sha1(url.encode()).hexdigest()[:16],
-                    title,
-                    src["Company"],
-                    description,
-                    posted,
-                    jobtype(title, description),
-                    category(title, description, src["Industry"], src["Company"]),
-                    url,
-                    src["URL"],
-                    src["URL"],
-                    "",
-                    normalize_work_arrangement(description, description),
-                    "",
-                    "",
-                    infer_country(description, src["Company"], description),
-                )
+            page.goto(src["URL"], wait_until="domcontentloaded", timeout=60000)
+            page.wait_for_timeout(1500)
+            hrefs = page.locator("a[href]").evaluate_all(
+                "(nodes) => nodes.map((node) => node.href)"
             )
-        except (ValueError, requests.RequestException):
-            continue
-    return out
+            for href in hrefs:
+                parsed = urlparse(href)
+                linked_host = (parsed.hostname or "").lower().removeprefix("www.")
+                if linked_host == source_host and pattern.search(parsed.path):
+                    post_urls.add(href)
+
+            out = []
+            for url in sorted(post_urls):
+                match = pattern.search(urlparse(url).path)
+                posted = date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+                if posted < CUTOFF:
+                    continue
+                try:
+                    page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                    page.wait_for_timeout(500)
+                    detail = BeautifulSoup(page.content(), "html.parser")
+                    heading = detail.find("h1")
+                    title = clean(heading.get_text(" ")) if heading else ""
+                    if not title:
+                        continue
+                    main = detail.find("article") or detail.find("main") or detail
+                    description = format_description(str(main))
+                    if len(strip_html(description)) < 200:
+                        continue
+                    out.append(
+                        Job(
+                            hashlib.sha1(url.encode()).hexdigest()[:16],
+                            title,
+                            src["Company"],
+                            description,
+                            posted,
+                            jobtype(title, description),
+                            category(title, description, src["Industry"], src["Company"]),
+                            url,
+                            src["URL"],
+                            src["URL"],
+                            "",
+                            normalize_work_arrangement(description, description),
+                            "",
+                            "",
+                            infer_country(description, src["Company"], description),
+                        )
+                    )
+                except (ValueError, requests.RequestException) as exc:
+                    print(f"Graham Media detail skipped {url}: {exc}")
+            print(f"Graham Media rendered careers board: discovered={len(post_urls)} eligible={len(out)}")
+            return out
+        finally:
+            browser.close()
 
 
 def stingray_jobs(src):
