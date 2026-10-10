@@ -1394,16 +1394,38 @@ def pbs_workday_rendered(src):
                 location = clean(city_match.group(1))
 
             try:
-                page.goto(detail_url, wait_until="domcontentloaded", timeout=45000)
-                page.locator("h1").first.wait_for(state="visible", timeout=20000)
-                title = clean(page.locator("h1").first.inner_text(timeout=10000))
-                desc_locator = page.locator("[data-automation-id='jobPostingDescription']")
-                if desc_locator.count():
-                    desc_text = clean(desc_locator.first.inner_text(timeout=10000))
-                    desc_html = desc_locator.first.evaluate("(el) => el.innerHTML")
-                else:
-                    desc_text = clean(page.locator("main").inner_text(timeout=10000))
-                    desc_html = page.locator("main").first.evaluate("(el) => el.innerHTML")
+                detail_response = req("GET", detail_url)
+                detail_soup = BeautifulSoup(detail_response.text, "html.parser")
+                structured = None
+                for script in detail_soup.find_all("script", type="application/ld+json"):
+                    try:
+                        value = json.loads(script.string or script.get_text() or "{}")
+                    except Exception:
+                        continue
+                    candidates = value if isinstance(value, list) else [value]
+                    structured = next(
+                        (item for item in candidates if isinstance(item, dict)
+                         and str(item.get("@type", "")).lower() == "jobposting"),
+                        None,
+                    )
+                    if structured:
+                        break
+                heading = detail_soup.find("h1")
+                title = clean((structured or {}).get("title") or (
+                    heading.get_text(" ", strip=True) if heading else ""
+                ))
+                desc_node = detail_soup.select_one(
+                    "[data-automation-id='jobPostingDescription'], "
+                    "[itemprop='description'], .job-description, .jobdescription, main"
+                )
+                desc_html = str((structured or {}).get("description") or "")
+                if not desc_html and desc_node:
+                    desc_html = str(desc_node)
+                desc_text = clean(BeautifulSoup(desc_html, "html.parser").get_text(" ", strip=True))
+                if not desc_text and desc_node:
+                    desc_text = clean(desc_node.get_text(" ", strip=True))
+                if not location and structured:
+                    location = get_location_from_jsonld(structured)
             except Exception as exc:
                 print(f"PBS Workday detail skipped {detail_url}: {type(exc).__name__}")
                 continue
