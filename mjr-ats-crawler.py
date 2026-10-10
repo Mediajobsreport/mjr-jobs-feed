@@ -13940,13 +13940,29 @@ def amazon_music_jobs(src):
                     if not location:
                         location_node = detail.select_one("div.association.location-icon")
                         if location_node:
-                            location = clean(location_node.get_text(" ", strip=True))
+                            location_lines = [
+                                clean(value)
+                                for value in location_node.get_text("\n", strip=True).splitlines()
+                                if clean(value)
+                            ]
+                            location = location_lines[0] if location_lines else ""
                     posted = row["date"]
 
                     city, state = "", ""
                     country = infer_country(location, src["Company"], description)
                     parts = [clean(part) for part in location.split(",") if clean(part)]
                     if parts:
+                        tokens = {part.upper() for part in parts}
+                        # MJR's feed is US/Canada focused. Amazon Music's team
+                        # board includes many international openings; never
+                        # label those as US because infer_country defaults US.
+                        foreign_markers = {
+                            "IND", "INDIA", "MEX", "MEXICO", "DEU", "GERMANY",
+                            "JPN", "JAPAN", "GBR", "UNITED KINGDOM", "CRI",
+                            "COSTA RICA",
+                        }
+                        if tokens & foreign_markers:
+                            continue
                         if parts[0].upper() in {"USA", "US", "UNITED STATES"}:
                             city = parts[-1]
                             state = parts[1] if len(parts) > 2 else ""
