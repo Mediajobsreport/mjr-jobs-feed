@@ -11017,7 +11017,12 @@ def graham_media_jobs(src):
                         continue
                     main = detail.find("article") or detail.find("main") or detail
                     description = format_description(str(main))
-                    if len(strip_html(description)) < 200:
+                    description_length = len(strip_html(description))
+                    print(
+                        f"Graham Media detail parse: title={title!r}, "
+                        f"description_chars={description_length}, url={url}"
+                    )
+                    if description_length < 200:
                         continue
                     out.append(
                         Job(
