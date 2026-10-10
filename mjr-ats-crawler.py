@@ -6866,6 +6866,78 @@ def disney_public(src):
     )
 
 
+def bell_phenom(src):
+    """Collect current Bell Media openings from Bell's public Phenom widget."""
+    host = "https://jobs.bell.ca"
+    body = {
+        "lang": "en_ca",
+        "deviceType": "desktop",
+        "country": "ca",
+        "pageName": "search-results",
+        "ddoKey": "refineSearch",
+        "sortBy": "Most relevant",
+        "subsearch": "",
+        "from": 0,
+        "jobs": True,
+        "all_fields": ["category", "location", "brand"],
+        "size": 100,
+    }
+    out = []
+    try:
+        r = req(
+            "POST",
+            host + "/widgets",
+            json=body,
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
+        )
+        r.raise_for_status()
+        payload = r.json()
+        jobs = ((payload.get("refineSearch") or {}).get("data") or {}).get("jobs") or []
+        for item in jobs:
+            if "Media" not in (item.get("multi_category") or []):
+                continue
+            title = clean(item.get("title"))
+            job_id = clean(item.get("jobId") or item.get("reqId"))
+            if not title or not job_id:
+                continue
+            posted = item.get("postedDate") or item.get("dateCreated")
+            try:
+                posted_date = dtparser.parse(str(posted)).date()
+            except Exception:
+                continue
+            if (TODAY - posted_date).days >= retention_days(jobtype(title)):
+                continue
+            location = clean(", ".join(item.get("multi_location") or []))
+            city, state, country = location, "", "US"
+            if re.search(r"washington,?\s*d\.?c\.?", location, re.I):
+                city, state, country = "Washington, D.C.", "DC", "US"
+            elif location:
+                country = clean(item.get("country") or "US")
+                state = clean(item.get("state") or "")
+            slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+            url = f"{host}/ca/en/job/BECACA{job_id}EXTERNALENCA/{slug}"
+            description = item.get("description") or item.get("descriptionTeaser") or ""
+            jt = jobtype(title, description)
+            out.append(Job(
+                id=f"bell-{job_id}",
+                title=title,
+                company=src["Company"],
+                description=format_description(description),
+                date=posted_date,
+                jobtype=jt,
+                category=category(title, description, src.get("Industry", ""), src["Company"]),
+                url=url,
+                source=src["URL"],
+                company_website=src["URL"],
+                logo="",
+                city=city,
+                state=state,
+                country=country,
+            ))
+    except Exception as e:
+        print(f"Bell Media Phenom error: {type(e).__name__}: {e}")
+    return out
+
 def wbd_phenom(src):
     """Warner Bros. Discovery / CNN Phenom People collector.
 
@@ -13937,6 +14009,8 @@ def main():
                 if company_route_key == "fox"
                 else disney_public(s)
                 if company_route_key in {"disney/abc", "espn"}
+                else bell_phenom(s)
+                if company_key == "bell media"
                 else wbd_phenom(s)
                 if company_key == "cnn"
                 else gray_direct(s)
