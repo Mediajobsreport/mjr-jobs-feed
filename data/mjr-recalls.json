@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-10T20:07:38.288Z",
+  "generated": "2026-10-10T23:45:44.015Z",
   "version": "2.4",
   "newestDate": "2026-10-09",
   "stale": false,
@@ -10,7 +10,7 @@
     },
     "CPSC": {
       "ok": true,
-      "count": 10047
+      "count": 9887
     },
     "USDA": {
       "ok": true,
@@ -355,7 +355,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V638000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V638000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
       "score": 125
     },
     {
@@ -2038,7 +2038,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V643000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V643000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V643-4143.pdf",
       "score": 50
     }
   ]
