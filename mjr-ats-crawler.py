@@ -13840,6 +13840,154 @@ def careeronestop_townsquare_test():
     print(f"CareerOneStop Townsquare Media test: {len(rows)} API rows, {len(out)} qualifying jobs")
     return out
 
+def amazon_music_jobs(src):
+    """Collect current Amazon Music roles from Amazon's rendered jobs board."""
+    if sync_playwright is None:
+        raise RuntimeError("Playwright is required for Amazon Music's rendered jobs board")
+
+    listing_url = src["URL"]
+    board_host = (urlparse(listing_url).hostname or "").lower().removeprefix("www.")
+    cards_by_id = {}
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+        page = browser.new_page(
+            user_agent=SESSION.headers.get(
+                "User-Agent",
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130 Safari/537.36",
+            ),
+            viewport={"width": 1365, "height": 1000},
+        )
+        try:
+            page.goto(listing_url, wait_until="domcontentloaded", timeout=60000)
+            page.locator('a[href^="/jobs/"]').first.wait_for(state="attached", timeout=45000)
+            page.wait_for_timeout(1200)
+
+            page_buttons = page.locator(
+                'button[data-test-component="StencilPaginationButton"][data-test-id]'
+            )
+            page_numbers = []
+            for button in page_buttons.all():
+                value = button.get_attribute("data-test-id")
+                if value and value.isdigit():
+                    page_numbers.append(int(value))
+            page_count = min(max(page_numbers or [1]), 10)
+
+            for page_number in range(1, page_count + 1):
+                if page_number > 1:
+                    old_first = page.locator('a[href^="/jobs/"]').first.get_attribute("href")
+                    target = page.locator(
+                        'button[data-test-component="StencilPaginationButton"]'
+                        f'[data-test-id="{page_number}"]'
+                    )
+                    if target.count() == 0:
+                        break
+                    target.click(timeout=15000)
+                    page.wait_for_function(
+                        """(oldHref) => {
+                            const first = document.querySelector('a[href^="/jobs/"]');
+                            return first && first.getAttribute("href") !== oldHref;
+                        }""",
+                        arg=old_first,
+                        timeout=30000,
+                    )
+
+                cards = page.locator('div[class*="job-card-module_root"]')
+                rows = cards.evaluate_all(
+                    """cards => cards.map(card => {
+                        const link = card.querySelector('a[href^="/jobs/"]');
+                        const location = card.querySelector('[class*="map-location-to-element-module_item"]');
+                        const text = card.innerText || "";
+                        const match = text.match(/Updated:\s*(\d{1,2}\/\d{1,2}\/\d{4})/i);
+                        return {
+                            url: link ? new URL(link.href, location?.baseURI || document.baseURI).href : "",
+                            title: link ? (link.innerText || "").trim() : "",
+                            location: location ? (location.innerText || "").trim() : "",
+                            updated: match ? match[1] : ""
+                        };
+                    })"""
+                )
+                for row in rows:
+                    match = re.search(r"/jobs/(\d+)(?:/|$)", urlparse(row.get("url", "")).path)
+                    if not match:
+                        continue
+                    job_id = match.group(1)
+                    if (urlparse(row["url"]).hostname or "").lower().removeprefix("www.") != board_host:
+                        continue
+                    posted = pdate(row.get("updated", ""))
+                    title = clean(row.get("title", ""))
+                    if not posted or not title:
+                        continue
+                    if posted < feed_cutoff(jobtype(title)):
+                        continue
+                    row["id"] = job_id
+                    row["date"] = posted
+                    cards_by_id[job_id] = row
+
+            out = []
+            for row in cards_by_id.values():
+                try:
+                    page.goto(row["url"], wait_until="domcontentloaded", timeout=60000)
+                    page.locator("h1").first.wait_for(state="attached", timeout=30000)
+                    detail = BeautifulSoup(page.content(), "html.parser")
+                    heading = detail.find("h1")
+                    title = clean(heading.get_text(" ")) if heading else row["title"]
+                    body = detail.select_one('[class*="job-detail-body"]') or detail.find("main") or detail
+                    description = format_description(str(body))
+                    if len(strip_html(description)) < 200:
+                        continue
+                    location = clean(row.get("location", ""))
+                    if not location:
+                        location_node = detail.select_one("div.association.location-icon")
+                        if location_node:
+                            location = clean(location_node.get_text(" ", strip=True))
+                    posted = row["date"]
+
+                    city, state = "", ""
+                    country = infer_country(location, src["Company"], description)
+                    parts = [clean(part) for part in location.split(",") if clean(part)]
+                    if parts:
+                        if parts[0].upper() in {"USA", "US", "UNITED STATES"}:
+                            city = parts[-1]
+                            state = parts[1] if len(parts) > 2 else ""
+                        elif parts[-1].upper() in {"USA", "US", "UNITED STATES"}:
+                            city = parts[0]
+                            state = parts[1] if len(parts) > 2 else ""
+                        elif len(parts) >= 2:
+                            city = parts[0]
+                            state = parts[1] if len(parts) > 2 else ""
+                        else:
+                            city = parts[0]
+
+                    out.append(Job(
+                        row["id"],
+                        title,
+                        src["Company"],
+                        description,
+                        posted,
+                        jobtype(title, strip_html(description)),
+                        category(title, description, src["Industry"], src["Company"]),
+                        page.url,
+                        listing_url,
+                        listing_url,
+                        "",
+                        normalize_work_arrangement(description, location, title),
+                        city,
+                        state,
+                        country,
+                    ))
+                except Exception as exc:
+                    print(f"Amazon Music detail skipped {row.get('url')}: {exc}")
+
+            print(
+                f"Amazon Music rendered board: pages={page_count} "
+                f"recent_listings={len(cards_by_id)} validated={len(out)}"
+            )
+            return out
+        finally:
+            browser.close()
+
+
 def main():
     with SOURCES_FILE.open(
         newline="",
@@ -13977,6 +14125,8 @@ def main():
                 if _ats_family(s) == "jazzhr"
                 else ats_html(s)
                 if _ats_family(s)
+                else amazon_music_jobs(s)
+                if company_key == "amazon music"
                 else generic(s)
             )
 
