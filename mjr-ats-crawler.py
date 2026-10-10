@@ -1381,6 +1381,8 @@ def workday(src):
                     chosen = (h, ten, ep, probe)
                     break
             except Exception as e:
+                if company == "pbs":
+                    print(f"PBS_WORKDAY_CANDIDATE_ERROR url={ep} {type(e).__name__}: {e}")
                 last_error = e
         if chosen:
             break
