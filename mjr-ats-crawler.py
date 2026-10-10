@@ -8015,6 +8015,15 @@ def cumulus_v17(src):
             )
             payload = rr.json()
             rows = payload.get("jobs") or [] if isinstance(payload, dict) else []
+            if page_num == 1 and rows:
+                sample = rows[0] if isinstance(rows[0], dict) else {}
+                sample_data = sample.get("data", sample)
+                print(
+                    "Cumulus Jibe response shape:",
+                    "payload_keys=", sorted(payload.keys()) if isinstance(payload, dict) else type(payload).__name__,
+                    "row_keys=", sorted(sample.keys()),
+                    "data_keys=", sorted(sample_data.keys()) if isinstance(sample_data, dict) else type(sample_data).__name__,
+                )
             ids = set()
             for item in rows:
                 if not isinstance(item, dict):
