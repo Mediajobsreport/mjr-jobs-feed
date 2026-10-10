@@ -11060,7 +11060,7 @@ def stingray_jobs(src):
             if len(strip_html(description)) < 200:
                 continue
             location_match = re.search(
-                r"Department\\s+(.+?)\\s+Location\\s+(Montreal|New York|Remote\s*\(USA\))(?=\s|$)",
+                r"Department\s+(.+?)\s+Location\s+(Montreal|New York|Remote\s*\(USA\))(?=\s|$)",
                 plain,
                 re.I,
             )
