@@ -4221,7 +4221,6 @@ def paycom(src):
     queue = [start]
     seen_pages = set()
     details = set()
-    current_listing_details = set()
 
     while queue and len(seen_pages) < 80 and len(details) < 3000:
         page = queue.pop(0)
@@ -5042,6 +5041,7 @@ def isolved(src):
     queue = [src["URL"]]
     seen_pages = set()
     details = set()
+    current_listing_details = set()
 
     while queue and len(seen_pages) < 80 and len(details) < 2500:
         page = queue.pop(0)
