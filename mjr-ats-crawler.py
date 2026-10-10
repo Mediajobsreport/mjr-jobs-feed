@@ -10111,6 +10111,8 @@ def hubbard_adp_cx(src):
                 "jobposting=", bool(re.search(r"""["']?@type["']?\s*:\s*["']JobPosting""", body, re.I)),
                 "title=", page_title,
             )
+            if jid == min(seed_ids):
+                print("Hubbard ADP first detail text sample:", clean(strip_html(body))[:500])
             j = _job_from_detail(src, final, body)
             if not j:
                 j = _radio_recovery_job(src, final, body)
