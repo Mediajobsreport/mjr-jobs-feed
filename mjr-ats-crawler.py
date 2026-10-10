@@ -10083,9 +10083,9 @@ def hubbard_adp_cx(src):
     try:
         landing = req("GET", src["URL"])
         raw = html.unescape(landing.text or "").replace("\\/", "/")
-        for m in re.finditer(r'(?i)reqId(?:%3D|=|["\']?\\s*[:=]\\s*["\'])(500\\d{10})', raw):
+        for m in re.finditer(r'(?i)reqId(?:%3D|=|["\']?\s*[:=]\s*["\'])(500\d{10})', raw):
             seed_ids.add(m.group(1))
-        for m in re.finditer(r'(?i)["\'](?:jobId|requisitionId|reqId)["\']\\s*:\\s*["\']?(500\\d{10})', raw):
+        for m in re.finditer(r'(?i)["\'](?:jobId|requisitionId|reqId)["\']\s*:\s*["\']?(500\d{10})', raw):
             seed_ids.add(m.group(1))
     except Exception:
         pass
@@ -10108,7 +10108,7 @@ def hubbard_adp_cx(src):
                 "url=", final,
                 "bytes=", len(body),
                 "type=", getattr(rr, "headers", {}).get("Content-Type", ""),
-                "jobposting=", bool(re.search(r'["']?@type["']?\s*:\s*["']JobPosting', body, re.I)),
+                "jobposting=", bool(re.search(r"""["']?@type["']?\s*:\s*["']JobPosting""", body, re.I)),
                 "title=", page_title,
             )
             j = _job_from_detail(src, final, body)
