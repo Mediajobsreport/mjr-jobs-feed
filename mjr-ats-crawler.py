@@ -1382,6 +1382,9 @@ def workday(src):
         if chosen:
             break
 
+    if company == "pbs":
+        probe = chosen[3] if chosen else {}
+        print(f"PBS_WORKDAY_PROBE chosen={bool(chosen)} host={chosen[0] if chosen else host} tenant={chosen[1] if chosen else tenant} site={site} keys={sorted(probe.keys()) if isinstance(probe, dict) else type(probe).__name__} total={probe.get('total') if isinstance(probe, dict) else None} postings={len(probe.get('jobPostings') or []) if isinstance(probe, dict) else 0} first={(probe.get('jobPostings') or [])[:3] if isinstance(probe, dict) else []}")
     if not chosen:
         # A valid Workday landing page that no longer exposes a working cxs
         # endpoint should not take down the entire feed.
@@ -1414,6 +1417,8 @@ def workday(src):
             break
 
         for p in posts:
+            if company == "pbs":
+                print("PBS_WORKDAY_LIST_JOB", json.dumps({k: p.get(k) for k in ("title", "postedOn", "locationsText", "externalPath")}, ensure_ascii=False))
             ext = p.get("externalPath") or ""
             if not ext:
                 continue
@@ -1447,9 +1452,13 @@ def workday(src):
                     "GET",
                     f"https://{host}/wday/cxs/{tenant}/{site}{ext}",
                 ).json().get("jobPostingInfo", {})
-            except Exception:
+            except Exception as e:
+                if company == "pbs":
+                    print(f"PBS_WORKDAY_DETAIL_ERROR {ext}: {type(e).__name__}: {e}")
                 continue
 
+            if company == "pbs":
+                print("PBS_WORKDAY_DETAIL", json.dumps({k: info.get(k) for k in ("title", "postedOn", "jobDescription", "jobReqId", "location")}, ensure_ascii=False)[:2000])
             pd = pdate(info.get("postedOn")) or list_pd
             if not pd or pd < CUTOFF:
                 continue
