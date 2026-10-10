@@ -1340,7 +1340,136 @@ def _workday_hosts(host):
     return list(dict.fromkeys(out))
 
 
+def pbs_workday_rendered(src):
+    """Read PBS's public Workday board through its rendered careers UI."""
+    if sync_playwright is None:
+        raise RuntimeError("Playwright unavailable for PBS Workday board")
+    company = src["Company"]
+    listing_url = src["URL"]
+    out = []
+    seen = set()
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(listing_url, wait_until="domcontentloaded", timeout=45000)
+        page.locator("a[href*='/job/']").first.wait_for(state="visible", timeout=30000)
+        entries = page.locator("a[href*='/job/']").evaluate_all(
+            """anchors => anchors.map(a => {
+                let node = a, context = "";
+                for (let i = 0; node && i < 8; i++, node = node.parentElement) {
+                    const text = (node.innerText || "").trim();
+                    if (/posted\s+(?:today|yesterday|\d+\+?\s+days?\s+ago)/i.test(text)) {
+                        context = text;
+                        break;
+                    }
+                }
+                return {href: a.href, title: (a.innerText || "").trim(), context};
+            })"""
+        )
+
+        for entry in entries:
+            detail_url = clean(entry.get("href") or "")
+            if not detail_url or detail_url in seen:
+                continue
+            seen.add(detail_url)
+            context = clean(entry.get("context") or "")
+            date_match = re.search(
+                r"posted\s+(today|yesterday|\d+\+?\s+days?\s+ago)",
+                context,
+                re.I,
+            )
+            posted = pdate(date_match.group(1)) if date_match else None
+            if not posted or posted < CUTOFF:
+                continue
+
+            location = ""
+            remote_match = re.search(r"\b(Remote)\b", context, re.I)
+            city_match = re.search(
+                r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b", context
+            )
+            if remote_match:
+                location = "Remote"
+            elif city_match:
+                location = clean(city_match.group(1))
+
+            try:
+                detail_response = req("GET", detail_url)
+                detail_soup = BeautifulSoup(detail_response.text, "html.parser")
+                structured = None
+                for script in detail_soup.find_all("script", type="application/ld+json"):
+                    try:
+                        value = json.loads(script.string or script.get_text() or "{}")
+                    except Exception:
+                        continue
+                    candidates = value if isinstance(value, list) else [value]
+                    structured = next(
+                        (item for item in candidates if isinstance(item, dict)
+                         and str(item.get("@type", "")).lower() == "jobposting"),
+                        None,
+                    )
+                    if structured:
+                        break
+                heading = detail_soup.find("h1")
+                title = clean((structured or {}).get("title") or (
+                    heading.get_text(" ", strip=True) if heading else ""
+                ))
+                desc_node = detail_soup.select_one(
+                    "[data-automation-id='jobPostingDescription'], "
+                    "[itemprop='description'], .job-description, .jobdescription, main"
+                )
+                desc_html = str((structured or {}).get("description") or "")
+                if not desc_html and desc_node:
+                    desc_html = str(desc_node)
+                desc_text = clean(BeautifulSoup(desc_html, "html.parser").get_text(" ", strip=True))
+                if not desc_text and desc_node:
+                    desc_text = clean(desc_node.get_text(" ", strip=True))
+                if not location and structured:
+                    location = get_location_from_jsonld(structured)
+            except Exception as exc:
+                print(f"PBS Workday detail skipped {detail_url}: {type(exc).__name__}")
+                continue
+
+            if len(desc_text) < 120:
+                continue
+            description = format_description(desc_html or desc_text)
+            role_type = jobtype(title, desc_text)
+            country = "US" if location == "Remote" or location.endswith(", VA") else infer_country(
+                context + " " + desc_text, company, description
+            )
+            if country not in {"US", "CA"}:
+                continue
+            path = urlparse(detail_url).path.rstrip("/")
+            req_match = re.search(r"_(JR\d+)$", path, re.I)
+            identifier = req_match.group(1) if req_match else hashlib.sha1(detail_url.encode()).hexdigest()[:16]
+            out.append(Job(
+                identifier,
+                title or clean(entry.get("title") or ""),
+                company,
+                description,
+                posted,
+                role_type,
+                "Internships" if role_type == "Internship"
+                else category(title, description, src.get("Industry", ""), company),
+                detail_url,
+                listing_url,
+                listing_url,
+                "",
+                normalize_work_arrangement(description, location, title),
+                location,
+                "",
+                country,
+            ))
+        browser.close()
+
+    print(f"PBS Workday rendered board: enumerated={len(seen)} eligible={len(out)}")
+    return out
+
+
 def workday(src):
+    if clean(src.get("Company", "")).lower() == "pbs":
+        return pbs_workday_rendered(src)
+
     host, tenant, site = _discover_workday_endpoint(src["URL"])
 
     if not host or not site:
