@@ -1363,7 +1363,7 @@ def workday(src):
         for ten in tenant_candidates:
             ep = f"https://{h}/wday/cxs/{ten}/{site}/jobs"
             try:
-                probe = req(
+                probe_response = req(
                     "POST",
                     ep,
                     json={
@@ -1373,7 +1373,10 @@ def workday(src):
                         "searchText": "",
                     },
                     headers={"Content-Type": "application/json"},
-                ).json()
+                )
+                probe = probe_response.json()
+                if company == "pbs":
+                    print(f"PBS_WORKDAY_CANDIDATE url={ep} status={probe_response.status_code} type={type(probe).__name__} keys={sorted(probe.keys()) if isinstance(probe, dict) else ''} preview={str(probe)[:1200]}")
                 if isinstance(probe, dict) and ("jobPostings" in probe or "total" in probe):
                     chosen = (h, ten, ep, probe)
                     break
