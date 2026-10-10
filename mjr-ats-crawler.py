@@ -10084,18 +10084,36 @@ def npg_adp_cx_rendered(src):
                 print(f"NPG ADP CX page {page_number}: {len(cards)} result cards")
 
                 for title, occurrence in cards:
-                    opened = False
+                    apply_opened = False
                     try:
                         page.get_by_role("button", name=title, exact=True).nth(occurrence).click(timeout=10000)
-                        opened = True
                         description_label = page.get_by_text("Job Description:", exact=True)
                         description_label.wait_for(state="visible", timeout=15000)
                         detail_raw = description_label.evaluate(
                             "el => el.closest('.details-main-section').innerText"
                         )
                         detail_text = clean(detail_raw)
-                        detail_url = page.url
-                        req_match = re.search(r"[?&]reqId=([^&]+)", detail_url, re.I)
+                        if len(detail_text) >= 200:
+                            apply_button = page.get_by_role("button", name="Apply", exact=True)
+                            apply_button.click(timeout=10000)
+                            page.wait_for_url(re.compile(r"/auth\?redirectUrl="), timeout=15000)
+                            apply_opened = True
+                            apply_url = page.url
+                            redirect = (parse_qs(urlparse(apply_url).query).get("redirectUrl") or [""])[0]
+                            req_match = re.search(r"/legacy/job/(\d+)", redirect)
+                            if not req_match:
+                                raise ValueError("ADP Apply target did not expose a requisition ID")
+                            req_id = req_match.group(1)
+                            source_url = urlparse(src["URL"])
+                            params = {k: vals[-1] for k, vals in parse_qs(source_url.query).items() if vals}
+                            params["__tx_annotation"] = "false"
+                            params["reqId"] = req_id
+                            detail_url = urlunparse((
+                                source_url.scheme, source_url.netloc,
+                                "/npgexternalcareers/cx/job-details", "", urlencode(params), ""
+                            ))
+                        else:
+                            continue
                         if req_match and detail_url not in seen and len(detail_text) >= 200:
                             seen.add(detail_url)
                             lines = [clean(x) for x in detail_raw.splitlines() if clean(x)]
@@ -10109,7 +10127,7 @@ def npg_adp_cx_rendered(src):
                                 country = infer_country(loc, src["Company"], detail_text)
                             jt = jobtype(actual_title, detail_text)
                             out.append(Job(
-                                req_match.group(1), actual_title, src["Company"], detail_text,
+                                req_id, actual_title, src["Company"], detail_text,
                                 posted, jt, category(actual_title, detail_text, src["Industry"], src["Company"]),
                                 detail_url, src["URL"], detail_url, "",
                                 normalize_work_arrangement(detail_text, loc, actual_title),
@@ -10121,7 +10139,7 @@ def npg_adp_cx_rendered(src):
                         # Opening a job detail uses browser history, with no
                         # in-page Back button in this ADP tenant.
                         try:
-                            if opened:
+                            if apply_opened:
                                 page.go_back(wait_until="domcontentloaded", timeout=15000)
                                 page.wait_for_timeout(700)
                         except Exception:
