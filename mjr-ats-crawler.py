@@ -10098,13 +10098,28 @@ def hubbard_adp_cx(src):
         try:
             rr = req("GET", url)
             final = str(getattr(rr, "url", "") or url)
-            j = _job_from_detail(src, final, rr.text)
+            body = rr.text or ""
+            title_match = re.search(r"<title[^>]*>(.*?)</title>", body, re.I | re.S)
+            page_title = clean(strip_html(title_match.group(1)))[:120] if title_match else ""
+            print(
+                "Hubbard ADP detail diagnostic:",
+                jid,
+                "status=", getattr(rr, "status_code", "?"),
+                "url=", final,
+                "bytes=", len(body),
+                "type=", getattr(rr, "headers", {}).get("Content-Type", ""),
+                "jobposting=", bool(re.search(r'["']?@type["']?\s*:\s*["']JobPosting', body, re.I)),
+                "title=", page_title,
+            )
+            j = _job_from_detail(src, final, body)
             if not j:
-                j = _radio_recovery_job(src, final, rr.text)
+                j = _radio_recovery_job(src, final, body)
+            print("Hubbard ADP parse:", jid, "accepted=", bool(j))
             if j and j.id not in seen:
                 seen.add(j.id)
                 out.append(j)
-        except Exception:
+        except Exception as exc:
+            print("Hubbard ADP detail failed:", jid, repr(exc)[:180])
             continue
 
     # Also retain the older public-board discovery path. It can automatically
