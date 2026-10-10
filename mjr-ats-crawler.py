@@ -1359,7 +1359,7 @@ def pbs_workday_rendered(src):
                 let node = a, context = "";
                 for (let i = 0; node && i < 8; i++, node = node.parentElement) {
                     const text = (node.innerText || "").trim();
-                    if (/posted\\s+(?:today|yesterday|\\d+\\+?\\s+days?\\s+ago)/i.test(text)) {
+                    if (/posted\s+(?:today|yesterday|\d+\+?\s+days?\s+ago)/i.test(text)) {
                         context = text;
                         break;
                     }
@@ -1375,7 +1375,7 @@ def pbs_workday_rendered(src):
             seen.add(detail_url)
             context = clean(entry.get("context") or "")
             date_match = re.search(
-                r"posted\\s+(today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                r"posted\s+(today|yesterday|\d+\+?\s+days?\s+ago)",
                 context,
                 re.I,
             )
@@ -1384,9 +1384,9 @@ def pbs_workday_rendered(src):
                 continue
 
             location = ""
-            remote_match = re.search(r"\\b(Remote)\\b", context, re.I)
+            remote_match = re.search(r"\b(Remote)\b", context, re.I)
             city_match = re.search(
-                r"\\b([A-Z][A-Za-z .'-]+,\\s*[A-Z]{2})\\b", context
+                r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b", context
             )
             if remote_match:
                 location = "Remote"
@@ -1418,7 +1418,7 @@ def pbs_workday_rendered(src):
             if country not in {"US", "CA"}:
                 continue
             path = urlparse(detail_url).path.rstrip("/")
-            req_match = re.search(r"_(JR\\d+)$", path, re.I)
+            req_match = re.search(r"_(JR\d+)$", path, re.I)
             identifier = req_match.group(1) if req_match else hashlib.sha1(detail_url.encode()).hexdigest()[:16]
             out.append(Job(
                 identifier,
