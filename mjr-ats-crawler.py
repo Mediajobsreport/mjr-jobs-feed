@@ -8015,8 +8015,6 @@ def cumulus_v17(src):
             )
             payload = rr.json()
             rows = payload.get("jobs") or [] if isinstance(payload, dict) else []
-            if page_num == 1 and rows:
-                print("CUMULUS_SAMPLE_ROW:", repr(rows[0])[:2500])
             ids = set()
             for item in rows:
                 if not isinstance(item, dict):
@@ -8028,7 +8026,7 @@ def cumulus_v17(src):
                     data.get("slug") or data.get("req_id")
                     or data.get("id") or data.get("jobId") or ""
                 ))
-                if re.fullmatch(r"\\d{3,10}", jid):
+                if re.fullmatch(r"\d{3,10}", jid):
                     ids.add(jid)
                     detail_urls.add(f"{host}/jobs/{jid}?lang=en-us")
             print(f"Cumulus Jibe API page={page_num} rows={len(rows)} ids={len(ids)}")
