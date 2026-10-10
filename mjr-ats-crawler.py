@@ -4959,7 +4959,8 @@ def _isolved_detail(src, url, raw, allow_undated_current_listing=False):
     # Some iSolved current-list boards omit post dates. Only assign the crawl
     # date when this detail was explicitly linked from a live "Current Job
     # Listings" page, which is an affirmative active-status signal.
-    if not pd and allow_undated_current_listing:
+    if allow_undated_current_listing and (not pd or pd < CUTOFF):
+        # The live current listings board is the active status signal; detail pages may retain old dates.
         pd = TODAY
     if not pd or pd < CUTOFF:
         return None
@@ -5132,7 +5133,7 @@ def isolved(src):
             if j and j.id not in seen_ids:
                 seen_ids.add(j.id)
                 out.append(j)
-            if is_zimmer_source and detail_index < 8:
+            if is_zimmer_source and (url in current_listing_details or detail_index < 8):
                 print(
                     f"Zimmer iSolved detail: {url} active={url in current_listing_details} "
                     f"final={final_url} accepted={bool(j)}"
