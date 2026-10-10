@@ -5451,6 +5451,98 @@ def _crawl_rendered_job_board(src, starts, allow_hosts=None, max_pages=40, max_j
 
 
 
+def rogers_successfactors(src):
+    """Read Rogers Sports & Media's public SAP SuccessFactors job board."""
+    listing_url = src["URL"]
+    response = req("GET", listing_url)
+    soup = BeautifulSoup(response.text, "html.parser")
+    jobs = []
+    seen = set()
+
+    for anchor in soup.find_all("a", href=True):
+        detail_url = urljoin(str(getattr(response, "url", "") or listing_url), anchor["href"]).split("#", 1)[0]
+        path = urlparse(detail_url).path
+        match = re.search(r"/job/[^/]+/(\d+)/?$", path, re.I)
+        if not match or detail_url in seen:
+            continue
+        seen.add(detail_url)
+        row = anchor.find_parent("tr")
+        listing_text = clean(row.get_text(" ", strip=True)) if row else ""
+        posted = None
+        for pattern in (
+            r"\b([A-Z][a-z]{2,8}\s+\d{1,2},?\s+20\d{2})\b",
+            r"\b(20\d{2}-\d{2}-\d{2})\b",
+            r"\b(\d{1,2}/\d{1,2}/20\d{2})\b",
+        ):
+            found = re.search(pattern, listing_text)
+            if found:
+                posted = pdate(found.group(1))
+                if posted:
+                    break
+        if not posted or posted < CUTOFF:
+            continue
+
+        try:
+            detail_response = req("GET", detail_url)
+        except Exception:
+            continue
+        detail_soup = BeautifulSoup(detail_response.text, "html.parser")
+        page_text = clean(detail_soup.get_text(" ", strip=True))
+        heading = detail_soup.find("h1")
+        title = clean(heading.get_text(" ", strip=True)) if heading else clean(anchor.get_text(" ", strip=True))
+        if not title:
+            continue
+
+        description_node = detail_soup.select_one(
+            "[itemprop='description'], .jobdescription, .job-description, "
+            ".jobDescription, #job-description, main"
+        )
+        description_text = clean(description_node.get_text(" ", strip=True)) if description_node else page_text
+        if len(description_text) < 120:
+            description_text = page_text
+        if len(description_text) < 120:
+            continue
+        description = format_description(str(description_node) if description_node else description_text)
+
+        location = ""
+        location_match = re.search(
+            r"\b([A-Z][A-Za-z .'-]+,\s*(?:[A-Z]{2}|[A-Z][a-z]+),\s*(?:CA|US|USA))\b",
+            page_text,
+        )
+        if location_match:
+            location = clean(location_match.group(1))
+        if not location and listing_text:
+            location_match = re.search(
+                r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2},\s*CA)\b",
+                listing_text,
+            )
+            if location_match:
+                location = clean(location_match.group(1))
+        country = "CA" if re.search(r"\b(?:Canada|CA)\b", location + " " + listing_text) else infer_country(page_text, src["Company"], description)
+        if country not in {"US", "CA"}:
+            continue
+
+        jobs.append(Job(
+            match.group(1),
+            title,
+            src["Company"],
+            description,
+            posted,
+            jobtype(title, description),
+            category(title, description, src.get("Industry", ""), src["Company"]),
+            detail_url,
+            listing_url,
+            listing_url,
+            "",
+            normalize_work_arrangement(description, location, title),
+            location,
+            "",
+            country,
+        ))
+    print(f"Rogers SuccessFactors: enumerated={len(seen)} eligible={len(jobs)}")
+    return jobs
+
+
 def cox_successfactors(src):
     """Cox Media Group: SAP SuccessFactors public career site.
 
@@ -13929,6 +14021,8 @@ def main():
                 if company_key == "tegna"
                 else cumulus_v17(s)
                 if company_key == "cumulus media"
+                else rogers_successfactors(s)
+                if company_key == "rogers sports & media"
                 else cox_successfactors(s)
                 if company_key in {"cox media group", "cox radio"}
                 else paramount_successfactors(s)
