@@ -13921,7 +13921,8 @@ def main():
             company_key = clean(s.get("Company", "")).lower()
             company_route_key = _company_test_key(company_key)
 
-
+            if company_key == "hubbard broadcasting":
+                print("Hubbard dispatcher diagnostic:", repr(company_key), repr(a))
             got = (
                 associated_press(s)
                 if company_key in {"associated press", "associated press (ap)"}
