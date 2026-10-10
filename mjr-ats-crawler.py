@@ -10088,24 +10088,20 @@ def npg_adp_cx_rendered(src):
                     try:
                         page.get_by_role("button", name=title, exact=True).nth(occurrence).click(timeout=10000)
                         opened = True
-                        detail = page.locator(".cx-job-details-page")
-                        detail.wait_for(state="visible", timeout=15000)
-                        detail_text = clean(detail.inner_text(timeout=5000))
+                        description_label = page.get_by_text("Job Description:", exact=True)
+                        description_label.wait_for(state="visible", timeout=15000)
+                        detail_raw = description_label.evaluate(
+                            "el => el.closest('.details-main-section').innerText"
+                        )
+                        detail_text = clean(detail_raw)
                         detail_url = page.url
                         req_match = re.search(r"[?&]reqId=([^&]+)", detail_url, re.I)
                         if req_match and detail_url not in seen and len(detail_text) >= 200:
                             seen.add(detail_url)
-                            title_node = detail.get_by_role("heading").first
-                            actual_title = clean(title_node.inner_text(timeout=2000)) if title_node.count() else title
-                            lines = [clean(x) for x in detail_text.splitlines() if clean(x)]
-                            loc = ""
-                            for i, line in enumerate(lines):
-                                if line.lower().rstrip(":") in {"location", "job location"} and i + 1 < len(lines):
-                                    loc = lines[i + 1]
-                                    break
-                            if not loc:
-                                mloc = re.search(r"(?im)^Location\s*:\s*(.+)$", detail_text)
-                                loc = clean(mloc.group(1)) if mloc else ""
+                            lines = [clean(x) for x in detail_raw.splitlines() if clean(x)]
+                            actual_title = lines[0] if lines else title
+                            mloc = re.search(r"(?im)^(.+,\s*(?:United States|Canada))$", detail_raw)
+                            loc = clean(mloc.group(1)) if mloc else ""
                             oldjob = load_state().get(detail_url.rstrip("/").lower(), {}).get("job", {})
                             posted = pdate(oldjob.get("date")) or TODAY
                             city, state, country = _split_adp_location(loc)
