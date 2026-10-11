@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-10T23:45:44.015Z",
+  "generated": "2026-10-11T05:53:27.646Z",
   "version": "2.4",
   "newestDate": "2026-10-09",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1066
+      "count": 1083
     },
     "CPSC": {
       "ok": true,
-      "count": 9887
+      "count": 10047
     },
     "USDA": {
       "ok": true,
@@ -355,7 +355,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V638000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V638000",
       "score": 125
     },
     {
@@ -2038,7 +2038,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V643000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V643-4143.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V643000",
       "score": 50
     }
   ]
