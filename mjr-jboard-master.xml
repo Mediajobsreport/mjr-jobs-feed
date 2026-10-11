@@ -14448,7 +14448,7 @@ Job Title:  Promotions Tech
     <date>2026-09-29</date>
     <expiration>3</expiration>
     <jobtype>Part Time</jobtype>
-    <category>Business Office</category>
+    <category>Radio</category>
     <url>https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&amp;id=8a7887ac9a31eebd019a50defd265315&amp;source=&amp;lang=en</url>
     <source>https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b</source>
     <url_verified>2026-10-10</url_verified>
@@ -60935,6 +60935,29 @@ Candidates should display both a natural curiosity and a talent for finding the 
     </location>
   </job>
   <job>
+    <id>be15e25a01ec26be</id>
+    <title>San Diego-Based News Anchor/Reporter Herring Networks, Inc</title>
+    <company>RTDNA</company>
+    <description>&lt;p&gt;One America News Network (OAN) is experiencing historic ratings performance and rapid growth. We are hiring for multiple positions at our San Diego, California headquarters and invite qualified candidates to submit a résumé, demo reel (if applicable), and salary requirements.&lt;/p&gt;&lt;p&gt; &lt;/p&gt;&lt;p&gt;Herring Networks, Inc. is committed to fostering a high-performing workplace. In addition to our fast-paced, collaborative production environment, we invest significantly in professional development and career enrichment. Success at Herring Networks is not defined by a single path, we value a diverse community of professionals who share a commitment to excellence and innovative ideas.&lt;/p&gt;&lt;p&gt; &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Position Overview&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;The Anchor/Reporter will anchor daily live newscasts. The ideal candidate will demonstrate a strong command of news writing and journalism standards, the ability to ad-lib effectively during breaking news situations, and the capacity to collaborate seamlessly with writers and producers.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Compensation&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;﻿$65,000 – 100,000 dependent on experience&lt;/p&gt;&lt;p&gt; &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Key Responsibilities&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Write clear, accurate, fact-based, and unbiased television news scripts in proper broadcast style&lt;/li&gt;&lt;li&gt;Maintain a thorough and current understanding of national and international events&lt;/li&gt;&lt;li&gt;Collaborate effectively with producers, writers, and production staff&lt;/li&gt;&lt;li&gt;Perform confidently on air, including during live and breaking news coverage&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;em&gt;Training on ENPS is provided. Part-time shifts are available.&lt;/em&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Qualifications&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Excellent command of the English language, including spelling, grammar, and broadcast writing style&lt;/li&gt;&lt;li&gt;Willingness and availability to work weekends and overnight shifts&lt;/li&gt;&lt;li&gt;Preferred: Bachelor’s degree in English, Journalism, Communications, or a related field&lt;/li&gt;&lt;li&gt;Preferred: Prior experience writing television news scripts&lt;/li&gt;&lt;li&gt;Preferred: Experience writing scripts in ENPS&lt;/li&gt;&lt;li&gt;Herring Networks, Inc. is an equal opportunity employer. We encourage qualified candidates of all backgrounds to apply.&lt;/li&gt;&lt;/ul&gt;</description>
+    <date>2026-10-07</date>
+    <expiration>11</expiration>
+    <jobtype>Full Time</jobtype>
+    <category>Journalism</category>
+    <url>https://careers.rtdna.org/job/san-diego-based-news-anchor-reporter-herring-networks-inc-san-diego-ca-86897b77545058b9f37c6f6c9d44d94bb</url>
+    <source>https://careers.rtdna.org/jobs?locale=en&amp;sort=date&amp;keywords=broadcast</source>
+    <url_verified>2026-10-10</url_verified>
+    <company_website>https://careers.rtdna.org/jobs?locale=en&amp;sort=date&amp;keywords=broadcast</company_website>
+    <logo />
+    <work_arrangement />
+    <arrangement_type>On-Site</arrangement_type>
+    <remote />
+    <location>
+      <city>San Diego, CA, US</city>
+      <state />
+      <country>US</country>
+    </location>
+  </job>
+  <job>
     <id>3848</id>
     <title>Editorial Assistant</title>
     <company>Salem Media Group</company>
@@ -98643,7 +98666,7 @@ The annual base pay range for this role is between:$275,000—$315,000 USD&lt;p&
     <arrangement_type>Remote</arrangement_type>
     <remote>true</remote>
     <location>
-      <city>Dallas, TX</city>
+      <city>United States</city>
       <state />
       <country>US</country>
     </location>
