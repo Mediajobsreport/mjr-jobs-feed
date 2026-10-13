@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-13T11:52:16.026Z",
+  "generated": "2026-10-13T19:21:32.406Z",
   "version": "2.4",
   "newestDate": "2026-10-09",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1083
+      "count": 1066
     },
     "CPSC": {
       "ok": true,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 97
+      "count": 95
     }
   },
   "count": 120,
@@ -58,22 +58,6 @@
       "score": 160
     },
     {
-      "id": "FDA-2026-10-02-great-value-trader-joe-s-organic-blueberries-triple-berry-blend-and-mi",
-      "source": "FDA",
-      "category": "food",
-      "title": "Great Value, Trader Joe’s Organic Blueberries, Triple Berry Blend and Mixed Berry Blend Recalled",
-      "reason": "Potential E. Coli O145:H28 Contamination",
-      "brand": "Great Value, Trader Joe’s",
-      "company": "Frutas y Hortalizas del Sur S.A.",
-      "product": "Organic Blueberries, Triple Berry Blend and Mixed Berry Blend",
-      "date": "2026-10-02",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 148
-    },
-    {
       "id": "CPSC-11018-dr-power-equipment-recalls-pilot-and-premier-trimmer-mowers-due-to-ris",
       "source": "CPSC",
       "category": "consumer",
@@ -106,6 +90,22 @@
       "campaign": "26V562000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V562-9434.pdf",
       "score": 142
+    },
+    {
+      "id": "FDA-2026-10-02-great-value-trader-joe-s-organic-blueberries-triple-berry-blend-and-mi",
+      "source": "FDA",
+      "category": "food",
+      "title": "Great Value, Trader Joe’s Organic Blueberries, Triple Berry Blend and Mixed Berry Blend Recalled",
+      "reason": "Potential E. Coli O145:H28 Contamination",
+      "brand": "Great Value, Trader Joe’s",
+      "company": "Frutas y Hortalizas del Sur S.A.",
+      "product": "Organic Blueberries, Triple Berry Blend and Mixed Berry Blend",
+      "date": "2026-10-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 136
     },
     {
       "id": "NHTSA-26V590000",
@@ -145,7 +145,7 @@
       "source": "CPSC",
       "category": "consumer",
       "title": "Decathlon America Recalls Van Rysel GRVL AF Bicycles Due to Risk of Serious Injury or Death from Crash…",
-      "reason": "The recalled bicycles’ front lock nut can loosen during use, causing the front wheel to dislodge or loosen over time, posing a crash hazard.",
+      "reason": "The recalled bicycles' front lock nut can loosen during use, causing the front wheel to dislodge or loosen over time, posing a crash hazard.",
       "brand": "",
       "company": "",
       "retailers": "Sold At: REI Co-op stores nationwide and online at REI.com from March 2025 through August 2026 for between $1,400 and $2,300.",
@@ -173,22 +173,6 @@
       "campaign": "26V578000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V578-3276.pdf",
       "score": 132
-    },
-    {
-      "id": "FDA-2026-08-28-northwest-naturals-chicken-recipe-northwest-naturals",
-      "source": "FDA",
-      "category": "food",
-      "title": "Northwest Naturals Chicken Recipe Pet Food Recalled",
-      "reason": "Potential contamination with Salmonella and/or Listeria monocytogenes",
-      "brand": "Northwest Naturals",
-      "company": "Northwest Naturals",
-      "product": "Chicken Recipe",
-      "date": "2026-08-28",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/panorama-produce-recalls-mangoes-due-possible-salmonella-contamination",
-      "score": 118
     },
     {
       "id": "CPSC-10982-esjay-us-recalls-toddler-busy-board-montessori-toys-due-to-risk-of-ser",
@@ -255,7 +239,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-trio-because-possible-health-risk",
-      "score": 103
+      "score": 95
     },
     {
       "id": "NHTSA-26V559000",
@@ -275,21 +259,20 @@
       "score": 132
     },
     {
-      "id": "NHTSA-26V638000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Mercedes-Benz Vehicles Recalled",
-      "reason": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2022-2025 S 500 4MATIC, Maybach S 580 4MATIC, Maybach S 680 4MATIC, S 580 4MATIC, 2023-2025 S 580 E 4MATIC, and 2024-2025 AMG S 63 E Performance vehicles. The front…",
-      "brand": "Mercedes-Benz",
-      "company": "Mercedes-Benz USA, LLC",
-      "product": "S 580 E 4MATIC, S 580 4MATIC, S 680 4MATIC, Amg S 63 E 4matic+, S 500 4MATIC",
-      "date": "2026-10-02",
-      "units": 30064,
+      "id": "FDA-2026-10-08-gardeners-basics-broccoli-sprouting-seeds-gardeners-basics",
+      "source": "FDA",
+      "category": "food",
+      "title": "Gardeners Basics Broccoli Sprouting Seeds Recalled",
+      "reason": "Product may be contaminated with Salmonella",
+      "brand": "Gardeners Basics",
+      "company": "Gardeners Basics",
+      "product": "Broccoli Sprouting Seeds",
+      "date": "2026-10-08",
+      "units": 0,
       "pet": false,
-      "majorBrand": true,
-      "campaign": "26V638000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
-      "score": 125
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gardeners-basics-recalls-waltham-29-broccoli-sprouting-seeds-due-possible-salmonella-contamination",
+      "score": 95
     },
     {
       "id": "CPSC-11012-dollar-tree-stores-recalls-electric-balloon-pumps-due-to-burn-hazard",
@@ -326,6 +309,23 @@
       "score": 113
     },
     {
+      "id": "NHTSA-26V638000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Mercedes-Benz Vehicles Recalled",
+      "reason": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2022-2025 S 500 4MATIC, Maybach S 580 4MATIC, Maybach S 680 4MATIC, S 580 4MATIC, 2023-2025 S 580 E 4MATIC, and 2024-2025 AMG S 63 E Performance vehicles. The front…",
+      "brand": "Mercedes-Benz",
+      "company": "Mercedes-Benz USA, LLC",
+      "product": "S 580 E 4MATIC, S 580 4MATIC, S 680 4MATIC, Amg S 63 E 4matic+, S 500 4MATIC",
+      "date": "2026-10-02",
+      "units": 30064,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V638000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
+      "score": 113
+    },
+    {
       "id": "CPSC-11015-pacearth-direct-recalls-pacearth-swing-seats-due-to-risk-of-serious-in",
       "source": "CPSC",
       "category": "consumer",
@@ -333,7 +333,7 @@
       "reason": "The seats, metal carabiners or quick links, or webbing straps of the recalled swing seats can break during use, posing a risk of serious injury due to fall hazard.",
       "brand": "",
       "company": "",
-      "retailers": "Sold Online At: Amazon.com from May 2017 through June 2026 for between $27 and $57., Pacearth Direct, of City of Industry, California",
+      "retailers": "Sold Online At: Amazon.com from May 2017 through June 2026 for between $27 and $57.",
       "product": "PACEARTH Swing Seats",
       "date": "2026-10-08",
       "units": 110550,
@@ -479,38 +479,6 @@
       "score": 103
     },
     {
-      "id": "FDA-2026-10-08-gardeners-basics-broccoli-sprouting-seeds-gardeners-basics",
-      "source": "FDA",
-      "category": "food",
-      "title": "Gardeners Basics Broccoli Sprouting Seeds Recalled",
-      "reason": "Product may be contaminated with Salmonella",
-      "brand": "Gardeners Basics",
-      "company": "Gardeners Basics",
-      "product": "Broccoli Sprouting Seeds",
-      "date": "2026-10-08",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gardeners-basics-recalls-waltham-29-broccoli-sprouting-seeds-due-possible-salmonella-contamination",
-      "score": 95
-    },
-    {
-      "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "EDEN BROTHERS Broccoli Seeds - Calabrese Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "EDEN BROTHERS",
-      "company": "Eden Brothers LLC",
-      "product": "Broccoli Seeds - Calabrese",
-      "date": "2026-10-07",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
-      "score": 95
-    },
-    {
       "id": "NHTSA-26V587000",
       "source": "NHTSA",
       "category": "consumer",
@@ -603,7 +571,7 @@
       "reason": "The recalled bath seats violate the mandatory standard for infant bath seats because they are unstable and can tip over while in use, posing a risk of serious injury or death due to drowning.",
       "brand": "",
       "company": "",
-      "retailers": "Sold Online At: Amazon.com in April 2026 for between $40 and $50., Hubei Youhong Trading Co., Ltd., dba ONTHEWEI, of China",
+      "retailers": "Sold Online At: Amazon.com in April 2026 for between $40 and $50.",
       "product": "ONTHEWEI Baby Bath Seats",
       "date": "2026-10-08",
       "units": 2140,
@@ -647,6 +615,22 @@
       "score": 90
     },
     {
+      "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "EDEN BROTHERS Broccoli Seeds - Calabrese Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "EDEN BROTHERS",
+      "company": "Eden Brothers LLC",
+      "product": "Broccoli Seeds - Calabrese",
+      "date": "2026-10-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
+      "score": 87
+    },
+    {
       "id": "CPSC-10975-jkmax-recalls-heated-blankets-and-heating-pads-due-to-fire-and-burn-ha",
       "source": "CPSC",
       "category": "consumer",
@@ -679,23 +663,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/ABC-Trading-Recalls-Squishy-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Water-Bead-Ingestion-Violate-Mandatory-Standard-for-Toys",
       "score": 86
-    },
-    {
-      "id": "NHTSA-26V636000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Mercedes-Benz Cla 220 Vehicles Recalled",
-      "reason": "Mercedes-Benz is recalling certain 2027 CLA 220 vehicles. A component of the left front seat belt may have been installed incorrectly. 4 vehicles or units may be affected.",
-      "brand": "Mercedes-Benz",
-      "company": "Mercedes-Benz USA, LLC",
-      "product": "Cla 220",
-      "date": "2026-10-02",
-      "units": 4,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V636000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V636-8765.pdf",
-      "score": 85
     },
     {
       "id": "NHTSA-26V633000",
@@ -816,22 +783,6 @@
       "score": 78
     },
     {
-      "id": "FDA-2026-10-09-par-pharmaceutical-brevital-sodium-500-mg-vial-for-injection-par-healt",
-      "source": "FDA",
-      "category": "health",
-      "title": "Par Pharmaceutical Brevital Sodium 500 mg/vial for Injection Recalled",
-      "reason": "Presence of particulate matter identified as cellulose",
-      "brand": "Par Pharmaceutical",
-      "company": "Par Health",
-      "product": "Brevital Sodium 500 mg/vial for Injection",
-      "date": "2026-10-09",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-two-lots-brevitalr-sodium-500-mgvial-civ-methohexital",
-      "score": 76
-    },
-    {
       "id": "CPSC-11006-gbymiuy-recalls-magnetic-stick-figure-toy-sets-due-to-risk-of-serious-",
       "source": "CPSC",
       "category": "consumer",
@@ -881,22 +832,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Yuyitop-Recalls-Aitjunz-8-Drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 76
-    },
-    {
-      "id": "FDA-2026-10-02-home-grown-green-sprouting-calabrese-broccoli-seeds-eak-distribution-l",
-      "source": "FDA",
-      "category": "food",
-      "title": "Home Grown Green Sprouting Calabrese Broccoli Seeds Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "Home Grown",
-      "company": "EAK Distribution LLC",
-      "product": "Green Sprouting Calabrese Broccoli Seeds",
-      "date": "2026-10-02",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 75
     },
     {
       "id": "NHTSA-26V611000",
@@ -1018,6 +953,23 @@
       "score": 75
     },
     {
+      "id": "NHTSA-26V636000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Mercedes-Benz Cla 220 Vehicles Recalled",
+      "reason": "Mercedes-Benz is recalling certain 2027 CLA 220 vehicles. A component of the left front seat belt may have been installed incorrectly. 4 vehicles or units may be affected.",
+      "brand": "Mercedes-Benz",
+      "company": "Mercedes-Benz USA, LLC",
+      "product": "Cla 220",
+      "date": "2026-10-02",
+      "units": 4,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V636000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V636-8765.pdf",
+      "score": 73
+    },
+    {
       "id": "NHTSA-26V622000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1049,23 +1001,6 @@
       "majorBrand": true,
       "campaign": "26V625000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V625-5393.pdf",
-      "score": 73
-    },
-    {
-      "id": "NHTSA-26V619000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Volvo Vehicles Recalled",
-      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain 2025-2027 VNL (4) and 2026-2027 VNR (4) vehicles equipped with a tanker application package. Inaccurate axle load calculations may cause reduced braking…",
-      "brand": "Volvo",
-      "company": "Volvo Trucks North America",
-      "product": "Vnl (4), Vnr (4)",
-      "date": "2026-09-28",
-      "units": 392,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V619000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V619-8062.pdf",
       "score": 73
     },
     {
@@ -1136,20 +1071,20 @@
       "score": 71
     },
     {
-      "id": "FDA-2026-10-05-nature-s-own-nature-s-own-hawaiian-bread-20oz-single-loaf-and-40-oz-2-",
+      "id": "FDA-2026-10-09-par-pharmaceutical-brevital-sodium-500-mg-vial-for-injection-par-healt",
       "source": "FDA",
-      "category": "food",
-      "title": "Nature's Own Nature's Own Hawaiian Bread, 20oz single loaf and 40 oz 2-pack Recalled",
-      "reason": "Undeclared milk allergen",
-      "brand": "Nature's Own",
-      "company": "Flowers Foods, Inc.",
-      "product": "Nature's Own Hawaiian Bread, 20oz single loaf and 40 oz 2-pack",
-      "date": "2026-10-05",
+      "category": "health",
+      "title": "Par Pharmaceutical Brevital Sodium 500 mg/vial for Injection Recalled",
+      "reason": "Presence of particulate matter identified as cellulose",
+      "brand": "Par Pharmaceutical",
+      "company": "Par Health",
+      "product": "Brevital Sodium 500 mg/vial for Injection",
+      "date": "2026-10-09",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/flowers-foods-issues-recall-natures-own-hawaiian-bread-due-undeclared-milk",
-      "score": 70
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-two-lots-brevitalr-sodium-500-mgvial-civ-methohexital",
+      "score": 68
     },
     {
       "id": "CPSC-10974-colerinsec-recalls-jerify-magnetic-stick-figure-toy-sets-due-to-risk-o",
@@ -1322,6 +1257,22 @@
       "score": 65
     },
     {
+      "id": "FDA-2026-10-02-home-grown-green-sprouting-calabrese-broccoli-seeds-eak-distribution-l",
+      "source": "FDA",
+      "category": "food",
+      "title": "Home Grown Green Sprouting Calabrese Broccoli Seeds Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "Home Grown",
+      "company": "EAK Distribution LLC",
+      "product": "Green Sprouting Calabrese Broccoli Seeds",
+      "date": "2026-10-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 63
+    },
+    {
       "id": "FDA-2026-10-01-bettergoods-pasta-gias-foods-inc",
       "source": "FDA",
       "category": "food",
@@ -1368,6 +1319,23 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 63
+    },
+    {
+      "id": "NHTSA-26V619000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Volvo Vehicles Recalled",
+      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain 2025-2027 VNL (4) and 2026-2027 VNR (4) vehicles equipped with a tanker application package. Inaccurate axle load calculations may cause reduced braking…",
+      "brand": "Volvo",
+      "company": "Volvo Trucks North America",
+      "product": "Vnl (4), Vnr (4)",
+      "date": "2026-09-28",
+      "units": 392,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V619000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V619-8062.pdf",
       "score": 63
     },
     {
@@ -1454,36 +1422,19 @@
       "score": 62
     },
     {
-      "id": "NHTSA-26E069000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Roadmaster Vehicles Recalled",
-      "reason": "Roadmaster Inc. (Roadmaster) is recalling certain Blackhawk All Terrain, Falcon 2, Falcon All Terrain, Falcon 3HD, Liberty, Sterling, and Nighthawk tow bars. The roll pin that secures the T-bolt to the stinger may…",
-      "brand": "Roadmaster",
-      "company": "Roadmaster Inc.",
-      "product": "Sterling Tow Bar, Nighthawk Tow Bar, Liberty, Falcon 3HD Tow Bar, Falcon All Terrain Tow Bar, Falcon 2 Tow Bar, Blackhawk All Terrain Tow Bar",
-      "date": "2026-10-02",
-      "units": 24656,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26E069000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E069-3803.pdf",
-      "score": 60
-    },
-    {
-      "id": "FDA-2026-10-09-riad-s-oliva-to-go-baba-ghanouj-spicy-baba-ghanouj-and-hummus-oliva-ll",
+      "id": "FDA-2026-10-05-nature-s-own-nature-s-own-hawaiian-bread-20oz-single-loaf-and-40-oz-2-",
       "source": "FDA",
       "category": "food",
-      "title": "Riad's Oliva to Go Baba Ghanouj, Spicy Baba Ghanouj, and Hummus Recalled",
-      "reason": "Undeclared sesame allergen",
-      "brand": "Riad's Oliva to Go",
-      "company": "Oliva LLC.",
-      "product": "Baba Ghanouj, Spicy Baba Ghanouj, and Hummus",
-      "date": "2026-10-09",
+      "title": "Nature's Own Nature's Own Hawaiian Bread, 20oz single loaf and 40 oz 2-pack Recalled",
+      "reason": "Undeclared milk allergen",
+      "brand": "Nature's Own",
+      "company": "Flowers Foods, Inc.",
+      "product": "Nature's Own Hawaiian Bread, 20oz single loaf and 40 oz 2-pack",
+      "date": "2026-10-05",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/oliva-llc-issues-allergy-alert-undeclared-sesame-baba-ghanouj-spicy-baba-ghanouj-and-hummus",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/flowers-foods-issues-recall-natures-own-hawaiian-bread-due-undeclared-milk",
       "score": 58
     },
     {
@@ -1501,23 +1452,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Agrish-Reannounces-and-Expands-Recall-of-Adult-Portable-Bed-Rails-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Additional-Units-Added",
-      "score": 58
-    },
-    {
-      "id": "NHTSA-26E066000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Cummins L9 Vehicles Recalled",
-      "reason": "Cummins, Inc. (Cummins) is recalling certain L9 diesel engines, part number D563027BX03. The remote fuel filter hoses may separate from the fitting, causing a fuel leak and an engine stall. 39,052 vehicles or units may…",
-      "brand": "Cummins",
-      "company": "Cummins, Inc.",
-      "product": "L9",
-      "date": "2026-09-28",
-      "units": 39052,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26E066000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E066-0581.pdf",
       "score": 58
     },
     {
@@ -1741,53 +1675,54 @@
       "score": 53
     },
     {
-      "id": "FDA-2026-10-07-rapture-preworkout-dietary-supplement-powder-leader-formulas-llc",
+      "id": "FDA-2026-10-09-riad-s-oliva-to-go-baba-ghanouj-spicy-baba-ghanouj-and-hummus-oliva-ll",
       "source": "FDA",
-      "category": "health",
-      "title": "RAPTURE Preworkout Dietary Supplement Powder Recalled",
-      "reason": "Product contains 1,3-Dimethylamylamine (DMAA)",
-      "brand": "RAPTURE",
-      "company": "Leader Formulas, LLC.",
-      "product": "Preworkout Dietary Supplement Powder",
-      "date": "2026-10-07",
+      "category": "food",
+      "title": "Riad's Oliva to Go Baba Ghanouj, Spicy Baba Ghanouj, and Hummus Recalled",
+      "reason": "Undeclared sesame allergen",
+      "brand": "Riad's Oliva to Go",
+      "company": "Oliva LLC.",
+      "product": "Baba Ghanouj, Spicy Baba Ghanouj, and Hummus",
+      "date": "2026-10-09",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/leader-formulas-llc-issues-voluntary-nationwide-recall-rapture-preworkout-due-presence-13",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/oliva-llc-issues-allergy-alert-undeclared-sesame-baba-ghanouj-spicy-baba-ghanouj-and-hummus",
       "score": 50
     },
     {
-      "id": "FDA-2026-10-07-babies-magic-tea-babies-magic-tea-brand-baby-sleep-gripe-water-4-oz-bo",
-      "source": "FDA",
-      "category": "health",
-      "title": "Babies' Magic Tea Babies' Magic Tea brand Baby Sleep Gripe Water 4 oz bottle Recalled",
-      "reason": "Product contains undeclared ethanol, methanol, and isopropanol",
-      "brand": "Babies' Magic Tea",
-      "company": "Pacific Health Sciences",
-      "product": "Babies' Magic Tea brand Baby Sleep Gripe Water 4 oz bottle",
-      "date": "2026-10-07",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water",
-      "score": 50
-    },
-    {
-      "id": "NHTSA-26V637000",
+      "id": "NHTSA-26E069000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Altec Vehicles Recalled",
-      "reason": "Altec Industries, Inc. (Altec) is recalling certain 2020-2026 AA Series Aerial Device, 2021-2026 AN Series Aerial Device, 2023-2026 AM Series Aerial Device, and 2024-2026 Digger Derrick, and 2024-2025 A-Class vehicles.…",
-      "brand": "Altec",
-      "company": "Altec Industries, Inc.",
-      "product": "Aa Series Aerial Device, Digger Derrick, A-Class, An Series Aerial Device, Am Series Aerial Device",
+      "title": "Roadmaster Vehicles Recalled",
+      "reason": "Roadmaster Inc. (Roadmaster) is recalling certain Blackhawk All Terrain, Falcon 2, Falcon All Terrain, Falcon 3HD, Liberty, Sterling, and Nighthawk tow bars. The roll pin that secures the T-bolt to the stinger may…",
+      "brand": "Roadmaster",
+      "company": "Roadmaster Inc.",
+      "product": "Sterling Tow Bar, Nighthawk Tow Bar, Liberty, Falcon 3HD Tow Bar, Falcon All Terrain Tow Bar, Falcon 2 Tow Bar, Blackhawk All Terrain Tow Bar",
       "date": "2026-10-02",
-      "units": 6780,
+      "units": 24656,
       "pet": false,
       "majorBrand": false,
-      "campaign": "26V637000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V637-9544.pdf",
-      "score": 50
+      "campaign": "26E069000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E069-3803.pdf",
+      "score": 48
+    },
+    {
+      "id": "NHTSA-26E066000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Cummins L9 Vehicles Recalled",
+      "reason": "Cummins, Inc. (Cummins) is recalling certain L9 diesel engines, part number D563027BX03. The remote fuel filter hoses may separate from the fitting, causing a fuel leak and an engine stall. 39,052 vehicles or units may…",
+      "brand": "Cummins",
+      "company": "Cummins, Inc.",
+      "product": "L9",
+      "date": "2026-09-28",
+      "units": 39052,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26E066000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E066-0581.pdf",
+      "score": 48
     },
     {
       "id": "CPSC-10973-fjtjbsi-recalls-six-drawer-dressers-due-to-risk-of-serious-injury-or-d",
@@ -2005,6 +1940,38 @@
       "score": 45
     },
     {
+      "id": "FDA-2026-10-07-rapture-preworkout-dietary-supplement-powder-leader-formulas-llc",
+      "source": "FDA",
+      "category": "health",
+      "title": "RAPTURE Preworkout Dietary Supplement Powder Recalled",
+      "reason": "Product contains 1,3-Dimethylamylamine (DMAA)",
+      "brand": "RAPTURE",
+      "company": "Leader Formulas, LLC.",
+      "product": "Preworkout Dietary Supplement Powder",
+      "date": "2026-10-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/leader-formulas-llc-issues-voluntary-nationwide-recall-rapture-preworkout-due-presence-13",
+      "score": 42
+    },
+    {
+      "id": "FDA-2026-10-07-babies-magic-tea-babies-magic-tea-brand-baby-sleep-gripe-water-4-oz-bo",
+      "source": "FDA",
+      "category": "health",
+      "title": "Babies' Magic Tea Babies' Magic Tea brand Baby Sleep Gripe Water 4 oz bottle Recalled",
+      "reason": "Product contains undeclared ethanol, methanol, and isopropanol",
+      "brand": "Babies' Magic Tea",
+      "company": "Pacific Health Sciences",
+      "product": "Babies' Magic Tea brand Baby Sleep Gripe Water 4 oz bottle",
+      "date": "2026-10-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pacific-health-sciences-voluntarily-recalls-one-lot-babies-magic-tea-brand-baby-sleep-gripe-water",
+      "score": 42
+    },
+    {
       "id": "FDA-2026-10-06-nova-biomedical-statstrip-statstrip-glucose-hospital-meter-system-nova",
       "source": "FDA",
       "category": "health",
@@ -2035,6 +2002,40 @@
       "majorBrand": false,
       "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-ineligible-meat-and-poultry-products-illegally",
       "score": 42
+    },
+    {
+      "id": "NHTSA-26V652000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "E-One Vehicles Recalled",
+      "reason": "E-One Incorporated (E-One) is recalling certain 2024-2026 Typhoon N, 2025-2026 Cyclone N, and 2026 Cyclone II fire trucks. The positive power supply may be loose, causing the wiring harness and busbar to overheat. 301…",
+      "brand": "E-One",
+      "company": "E-One Incorporated",
+      "product": "Typhoon N, Cyclone N, Cyclone Ii",
+      "date": "2026-10-06",
+      "units": 301,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V652000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V652-3537.pdf",
+      "score": 42
+    },
+    {
+      "id": "CPSC-10967-guang-zhou-recalls-wantefully-hair-dryer-brushes-due-to-risk-of-seriou",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Guang Zhou Recalls Wantefully Hair Dryer Brushes Due to Risk of Serious Injury or Death from…",
+      "reason": "The recalled hair dryer brushes are in violation of federal regulations for hair dryers as they lack an integrated immersion protection device, which presents a substantial product hazard to consumers and the risk of…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Amazon.com from February 2026 through March 2026 for about $30.",
+      "product": "Wantefully Hair Dryer Brushes",
+      "date": "2026-09-10",
+      "units": 2295,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
+      "score": 40
     }
   ]
 }
