@@ -8015,6 +8015,23 @@ def cumulus_v17(src):
             )
             payload = rr.json()
             rows = payload.get("jobs") or [] if isinstance(payload, dict) else []
+            if page_num == 1 and rows and isinstance(rows[0], dict):
+                sample = rows[0]
+                sample_data = sample.get("data", sample)
+                if isinstance(sample_data, dict):
+                    candidates = {
+                        k: str(v)[:100]
+                        for k, v in sample_data.items()
+                        if re.search(r"(?:id|slug|req|job|url|posting)", str(k), re.I)
+                        and not isinstance(v, (dict, list))
+                    }
+                    print(
+                        "Cumulus Jibe schema:"
+                        f" payload_keys={list(payload)[:20]}"
+                        f" row_keys={list(sample)[:30]}"
+                        f" data_keys={list(sample_data)[:40]}"
+                        f" id_candidates={candidates}"
+                    )
             ids = set()
             for item in rows:
                 if not isinstance(item, dict):
