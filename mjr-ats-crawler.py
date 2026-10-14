@@ -4316,6 +4316,8 @@ def paycom(src):
             if hck and hck.lower() == clientkey.lower() and h.rstrip("/") not in seen_pages:
                 queue.append(h)
 
+    PUBLIC_BOARD_ENUMERATION[clean(src["Company"]).lower()] = len(details)
+
     out = []
     seen_ids = set()
     for url in sorted(details):
