@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-14T20:14:27.072Z",
+  "generated": "2026-10-14T23:29:05.895Z",
   "version": "2.4",
   "newestDate": "2026-10-14",
   "stale": false,
@@ -10,7 +10,7 @@
     },
     "CPSC": {
       "ok": true,
-      "count": 10047
+      "count": 5964
     },
     "USDA": {
       "ok": true,
@@ -1098,7 +1098,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pan-pepin-inc-emite-alerta-por-alergenos-en-el-producto-parabien-al-grano-debido-la-presencia-de",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pan-pepin-inc-issues-allergy-alert-para-bien-al-grano-due-undeclared-sesame",
       "score": 70
     },
     {
@@ -1434,7 +1434,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/flowers-foods-issues-recall-natures-own-hawaiian-bread-due-undeclared-milk",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 58
     },
     {
