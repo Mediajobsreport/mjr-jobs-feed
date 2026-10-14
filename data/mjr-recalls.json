@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-14T13:47:59.605Z",
+  "generated": "2026-10-14T20:14:27.072Z",
   "version": "2.4",
-  "newestDate": "2026-10-09",
+  "newestDate": "2026-10-14",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1066
+      "count": 1069
     },
     "CPSC": {
       "ok": true,
@@ -259,20 +259,20 @@
       "score": 132
     },
     {
-      "id": "FDA-2026-10-08-gardeners-basics-broccoli-sprouting-seeds-gardeners-basics",
+      "id": "FDA-2026-10-14-par-health-and-endo-usa-argatroban-injection-250-mg-2-5-ml-100-mg-ml-p",
       "source": "FDA",
-      "category": "food",
-      "title": "Gardeners Basics Broccoli Sprouting Seeds Recalled",
-      "reason": "Product may be contaminated with Salmonella",
-      "brand": "Gardeners Basics",
-      "company": "Gardeners Basics",
-      "product": "Broccoli Sprouting Seeds",
-      "date": "2026-10-08",
+      "category": "health",
+      "title": "Par Health and Endo USA Argatroban Injection 250 mg/2.5 mL (100 mg/mL) Recalled",
+      "reason": "Presence of particulate matter, identified as cellulose, polystyrene, polyethylene terephthalate, stopper material, and possibly stainless steel",
+      "brand": "Par Health and Endo USA",
+      "company": "Par Health USA, LLC",
+      "product": "Argatroban Injection 250 mg/2.5 mL (100 mg/mL)",
+      "date": "2026-10-14",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gardeners-basics-recalls-waltham-29-broccoli-sprouting-seeds-due-possible-salmonella-contamination",
-      "score": 87
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-argatroban-injection-due-presence-particulate-matter",
+      "score": 88
     },
     {
       "id": "NHTSA-26V559000",
@@ -596,6 +596,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/ZMC-Group-Expands-Recall-of-Light-Up-Childrens-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
       "score": 90
+    },
+    {
+      "id": "FDA-2026-10-08-gardeners-basics-broccoli-sprouting-seeds-gardeners-basics",
+      "source": "FDA",
+      "category": "food",
+      "title": "Gardeners Basics Broccoli Sprouting Seeds Recalled",
+      "reason": "Product may be contaminated with Salmonella",
+      "brand": "Gardeners Basics",
+      "company": "Gardeners Basics",
+      "product": "Broccoli Sprouting Seeds",
+      "date": "2026-10-08",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gardeners-basics-recalls-waltham-29-broccoli-sprouting-seeds-due-possible-salmonella-contamination",
+      "score": 87
     },
     {
       "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
@@ -1052,6 +1068,38 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Xinan-Home-Recalls-WinxMatrs-Mattresses-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Mattress-Flammability",
       "score": 71
+    },
+    {
+      "id": "FDA-2026-10-14-para-bien-para-bien-al-grano-pan-pepin-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Para Bien Para Bien Al Grano Recalled",
+      "reason": "Undeclared sesame",
+      "brand": "Para Bien",
+      "company": "Pan Pepin Inc.",
+      "product": "Para Bien Al Grano",
+      "date": "2026-10-14",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pan-pepin-inc-emite-alerta-por-alergenos-en-el-producto-parabien-al-grano-debido-la-presencia-de",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-10-14-para-bien-para-bien-al-grano-24oz-box-pan-pepin-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Para Bien Para Bien Al Grano, 24oz box Recalled",
+      "reason": "Undeclared sesame",
+      "brand": "Para Bien",
+      "company": "Pan Pepin Inc.",
+      "product": "Para Bien Al Grano, 24oz box",
+      "date": "2026-10-14",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/pan-pepin-inc-emite-alerta-por-alergenos-en-el-producto-parabien-al-grano-debido-la-presencia-de",
+      "score": 70
     },
     {
       "id": "CPSC-11019-the-conqueror-recalls-avengers-medals-due-to-risk-of-serious-injury-or",
@@ -1989,57 +2037,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
       "score": 40
-    },
-    {
-      "id": "CPSC-10949-adult-portable-bed-rails-recalled-due-to-risk-of-serious-injury-or-dea",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Adult Portable Bed Rails Recalled Due to Risk of Serious Injury or Death from Entrapment and…",
-      "reason": "The recalled bed rails violate the mandatory standard for adult portable bed rails because users can become entrapped within the bed rail or between the bed rail and the side of the mattress, posing a serious…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from June 2025 through April 2026 for between $40 and $50.",
-      "product": "Loyoda Adult Portable Bed Rails",
-      "date": "2026-09-03",
-      "units": 2200,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Adult-Portable-Bed-Rails-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Sold-on-Amazon-by-Loyoda-Direct-and-Loyoda",
-      "score": 40
-    },
-    {
-      "id": "CPSC-10942-gizoon-direct-recalls-six-drawer-double-dressers-due-to-risk-of-seriou",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Gizoon Direct Recalls Six-Drawer Double Dressers Due to Risk of Serious Injury or Death from Tip-Over…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from May 2025 through August 2026 for between $138 and $171.",
-      "product": "Gizoon Six-Drawer Double Dressers",
-      "date": "2026-09-03",
-      "units": 4396,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Gizoon-Direct-Recalls-Six-Drawer-Double-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violates-Mandatory-Standard-for-Clothing-Storage-Units",
-      "score": 40
-    },
-    {
-      "id": "NHTSA-26V637000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Altec Vehicles Recalled",
-      "reason": "Altec Industries, Inc. (Altec) is recalling certain 2020-2026 AA Series Aerial Device, 2021-2026 AN Series Aerial Device, 2023-2026 AM Series Aerial Device, and 2024-2026 Digger Derrick, and 2024-2025 A-Class vehicles.…",
-      "brand": "Altec",
-      "company": "Altec Industries, Inc.",
-      "product": "Aa Series Aerial Device, Digger Derrick, A-Class, An Series Aerial Device, Am Series Aerial Device",
-      "date": "2026-10-02",
-      "units": 6780,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V637000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V637-9544.pdf",
-      "score": 38
     }
   ]
 }
