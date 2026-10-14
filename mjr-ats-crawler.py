@@ -10109,7 +10109,6 @@ def hubbard_adp_cx(src):
     # station/community job pages. These are only seeds; each ADP detail page
     # must still parse as a fresh JobPosting before entering the feed.
     seed_ids = {
-        "5001226700706",  # Board Operator - 1500 ESPN
         "5001222833906",  # Director - Rochester
         "5001217681406",  # Multiplatform News Producer - Albany
         "5001217673806",  # Media Sales Associate - Albany
