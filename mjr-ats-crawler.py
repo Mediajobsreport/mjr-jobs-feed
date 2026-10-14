@@ -2979,6 +2979,7 @@ ATS_JOB_HINTS = {
         r"/jobs/\d+",
         r"/job/",
     ],
+    "workable": [r"/j/[A-Fa-f0-9]{10}/?"],
     "betterteam": [
         # Betterteam tenant boards use root-level slugs for individual jobs,
         # e.g. /bilingual-sales-consultant-26, not /job/... paths.
@@ -3019,6 +3020,8 @@ def _ats_family(src):
         return "jobscore"
     if "paycor" in joined:
         return "paycor"
+    if "workable" in joined:
+        return "workable"
     if "isolved" in joined:
         return "isolved"
     if "betterteam" in joined:
@@ -3031,7 +3034,7 @@ KNOWN_ATS_HOST_TOKENS = (
     "icims.com", "ultipro.com", "ukg.com", "oraclecloud.com",
     "taleo.net", "breezy.hr", "applytojob.com", "jazz.co",
     "paycomonline.net", "rippling-ats.com", "jobscore.com",
-    "recruitingbypaycor.com", "isolvedhire.com", "betterteam.com",
+    "recruitingbypaycor.com", "isolvedhire.com", "betterteam.com", "apply.workable.com",
     "myworkdayjobs.com", "greenhouse.io",
 )
 
@@ -10911,7 +10914,7 @@ def generic(src):
     links = set()
 
     generic_patterns = [
-        r"/jobs/", r"/job/", r"/j/", r"jobdetail", r"/details/",
+        r"/jobs/", r"/job/", r"jobdetail", r"/details/",
         r"opportunitydetail", r"job-details", r"requisitions",
         r"career/JobIntroduction\.action", r"/apply/", r"/p/",
     ]
