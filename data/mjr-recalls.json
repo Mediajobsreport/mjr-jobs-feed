@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-13T23:47:22.528Z",
+  "generated": "2026-10-14T05:00:16.941Z",
   "version": "2.4",
   "newestDate": "2026-10-09",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1066
+      "count": 1083
     },
     "CPSC": {
       "ok": true,
