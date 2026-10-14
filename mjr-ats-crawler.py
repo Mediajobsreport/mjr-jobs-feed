@@ -10911,7 +10911,7 @@ def generic(src):
     links = set()
 
     generic_patterns = [
-        r"/jobs/", r"/job/", r"jobdetail", r"/details/",
+        r"/jobs/", r"/job/", r"/j/", r"jobdetail", r"/details/",
         r"opportunitydetail", r"job-details", r"requisitions",
         r"career/JobIntroduction\.action", r"/apply/", r"/p/",
     ]
