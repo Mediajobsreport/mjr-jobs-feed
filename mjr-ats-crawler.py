@@ -2979,7 +2979,6 @@ ATS_JOB_HINTS = {
         r"/jobs/\d+",
         r"/job/",
     ],
-    "workable": [r"/j/[A-Fa-f0-9]{10}/?"],
     "betterteam": [
         # Betterteam tenant boards use root-level slugs for individual jobs,
         # e.g. /bilingual-sales-consultant-26, not /job/... paths.
@@ -3020,8 +3019,6 @@ def _ats_family(src):
         return "jobscore"
     if "paycor" in joined:
         return "paycor"
-    if "workable" in joined:
-        return "workable"
     if "isolved" in joined:
         return "isolved"
     if "betterteam" in joined:
@@ -3034,7 +3031,7 @@ KNOWN_ATS_HOST_TOKENS = (
     "icims.com", "ultipro.com", "ukg.com", "oraclecloud.com",
     "taleo.net", "breezy.hr", "applytojob.com", "jazz.co",
     "paycomonline.net", "rippling-ats.com", "jobscore.com",
-    "recruitingbypaycor.com", "isolvedhire.com", "betterteam.com", "apply.workable.com",
+    "recruitingbypaycor.com", "isolvedhire.com", "betterteam.com",
     "myworkdayjobs.com", "greenhouse.io",
 )
 
