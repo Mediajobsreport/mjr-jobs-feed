@@ -23,7 +23,7 @@ Radio,Adams Radio Group,Company Career Site,https://www.adamsradiogroup.com/care
 Radio,Bell Media,Company Career Site,https://jobs.bell.ca/ca/en/c/media-jobs,True
 Radio,Blackburn Media,Company Career Site,https://blackburnmedia.ca/careers,True
 Broadcast Media,Cox Media Group,SAP SuccessFactors,https://careers.cmg.com/go/All-Jobs/9298500/,True
-Radio,Cumulus Media,Company Career Site,https://jobs.cumulusmedia.com/careers,True
+Radio,Cumulus Media,Company Career Site,https://jobs.cumulusmedia.com/jobs,True
 Radio,Curtis Media,Company Career Site,https://www.curtismedia.net/career-opportunities/,True
 Radio,Evanov,Company Career Site,https://evanov.ca/careers,True
 Radio,Federated Media,Company Career Site,https://www.federatedmedia.com/careers/,True
@@ -72,7 +72,7 @@ Journalism,Dotdash Meredith / People Inc,Workday,https://meredith.wd5.myworkdayj
 Journalism,Gannett / USA TODAY Co.,Dayforce,https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL?searchText=,True
 Journalism,Hearst Newspapers,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_8007/jobs?mode=location,True
 Journalism,Lee Enterprises,Dayforce,https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL,True
-Journalism,McClatchy,Company Career Site,https://mcclatchy.com/careers,True
+Journalism,McClatchy,UKG Pro,https://mcclatchy.rec.pro.ukg.net/MCC1008MCLTC/JobBoard/ff11d963-22db-4278-a2b7-709f3b882262,True
 Journalism,New York Post,Workday,https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers,True
 Journalism,NPR,Greenhouse,https://job-boards.greenhouse.io/nationalpublicradioinc,True
 Journalism,Tampa Bay Times Group,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=8c64d493-1027-445e-9378-39c4e859f2b6&ccId=19000101_000001&lang=en_US,True
@@ -110,7 +110,7 @@ Music Industry,Spotify,Lever,https://jobs.lever.co/spotify,True
 Music Industry,UnitedMasters,Greenhouse,https://job-boards.greenhouse.io/unitedmasterstranslation,True
 Music Industry,SoundCloud,Greenhouse,https://job-boards.greenhouse.io/soundcloud71,True
 Music Industry,Reservoir Media,Ashby,https://jobs.ashbyhq.com/reservoir-media,True
-Music Industry,Downtown Music,Greenhouse,https://job-boards.greenhouse.io/downtownmusic,True
+Music Industry,Downtown Music,Greenhouse,https://job-boards.greenhouse.io/downtownmusicholdings,True
 Digital,Complex,Lever,https://jobs.lever.co/Complex,True
 Digital,143 Studios,Greenhouse,https://job-boards.greenhouse.io/143studiosinc,True
 Digital,Feld Entertainment,Lever,https://jobs.lever.co/feldinc,True
@@ -120,3 +120,4 @@ Radio,Mid-West Family of Companies,Company Career Site,https://midwestfamilyofco
 
 Radio,New York Public Radio,Company Career Site,https://jobs.jobvite.com/newyork-public-radio,True
 Journalism,Los Angeles Times,Dayforce,https://us262.dayforcehcm.com/CandidatePortal/en-US/nantmedia,True
+Music Industry,Hook,Ashby,https://jobs.ashbyhq.com/hookmusic,True
