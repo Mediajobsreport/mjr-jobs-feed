@@ -14112,6 +14112,9 @@ def main():
                         clean(_j.title) + ":" + "|".join(_reasons)
                     )
 
+            # Collector enumeration can be recorded during the crawl.
+            public_board_enumerated = company_key in PUBLIC_BOARD_ENUMERATION
+
             audit.append(
                 [
                     s["Company"],
