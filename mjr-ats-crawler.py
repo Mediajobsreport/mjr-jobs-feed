@@ -1506,6 +1506,55 @@ def workday(src):
 
     return out
 
+def lever(src):
+    """Collect public Lever postings through the Lever API."""
+    parts = [p for p in urlparse(src["URL"]).path.split("/") if p]
+    board = parts[0] if parts else ""
+    if not board:
+        raise RuntimeError("Lever board missing")
+
+    payload = req("GET", f"https://api.lever.co/v0/postings/{quote(board)}", params={"mode": "json"}).json()
+    if not isinstance(payload, list):
+        return []
+
+    out, seen = [], set()
+    for row in payload:
+        if not isinstance(row, dict):
+            continue
+        created = row.get("createdAt")
+        posted = None
+        if isinstance(created, (int, float)) or str(created or "").isdigit():
+            try:
+                stamp = float(created)
+                if stamp > 10_000_000_000:
+                    stamp /= 1000
+                posted = datetime.fromtimestamp(stamp, tz=ZoneInfo("UTC")).date()
+            except (ValueError, OverflowError, OSError):
+                posted = None
+        if not posted:
+            posted = pdate(created)
+        if not posted or posted < CUTOFF:
+            continue
+
+        title = clean(row.get("text") or row.get("title") or "")
+        if not title:
+            continue
+        categories = row.get("categories") if isinstance(row.get("categories"), dict) else {}
+        location = clean(categories.get("location") or row.get("workplaceType") or row.get("location") or "")
+        description = format_description(row.get("descriptionPlain") or row.get("description") or row.get("lists") or "")
+        if len(strip_html(description)) < 100:
+            continue
+        job_url = clean(row.get("hostedUrl") or row.get("applyUrl") or "")
+        if not job_url:
+            continue
+        jid = clean(str(row.get("id") or hashlib.sha1(job_url.encode()).hexdigest()[:16]))
+        if jid in seen:
+            continue
+        seen.add(jid)
+        details = " ".join(clean(str(categories.get(k) or "")) for k in ("team", "department", "commitment"))
+        out.append(Job(jid, title, src["Company"], description, posted, jobtype(title, details), category(title, description, src["Industry"], src["Company"]), job_url, src["URL"], src["URL"], "", normalize_work_arrangement(description, location, title), location, "", infer_country(location, src["Company"], description)))
+    return out
+
 def greenhouse(src):
     parts = [p for p in urlparse(src["URL"]).path.split("/") if p]
     board = parts[0] if parts else ""
@@ -13943,6 +13992,8 @@ def main():
                 if company_key == "gray media"
                 else workday(s)
                 if "workday" in a
+                else lever(s)
+                if "lever" in a or "jobs.lever.co" in s.get("URL", "").lower()
                 else greenhouse(s)
                 if "greenhouse" in a
                 else paylocity(s)
