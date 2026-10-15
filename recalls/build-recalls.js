@@ -13,6 +13,20 @@ const FDA_XLSX =
 const FDA_2026_XML =
   "https://www.fda.gov/media/191968/download?attachment=";
 
+// The FDA XLSX is the primary source, but the agency also publishes annual
+// XML datasets. Use those official files if the spreadsheet endpoint is down.
+const FDA_XML_ARCHIVES = [
+  { year: 2026, url: FDA_2026_XML },
+  { year: 2025, url: "https://www.fda.gov/media/187526/download" },
+  { year: 2024, url: "https://www.fda.gov/media/177107/download?attachment=" },
+  { year: 2023, url: "https://www.fda.gov/media/165123/download?attachment=" },
+  { year: 2022, url: "https://www.fda.gov/media/155924/download?attachment=" },
+  { year: 2021, url: "https://www.fda.gov/media/145551/download?attachment=" },
+  { year: 2020, url: "https://www.fda.gov/media/140352/download?attachment=" },
+  { year: 2019, url: "https://www.fda.gov/media/124800/download?attachment=" },
+  { year: 2018, url: "https://www.fda.gov/media/124799/download?attachment=" }
+];
+
 const CPSC_API =
   "https://www.saferproducts.gov/RestWebServices/Recall?format=json";
 
@@ -391,7 +405,7 @@ async function fetchText(url, label = "HTML") {
   );
 }
 
-async function fetchXML(url, label = "XML") {
+async function fetchXML(url, label = "XML", maxAttempts = 5) {
   return requestWithRetry(
     url,
     {
@@ -399,7 +413,8 @@ async function fetchXML(url, label = "XML") {
       redirect: "follow"
     },
     label,
-    async response => response.text()
+    async response => response.text(),
+    maxAttempts
   );
 }
 
@@ -602,6 +617,118 @@ function fdaRowsFromSheet(sheet) {
 
       return obj;
     });
+}
+
+function decodeFDAField(value) {
+  let decoded = String(value == null ? "" : value)
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1");
+
+  // Some archived FDA files double-escape XML entities. Decode a few passes
+  // and handle numeric references without interpreting markup in field text.
+  for (let pass = 0; pass < 3; pass++) {
+    decoded = decoded.replace(
+      /&(#x[\da-f]+|#\d+|amp|quot|apos|lt|gt);/gi,
+      token => {
+        const entity = token.slice(1, -1);
+        if (/^#x/i.test(entity)) {
+          const codePoint = parseInt(entity.slice(2), 16);
+          return Number.isInteger(codePoint) && codePoint >= 0 && codePoint <= 0x10ffff
+            ? String.fromCodePoint(codePoint)
+            : token;
+        }
+        if (/^#\d/.test(entity)) {
+          const codePoint = parseInt(entity.slice(1), 10);
+          return Number.isInteger(codePoint) && codePoint >= 0 && codePoint <= 0x10ffff
+            ? String.fromCodePoint(codePoint)
+            : token;
+        }
+        return {
+          amp: "&",
+          quot: '"',
+          apos: "'",
+          lt: "<",
+          gt: ">"
+        }[entity.toLowerCase()] || token;
+      }
+    );
+  }
+
+  return decoded.trim();
+}
+
+function fdaRowsFromXml(xml) {
+  const rows = [];
+  const recordRegex = /<recalls(?:\s[^>]*)?>([\s\S]*?)<\/recalls>/gi;
+  const field = (record, name) => {
+    const match = record.match(
+      new RegExp(`<${name}\\s*>([\\s\\S]*?)<\\/${name}\\s*>`, "i")
+    );
+    return match ? decodeFDAField(match[1]) : "";
+  };
+
+  let match;
+  while ((match = recordRegex.exec(xml))) {
+    const record = match[1];
+    const row = {
+      "Date": field(record, "Date"),
+      "Brand Name(s)": field(record, "Brand"),
+      "Product Description": field(record, "ProductDescription"),
+      "Product Type": field(record, "ProductType"),
+      "Recall Reason Description": field(record, "Reason"),
+      "Company Name": field(record, "Company"),
+      __direct_url: field(record, "Url")
+    };
+
+    if (row.Date && (row["Brand Name(s)"] || row["Product Description"] || row["Company Name"])) {
+      rows.push(row);
+    }
+  }
+
+  return rows;
+}
+
+async function loadFDAArchiveRows() {
+  const rows = [];
+  const seen = new Set();
+
+  for (const archive of FDA_XML_ARCHIVES) {
+    if (rows.length >= MIN_SOURCE_COUNTS.FDA) break;
+
+    try {
+      const xml = await fetchXML(
+        archive.url,
+        `FDA ${archive.year} XML fallback`,
+        2
+      );
+
+      if (!/<recalls(?:\s[^>]*)?>/i.test(xml)) {
+        throw new Error("Response is not an FDA recalls XML dataset");
+      }
+
+      const yearRows = fdaRowsFromXml(xml);
+      let added = 0;
+
+      for (const row of yearRows) {
+        const key = [row.Date, row["Brand Name(s)"], row["Product Description"], row["Company Name"]]
+          .map(normalizeMatchText)
+          .join("|");
+        if (seen.has(key)) continue;
+        seen.add(key);
+        rows.push(row);
+        added++;
+      }
+
+      console.log(`FDA ${archive.year} XML fallback: ${added} records`);
+    } catch (err) {
+      console.warn(
+        `FDA ${archive.year} XML fallback unavailable:`,
+        err.message || err
+      );
+    }
+  }
+
+  console.log(`FDA XML fallback total: ${rows.length} records`);
+  return rows;
 }
 
 function pickField(row, names) {
@@ -1169,7 +1296,7 @@ function matchFDAOfficialXmlUrl(item, xmlLinks) {
 
 async function loadFDA() {
   const [
-    buffer,
+    bufferResult,
     detailLinks,
     officialXmlLinks
   ] =
@@ -1177,28 +1304,41 @@ async function loadFDA() {
       fetchBuffer(
         FDA_XLSX,
         "FDA XLSX"
+      ).then(
+        buffer => ({ buffer }),
+        error => ({ error })
       ),
       loadFDADetailLinks(),
       loadFDAOfficialXmlLinks()
     ]);
 
-  const wb =
-    XLSX.read(
-      buffer,
-      {
-        type: "buffer"
-      }
-    );
+  let rows;
 
-  const sheet =
-    wb.Sheets[
-      wb.SheetNames[0]
-    ];
-
-  const rows =
-    fdaRowsFromSheet(
-      sheet
+  if (bufferResult.error) {
+    console.warn(
+      "FDA XLSX unavailable; falling back to official annual XML datasets:",
+      bufferResult.error.message || bufferResult.error
     );
+    rows = await loadFDAArchiveRows();
+  } else {
+    const wb =
+      XLSX.read(
+        bufferResult.buffer,
+        {
+          type: "buffer"
+        }
+      );
+
+    const sheet =
+      wb.Sheets[
+        wb.SheetNames[0]
+      ];
+
+    rows =
+      fdaRowsFromSheet(
+        sheet
+      );
+  }
 
   console.log(
     "FDA mapped headers:",
@@ -1394,7 +1534,7 @@ async function loadFDA() {
     ).length;
 
   console.log(
-    `FDA direct URLs from spreadsheet: ${alreadyDirect}/${items.length}`
+    `FDA direct URLs from source rows: ${alreadyDirect}/${items.length}`
   );
 
   console.log(
