@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-16T19:40:41.770Z",
+  "generated": "2026-10-16T22:54:17.244Z",
   "version": "2.4",
   "newestDate": "2026-10-16",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1088
+      "count": 1071
     },
     "CPSC": {
       "ok": true,
@@ -246,7 +246,7 @@
       "source": "FDA",
       "category": "food",
       "title": "Family Farmstead Raw Mild Cheddar Cheese Recalled",
-      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (E. Coli O157:H7)",
+      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (E. Coli O26:H11 and O45:H2)",
       "brand": "Family Farmstead",
       "company": "Family Farmstead Dairy, LLC",
       "product": "Raw Mild Cheddar Cheese",
@@ -254,7 +254,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o157h7",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
       "score": 115
     },
     {
