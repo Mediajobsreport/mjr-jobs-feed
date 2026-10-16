@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-16T13:18:54.739Z",
+  "generated": "2026-10-16T19:40:41.770Z",
   "version": "2.4",
-  "newestDate": "2026-10-15",
+  "newestDate": "2026-10-16",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1087
+      "count": 1088
     },
     "CPSC": {
       "ok": true,
@@ -71,7 +71,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V621000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V621000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V621-5191.pdf",
       "score": 150
     },
     {
@@ -192,19 +192,19 @@
       "score": 125
     },
     {
-      "id": "FDA-2026-10-15-family-farmstead-raw-mild-cheddar-cheese-family-farmstead-dairy-llc",
+      "id": "FDA-2026-10-16-starfish-seafood-cold-smoked-salmon-krasnyi-oktyabr-inc",
       "source": "FDA",
       "category": "food",
-      "title": "Family Farmstead Raw Mild Cheddar Cheese Recalled",
-      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (E. Coli O157:H7)",
-      "brand": "Family Farmstead",
-      "company": "Family Farmstead Dairy, LLC",
-      "product": "Raw Mild Cheddar Cheese",
-      "date": "2026-10-15",
+      "title": "Starfish Seafood Cold Smoked Salmon Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Starfish Seafood",
+      "company": "Krasnyi Oktyabr Inc.",
+      "product": "Cold Smoked Salmon",
+      "date": "2026-10-16",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o157h7",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-premium-cold-smoked-norwegian-salmon-sliced-227g8oz",
       "score": 115
     },
     {
@@ -242,6 +242,22 @@
       "score": 123
     },
     {
+      "id": "FDA-2026-10-15-family-farmstead-raw-mild-cheddar-cheese-family-farmstead-dairy-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Family Farmstead Raw Mild Cheddar Cheese Recalled",
+      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (E. Coli O157:H7)",
+      "brand": "Family Farmstead",
+      "company": "Family Farmstead Dairy, LLC",
+      "product": "Raw Mild Cheddar Cheese",
+      "date": "2026-10-15",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o157h7",
+      "score": 115
+    },
+    {
       "id": "NHTSA-26V560000",
       "source": "NHTSA",
       "category": "consumer",
@@ -257,22 +273,6 @@
       "campaign": "26V560000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V560-9456.pdf",
       "score": 132
-    },
-    {
-      "id": "FDA-2026-10-09-starfish-seafood-cold-smoked-salmon-krasnyi-oktyabr-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Starfish Seafood Cold Smoked Salmon Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes",
-      "brand": "Starfish Seafood",
-      "company": "Krasnyi Oktyabr Inc.",
-      "product": "Cold Smoked Salmon",
-      "date": "2026-10-09",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-premium-cold-smoked-norwegian-salmon-sliced-227g8oz",
-      "score": 87
     },
     {
       "id": "NHTSA-26V559000",
@@ -322,7 +322,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V638000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V638000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
       "score": 113
     },
     {
@@ -700,6 +700,22 @@
       "score": 88
     },
     {
+      "id": "FDA-2026-10-09-starfish-seafood-cold-smoked-salmon-halibut-and-trout-krasnyi-oktyabr-",
+      "source": "FDA",
+      "category": "food",
+      "title": "Starfish Seafood Cold Smoked Salmon, Halibut, and Trout Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Starfish Seafood",
+      "company": "Krasnyi Oktyabr Inc.",
+      "product": "Cold Smoked Salmon, Halibut, and Trout",
+      "date": "2026-10-09",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-trio-because-possible-health-risk",
+      "score": 87
+    },
+    {
       "id": "CPSC-10975-jkmax-recalls-heated-blankets-and-heating-pads-due-to-fire-and-burn-ha",
       "source": "CPSC",
       "category": "consumer",
@@ -913,7 +929,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 75
     },
     {
@@ -1757,7 +1773,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26E070000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E070000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E070-0426.pdf",
       "score": 54
     },
     {
@@ -2023,22 +2039,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/fi-recalls-supplements-dogs-because-possible-salmonella-contamination",
-      "score": 45
-    },
-    {
-      "id": "FDA-2026-09-06-made-fresh-salads-northside-ready-to-eat-deli-style-salads-and-cream-c",
-      "source": "FDA",
-      "category": "food",
-      "title": "Made Fresh Salads, Northside Ready to Eat Deli Style Salads and cream cheese Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes",
-      "brand": "Made Fresh Salads, Northside",
-      "company": "Made Fresh Salads Inc.",
-      "product": "Ready to Eat Deli Style Salads and cream cheese",
-      "date": "2026-09-06",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-ready-eat-deli-style-salads-and-cream-cheese-because-possible-health",
       "score": 45
     }
   ]
