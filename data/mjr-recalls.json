@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-16T22:54:17.244Z",
+  "generated": "2026-10-17T04:33:48.302Z",
   "version": "2.4",
   "newestDate": "2026-10-16",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1071
+      "count": 1088
     },
     "CPSC": {
       "ok": true,
@@ -71,7 +71,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V621000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V621-5191.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V621000",
       "score": 150
     },
     {
@@ -322,7 +322,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V638000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V638000",
       "score": 113
     },
     {
@@ -432,7 +432,7 @@
       "source": "CPSC",
       "category": "consumer",
       "title": "Papablic, of USA Recalls Convertible Bedside Sleepers Due to Risk of Serious Injury or Death from…",
-      "reason": "The bedside sleepers with play yard extensions violate the mandatory safety standard for play yards because the mattress can become displaced causing a baby to become entrapped between the sleeping pad and bottom…",
+      "reason": "The bedside sleepers with play yard extensions violate the mandatory safety standard for play yards because the mattress can become displaced, causing a baby to become entrapped between the sleeping pad and bottom…",
       "brand": "",
       "company": "",
       "retailers": "Sold Online At: Amazon.com and papablic.com from April 2025 through July 2026 for about $190.",
@@ -1126,7 +1126,7 @@
       "reason": "Glass can break inside the recalled cups while in use, posing a risk of serious injury from ingestion and laceration hazards.",
       "brand": "",
       "company": "",
-      "retailers": "Sold At: Loving Thyselfstore and on-line athttps://www.instagram.com/lovingthyselfrocksandfossils/?hl=en andhttps://www.instagram.com/lovingthyselfrocks/?hl=en and Etsy.com from April 2026 through September 2026 for between $20 and $50.",
+      "retailers": "Sold At: Loving Thyself store and on-line at https://www.instagram.com/lovingthyselfrocksandfossils/?hl=en and https://www.instagram.com/lovingthyselfrocks/?hl=en and Etsy.com from April 2026 through September 2026 for between $20 and $50.",
       "product": "Crystal Glass Cups with Loose Crystal Chips",
       "date": "2026-10-15",
       "units": 600,
@@ -1773,7 +1773,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26E070000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E070-0426.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E070000",
       "score": 54
     },
     {
@@ -1890,7 +1890,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26E066000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E066-0581.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E066000",
       "score": 48
     },
     {
