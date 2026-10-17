@@ -15337,6 +15337,34 @@ def amazon_music_jobs(src):
             browser.close()
 
 
+
+def hallmark_ukg(src):
+    """Collect Hallmark's US Corporate, Creative, and Internship boards."""
+    boards = [
+        ("Corporate", "1af38e50-bef2-48c7-8919-d646ae0bee65"),
+        ("Creative", "d80ed073-b3ff-4375-ad65-2b03bcbbffb8"),
+        ("Internships", "ab752bd2-ff61-4489-a86c-18d808fa6f00"),
+    ]
+    jobs = []
+    seen = set()
+    for label, board in boards:
+        board_src = dict(
+            src,
+            URL=f"https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/{board}/",
+        )
+        try:
+            found = ukg(board_src)
+            for job in found:
+                if job.id not in seen:
+                    seen.add(job.id)
+                    jobs.append(job)
+            print(f"Hallmark {label}: {len(found)} jobs")
+        except Exception as exc:
+            print(f"Hallmark {label}: ERROR {type(exc).__name__}: {exc}")
+    print(f"Hallmark US boards: collected={len(jobs)}")
+    return jobs
+
+
 def main():
     with SOURCES_FILE.open(
         newline="",
@@ -15444,6 +15472,8 @@ def main():
                 if company_key == "cnn"
                 else gray_direct(s)
                 if company_key == "gray media"
+                else hallmark_ukg(s)
+                if company_key == "hallmark"
                 else bonneville_workday(s)
                 if company_key == "bonneville"
                 else workday(s)
