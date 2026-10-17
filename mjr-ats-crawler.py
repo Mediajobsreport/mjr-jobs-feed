@@ -11620,6 +11620,123 @@ def stingray_jobs(src):
     return out
 
 
+def npg_adp_cx_rendered(src):
+    """Collect NPG openings through ADP's public rendered career-center UI."""
+    if sync_playwright is None:
+        return []
+
+    out = []
+    seen = set()
+    start = src["URL"]
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1365, "height": 900})
+            page.goto(start, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_timeout(3500)
+
+            # ADP's CX board does not populate results until Search is submitted.
+            search = page.get_by_role("button", name=re.compile(r"^Search$", re.I))
+            if search.count():
+                search.first.click()
+            page.get_by_text(re.compile(r"Search results loaded|jobs found", re.I)).wait_for(timeout=30000)
+            page.wait_for_timeout(1000)
+
+            for page_number in range(1, 5):
+                # ADP renders one title button per result card; headings in the
+                # detail panel are excluded because they have no same-title button.
+                headings = page.get_by_role("heading")
+                cards = []
+                occurrences = {}
+                for idx in range(headings.count()):
+                    try:
+                        title = clean(headings.nth(idx).inner_text(timeout=1000))
+                        matches = page.get_by_role("button", name=title, exact=True)
+                        if title and matches.count():
+                            occurrence = occurrences.get(title, 0)
+                            cards.append((title, occurrence))
+                            occurrences[title] = occurrence + 1
+                    except Exception:
+                        continue
+                print(f"NPG ADP CX page {page_number}: {len(cards)} result cards")
+
+                for title, occurrence in cards:
+                    apply_opened = False
+                    try:
+                        page.get_by_role("button", name=title, exact=True).nth(occurrence).click(timeout=10000)
+                        description_label = page.get_by_text("Job Description:", exact=True)
+                        description_label.wait_for(state="visible", timeout=15000)
+                        detail_raw = description_label.evaluate(
+                            "el => el.closest('.details-main-section').innerText"
+                        )
+                        detail_text = clean(detail_raw)
+                        if len(detail_text) >= 200:
+                            apply_button = page.get_by_role("button", name="Apply", exact=True)
+                            apply_button.click(timeout=10000)
+                            page.wait_for_url(re.compile(r"/auth\?redirectUrl="), timeout=15000)
+                            apply_opened = True
+                            apply_url = page.url
+                            redirect = (parse_qs(urlparse(apply_url).query).get("redirectUrl") or [""])[0]
+                            req_match = re.search(r"/legacy/job/(\d+)", redirect)
+                            if not req_match:
+                                raise ValueError("ADP Apply target did not expose a requisition ID")
+                            req_id = req_match.group(1)
+                            source_url = urlparse(src["URL"])
+                            params = {k: vals[-1] for k, vals in parse_qs(source_url.query).items() if vals}
+                            params["__tx_annotation"] = "false"
+                            params["reqId"] = req_id
+                            detail_url = urlunparse((
+                                source_url.scheme, source_url.netloc,
+                                "/npgexternalcareers/cx/job-details", "", urlencode(params), ""
+                            ))
+                        else:
+                            continue
+                        if req_match and detail_url not in seen and len(detail_text) >= 200:
+                            seen.add(detail_url)
+                            lines = [clean(x) for x in detail_raw.splitlines() if clean(x)]
+                            actual_title = lines[0] if lines else title
+                            mloc = re.search(r"(?im)^(.+,\s*(?:United States|Canada))$", detail_raw)
+                            loc = clean(mloc.group(1)) if mloc else ""
+                            oldjob = load_state().get(detail_url.rstrip("/").lower(), {}).get("job", {})
+                            posted = pdate(oldjob.get("date")) or TODAY
+                            city, state, country = _split_adp_location(loc)
+                            if not country:
+                                country = infer_country(loc, src["Company"], detail_text)
+                            jt = jobtype(actual_title, detail_text)
+                            out.append(Job(
+                                req_id, actual_title, src["Company"], detail_text,
+                                posted, jt, category(actual_title, detail_text, src["Industry"], src["Company"]),
+                                detail_url, src["URL"], detail_url, "",
+                                normalize_work_arrangement(detail_text, loc, actual_title),
+                                city, state, country,
+                            ))
+                    except Exception as e:
+                        print(f"NPG ADP CX detail skipped ({title[:70]}): {type(e).__name__}")
+                    finally:
+                        # Opening a job detail uses browser history, with no
+                        # in-page Back button in this ADP tenant.
+                        try:
+                            if apply_opened:
+                                page.go_back(wait_until="domcontentloaded", timeout=15000)
+                                page.wait_for_timeout(700)
+                        except Exception:
+                            pass
+
+                if page_number >= 4:
+                    break
+                next_page = page.get_by_role("button", name=f"Page {page_number + 1}", exact=True)
+                if not next_page.count() or not next_page.is_enabled():
+                    break
+                next_page.click(timeout=10000)
+                page.wait_for_timeout(1200)
+            browser.close()
+    except Exception as e:
+        print(f"NPG ADP CX render unavailable: {type(e).__name__}: {clean(str(e))[:160]}")
+        return out
+
+    print(f"NPG ADP CX rendered board: {len(out)} detail postings collected")
+    return out
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -14921,6 +15038,8 @@ def main():
                 if _ats_family(s)
                 else amazon_music_jobs(s)
                 if company_key == "amazon music"
+                else npg_adp_cx_rendered(s)
+                if company_key == "npg"
                 else generic(s)
             )
 
