@@ -11862,6 +11862,73 @@ def pamal_broadcasting_jobs(src):
     return out
 
 
+def pattison_media_jobs(src):
+    """Collect Pattison postings currently listed with future application deadlines."""
+    url = src["URL"]
+    try:
+        response = req("GET", url)
+    except Exception as exc:
+        print(f"Pattison careers request failed: {type(exc).__name__}")
+        return []
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    out, seen = [], set()
+    for card in soup.select(".w-dyn-item"):
+        link = card.select_one('a[href*="/careers/"]')
+        if not link:
+            continue
+        title_node = card.select_one("h3")
+        deadline_node = card.select_one(".tagline.red")
+        if not title_node or not deadline_node:
+            continue
+        title = clean(title_node.get_text(" "))
+        try:
+            deadline = dtparser.parse(clean(deadline_node.get_text(" ")), fuzzy=True).date()
+        except Exception:
+            continue
+        if not title or deadline < TODAY:
+            continue
+
+        detail_url = urljoin(url, link.get("href", ""))
+        try:
+            detail_response = req("GET", detail_url)
+        except Exception as exc:
+            print(f"Pattison posting detail failed for {title}: {type(exc).__name__}")
+            continue
+        detail = BeautifulSoup(detail_response.text, "html.parser")
+        body = detail.select_one(".w-richtext")
+        if not body:
+            continue
+        body_text = clean(body.get_text(" "))
+        if len(body_text) < 180 or re.search(r"no longer accepting applications|page not found", body_text, re.I):
+            continue
+        description = format_description(body.decode_contents())
+        location_nodes = card.select('[fs-cmsfilter-field="type"]')
+        location = ", ".join(clean(n.get_text(" ")) for n in location_nodes if clean(n.get_text(" ")))
+        city = clean(location_nodes[0].get_text(" ")) if location_nodes else ""
+        region = clean(location_nodes[1].get_text(" ")) if len(location_nodes) > 1 else ""
+        country = "Canada"
+        identity = f"{src['Company']}|{detail_url}"
+        job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+        if job_id in seen:
+            continue
+        seen.add(job_id)
+        apply_url = detail_url
+        apply_link = body.find("a", href=True)
+        if apply_link:
+            apply_url = urljoin(detail_url, apply_link["href"])
+        out.append(Job(
+            job_id, title, src["Company"], description, TODAY,
+            jobtype(title, body_text),
+            category(title, description, src["Industry"], src["Company"]),
+            detail_url, url, apply_url, "",
+            normalize_work_arrangement(description, location, title),
+            city, region, country, deadline,
+        ))
+    print(f"Pattison official careers page: {len(out)} open listings")
+    return out
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -15169,6 +15236,8 @@ def main():
                 if company_key == "leighton media"
                 else pamal_broadcasting_jobs(s)
                 if company_key == "pamal broadcasting"
+                else pattison_media_jobs(s)
+                if company_key == "pattison media"
                 else generic(s)
             )
 
