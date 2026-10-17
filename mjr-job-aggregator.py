@@ -4100,6 +4100,9 @@ def _isolved_job_links(base_url, raw):
         r'https?://[^"\'<>\s]+ourcareerpages\.com/job/[^"\'<>\s]+',
         r'https?://[^"\'<>\s]+isolvedhire\.com/[^"\'<>\s]+',
         r'/job/[^"\'<>\s]+',
+        # iSolved Hire's embedded boards use numbered HTML detail pages,
+        # e.g. /iframe/767/1879417.html, rather than /job/<slug> URLs.
+        r'(?:https?://[^"\'<>\s]+isolvedhire\.com)?/iframe/\d+/\d+\.html(?:\?[^"\'<>\s]*)?',
     ]
     for pat in patterns:
         for m in re.finditer(pat, raw2, re.I):
@@ -4219,7 +4222,7 @@ def isolved(src):
             if not ("ourcareerpages.com" in host or "isolvedhire.com" in host):
                 continue
 
-            if "/job/" in hp.path.lower():
+            if "/job/" in hp.path.lower() or re.search(r"/iframe/\d+/\d+\.html$", hp.path, re.I):
                 details.add(h.split("#",1)[0])
                 continue
 

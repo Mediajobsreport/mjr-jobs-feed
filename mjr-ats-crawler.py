@@ -5316,6 +5316,9 @@ def _isolved_job_links(base_url, raw):
         r'https?://[^"\'<>\s]+ourcareerpages\.com/job/[^"\'<>\s]+',
         r'https?://[^"\'<>\s]+isolvedhire\.com/[^"\'<>\s]+',
         r'/job/[^"\'<>\s]+',
+        # iSolved Hire's embedded boards use numbered HTML detail pages,
+        # e.g. /iframe/767/1879417.html, rather than /job/<slug> URLs.
+        r'(?:https?://[^"\'<>\s]+isolvedhire\.com)?/iframe/\d+/\d+\.html(?:\?[^"\'<>\s]*)?',
     ]
     for pat in patterns:
         for m in re.finditer(pat, raw2, re.I):
@@ -5486,6 +5489,8 @@ def isolved(src):
                 and h.rstrip("/") not in seen_pages
             ):
                 queue.append(h)
+
+    PUBLIC_BOARD_ENUMERATION[clean(src["Company"]).lower()] = len(details)
 
     out = []
     seen_ids = set()
@@ -11450,6 +11455,171 @@ def associated_press(src):
     return out
 
 
+def graham_media_jobs(src):
+    """Collect dated job articles from Graham Media's rendered careers page."""
+    if sync_playwright is None:
+        raise RuntimeError("Playwright is required for Graham Media's rendered careers page")
+
+    source_host = (urlparse(src["URL"]).hostname or "").lower().removeprefix("www.")
+    pattern = re.compile(r"/gmg-careers/(20\d{2})/(\d{1,2})/(\d{1,2})/[^/?#]+", re.I)
+    post_urls = set()
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+        page = browser.new_page(
+            user_agent=SESSION.headers.get(
+                "User-Agent",
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/130 Safari/537.36",
+            ),
+            viewport={"width": 1365, "height": 1000},
+        )
+        try:
+            page.goto(src["URL"], wait_until="domcontentloaded", timeout=60000)
+            page.wait_for_timeout(1500)
+            hrefs = page.locator("a[href]").evaluate_all(
+                "(nodes) => nodes.map((node) => node.href)"
+            )
+            for href in hrefs:
+                parsed = urlparse(href)
+                linked_host = (parsed.hostname or "").lower().removeprefix("www.")
+                if linked_host == source_host and pattern.search(parsed.path):
+                    post_urls.add(href)
+
+            out = []
+            for url in sorted(post_urls):
+                match = pattern.search(urlparse(url).path)
+                posted = date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+                if posted < CUTOFF:
+                    continue
+                try:
+                    page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                    page.wait_for_timeout(500)
+                    detail = BeautifulSoup(page.content(), "html.parser")
+                    title = next(
+                        (
+                            clean(heading.get_text(" "))
+                            for heading in detail.find_all(["h1", "h2", "h3"])
+                            if clean(heading.get_text(" "))
+                            and clean(heading.get_text(" ")).lower() not in {
+                                "graham media group", "careers", "our careers"
+                            }
+                        ),
+                        "",
+                    )
+                    if not title:
+                        print(
+                            f"Graham Media missing title: url={url}, "
+                            f"page_url={page.url}, page_title={page.title()!r}, "
+                            f"text={clean(detail.get_text(' '))[:180]!r}"
+                        )
+                        continue
+                    main = detail.find("article") or detail.find("main") or detail
+                    description = format_description(str(main))
+                    description_length = len(strip_html(description))
+                    if description_length < 200:
+                        continue
+                    out.append(
+                        Job(
+                            hashlib.sha1(url.encode()).hexdigest()[:16],
+                            title,
+                            src["Company"],
+                            description,
+                            posted,
+                            jobtype(title, description),
+                            category(title, description, src["Industry"], src["Company"]),
+                            url,
+                            src["URL"],
+                            src["URL"],
+                            "",
+                            normalize_work_arrangement(description, description),
+                            "",
+                            "",
+                            infer_country(description, src["Company"], description),
+                        )
+                    )
+                except (ValueError, requests.RequestException) as exc:
+                    print(f"Graham Media detail skipped {url}: {exc}")
+            print(f"Graham Media rendered careers board: discovered={len(post_urls)} eligible={len(out)}")
+            return out
+        finally:
+            browser.close()
+
+
+def stingray_jobs(src):
+    """Collect jobs linked from Stingray's live open-positions board."""
+    response = req("GET", src["URL"])
+    soup = BeautifulSoup(response.text, "html.parser")
+    origin = urlparse(src["URL"]).netloc.lower()
+    job_urls = set()
+    for anchor in soup.find_all("a", href=True):
+        url = urljoin(src["URL"], anchor["href"])
+        parsed = urlparse(url)
+        if (
+            parsed.netloc.lower() == origin
+            and re.fullmatch(r"/job/[^/]+/?", parsed.path, re.I)
+        ):
+            job_urls.add(url)
+
+    out = []
+    for url in sorted(job_urls):
+        try:
+            page = req("GET", url)
+            detail = BeautifulSoup(page.text, "html.parser")
+            headings = [clean(h.get_text(" ")) for h in detail.find_all(["h1", "h2", "h3"])]
+            title = next(
+                (h for h in headings if h and h.lower() != "open position at stingray"),
+                "",
+            )
+            if not title and detail.title:
+                title = clean(detail.title.get_text(" ")).split(" – ")[0]
+            if not title:
+                continue
+            main = detail.find("main") or detail.find("article") or detail
+            description = format_description(str(main))
+            plain = clean(main.get_text(" "))
+            if len(strip_html(description)) < 200:
+                continue
+            location_match = re.search(
+                r"Department\s+(.+?)\s+Location\s+(Montreal|New York|Remote\s*\(USA\))(?=\s|$)",
+                plain,
+                re.I,
+            )
+            location = clean(location_match.group(2)) if location_match else ""
+            country = infer_country(location, src["Company"], description)
+            city, state = "", ""
+            if location.lower() == "montreal":
+                city, state, country = "Montreal", "Quebec", "CA"
+            elif location.lower() == "new york":
+                city, state, country = "New York", "New York", "US"
+            elif location.lower() == "remote (usa)":
+                city, state, country = "Remote", "", "US"
+            # This URL is included in Stingray's active open-position board.
+            # The board does not expose posting dates, so use the crawl date.
+            posted = TODAY
+            out.append(
+                Job(
+                    hashlib.sha1(url.encode()).hexdigest()[:16],
+                    title,
+                    src["Company"],
+                    description,
+                    posted,
+                    jobtype(title, description),
+                    category(title, description, src["Industry"], src["Company"]),
+                    url,
+                    src["URL"],
+                    src["URL"],
+                    "",
+                    normalize_work_arrangement(description, description),
+                    city,
+                    state,
+                    country,
+                )
+            )
+        except (ValueError, requests.RequestException):
+            continue
+    return out
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -14713,8 +14883,10 @@ def main():
                 if "lever" in a or "jobs.lever.co" in s.get("URL", "").lower()
                 else greenhouse(s)
                 if "greenhouse" in a
-                else lever(s)
-                if "lever" in a or "jobs.lever.co" in s.get("URL", "").lower()
+                else graham_media_jobs(s)
+                if company_key == "graham media"
+                else stingray_jobs(s)
+                if company_key == "stingray"
                 else paylocity(s)
                 if "paylocity" in a
                 else hubbard_adp_cx(s)
@@ -14827,6 +14999,9 @@ def main():
                     eligibility_notes.append(
                         clean(_j.title) + ":" + "|".join(_reasons)
                     )
+
+            # Collector enumeration can be recorded during the crawl.
+            public_board_enumerated = company_key in PUBLIC_BOARD_ENUMERATION
 
             audit.append(
                 [
