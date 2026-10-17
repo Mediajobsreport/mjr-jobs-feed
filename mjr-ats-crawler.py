@@ -11862,6 +11862,125 @@ def pamal_broadcasting_jobs(src):
     return out
 
 
+def pattison_media_jobs(src):
+    """Collect Pattison postings currently listed with future application deadlines."""
+    url = src["URL"]
+    try:
+        response = req("GET", url)
+    except Exception as exc:
+        print(f"Pattison careers request failed: {type(exc).__name__}")
+        return []
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    out, seen = [], set()
+    for card in soup.select(".w-dyn-item"):
+        link = card.select_one('a[href*="/careers/"]')
+        if not link:
+            continue
+        title_node = card.select_one("h3")
+        deadline_node = card.select_one(".tagline.red")
+        if not title_node or not deadline_node:
+            continue
+        title = clean(title_node.get_text(" "))
+        try:
+            deadline = dtparser.parse(clean(deadline_node.get_text(" ")), fuzzy=True).date()
+        except Exception:
+            continue
+        if not title or deadline < TODAY:
+            continue
+
+        detail_url = urljoin(url, link.get("href", ""))
+        try:
+            detail_response = req("GET", detail_url)
+        except Exception as exc:
+            print(f"Pattison posting detail failed for {title}: {type(exc).__name__}")
+            continue
+        detail = BeautifulSoup(detail_response.text, "html.parser")
+        body = detail.select_one(".w-richtext")
+        if not body:
+            continue
+        body_text = clean(body.get_text(" "))
+        if len(body_text) < 180 or re.search(r"no longer accepting applications|page not found", body_text, re.I):
+            continue
+        description = format_description(body.decode_contents())
+        location_nodes = card.select('[fs-cmsfilter-field="type"]')
+        location = ", ".join(clean(n.get_text(" ")) for n in location_nodes if clean(n.get_text(" ")))
+        city = clean(location_nodes[0].get_text(" ")) if location_nodes else ""
+        region = clean(location_nodes[1].get_text(" ")) if len(location_nodes) > 1 else ""
+        country = "Canada"
+        identity = f"{src['Company']}|{detail_url}"
+        job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+        if job_id in seen:
+            continue
+        seen.add(job_id)
+        apply_url = detail_url
+        apply_link = body.find("a", href=True)
+        if apply_link:
+            apply_url = urljoin(detail_url, apply_link["href"])
+        out.append(Job(
+            job_id, title, src["Company"], description, TODAY,
+            jobtype(title, body_text),
+            category(title, description, src["Industry"], src["Company"]),
+            detail_url, url, apply_url, "",
+            normalize_work_arrangement(description, location, title),
+            city, region, country, deadline,
+        ))
+    print(f"Pattison official careers page: {len(out)} open listings")
+    return out
+
+
+def stephens_media_group_jobs(src):
+    """Read concrete SMG job ads while excluding its recurring-role boilerplate."""
+    url = src["URL"]
+    try:
+        response = req("GET", url)
+    except Exception as exc:
+        print(f"Stephens careers request failed: {type(exc).__name__}")
+        return []
+    soup = BeautifulSoup(response.text, "html.parser")
+    content = soup.select_one(".entry-content")
+    if not content:
+        return []
+
+    heading = next((p for p in content.find_all("p")
+                    if clean(p.get_text(" ")).lower() == "account executive"), None)
+    if not heading:
+        return []
+    pieces = []
+    for node in heading.find_all_next():
+        if node is heading:
+            continue
+        if node.name == "p" and clean(node.get_text(" ")).lower() == "programming":
+            break
+        if node.name == "p" and "====" in clean(node.get_text(" ")):
+            break
+        if node.parent is content or content in node.parents:
+            if node.name in {"p", "ul", "ol", "div"} and node not in pieces:
+                pieces.append(node)
+    # Keep only top-level blocks to avoid duplicating nested list contents.
+    blocks = [node for node in pieces if not any(parent in pieces for parent in node.parents)]
+    if not blocks:
+        return []
+    html_body = "".join(str(node) for node in blocks)
+    text_body = clean(BeautifulSoup(html_body, "html.parser").get_text(" "))
+    if len(text_body) < 300 or not re.search(r"mailto:", html_body, re.I):
+        return []
+    description = format_description(html_body)
+    title = "Account Executive"
+    identity = f"{src['Company']}|{title}|{url}"
+    job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+    apply = next((urljoin(url, a["href"]) for a in BeautifulSoup(html_body, "html.parser").find_all("a", href=True)
+                  if a["href"].lower().startswith("mailto:")), url)
+    job = Job(
+        job_id, title, src["Company"], description, TODAY, jobtype(title, text_body),
+        category(title, description, src["Industry"], src["Company"]),
+        f"{url.split('#', 1)[0]}#account-executive", url, apply, "",
+        normalize_work_arrangement(description, "", title), "", "", "United States",
+    )
+    print("Stephens Media Group official careers page: 1 concrete Account Executive listing")
+    return [job]
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -15169,6 +15288,10 @@ def main():
                 if company_key == "leighton media"
                 else pamal_broadcasting_jobs(s)
                 if company_key == "pamal broadcasting"
+                else pattison_media_jobs(s)
+                if company_key == "pattison media"
+                else stephens_media_group_jobs(s)
+                if company_key == "stephens media group"
                 else generic(s)
             )
 
