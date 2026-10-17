@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-17T18:32:58.400Z",
+  "generated": "2026-10-17T22:29:58.130Z",
   "version": "2.4",
-  "newestDate": "2026-10-16",
+  "newestDate": "2026-10-17",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1071
+      "count": 1072
     },
     "CPSC": {
       "ok": true,
-      "count": 10053
+      "count": 10040
     },
     "USDA": {
       "ok": true,
@@ -92,6 +92,22 @@
       "score": 135
     },
     {
+      "id": "FDA-2026-10-17-gelatelli-coffee-vanilla-gelato-with-coffee-sauce-cookie-pieces-lidl-u",
+      "source": "FDA",
+      "category": "food",
+      "title": "Gelatelli Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces Recalled",
+      "reason": "Potential contamination with Listeria monocytogenes",
+      "brand": "Gelatelli",
+      "company": "Lidl US",
+      "product": "Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces",
+      "date": "2026-10-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/lidl-us-recalls-gelatelli-coffee-vanilla-gelato-due-possible-health-risk",
+      "score": 133
+    },
+    {
       "id": "FDA-2026-10-02-great-value-trader-joe-s-organic-blueberries-triple-berry-blend-and-mi",
       "source": "FDA",
       "category": "food",
@@ -123,22 +139,6 @@
       "campaign": "26V590000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V590-2304.pdf",
       "score": 132
-    },
-    {
-      "id": "FDA-2026-09-03-great-value-organic-triple-berry-blend-frutas-y-hortalizas-del-sur-s-a",
-      "source": "FDA",
-      "category": "food",
-      "title": "Great Value Organic Triple Berry Blend Recalled",
-      "reason": "Possible E. Coli Contamination",
-      "brand": "Great Value",
-      "company": "Frutas y Hortalizas del Sur S.A.",
-      "product": "Organic Triple Berry Blend",
-      "date": "2026-09-03",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/frutas-y-hortalizas-del-sur-sa-expands-recall-include-one-lot-great-value-frozen-organic-triple",
-      "score": 118
     },
     {
       "id": "CPSC-10982-esjay-us-recalls-toddler-busy-board-montessori-toys-due-to-risk-of-ser",
@@ -175,20 +175,20 @@
       "score": 132
     },
     {
-      "id": "FDA-2026-10-16-starfish-seafood-cold-smoked-salmon-krasnyi-oktyabr-inc",
+      "id": "FDA-2026-09-03-great-value-organic-triple-berry-blend-frutas-y-hortalizas-del-sur-s-a",
       "source": "FDA",
       "category": "food",
-      "title": "Starfish Seafood Cold Smoked Salmon Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes",
-      "brand": "Starfish Seafood",
-      "company": "Krasnyi Oktyabr Inc.",
-      "product": "Cold Smoked Salmon",
-      "date": "2026-10-16",
+      "title": "Great Value Organic Triple Berry Blend Recalled",
+      "reason": "Possible E. Coli Contamination",
+      "brand": "Great Value",
+      "company": "Frutas y Hortalizas del Sur S.A.",
+      "product": "Organic Triple Berry Blend",
+      "date": "2026-09-03",
       "units": 0,
       "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-premium-cold-smoked-norwegian-salmon-sliced-227g8oz",
-      "score": 115
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/frutas-y-hortalizas-del-sur-sa-expands-recall-include-one-lot-great-value-frozen-organic-triple",
+      "score": 118
     },
     {
       "id": "CPSC-11018-dr-power-equipment-recalls-pilot-and-premier-trimmer-mowers-due-to-ris",
@@ -225,6 +225,22 @@
       "score": 125
     },
     {
+      "id": "FDA-2026-10-16-starfish-seafood-cold-smoked-salmon-krasnyi-oktyabr-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Starfish Seafood Cold Smoked Salmon Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Starfish Seafood",
+      "company": "Krasnyi Oktyabr Inc.",
+      "product": "Cold Smoked Salmon",
+      "date": "2026-10-16",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-premium-cold-smoked-norwegian-salmon-sliced-227g8oz",
+      "score": 115
+    },
+    {
       "id": "CPSC-11026-hatsanusa-recalls-blitz-air-rifles-due-to-risk-of-serious-injury-or-de",
       "source": "CPSC",
       "category": "consumer",
@@ -256,22 +272,6 @@
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
       "score": 109
-    },
-    {
-      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
-      "source": "FDA",
-      "category": "food",
-      "title": "Whole Foods Market Cheese Recalled",
-      "reason": "Undeclared Egg",
-      "brand": "Whole Foods Market",
-      "company": "Whole Foods Market",
-      "product": "Cheese",
-      "date": "2026-09-11",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/whole-foods-market-issues-allergy-alert-undeclared-egg-cabricharme-cheese",
-      "score": 83
     },
     {
       "id": "CPSC-11000-newdery-power-banks-recalled-due-to-fire-and-burn-hazards-risk-of-seri",
@@ -767,6 +767,22 @@
       "score": 83
     },
     {
+      "id": "FDA-2026-09-11-whole-foods-market-cheese-whole-foods-market",
+      "source": "FDA",
+      "category": "food",
+      "title": "Whole Foods Market Cheese Recalled",
+      "reason": "Undeclared Egg",
+      "brand": "Whole Foods Market",
+      "company": "Whole Foods Market",
+      "product": "Cheese",
+      "date": "2026-09-11",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/whole-foods-market-issues-allergy-alert-undeclared-egg-cabricharme-cheese",
+      "score": 83
+    },
+    {
       "id": "CPSC-10972-sweet-cubby-recalls-children-s-loungewear-sets-due-to-risk-of-serious-",
       "source": "CPSC",
       "category": "consumer",
@@ -895,7 +911,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 75
     },
     {
@@ -2021,22 +2037,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-ready-eat-deli-style-salads-and-cream-cheese-because-possible-health",
-      "score": 45
-    },
-    {
-      "id": "FDA-2026-09-04-foods-alive-moringa-leaf-powder-foods-alive-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Foods Alive Moringa Leaf Powder Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "Foods Alive",
-      "company": "Foods Alive Inc.",
-      "product": "Moringa Leaf Powder",
-      "date": "2026-09-04",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/foods-alive-recalls-organic-moringa-leaf-powder-because-possible-health-risk",
       "score": 45
     }
   ]
