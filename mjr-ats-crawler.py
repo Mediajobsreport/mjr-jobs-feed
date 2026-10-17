@@ -1795,7 +1795,8 @@ def lever(src):
     source_url = clean(src.get("URL", ""))
     parsed = urlparse(source_url)
     parts = [p for p in parsed.path.split("/") if p]
-    site = parts[0].lower() if parts else ""
+    # Lever board slugs are usually lowercase, but Complex exposes a case-sensitive board.
+    site = (parts[0] if parts and parts[0].lower() == "complex" else parts[0].lower()) if parts else ""
     if not site:
         raise RuntimeError("Lever site missing")
 
