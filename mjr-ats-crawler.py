@@ -11737,6 +11737,69 @@ def npg_adp_cx_rendered(src):
     print(f"NPG ADP CX rendered board: {len(out)} detail postings collected")
     return out
 
+def leighton_media_jobs(src):
+    """Collect live roles from Leighton's official open-positions page."""
+    url = src["URL"]
+    try:
+        response = req("GET", url)
+    except Exception as exc:
+        print(f"Leighton careers request failed: {type(exc).__name__}")
+        return []
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    toggles = soup.select(".et_pb_toggle")
+    out, seen = [], set()
+    state_by_city = {
+        "Alexandria": "Minnesota", "St. Cloud": "Minnesota",
+        "Winona": "Minnesota", "Fergus Falls": "Minnesota",
+        "Perham": "Minnesota", "Detroit Lakes": "Minnesota",
+        "Grand Forks": "North Dakota",
+    }
+    for toggle in toggles:
+        title_node = toggle.select_one(".et_pb_toggle_title") or toggle.find(["h2", "h3", "h4", "h5"])
+        body_node = toggle.select_one(".et_pb_toggle_content")
+        if not title_node or not body_node:
+            continue
+        title = clean(title_node.get_text(" "))
+        if not title or title.lower() in {"open positions", "careers", "jobs"}:
+            continue
+
+        location_node = toggle.find_previous(["h2", "h3"])
+        location = clean(location_node.get_text(" ")) if location_node else ""
+        if location.lower() in {"careers", "open positions", "career opportunities"}:
+            location = ""
+        raw_description = body_node.decode_contents()
+        description = format_description(raw_description)
+        plain_description = clean(BeautifulSoup(raw_description, "html.parser").get_text(" "))
+        if len(plain_description) < 180:
+            continue
+
+        apply_url = url
+        for link in body_node.find_all("a", href=True):
+            label = clean(link.get_text(" ")).lower()
+            if label in {"apply now", "apply", "submit application"}:
+                apply_url = urljoin(url, link["href"])
+                break
+        city = location if location in state_by_city else ""
+        state = state_by_city.get(city, "")
+        identity = f"{src['Company']}|{city}|{title}"
+        job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+        canonical = f"{url.split('#', 1)[0]}#{quote((city + '-' + title).lower().replace(' ', '-'))}"
+        if job_id in seen:
+            continue
+        seen.add(job_id)
+        out.append(Job(
+            job_id, title, src["Company"], description, TODAY,
+            jobtype(title, plain_description),
+            category(title, description, src["Industry"], src["Company"]),
+            canonical, url, apply_url, "",
+            normalize_work_arrangement(description, city, title),
+            city, state, "United States",
+        ))
+    print(f"Leighton official open positions: {len(out)} current roles")
+    return out
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -15040,7 +15103,7 @@ def main():
                 if company_key == "amazon music"
                 else npg_adp_cx_rendered(s)
                 if company_key == "npg"
-                else generic(s)
+                else leighton_media_jobs(s)\n                if company_key == "leighton media"\n                else generic(s)
             )
 
             icims_enumerated = 0
