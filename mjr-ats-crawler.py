@@ -15337,3 +15337,5 @@ def main():
     print("Wrote", len(jobs), "jobs")
 
 
+if __name__ == "__main__":
+    main()
