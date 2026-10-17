@@ -1466,6 +1466,39 @@ def pbs_workday_rendered(src):
     return out
 
 
+def bonneville_workday(src):
+    """Collect Bonneville openings from every market board linked by its careers page."""
+    market_sites = [
+        ("Salt Lake City", "BonSaltLake"),
+        ("Seattle", "BonSeattle"),
+        ("Phoenix", "BonPhoenix"),
+        ("Denver", "BonDenver"),
+        ("Sacramento", "BonSacramento"),
+    ]
+    jobs = []
+    seen = set()
+    errors = []
+    for market, site in market_sites:
+        market_src = dict(
+            src,
+            URL=f"https://deseretmanagement.wd1.myworkdayjobs.com/{site}",
+        )
+        try:
+            found = workday(market_src)
+            for job in found:
+                if job.id not in seen:
+                    seen.add(job.id)
+                    jobs.append(job)
+            print(f"Bonneville {market}: {len(found)} eligible jobs")
+        except Exception as exc:
+            errors.append(f"{market}: {type(exc).__name__}: {exc}")
+            print(f"Bonneville {market}: ERROR {type(exc).__name__}: {exc}")
+    print(f"Bonneville multi-market: eligible={len(jobs)} markets_failed={len(errors)}")
+    if not jobs and errors:
+        raise RuntimeError("; ".join(errors))
+    return jobs
+
+
 def workday(src):
     if clean(src.get("Company", "")).lower() == "pbs":
         return pbs_workday_rendered(src)
