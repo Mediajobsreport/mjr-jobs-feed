@@ -11403,6 +11403,12 @@ def _v28_before_request(url):
     if host in {"careers.paramount.com", "www.careers.paramount.com"}:
         host_cap = max(host_cap, int(os.getenv("MJR_PARAMOUNT_REQUEST_CAP", "300")))
 
+    # Hallmark exposes three official UKG boards on one host. Corporate can have
+    # hundreds of stale detail IDs, so allow the shared host budget to reach the
+    # Creative and Internship boards after Corporate has been enumerated.
+    if host == "recruiting2.ultipro.com":
+        host_cap = max(host_cap, int(os.getenv("MJR_HALLMARK_UKG_REQUEST_CAP", "1200")))
+
     # NBCUniversal publishes a large current inventory through SmartRecruiters.
     # The collector first filters list summaries by date and US/Canada location,
     # then follows only qualifying detail refs. Give that verified, bounded
