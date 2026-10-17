@@ -1,7 +1,7 @@
 Industry,Company,ATS,URL,Active
 Radio,Audacy,iCIMS,https://careers-audacy.icims.com/jobs/search?ss=1,True
 Radio,Beasley Media Group,ApplyToJob / JazzHR,https://beasleymediagroup.applytojob.com/apply/?selected_category=-1&selected_jobtype=-1&selected_location=-1,True
-Radio,Bonneville,Workday,https://deseretmanagement.wd1.myworkdayjobs.com/BonSaltLake,True
+Radio,Bonneville,Workday,https://bonneville.com/careers/,True
 Radio,CBC/Radio-Canada,Workday,https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/,True
 Radio,Connoisseur Media,Paycor,https://recruitingbypaycor.com/career/CareerHome.action?clientId=8a7883d082ae53c80182f17d3aba194b,True
 Radio,Corus,Dayforce,https://can241.dayforcehcm.com/CandidatePortal/en-US/corusent/Site/CORUS,True
@@ -39,10 +39,10 @@ Radio,Spanish Broadcasting System,ADP Workforce Now,https://workforcenow.adp.com
 Radio,Stingray,Company Career Site,https://jobs.stingray.com/career-opportunities/,True
 Radio,Summit Media,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?ccId=19000101_000001&cid=f2bc0ab2-658e-428f-8db7-8aaeb797dbcd&lang=en_US&type=JS,True
 Radio,Townsquare Media,Greenhouse,https://job-boards.greenhouse.io/townsquaremedia,True
-Television,Capitol Broadcasting,Company Career Site,https://capitolbroadcasting.com/careers/,True
+Television,Capitol Broadcasting,ADP Workforce Now,https://workforcenow.adp.com/mascsr/default/careercenter/recruitment.html?ccId=19000101_000001&cid=290e1fc8-a28d-477b-b05d-146069c94791&lang=en_US,True
 Television,Fox Television,Workday,https://fox.wd1.myworkdayjobs.com/en-US/Domestic,True
 Television,Gray Media,UKG Pro,https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/?q=&o=postedDateDesc&w=&wc=&we=&wpst=,True
-Television,Hallmark,Company Career Site,https://careers.hallmark.co.uk/viewalljobs/,True
+Television,Hallmark,UKG Pro,https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/1af38e50-bef2-48c7-8919-d646ae0bee65/?o=postedDateDesc&q=,True
 Television,Hearst,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_6/jobs,True
 Television,Morgan Murphy Media,Breezy HR,https://morgan-murphy-media.breezy.hr/,True
 Television,Newsmax,UKG Pro,https://recruiting.ultipro.com/NEW1027/JobBoard/3d5ae180-49c4-20f7-d7b4-adfe940978a7/?q=&o=postedDateDesc,True
@@ -108,7 +108,7 @@ Music Industry,Suno,Ashby,https://jobs.ashbyhq.com/suno,Yes
 Music Industry,Spotify,Lever,https://jobs.lever.co/spotify,True
 Music Industry,UnitedMasters,Greenhouse,https://job-boards.greenhouse.io/unitedmasterstranslation,True
 Music Industry,SoundCloud,Greenhouse,https://job-boards.greenhouse.io/soundcloud71,True
-Music Industry,Reservoir Media,Ashby,https://jobs.ashbyhq.com/reservoir-media,True
+Music Industry,Reservoir Media,Ashby,https://jobs.ashbyhq.com/reservoir,True
 Music Industry,Downtown Music,Greenhouse,https://job-boards.greenhouse.io/downtownmusicholdings,False
 Digital,Complex,Lever,https://jobs.lever.co/Complex,True
 Digital,143 Studios,Greenhouse,https://job-boards.greenhouse.io/143studiosinc,True

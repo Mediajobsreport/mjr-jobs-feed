@@ -1466,6 +1466,39 @@ def pbs_workday_rendered(src):
     return out
 
 
+def bonneville_workday(src):
+    """Collect Bonneville openings from every market board linked by its careers page."""
+    market_sites = [
+        ("Salt Lake City", "BonSaltLake"),
+        ("Seattle", "BonSeattle"),
+        ("Phoenix", "BonPhoenix"),
+        ("Denver", "BonDenver"),
+        ("Sacramento", "BonSacramento"),
+    ]
+    jobs = []
+    seen = set()
+    errors = []
+    for market, site in market_sites:
+        market_src = dict(
+            src,
+            URL=f"https://deseretmanagement.wd1.myworkdayjobs.com/{site}",
+        )
+        try:
+            found = workday(market_src)
+            for job in found:
+                if job.id not in seen:
+                    seen.add(job.id)
+                    jobs.append(job)
+            print(f"Bonneville {market}: {len(found)} eligible jobs")
+        except Exception as exc:
+            errors.append(f"{market}: {type(exc).__name__}: {exc}")
+            print(f"Bonneville {market}: ERROR {type(exc).__name__}: {exc}")
+    print(f"Bonneville multi-market: eligible={len(jobs)} markets_failed={len(errors)}")
+    if not jobs and errors:
+        raise RuntimeError("; ".join(errors))
+    return jobs
+
+
 def workday(src):
     if clean(src.get("Company", "")).lower() == "pbs":
         return pbs_workday_rendered(src)
@@ -11370,6 +11403,12 @@ def _v28_before_request(url):
     if host in {"careers.paramount.com", "www.careers.paramount.com"}:
         host_cap = max(host_cap, int(os.getenv("MJR_PARAMOUNT_REQUEST_CAP", "300")))
 
+    # Hallmark exposes three official UKG boards on one host. Corporate can have
+    # hundreds of stale detail IDs, so allow the shared host budget to reach the
+    # Creative and Internship boards after Corporate has been enumerated.
+    if host == "recruiting2.ultipro.com":
+        host_cap = max(host_cap, int(os.getenv("MJR_HALLMARK_UKG_REQUEST_CAP", "1200")))
+
     # NBCUniversal publishes a large current inventory through SmartRecruiters.
     # The collector first filters list summaries by date and US/Canada location,
     # then follows only qualifying detail refs. Give that verified, bounded
@@ -11979,6 +12018,179 @@ def stephens_media_group_jobs(src):
     )
     print("Stephens Media Group official careers page: 1 concrete Account Executive listing")
     return [job]
+
+
+def lotus_careers_jobs(src):
+    """Collect Lotus career articles with explicit posting and close dates."""
+    url = src["URL"]
+    try:
+        response = req("GET", url)
+    except Exception as exc:
+        print(f"Lotus careers request failed: {type(exc).__name__}")
+        return []
+    soup = BeautifulSoup(response.text, "html.parser")
+    out, seen = [], set()
+    for card in soup.select("article.ee-post"):
+        title_link = card.select_one("a.ee-post__title[href]")
+        date_node = card.select_one(".ee-post__meta--date")
+        if not title_link or not date_node:
+            continue
+        title = clean(title_link.get_text(" "))
+        posted = pdate(clean(date_node.get_text(" ")).replace("Posted on", ""))
+        if not title or not posted or posted < CUTOFF:
+            continue
+        detail_url = urljoin(url, title_link["href"])
+        if detail_url in seen:
+            continue
+        try:
+            detail_response = req("GET", detail_url)
+        except Exception as exc:
+            print(f"Lotus job detail failed for {title}: {type(exc).__name__}")
+            continue
+        detail = BeautifulSoup(detail_response.text, "html.parser")
+        body = detail.select_one(".elementor-widget-theme-post-content .elementor-widget-container")
+        if not body:
+            continue
+        text_body = clean(body.get_text(" "))
+        deadline_match = re.search(r"\bCLOSE\s+DATE\s*:\s*([A-Za-z]+\s+\d{1,2},?\s+20\d{2})", text_body, re.I)
+        if not deadline_match:
+            continue
+        try:
+            deadline = dtparser.parse(deadline_match.group(1), fuzzy=True).date()
+        except Exception:
+            continue
+        if deadline < TODAY or len(text_body) < 180:
+            continue
+        location_para = next((p for p in body.find_all("p")
+                              if re.match(r"\s*LOCATION\s*:", p.get_text(" "), re.I)), None)
+        location_match = re.search(r"\bLOCATION\s*:\s*(.+)", location_para.get_text(" ") if location_para else "", re.I)
+        location = clean(location_match.group(1)) if location_match else ""
+        city = ""
+        state = ""
+        if location:
+            pieces = [clean(x) for x in location.split(",")]
+            city = pieces[0]
+            if len(pieces) > 1:
+                state = pieces[1]
+        description = format_description(body.decode_contents())
+        apply_link = body.find("a", href=True)
+        apply_url = urljoin(detail_url, apply_link["href"]) if apply_link else detail_url
+        identity = f"{src['Company']}|{detail_url}"
+        job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+        seen.add(detail_url)
+        out.append(Job(
+            job_id, title, src["Company"], description, posted,
+            jobtype(title, text_body),
+            category(title, description, src["Industry"], src["Company"]),
+            detail_url, url, apply_url, "",
+            normalize_work_arrangement(description, location, title),
+            city, state, "United States", deadline,
+        ))
+    print(f"Lotus official careers page: {len(out)} open postings")
+    return out
+
+
+def tbn_careers_jobs(src):
+    """Collect current TBN careers listings, rendering detail pages as needed."""
+    url = src["URL"]
+    try:
+        response = req("GET", url)
+    except Exception as exc:
+        print(f"TBN careers request failed: {type(exc).__name__}")
+        return []
+    soup = BeautifulSoup(response.text, "html.parser")
+    listings, seen = [], set()
+    for link in soup.select('a[href*="/careers/"]'):
+        detail_url = urljoin(url, link.get("href", "")).split("#", 1)[0]
+        title = clean(link.get_text(" "))
+        if not title or urlparse(detail_url).path.rstrip("/") == urlparse(url).path.rstrip("/"):
+            continue
+        if not re.search(r"/careers/(?:[a-z]{2}/)?[^/]+/[^/]+$", urlparse(detail_url).path, re.I):
+            continue
+        if detail_url in seen:
+            continue
+        seen.add(detail_url)
+        listings.append((title, detail_url))
+
+    rendered = {}
+    browser_needed = []
+    for title, detail_url in listings:
+        try:
+            detail_response = req("GET", detail_url)
+            detail_html = detail_response.text
+            if len(detail_html) < 1000 or "Access Denied" in detail_html[:3000]:
+                browser_needed.append((title, detail_url))
+                continue
+        except Exception:
+            browser_needed.append((title, detail_url))
+            continue
+        rendered[detail_url] = detail_html
+
+    if browser_needed and sync_playwright:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page()
+                for title, detail_url in browser_needed:
+                    try:
+                        page.goto(detail_url, wait_until="domcontentloaded", timeout=25000)
+                        page.locator("body").wait_for(state="visible", timeout=10000)
+                        rendered[detail_url] = page.content()
+                    except Exception as exc:
+                        print(f"TBN rendered detail failed for {title}: {type(exc).__name__}")
+                browser.close()
+        except Exception as exc:
+            print(f"TBN rendered detail collector unavailable: {type(exc).__name__}")
+
+    out = []
+    for title, detail_url in listings:
+        detail_html = rendered.get(detail_url)
+        if not detail_html:
+            continue
+        detail = BeautifulSoup(detail_html, "html.parser")
+        page_text = clean(detail.get_text(" "))
+        date_value = ""
+        for selector in ("time[datetime]", "time", ".field--name-field-date", ".submitted"):
+            node = detail.select_one(selector)
+            if node:
+                date_value = clean(node.get("datetime") or node.get_text(" "))
+                if date_value:
+                    break
+        if not date_value:
+            date_match = re.search(r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+20\d{2}\b", page_text, re.I)
+            date_value = date_match.group(0) if date_match else ""
+        posted = pdate(date_value)
+        if not posted or posted < CUTOFF:
+            continue
+        heading = detail.find("h1") or detail.find("h2")
+        canonical_title = clean(heading.get_text(" ")) if heading else title
+        body = detail.select_one(".field--name-body, .node__content, article")
+        description_text = clean(body.get_text(" ")) if body else page_text
+        if len(description_text) < 180:
+            continue
+        description = format_description(body.decode_contents() if body else detail_html)
+        apply_node = next((a for a in detail.find_all("a", href=True)
+                           if clean(a.get_text(" ")).lower() in {"apply", "apply now"}), None)
+        apply_url = urljoin(detail_url, apply_node["href"]) if apply_node else detail_url
+        location = "Remote" if re.search(r"\bremote\b", canonical_title, re.I) else ""
+        loc_match = re.search(r"\b((?:Fort Worth|Ft\.? Worth|Dallas|Los Angeles|Nashville),\s*[A-Z]{2})\b", canonical_title, re.I)
+        if loc_match:
+            location = loc_match.group(1)
+        city = location.split(",", 1)[0] if location and "," in location else ("Remote" if location else "")
+        state = location.split(",", 1)[1].strip() if location and "," in location else ""
+        country = "United States"
+        jid = re.search(r"/careers/(?:[a-z]{2}/)?([^/]+)/([^/]+)/?$", urlparse(detail_url).path, re.I)
+        job_id = jid.group(2) if jid else hashlib.sha1(detail_url.encode()).hexdigest()[:16]
+        out.append(Job(
+            job_id, canonical_title, src["Company"], description, posted,
+            jobtype(canonical_title, description_text),
+            category(canonical_title, description, src["Industry"], src["Company"]),
+            detail_url, url, apply_url, "",
+            normalize_work_arrangement(description, location, canonical_title),
+            city, state, country,
+        ))
+    print(f"TBN official careers page: listed={len(listings)} current={len(out)}")
+    return out
 
 
 def generic(src):
@@ -15131,6 +15343,34 @@ def amazon_music_jobs(src):
             browser.close()
 
 
+
+def hallmark_ukg(src):
+    """Collect Hallmark's US Corporate, Creative, and Internship boards."""
+    boards = [
+        ("Corporate", "1af38e50-bef2-48c7-8919-d646ae0bee65"),
+        ("Creative", "d80ed073-b3ff-4375-ad65-2b03bcbbffb8"),
+        ("Internships", "ab752bd2-ff61-4489-a86c-18d808fa6f00"),
+    ]
+    jobs = []
+    seen = set()
+    for label, board in boards:
+        board_src = dict(
+            src,
+            URL=f"https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/{board}/",
+        )
+        try:
+            found = ukg(board_src)
+            for job in found:
+                if job.id not in seen:
+                    seen.add(job.id)
+                    jobs.append(job)
+            print(f"Hallmark {label}: {len(found)} jobs")
+        except Exception as exc:
+            print(f"Hallmark {label}: ERROR {type(exc).__name__}: {exc}")
+    print(f"Hallmark US boards: collected={len(jobs)}")
+    return jobs
+
+
 def main():
     with SOURCES_FILE.open(
         newline="",
@@ -15238,6 +15478,10 @@ def main():
                 if company_key == "cnn"
                 else gray_direct(s)
                 if company_key == "gray media"
+                else hallmark_ukg(s)
+                if company_key == "hallmark"
+                else bonneville_workday(s)
+                if company_key == "bonneville"
                 else workday(s)
                 if "workday" in a
                 else lever(s)
@@ -15292,6 +15536,10 @@ def main():
                 if company_key == "pattison media"
                 else stephens_media_group_jobs(s)
                 if company_key == "stephens media group"
+                else lotus_careers_jobs(s)
+                if company_key == "lotus"
+                else tbn_careers_jobs(s)
+                if company_key == "tbn"
                 else generic(s)
             )
 
