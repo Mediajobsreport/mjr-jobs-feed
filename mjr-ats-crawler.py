@@ -497,7 +497,8 @@ def category(title, desc, industry, company):
     if re.search(r"\bassignment desk(?: assistant| editor| manager| coordinator)?\b", t) and television_context:
         return "Television"
 
-    # Print/digital newsroom editing and news-design titles are Journalism.    # Keep this title-first so generic business/product language in newspaper
+    # Print/digital newsroom editing and news-design titles are Journalism.
+    # Keep this title-first so generic business/product language in newspaper
     # descriptions does not push editorial jobs into Business Office.
     if ind == "journalism" and re.search(
         r"\b(news designer|newsroom designer|news editor|editor,? the |"
@@ -996,7 +997,8 @@ def category(title, desc, industry, company):
     ):
         return "Radio"
 
-    # Television/video production.    if re.search(
+    # Television/video production.
+    if re.search(
         r"\b("
         r"television production|tv production|newscast production|"
         r"control room|camera operation|video production|studio production|"
@@ -1495,7 +1497,8 @@ def workday(src):
                     ep,
                     json={
                         "appliedFacets": {},
-                        "limit": 20,                        "offset": 0,
+                        "limit": 20,
+                        "offset": 0,
                         "searchText": "",
                     },
                     headers={"Content-Type": "application/json"},
@@ -1994,7 +1997,8 @@ def _adp_description(obj):
 
 
 def _adp_apply_url(src_url, job_id, detail=None):
-    """Create a public ADP job-specific career-center URL without inventing a host."""    u = urlparse(src_url)
+    """Create a public ADP job-specific career-center URL without inventing a host."""
+    u = urlparse(src_url)
     q = parse_qs(u.query, keep_blank_values=True)
     q["jobId"] = [str(job_id)]
     # Keep the external career-center identity already supplied by the employer.
@@ -2493,7 +2497,8 @@ def paylocity(src):
             continue
         out.append(Job(
             jid, title, src["Company"], desc, pd, _paylocity_jobtype(title, p),
-            category(title, desc, src["Industry"], src["Company"]), url,            src["URL"], src["URL"], "", normalize_work_arrangement(desc, loc),
+            category(title, desc, src["Industry"], src["Company"]), url,
+            src["URL"], src["URL"], "", normalize_work_arrangement(desc, loc),
             city or loc, state, infer_country(loc, src["Company"], desc),
         ))
 
@@ -2992,7 +2997,8 @@ def _jsonld_jobs(soup):
         stack = data if isinstance(data, list) else [data]
         while stack:
             obj = stack.pop()
-            if isinstance(obj, list):                stack.extend(obj)
+            if isinstance(obj, list):
+                stack.extend(obj)
                 continue
             if not isinstance(obj, dict):
                 continue
@@ -3491,7 +3497,8 @@ def icims(src):
 
     out = []
     for url in sorted(links):
-        try:            rr = req("GET", url)
+        try:
+            rr = req("GET", url)
             j = _icims_detail(src, url, rr.text)
             if j:
                 out.append(j)
@@ -3990,7 +3997,8 @@ def _oracle_date(row):
     for name in (
         "PostedDate",
         "postedDate",
-        "PostedDateTime",        "postedDateTime",
+        "PostedDateTime",
+        "postedDateTime",
         "PostingStartDate",
         "postingStartDate",
         "ExternalPostedStartDate",
@@ -4488,6 +4496,7 @@ def _paycom_detail(src, url, raw):
         "",
         infer_country(loc or full_text, src["Company"], desc),
     )
+
 
 def paycom(src):
     """Dedicated Paycom public ATS collector.
@@ -4988,7 +4997,8 @@ def federated_media(src):
                 r"([A-Za-z .,'/-]+?)(?:\s+Posted|\s+Full Time|\s+Part Time|$)",
                 txt,
                 re.I,
-            )            if mloc:
+            )
+            if mloc:
                 loc = clean(mloc.group(1))
 
             jid = hashlib.sha1(url.encode()).hexdigest()[:16]
@@ -5487,7 +5497,8 @@ def isolved(src):
     for detail_index, url in enumerate(sorted(details)):
         try:
             rr = req("GET", url)
-            final_url = str(getattr(rr, "url", "") or url)            fu = urlparse(final_url)
+            final_url = str(getattr(rr, "url", "") or url)
+            fu = urlparse(final_url)
             if (
                 "admin.isolvedhire.com" in fu.netloc.lower()
                 or fu.path.lower().startswith("/help")
@@ -5986,7 +5997,8 @@ def cox_successfactors(src):
         seen_pages.add(page_key)
 
         try:
-            r = req("GET", page)        except Exception:
+            r = req("GET", page)
+        except Exception:
             continue
 
         final_url = str(getattr(r, "url", "") or page)
@@ -6485,7 +6497,8 @@ def fox_public(src):
 
     print(
         f"FOX public careers: {len(out)} current jobs "
-        f"({detail_requests} detail requests)"    )
+        f"({detail_requests} detail requests)"
+    )
     return out
 
 
@@ -6984,7 +6997,8 @@ def company_scope_rejection_reason(job_or_dict):
         hard_nonmedia_title = re.search(
             r"\b(chef(?: de partie| de rang)?|demi chef|cook|culinary|"
             r"food\s*(?:&|and)\s*beverage|food service|restaurant server|"
-            r"banquet server|cocktail server|bartender|busser|dishwasher|"            r"housekeep(?:er|ing)|custodial|custodian|lifeguard|"
+            r"banquet server|cocktail server|bartender|busser|dishwasher|"
+            r"housekeep(?:er|ing)|custodial|custodian|lifeguard|"
             r"supply and distribution worker|warehouse worker|"
             r"hotel utility|hotel operations|front desk|bellperson|concierge|"
             r"spa attendant|massage therapist|cosmetologist|"
@@ -7483,6 +7497,7 @@ def wbd_phenom(src):
             "size": 100,
         },
     ]
+
     for body in bodies:
         try:
             r = req(
@@ -7982,7 +7997,8 @@ def siriusxm_v17(src):
         candidates = all_by_keys(
             data,
             [
-                r"(?:^|\.)(?:location|location_name|locationname|display_location|displaylocation)$",                r"(?:^|\.)locations(?:\[\d+\])?(?:\.name)?$",
+                r"(?:^|\.)(?:location|location_name|locationname|display_location|displaylocation)$",
+                r"(?:^|\.)locations(?:\[\d+\])?(?:\.name)?$",
                 r"(?:^|\.)address(?:\.name)?$",
             ],
         )
@@ -8481,7 +8497,8 @@ def nbcuniversal_v17(src):
                 or location_obj.get("country")
                 or ""
             )).upper()
-            if detail_country_raw in {"US", "USA", "UNITED STATES", "UNITED STATES OF AMERICA"}:                country = "US"
+            if detail_country_raw in {"US", "USA", "UNITED STATES", "UNITED STATES OF AMERICA"}:
+                country = "US"
             elif detail_country_raw in {"CA", "CANADA"}:
                 country = "CA"
             else:
@@ -8980,7 +8997,8 @@ def paylocity_v18(src):
             "https://recruiting.paylocity.com/recruiting/jobs/All/da27c45a-0c7a-4cbe-a575-3444d884e49b/Dick-Broadcasting-Company-Inc",
         ],
         "nrg media": [
-            "https://recruiting.paylocity.com/recruiting/jobs/All/76da5c58-0cdb-4886-86b6-41d72879e541/NRG-MEDIA-LLC",        ],
+            "https://recruiting.paylocity.com/recruiting/jobs/All/76da5c58-0cdb-4886-86b6-41d72879e541/NRG-MEDIA-LLC",
+        ],
         "weigel": [
             "https://recruiting.paylocity.com/recruiting/jobs/All/7cbe86ee-b534-47b4-9c82-d15e8b55a6cb/Weigel-Broadcasting-Co",
         ],
@@ -9479,7 +9497,8 @@ def connoisseur_paycor(src):
 
             embedded_hits = []
             def _embedded_response(resp):
-                try:                    u = resp.url or ""
+                try:
+                    u = resp.url or ""
                     if (
                         resp.request.resource_type in ("xhr", "fetch", "document")
                         and (
@@ -9978,7 +9997,8 @@ def connoisseur_paycor(src):
                         j.category = "Engineering"
                     elif "traffic coordinator" in _ct or "sales assistant" in _ct or "administrative" in _ct:
                         j.category = "Business Office"
-                    elif any(x in _ct for x in ("on-air", "on air", "board operator", "program director", "news reporter", "street team", "promotions")):                        j.category = "Radio"
+                    elif any(x in _ct for x in ("on-air", "on air", "board operator", "program director", "news reporter", "street team", "promotions")):
+                        j.category = "Radio"
 
                 # The live Paycor listing carries the physical address even when
                 # JobIntroduction renders a generic shell. Bind city/state from
@@ -10477,7 +10497,8 @@ def radio_recovery(src):
             hp=urlparse(href)
             same=hp.netloc.lower()==host
             ext=any(x in hp.netloc.lower() for x in ("paylocity.com","icims.com","myworkdayjobs.com","jobs.rogers.com","greenhouse.io","lever.co"))
-            if not (same or ext): continue            p=hp.path.lower()
+            if not (same or ext): continue
+            p=hp.path.lower()
             if (re.search(r"/(?:job|jobs|career|careers|job-openings?)/",p)
                 or re.search(r"/job/\d+",p)
                 or label in {"view details","learn more","apply","apply now"}
@@ -10976,7 +10997,8 @@ def emf_v25(src):
         links = _v25_collect_job_links(
             final, r.text, host_hint="careers-kloveair1.icims.com", max_links=100
         )
-        new_links = [u for u in links if u not in seen]        if not new_links and page_num > 2:
+        new_links = [u for u in links if u not in seen]
+        if not new_links and page_num > 2:
             break
         for u in new_links:
             seen.add(u)
@@ -11475,7 +11497,8 @@ def graham_media_jobs(src):
                     detail = BeautifulSoup(page.content(), "html.parser")
                     title = next(
                         (
-                            clean(heading.get_text(" "))                            for heading in detail.find_all(["h1", "h2", "h3"])
+                            clean(heading.get_text(" "))
+                            for heading in detail.find_all(["h1", "h2", "h3"])
                             if clean(heading.get_text(" "))
                             and clean(heading.get_text(" ")).lower() not in {
                                 "graham media group", "careers", "our careers"
@@ -11975,6 +11998,7 @@ def stateful(jobs):
     STATE_FILE.write_text(json.dumps(st, indent=2, default=str))
     return ret
 
+
 def _recover_missing_location(j):
     """Recover only clearly labelled city/state locations; never guess."""
     if clean(j.city):
@@ -12473,7 +12497,8 @@ def _icims_frame_detail_urls(src, max_details=160):
     src = _icims_effective_source(src)
     parsed = urlparse(src["URL"])
     base = f"{parsed.scheme}://{parsed.netloc}"
-    start_url = src["URL"] if "/jobs/search" in parsed.path.lower() else base + "/jobs/search?ss=1"    detail_urls = set()
+    start_url = src["URL"] if "/jobs/search" in parsed.path.lower() else base + "/jobs/search?ss=1"
+    detail_urls = set()
 
     try:
         with sync_playwright() as p:
@@ -12972,6 +12997,7 @@ def collect_audacy_v40(src):
             ):
                 continue
             cleaned_sentences.append(sentence)
+
         reduced = " ".join(cleaned_sentences)[:5000]
         jt = jobtype(title, reduced)
 
@@ -13471,7 +13497,8 @@ def salem_icims_v75(src):
                     jid = m.group(1)
                     page_ids.add(jid)
                     q = parse_qs(up.query)
-                    q["in_iframe"] = ["1"]                    nq = urlencode({k: v[-1] for k, v in q.items()})
+                    q["in_iframe"] = ["1"]
+                    nq = urlencode({k: v[-1] for k, v in q.items()})
                     page_urls_found.add(urlunparse((up.scheme, up.netloc, up.path, "", nq, "")))
 
             # iCIMS can serialize job paths or bare IDs into script state.
@@ -13970,7 +13997,8 @@ def salem_icims_v76(src):
 
         # v77: this requisition was observed on Salem's live rendered search.
         # Parse it with Salem's non-date-gated detail parser so missing/stale
-        # iCIMS datePosted metadata cannot discard an otherwise-live job.        j = _salem_live_detail_job_v77(src, requested_id, final, raw, state)
+        # iCIMS datePosted metadata cannot discard an otherwise-live job.
+        j = _salem_live_detail_job_v77(src, requested_id, final, raw, state)
         if not j:
             continue
 
@@ -14469,7 +14497,8 @@ def voiceover_sources_test():
                     parts.append(f"<h3>{html.escape(heading)}</h3>")
                 if content:
                     parts.append(f"<ul>{content}</ul>" if "<li" in content.lower() else content)
-            if row.get("additional"):                parts.append(str(row.get("additional")))
+            if row.get("additional"):
+                parts.append(str(row.get("additional")))
             description = format_description("".join(parts))
             if len(strip_html(description)) < 200:
                 continue
@@ -14969,6 +14998,7 @@ def main():
     for s in sources:
         if str(s.get("Active", "True")).lower() in ("false", "0", "no"):
             continue
+
         try:
             a = s["ATS"].lower()
 
@@ -15292,5 +15322,3 @@ def main():
     print("Wrote", len(jobs), "jobs")
 
 
-if __name__ == "__main__":
-    main()
