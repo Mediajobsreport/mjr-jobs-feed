@@ -11747,7 +11747,9 @@ def leighton_media_jobs(src):
         return []
 
     soup = BeautifulSoup(response.text, "html.parser")
-    toggles = soup.select(".et_pb_toggle")
+    # The current HubSpot career page uses a simple-accordion module. Keep
+    # support for the older Divi toggle markup while preferring the live DOM.
+    toggles = soup.select(".simple-accordion__item") or soup.select(".et_pb_toggle")
     out, seen = [], set()
     state_by_city = {
         "Alexandria": "Minnesota", "St. Cloud": "Minnesota",
@@ -11756,18 +11758,31 @@ def leighton_media_jobs(src):
         "Grand Forks": "North Dakota",
     }
     for toggle in toggles:
-        title_node = toggle.select_one(".et_pb_toggle_title") or toggle.find(["h2", "h3", "h4", "h5"])
-        body_node = toggle.select_one(".et_pb_toggle_content")
+        title_node = (
+            toggle.select_one(".simple-accordion__title button")
+            or toggle.select_one(".et_pb_toggle_title")
+            or toggle.find(["h2", "h3", "h4", "h5"])
+        )
+        body_node = (
+            toggle.select_one(".simple-accordion__content")
+            or toggle.select_one(".et_pb_toggle_content")
+        )
         if not title_node or not body_node:
             continue
         title = clean(title_node.get_text(" "))
         if not title or title.lower() in {"open positions", "careers", "jobs"}:
             continue
 
-        location_node = toggle.find_previous(["h2", "h3"])
+        location_node = toggle.find_parent(class_="sa-item")
+        if location_node:
+            location_node = location_node.select_one(".simple-accordion__intro h3")
+        if not location_node:
+            location_node = toggle.find_previous(["h2", "h3"])
         location = clean(location_node.get_text(" ")) if location_node else ""
         if location.lower() in {"careers", "open positions", "career opportunities"}:
             location = ""
+        if "no open positions available" in clean(toggle.get_text(" ")).lower():
+            continue
         raw_description = body_node.decode_contents()
         description = format_description(raw_description)
         plain_description = clean(BeautifulSoup(raw_description, "html.parser").get_text(" "))
