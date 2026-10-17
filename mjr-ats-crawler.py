@@ -11815,6 +11815,53 @@ def leighton_media_jobs(src):
     return out
 
 
+def pamal_broadcasting_jobs(src):
+    """Collect concrete openings explicitly marked POSITION AVAILABLE."""
+    url = src["URL"]
+    try:
+        response = req("GET", url)
+    except Exception as exc:
+        print(f"Pamal careers request failed: {type(exc).__name__}")
+        return []
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    out, seen = [], set()
+    for card in soup.select("li.c-pod"):
+        title_node = card.select_one(".c-pod__title")
+        desc_node = card.select_one(".c-pod__description")
+        if not title_node or not desc_node:
+            continue
+        title = clean(title_node.get_text(" "))
+        raw = desc_node.get_text("\n", strip=True)
+        if not title or not re.search(r"\bPOSITION AVAILABLE\s*:", raw, re.I):
+            continue
+        plain = clean(raw)
+        if len(plain) < 100:
+            continue
+        location_match = re.search(r"\bLOCATION\s*:\s*([^\n]+)", raw, re.I)
+        location = clean(location_match.group(1)) if location_match else ""
+        city = location.split("/")[0].strip().rsplit(",", 1)[0].strip() if location else ""
+        state_match = re.search(r"\b(?:NY|New York)\b", location, re.I)
+        state = "New York" if state_match else ""
+        description = format_description(desc_node.decode_contents())
+        identity = f"{src['Company']}|{location}|{title}"
+        job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+        if job_id in seen:
+            continue
+        seen.add(job_id)
+        canonical = f"{url.split('#', 1)[0]}#{quote((title + '-' + location).lower().replace(' ', '-'))}"
+        out.append(Job(
+            job_id, title, src["Company"], description, TODAY,
+            jobtype(title, plain),
+            category(title, description, src["Industry"], src["Company"]),
+            canonical, url, url, "",
+            normalize_work_arrangement(description, location, title),
+            city, state, "United States",
+        ))
+    print(f"Pamal official careers page: {len(out)} explicit openings")
+    return out
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -15120,6 +15167,8 @@ def main():
                 if company_key == "npg"
                 else leighton_media_jobs(s)
                 if company_key == "leighton media"
+                else pamal_broadcasting_jobs(s)
+                if company_key == "pamal broadcasting"
                 else generic(s)
             )
 
