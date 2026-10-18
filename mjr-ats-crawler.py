@@ -15497,6 +15497,8 @@ def main():
                 if "paylocity" in a
                 else hubbard_adp_cx(s)
                 if company_key == "hubbard broadcasting"
+                else npg_adp_cx_rendered(s)
+                if company_key == "npg"
                 else adp(s)
                 if "adp" in a
                 else dayforce(s)
@@ -15527,8 +15529,6 @@ def main():
                 if _ats_family(s)
                 else amazon_music_jobs(s)
                 if company_key == "amazon music"
-                else npg_adp_cx_rendered(s)
-                if company_key == "npg"
                 else leighton_media_jobs(s)
                 if company_key == "leighton media"
                 else pamal_broadcasting_jobs(s)
