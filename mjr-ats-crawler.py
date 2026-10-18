@@ -4611,6 +4611,22 @@ def paycom(src):
             if hck and hck.lower() == clientkey.lower() and h.rstrip("/") not in seen_pages:
                 queue.append(h)
 
+    # The rendered shell embeds a session JWT for the portal search API.
+    # Calling that API directly is reliable in CI even when browser hydration is blocked.
+    try:
+        jwt_match = re.search(r'"sessionJWT"\\s*:\\s*"([^"]+)"', r.text or "")
+        if jwt_match:
+            api_payload = {"skip": 0, "take": 100, "filtersForQuery": {"distanceFrom": 0, "workEnvironments": [], "positionTypes": [], "educationLevels": [], "categories": [], "travelTypes": [], "shiftTypes": [], "otherFilters": [], "keywordSearchText": "", "location": "", "sortOption": ""}}
+            api_resp = req("POST", "https://portal-applicant-tracking.us-cent.paycomonline.net/api/ats/job-posting-previews/search", headers={"Authorization": "Bearer " + jwt_match.group(1), "Locale": "en-US", "Content-Type": "application/json"}, json=api_payload, timeout=30)
+            previews = (api_resp.json() or {}).get("jobPostingPreviews") or []
+            print(f"Paycom portal API returned {len(previews)} previews")
+            for item in previews:
+                jid = clean(str(item.get("jobId") or ""))
+                if jid:
+                    details.add(f"{origin}/v4/ats/web.php/portal/{clientkey}/jobs/{jid}")
+    except Exception as api_exc:
+        print(f"Paycom portal API error: {type(api_exc).__name__}: {api_exc}")
+
     # Modern Paycom boards render job cards client-side after redirecting the
     # legacy listing URL to /portal/<clientkey>/career-page. If the initial
     # HTML has no anchors, use the already-supported Playwright dependency to
