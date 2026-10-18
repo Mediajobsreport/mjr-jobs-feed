@@ -8596,6 +8596,8 @@ def smartrecruiters_v17(src, company_id=None):
         if len(rows) < limit or (isinstance(total, int) and offset >= total):
             break
 
+    PUBLIC_BOARD_ENUMERATION[clean(src["Company"]).lower()] = rows_checked
+
     print(
         f"{src['Company']} SmartRecruiters: rows_checked={rows_checked} "
         f"unique={len(seen_ids)} details={details_fetched} "
