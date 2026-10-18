@@ -2453,7 +2453,7 @@ def _paylocity_board_jobs(src, start_url=None):
     # are dynamically inserted. Add those as candidates too.
     raw = html.unescape(r.text or "").replace("\\/", "/")
     for m in re.finditer(
-        r'https?://recruiting\.paylocity\.com/recruiting/jobs/details/\d+/[^"\'<>\\s]+',
+        r'https?://recruiting\.paylocity\.com/recruiting/jobs/details/\d+/[^"\'<>\s]+',
         raw,
         re.I,
     ):
@@ -3900,7 +3900,7 @@ def ukg(src):
                     )
 
             for m in re.finditer(
-                r"[\"'](?:opportunityId|OpportunityId)[\"']\\s*:\\s*[\"']([0-9a-f-]{36})[\"']",
+                r"[\"'](?:opportunityId|OpportunityId)[\"']\s*:\s*[\"']([0-9a-f-]{36})[\"']",
                 raw,
                 re.I,
             ):
@@ -7556,7 +7556,7 @@ def wbd_phenom(src):
         raw = json.dumps(payload, ensure_ascii=False)
         urls = set()
         for m in re.finditer(
-            r'https?://careers\.wbd\.com/[^"\\\s]+|/global/en/job/[^"\\\s]+|/job/[^"\\\s]+',
+            r'https?://careers\.wbd\.com/[^"\\s]+|/global/en/job/[^"\\s]+|/job/[^"\\s]+',
             raw,
             re.I,
         ):
@@ -9715,8 +9715,8 @@ def connoisseur_paycor(src):
                             try:
                                 cards = fr.locator("a[href*='JobIntroduction.action']").evaluate_all("""els => els.map(a => ({
                                     href: a.href || '',
-                                    text: (a.innerText || '').replace(/\\s+/g,' ').trim(),
-                                    card: ((a.closest('li, tr, article, [class*=job], [class*=position]') || a.parentElement || a).innerText || '').replace(/\\s+/g,' ').trim()
+                                    text: (a.innerText || '').replace(/\s+/g,' ').trim(),
+                                    card: ((a.closest('li, tr, article, [class*=job], [class*=position]') || a.parentElement || a).innerText || '').replace(/\s+/g,' ').trim()
                                 }))""")
                                 for card in cards:
                                     hu = clean(str(card.get("href") or "")).split("#",1)[0]
@@ -9762,7 +9762,7 @@ def connoisseur_paycor(src):
                                             if (
                                                 len(line) <= 180
                                                 and not re.search(r"^(?:apply|view|details|career openings?)$", line, re.I)
-                                                and not re.match(r"^\\d{1,6}\\s+", line)
+                                                and not re.match(r"^\d{1,6}\s+", line)
                                             ):
                                                 title_text = line
                                                 break
@@ -9786,7 +9786,7 @@ def connoisseur_paycor(src):
                                         rp.goto(retry_url, wait_until="domcontentloaded", timeout=20000)
                                         rp.wait_for_timeout(2500)
                                         retry_links = rp.locator("a[href*='JobIntroduction.action']").evaluate_all(
-                                            "els => els.map(a => ({href:a.href||'', text:(a.innerText||'').trim(), card:((a.parentElement?.parentElement?.innerText||a.parentElement?.innerText||'')).replace(/\\s+/g,' ').trim()}))"
+                                            "els => els.map(a => ({href:a.href||'', text:(a.innerText||'').trim(), card:((a.parentElement?.parentElement?.innerText||a.parentElement?.innerText||'')).replace(/\s+/g,' ').trim()}))"
                                         )
                                         rp.close()
                                         for item in retry_links:
@@ -9877,12 +9877,12 @@ def connoisseur_paycor(src):
                                     )
                                     try:
                                         meta = detail_page.locator("body").evaluate("""body => {
-                                            const norm = s => (s || '').replace(/\\s+/g,' ').trim();
+                                            const norm = s => (s || '').replace(/\s+/g,' ').trim();
                                             const headings = Array.from(body.querySelectorAll('h1,h2,h3,.job-title,.position-title,[class*=title]'))
                                                 .map(e => norm(e.innerText)).filter(Boolean);
                                             const title = headings.find(x => !/career openings|connoisseur media|job description|apply/i.test(x)) || '';
                                             const text = norm(body.innerText);
-                                            const loc = text.match(/(?:Location|Job Location)\\s*:?\\s*([^\\n]{2,180})/i);
+                                            const loc = text.match(/(?:Location|Job Location)\s*:?\s*([^\\n]{2,180})/i);
                                             return {title, location: loc ? norm(loc[1]) : ''};
                                         }""")
                                         if meta:
@@ -10056,7 +10056,7 @@ def connoisseur_paycor(src):
                 card_lines = board_meta.get("card_lines") or []
                 card_text = " | ".join(card_lines) or clean(str(rendered_card or board_meta.get("card") or ""))
                 loc_matches = re.findall(
-                    r"\\b([A-Z][A-Za-z .'-]{1,80}),\\s*([A-Z]{2})(?:\\s+\\d{5}(?:-\\d{4})?)?\\b",
+                    r"\\b([A-Z][A-Za-z .'-]{1,80}),\s*([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?\\b",
                     card_text,
                 )
                 if loc_matches:
@@ -10117,7 +10117,7 @@ def connoisseur_paycor(src):
             continue
 
         city = state = ""
-        m = re.search(r"(?:Location|Job Location)\\s*:?\\s*([A-Z][A-Za-z .'-]+),\\s*([A-Z]{2})\\b", txt, re.I)
+        m = re.search(r"(?:Location|Job Location)\s*:?\s*([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\\b", txt, re.I)
         if m:
             city, state = clean(m.group(1)), m.group(2).upper()
 
@@ -10746,9 +10746,9 @@ def hubbard_adp_cx_rendered(src):
                         ]
                         req_match = next(
                             (
-                                re.fullmatch(r"#?([A-Z0-9]+-\\d{3,})", line, re.I)
+                                re.fullmatch(r"#?([A-Z0-9]+-\d{3,})", line, re.I)
                                 for line in lines[1:6]
-                                if re.fullmatch(r"#?([A-Z0-9]+-\\d{3,})", line, re.I)
+                                if re.fullmatch(r"#?([A-Z0-9]+-\d{3,})", line, re.I)
                             ),
                             None,
                         )
@@ -10762,7 +10762,7 @@ def hubbard_adp_cx_rendered(src):
                         location = next(
                             (
                                 line for line in lines
-                                if re.search(r",\\s*(?:United States|Canada)$", line, re.I)
+                                if re.search(r",\s*(?:United States|Canada)$", line, re.I)
                             ),
                             "",
                         )
@@ -10860,9 +10860,9 @@ def hubbard_adp_cx(src):
     try:
         landing = req("GET", src["URL"])
         raw = html.unescape(landing.text or "").replace("\\/", "/")
-        for m in re.finditer(r'(?i)reqId(?:%3D|=|["\']?\\s*[:=]\\s*["\'])(500\\d{10})', raw):
+        for m in re.finditer(r'(?i)reqId(?:%3D|=|["\']?\s*[:=]\s*["\'])(500\d{10})', raw):
             seed_ids.add(m.group(1))
-        for m in re.finditer(r'(?i)["\'](?:jobId|requisitionId|reqId)["\']\\s*:\\s*["\']?(500\\d{10})', raw):
+        for m in re.finditer(r'(?i)["\'](?:jobId|requisitionId|reqId)["\']\s*:\s*["\']?(500\d{10})', raw):
             seed_ids.add(m.group(1))
     except Exception:
         pass
