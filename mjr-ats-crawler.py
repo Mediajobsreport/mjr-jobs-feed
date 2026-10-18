@@ -10731,7 +10731,7 @@ def hubbard_adp_cx_rendered(src):
                     try:
                         page.get_by_role("button", name=title, exact=True).nth(
                             occurrence
-                        ).click(timeout=10000)
+                        ).click(timeout=10000, force=True)
                         stage = "wait for detail panel"
                         detail_panel = page.locator(".cx-job-details-page")
                         detail_panel.wait_for(state="visible", timeout=15000)
