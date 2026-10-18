@@ -10913,8 +10913,9 @@ def hubbard_adp_cx(src):
             j = _job_from_detail(src, final, rr.text)
             if not j:
                 j = _radio_recovery_job(src, final, rr.text)
-            if j and j.id not in seen:
-                seen.add(j.id)
+            key = j.url.rstrip("/").lower() if j else ""
+            if j and key not in seen:
+                seen.add(key)
                 out.append(j)
         except Exception:
             continue
