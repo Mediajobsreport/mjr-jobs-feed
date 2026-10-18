@@ -4556,6 +4556,32 @@ def paycom(src):
     seen_pages = set()
     details = set()
 
+    # CMB uses WP Job Manager with client-side listings. Its public AJAX
+    # endpoint exposes current listing HTML even when the landing page is
+    # only a JavaScript placeholder.
+    if company == "christian music broadcasters (cmb)":
+        try:
+            rr = req(
+                "POST",
+                "https://cmbonline.org/jm-ajax/get_listings/",
+                data={
+                    "per_page": 100,
+                    "page": 1,
+                    "show_pagination": "false",
+                    "orderby": "featured",
+                    "order": "DESC",
+                    "location": "",
+                    "keywords": "",
+                    "categories": "",
+                },
+            )
+            payload = rr.json()
+            listing_html = payload.get("html", "") if isinstance(payload, dict) else ""
+            for h in _direct_board_candidate_links("https://cmbonline.org/jobs/", listing_html):
+                details.add(h)
+        except Exception:
+            pass
+
     while queue and len(seen_pages) < 80 and len(details) < 3000:
         page = queue.pop(0)
         key = page.rstrip("/")
