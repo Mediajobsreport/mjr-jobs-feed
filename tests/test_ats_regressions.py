@@ -24,6 +24,18 @@ class Response:
 
 
 class ATSRegressionTests(unittest.TestCase):
+    def test_hubbard_adp_job_code_uses_rendered_public_code(self):
+        detail = """Multiplatform News Producer
+#26-1275
+Albany, New York, United States
+Job Overview
+Produce digital and broadcast news content."""
+        self.assertEqual(crawler._hubbard_adp_job_code(detail), "26-1275")
+        self.assertEqual(
+            crawler._hubbard_adp_job_code("Multiplatform News Producer\nAlbany, New York"),
+            "",
+        )
+
     def test_relative_dates_include_workday_lower_bounds(self):
         for label, days in [
             ("Posted Today", 0), ("Posted Yesterday", 1),
