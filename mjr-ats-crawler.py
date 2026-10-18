@@ -2453,7 +2453,7 @@ def _paylocity_board_jobs(src, start_url=None):
     # are dynamically inserted. Add those as candidates too.
     raw = html.unescape(r.text or "").replace("\\/", "/")
     for m in re.finditer(
-        r'https?://recruiting\.paylocity\.com/recruiting/jobs/details/\d+/[^"\'<>\\s]+',
+        r'https?://recruiting\.paylocity\.com/recruiting/jobs/details/\d+/[^"\'<>\s]+',
         raw,
         re.I,
     ):
@@ -3900,7 +3900,7 @@ def ukg(src):
                     )
 
             for m in re.finditer(
-                r"[\"'](?:opportunityId|OpportunityId)[\"']\\s*:\\s*[\"']([0-9a-f-]{36})[\"']",
+                r"[\"'](?:opportunityId|OpportunityId)[\"']\s*:\s*[\"']([0-9a-f-]{36})[\"']",
                 raw,
                 re.I,
             ):
@@ -7556,7 +7556,7 @@ def wbd_phenom(src):
         raw = json.dumps(payload, ensure_ascii=False)
         urls = set()
         for m in re.finditer(
-            r'https?://careers\.wbd\.com/[^"\\\s]+|/global/en/job/[^"\\\s]+|/job/[^"\\\s]+',
+            r'https?://careers\.wbd\.com/[^"\\s]+|/global/en/job/[^"\\s]+|/job/[^"\\s]+',
             raw,
             re.I,
         ):
@@ -9715,8 +9715,8 @@ def connoisseur_paycor(src):
                             try:
                                 cards = fr.locator("a[href*='JobIntroduction.action']").evaluate_all("""els => els.map(a => ({
                                     href: a.href || '',
-                                    text: (a.innerText || '').replace(/\\s+/g,' ').trim(),
-                                    card: ((a.closest('li, tr, article, [class*=job], [class*=position]') || a.parentElement || a).innerText || '').replace(/\\s+/g,' ').trim()
+                                    text: (a.innerText || '').replace(/\s+/g,' ').trim(),
+                                    card: ((a.closest('li, tr, article, [class*=job], [class*=position]') || a.parentElement || a).innerText || '').replace(/\s+/g,' ').trim()
                                 }))""")
                                 for card in cards:
                                     hu = clean(str(card.get("href") or "")).split("#",1)[0]
@@ -9762,7 +9762,7 @@ def connoisseur_paycor(src):
                                             if (
                                                 len(line) <= 180
                                                 and not re.search(r"^(?:apply|view|details|career openings?)$", line, re.I)
-                                                and not re.match(r"^\\d{1,6}\\s+", line)
+                                                and not re.match(r"^\d{1,6}\s+", line)
                                             ):
                                                 title_text = line
                                                 break
@@ -9786,7 +9786,7 @@ def connoisseur_paycor(src):
                                         rp.goto(retry_url, wait_until="domcontentloaded", timeout=20000)
                                         rp.wait_for_timeout(2500)
                                         retry_links = rp.locator("a[href*='JobIntroduction.action']").evaluate_all(
-                                            "els => els.map(a => ({href:a.href||'', text:(a.innerText||'').trim(), card:((a.parentElement?.parentElement?.innerText||a.parentElement?.innerText||'')).replace(/\\s+/g,' ').trim()}))"
+                                            "els => els.map(a => ({href:a.href||'', text:(a.innerText||'').trim(), card:((a.parentElement?.parentElement?.innerText||a.parentElement?.innerText||'')).replace(/\s+/g,' ').trim()}))"
                                         )
                                         rp.close()
                                         for item in retry_links:
@@ -9877,12 +9877,12 @@ def connoisseur_paycor(src):
                                     )
                                     try:
                                         meta = detail_page.locator("body").evaluate("""body => {
-                                            const norm = s => (s || '').replace(/\\s+/g,' ').trim();
+                                            const norm = s => (s || '').replace(/\s+/g,' ').trim();
                                             const headings = Array.from(body.querySelectorAll('h1,h2,h3,.job-title,.position-title,[class*=title]'))
                                                 .map(e => norm(e.innerText)).filter(Boolean);
                                             const title = headings.find(x => !/career openings|connoisseur media|job description|apply/i.test(x)) || '';
                                             const text = norm(body.innerText);
-                                            const loc = text.match(/(?:Location|Job Location)\\s*:?\\s*([^\\n]{2,180})/i);
+                                            const loc = text.match(/(?:Location|Job Location)\s*:?\s*([^\\n]{2,180})/i);
                                             return {title, location: loc ? norm(loc[1]) : ''};
                                         }""")
                                         if meta:
@@ -10056,7 +10056,7 @@ def connoisseur_paycor(src):
                 card_lines = board_meta.get("card_lines") or []
                 card_text = " | ".join(card_lines) or clean(str(rendered_card or board_meta.get("card") or ""))
                 loc_matches = re.findall(
-                    r"\\b([A-Z][A-Za-z .'-]{1,80}),\\s*([A-Z]{2})(?:\\s+\\d{5}(?:-\\d{4})?)?\\b",
+                    r"\\b([A-Z][A-Za-z .'-]{1,80}),\s*([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?\\b",
                     card_text,
                 )
                 if loc_matches:
@@ -10117,7 +10117,7 @@ def connoisseur_paycor(src):
             continue
 
         city = state = ""
-        m = re.search(r"(?:Location|Job Location)\\s*:?\\s*([A-Z][A-Za-z .'-]+),\\s*([A-Z]{2})\\b", txt, re.I)
+        m = re.search(r"(?:Location|Job Location)\s*:?\s*([A-Z][A-Za-z .'-]+),\s*([A-Z]{2})\\b", txt, re.I)
         if m:
             city, state = clean(m.group(1)), m.group(2).upper()
 
@@ -10687,6 +10687,200 @@ def townsquare_v23(src):
     return out
 
 
+def _hubbard_adp_job_code(detail_raw):
+    """Return the public Hubbard job code shown near the title."""
+    lines = [clean(line) for line in str(detail_raw or "").splitlines() if clean(line)]
+    for line in lines[1:6]:
+        match = re.fullmatch(r"#?([A-Z0-9]+-[0-9]{3,})", line, re.I)
+        if match:
+            return match.group(1).upper()
+    return ""
+
+
+def hubbard_adp_cx_rendered(src):
+    """Enumerate Hubbard's public ADP CX results through its rendered UI."""
+    if sync_playwright is None:
+        return []
+
+    out, seen = [], set()
+    start = src["URL"]
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1365, "height": 900})
+            page.goto(start, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_timeout(2500)
+            search = page.get_by_role("button", name=re.compile(r"^Search$", re.I))
+            if search.count():
+                search.first.click()
+            page.get_by_text(
+                re.compile(r"Search results loaded|jobs found", re.I)
+            ).wait_for(timeout=30000)
+            page.wait_for_timeout(800)
+
+            test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
+            targeted_hubbard = (
+                test_mode
+                and "hubbard broadcasting"
+                in os.getenv("MJR_TEST_COMPANIES", "").lower()
+            )
+            # A Hubbard-only test walks the full bounded board so it verifies
+            # pagination and every currently rendered result without touching
+            # production feed files.
+            page_limit = 2 if targeted_hubbard else (1 if test_mode else 6)
+            card_limit = 2 if targeted_hubbard else (1 if test_mode else 10)
+            for page_number in range(1, page_limit + 1):
+                headings = page.get_by_role("heading")
+                cards, occurrences = [], {}
+                for idx in range(headings.count()):
+                    try:
+                        title = clean(headings.nth(idx).inner_text(timeout=1000))
+                        matches = page.get_by_role("button", name=title, exact=True)
+                        if title and matches.count():
+                            occurrence = occurrences.get(title, 0)
+                            cards.append((title, occurrence))
+                            occurrences[title] = occurrence + 1
+                    except Exception:
+                        continue
+
+                print("Hubbard ADP CX page {}: {} result cards".format(page_number, len(cards)))
+                for title, occurrence in cards[:card_limit]:
+                    apply_opened = False
+                    stage = "open result card"
+                    try:
+                        page.get_by_role("button", name=title, exact=True).nth(
+                            occurrence
+                        ).click(timeout=10000, force=True)
+                        stage = "wait for detail panel"
+                        detail_panel = page.locator(".details-main-section")
+                        detail_panel.wait_for(state="visible", timeout=15000)
+                        page.wait_for_function(
+                            """(expected) => {
+                                const panel = document.querySelector('.details-main-section');
+                                const firstLine = panel?.innerText?.trim().split(/\\r?\\n/)[0]?.trim();
+                                return firstLine === expected;
+                            }""",
+                            arg=title,
+                            timeout=10000,
+                        )
+                        stage = "read detail panel"
+                        detail_raw = detail_panel.inner_text(timeout=10000)
+                        if len(clean(detail_raw)) < 200:
+                            continue
+
+                        lines = [
+                            clean(line) for line in detail_raw.splitlines()
+                            if clean(line)
+                        ]
+                        req_id = _hubbard_adp_job_code(detail_raw)
+                        if not req_id:
+                            raise ValueError("Rendered detail did not expose a stable Hubbard job code")
+                        if req_id in seen:
+                            continue
+                        seen.add(req_id)
+
+                        location = next(
+                            (
+                                line for line in lines
+                                if re.search(r",\s*(?:United States|Canada)$", line, re.I)
+                            ),
+                            "",
+                        )
+                        description = format_description(detail_raw)
+                        if len(strip_html(description)) < 200:
+                            continue
+                        city, state, country = _split_adp_location(location)
+                        if not country:
+                            country = infer_country(
+                                location, src["Company"], detail_raw
+                            )
+                        saved = load_state().get(
+                            req_id.lower(), {}
+                        ).get("job", {})
+                        posted = pdate(saved.get("date")) or TODAY
+                        out.append(
+                            Job(
+                                req_id, title, src["Company"], description,
+                                posted, jobtype(title, description),
+                                category(
+                                    title, description, src["Industry"],
+                                    src["Company"],
+                                ),
+                                start + "#job-" + quote(req_id, safe=""),
+                                start, "", "",
+                                normalize_work_arrangement(
+                                    description, location, title
+                                ),
+                                city, state, country,
+                            )
+                        )
+                    except Exception as exc:
+                        print(
+                            "Hubbard ADP rendered detail skipped ({}): {}".format(
+                                title[:70], "{} ({})".format(stage, clean(str(exc))[:180])
+                            )
+                        )
+                    finally:
+                        if apply_opened and "/auth" in page.url.lower():
+                            try:
+                                page.go_back(
+                                    wait_until="commit", timeout=8000
+                                )
+                                page.wait_for_timeout(250)
+                            except Exception:
+                                pass
+
+                print("Hubbard ADP CX page {}: collected={}".format(page_number, len(out)))
+                if page_number >= page_limit:
+                    break
+                next_page = page.get_by_role(
+                    "button", name="Page {}".format(page_number + 1), exact=True
+                )
+                if not next_page.count() or not next_page.is_enabled():
+                    break
+                previous_titles = [title for title, _ in cards]
+                next_page.click(timeout=10000)
+                # ADP renders the result list inside a component whose DOM is
+                # not consistently visible to page.evaluate. Poll through
+                # Playwright's role locators, which pierce the component tree.
+                deadline = time.monotonic() + 15
+                page_changed = False
+                while time.monotonic() < deadline:
+                    current_headings = page.get_by_role("heading")
+                    current_titles = []
+                    for idx in range(current_headings.count()):
+                        try:
+                            current_title = clean(
+                                current_headings.nth(idx).inner_text(timeout=500)
+                            )
+                            if current_title and page.get_by_role(
+                                "button", name=current_title, exact=True
+                            ).count():
+                                current_titles.append(current_title)
+                        except Exception:
+                            continue
+                    if current_titles and current_titles != previous_titles:
+                        page_changed = True
+                        break
+                    page.wait_for_timeout(250)
+                if not page_changed:
+                    raise TimeoutError(
+                        "ADP result headings did not change after selecting page {}".format(
+                            page_number + 1
+                        )
+                    )
+            browser.close()
+    except Exception as exc:
+        print(
+            "Hubbard ADP CX render unavailable: {}: {}".format(
+                type(exc).__name__, clean(str(exc))[:160]
+            )
+        )
+        return out
+
+    return out
+
+
 def hubbard_adp_cx(src):
     """Recover Hubbard jobs from its ADP CX board.
 
@@ -10697,8 +10891,8 @@ def hubbard_adp_cx(src):
     requisition URLs, then let ADP's own detail pages/schema provide the job.
     The older rendered-board recovery remains as the automatic fallback.
     """
-    out = []
-    seen = set()
+    out = hubbard_adp_cx_rendered(src)
+    seen = {j.url.rstrip("/").lower() for j in out if j.url}
 
     # Current canonical Hubbard requisitions independently exposed by public
     # station/community job pages. These are only seeds; each ADP detail page
@@ -10716,9 +10910,9 @@ def hubbard_adp_cx(src):
     try:
         landing = req("GET", src["URL"])
         raw = html.unescape(landing.text or "").replace("\\/", "/")
-        for m in re.finditer(r'(?i)reqId(?:%3D|=|["\']?\\s*[:=]\\s*["\'])(500\\d{10})', raw):
+        for m in re.finditer(r'(?i)reqId(?:%3D|=|["\']?\s*[:=]\s*["\'])(500\d{10})', raw):
             seed_ids.add(m.group(1))
-        for m in re.finditer(r'(?i)["\'](?:jobId|requisitionId|reqId)["\']\\s*:\\s*["\']?(500\\d{10})', raw):
+        for m in re.finditer(r'(?i)["\'](?:jobId|requisitionId|reqId)["\']\s*:\s*["\']?(500\d{10})', raw):
             seed_ids.add(m.group(1))
     except Exception:
         pass
@@ -10734,8 +10928,9 @@ def hubbard_adp_cx(src):
             j = _job_from_detail(src, final, rr.text)
             if not j:
                 j = _radio_recovery_job(src, final, rr.text)
-            if j and j.id not in seen:
-                seen.add(j.id)
+            key = j.url.rstrip("/").lower() if j else ""
+            if j and key not in seen:
+                seen.add(key)
                 out.append(j)
         except Exception:
             continue
@@ -10743,8 +10938,8 @@ def hubbard_adp_cx(src):
     # Also retain the older public-board discovery path. It can automatically
     # pick up additional jobs whenever ADP exposes detail URLs in rendered HTML.
     for j in hubbard_v23(src):
-        if j.id not in seen:
-            seen.add(j.id)
+        if j.url.rstrip("/").lower() not in seen:
+            seen.add(j.url.rstrip("/").lower())
             out.append(j)
 
     return out
