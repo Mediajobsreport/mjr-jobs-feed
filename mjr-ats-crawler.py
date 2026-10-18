@@ -4614,7 +4614,7 @@ def paycom(src):
     # The rendered shell embeds a session JWT for the portal search API.
     # Calling that API directly is reliable in CI even when browser hydration is blocked.
     try:
-        jwt_match = re.search(r'"sessionJWT"\\s*:\\s*"([^"]+)"', r.text or "")
+        jwt_match = re.search(r'"sessionJWT"\s*:\s*"([^"]+)"', r.text or "")
         if jwt_match:
             api_payload = {"skip": 0, "take": 100, "filtersForQuery": {"distanceFrom": 0, "workEnvironments": [], "positionTypes": [], "educationLevels": [], "categories": [], "travelTypes": [], "shiftTypes": [], "otherFilters": [], "keywordSearchText": "", "location": "", "sortOption": ""}}
             api_resp = req("POST", "https://portal-applicant-tracking.us-cent.paycomonline.net/api/ats/job-posting-previews/search", headers={"Authorization": "Bearer " + jwt_match.group(1), "Locale": "en-US", "Content-Type": "application/json"}, json=api_payload, timeout=30)
@@ -4632,7 +4632,7 @@ def paycom(src):
     # HTML has no anchors, use the already-supported Playwright dependency to
     # enumerate the rendered portal links, then parse them through the normal
     # detail path below.
-    if (not any(re.search(r"/ats/web\\.php/portal/[A-F0-9]{16,64}/jobs/[A-Z0-9_-]+/?$", urlparse(u).path, re.I) for u in details)) and sync_playwright is not None:
+    if (not any(re.search(r"/ats/web\.php/portal/[A-F0-9]{16,64}/jobs/[A-Z0-9_-]+/?$", urlparse(u).path, re.I) for u in details)) and sync_playwright is not None:
         try:
             with sync_playwright() as p:
                 browser = p.chromium.launch(headless=True)
