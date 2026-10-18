@@ -4632,10 +4632,15 @@ def paycom(src):
                     page_obj.wait_for_load_state("networkidle", timeout=20000)
                 except Exception:
                     page_obj.wait_for_timeout(12000)
-                hrefs = page_obj.locator("a[href]").evaluate_all(
-                    "els => els.map(e => e.href)"
-                )
-                print(f"Paycom rendered fallback: {len(hrefs)} anchors on portal page: {hrefs}")
+                hrefs = []
+                for frame in page_obj.frames:
+                    try:
+                        hrefs.extend(frame.locator("a[href]").evaluate_all(
+                            "els => els.map(e => e.href)"
+                        ))
+                    except Exception:
+                        continue
+                print(f"Paycom rendered fallback: {len(hrefs)} anchors across {len(page_obj.frames)} frames")
                 for href in hrefs:
                     hp = urlparse(href)
                     m = re.search(
