@@ -5606,6 +5606,7 @@ def _direct_board_date(raw):
         r"(?:Date Posted|Posted Date|Posted|Posting Date)\s*:?\s*"
         r"(20\d{2}-\d{2}-\d{2})",
         r'["\']datePosted["\']\s*:\s*["\']([^"\']+)["\']',
+        r'["\']datePublished["\']\s*:\s*["\']([^"\']+)["\']',
     ]
     for pat in patterns:
         for m in re.finditer(pat, s, re.I):
