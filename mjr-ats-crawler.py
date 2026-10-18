@@ -10718,8 +10718,17 @@ def hubbard_adp_cx_rendered(src):
             ).wait_for(timeout=30000)
             page.wait_for_timeout(800)
 
-            page_limit = 1 if os.getenv("MJR_TEST_MODE", "false").lower() == "true" else 6
-            card_limit = 1 if os.getenv("MJR_TEST_MODE", "false").lower() == "true" else 10
+            test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
+            targeted_hubbard = (
+                test_mode
+                and "hubbard broadcasting"
+                in os.getenv("MJR_TEST_COMPANIES", "").lower()
+            )
+            # A Hubbard-only test walks the full bounded board so it verifies
+            # pagination and every currently rendered result without touching
+            # production feed files.
+            page_limit = 6 if not test_mode or targeted_hubbard else 1
+            card_limit = 10 if not test_mode or targeted_hubbard else 1
             for page_number in range(1, page_limit + 1):
                 headings = page.get_by_role("heading")
                 cards, occurrences = [], {}
