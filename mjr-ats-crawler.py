@@ -12207,6 +12207,18 @@ def tbn_careers_jobs(src):
                         rendered[detail_url] = page.content()
                     except Exception as exc:
                         print(f"TBN rendered detail failed for {title}: {type(exc).__name__}")
+                try:
+                    api_payload = {"skip": 0, "take": 100, "filtersForQuery": {"distanceFrom": 0, "workEnvironments": [], "positionTypes": [], "educationLevels": [], "categories": [], "travelTypes": [], "shiftTypes": [], "otherFilters": [], "keywordSearchText": "", "location": "", "sortOption": ""}}
+                    api_text = page_obj.evaluate("""async ({api,payload}) => { const r = await fetch(api, {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(payload)}); return await r.text(); }""", {"api": "https://portal-applicant-tracking.us-cent.paycomonline.net/api/ats/job-posting-previews/search", "payload": api_payload})
+                    api_data = json.loads(api_text)
+                    previews = api_data.get("jobPostingPreviews") or []
+                    print(f"Paycom portal API returned {len(previews)} previews")
+                    for item in previews:
+                        jid = clean(str(item.get("jobId") or item.get("id") or item.get("jobCode") or item.get("requisitionId") or ""))
+                        if jid:
+                            details.add(f"{origin}/v4/ats/web.php/portal/{clientkey}/jobs/{jid}")
+                except Exception as api_exc:
+                    print(f"Paycom portal API error: {type(api_exc).__name__}: {api_exc}")
                 browser.close()
         except Exception as exc:
             print(f"TBN rendered detail collector unavailable: {type(exc).__name__}")
