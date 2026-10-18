@@ -10709,6 +10709,7 @@ def hubbard_adp_cx_rendered(src):
             page.wait_for_timeout(800)
 
             page_limit = 1 if os.getenv("MJR_TEST_MODE", "false").lower() == "true" else 6
+            card_limit = 1 if os.getenv("MJR_TEST_MODE", "false").lower() == "true" else 10
             for page_number in range(1, page_limit + 1):
                 headings = page.get_by_role("heading")
                 cards, occurrences = [], {}
@@ -10724,23 +10725,28 @@ def hubbard_adp_cx_rendered(src):
                         continue
 
                 print("Hubbard ADP CX page {}: {} result cards".format(page_number, len(cards)))
-                for title, occurrence in cards:
+                for title, occurrence in cards[:card_limit]:
                     apply_opened = False
+                    stage = "open result card"
                     try:
                         page.get_by_role("button", name=title, exact=True).nth(
                             occurrence
                         ).click(timeout=10000)
+                        stage = "wait for detail panel"
                         detail_panel = page.locator(".cx-job-details-page")
                         detail_panel.wait_for(state="visible", timeout=15000)
+                        stage = "read detail panel"
                         detail_raw = detail_panel.inner_text(timeout=10000)
                         if len(clean(detail_raw)) < 200:
                             continue
 
+                        stage = "click Apply"
                         apply_button = page.get_by_role(
                             "button", name=re.compile(r"^Apply$", re.I)
                         )
                         apply_button.last.click(timeout=10000)
                         apply_opened = True
+                        stage = "wait for Apply navigation"
                         page.wait_for_url(re.compile(r"/auth"), timeout=8000)
                         apply_url = page.url
                         apply_qs = parse_qs(urlparse(apply_url).query)
@@ -10777,7 +10783,7 @@ def hubbard_adp_cx_rendered(src):
                         except Exception as exc:
                             print(
                                 "Hubbard ADP detail fetch skipped ({}): {}".format(
-                                    title[:70], type(exc).__name__
+                                    title[:70], "{} ({})".format(stage, clean(str(exc))[:180])
                                 )
                             )
 
