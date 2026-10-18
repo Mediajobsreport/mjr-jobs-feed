@@ -8424,16 +8424,20 @@ def townsquare_v17(src):
     )
 
 
-def nbcuniversal_v17(src):
-    """Collect NBCUniversal's public SmartRecruiters postings efficiently.
+def smartrecruiters_v17(src, company_id=None):
+    """Collect a public SmartRecruiters board through its postings API efficiently.
 
     SmartRecruiters list results already contain releasedDate and location.
     Filter the public inventory to MJR's freshness window at the list endpoint,
     reject non-US/Canada summaries before detail retrieval, and fetch details
-    only for jobs that can actually enter the feed. This keeps NBCU well below
-    the crawler's per-domain request safety cap.
+    only for jobs that can actually enter the feed. This keeps large boards well
+    below the crawler's per-domain request safety cap.
     """
-    company_id = "NBCUniversal3"
+    if not company_id:
+        match = re.search(r"(?:jobs|careers)\.smartrecruiters\.com/([^/?#]+)", src.get("URL", ""), re.I)
+        if not match:
+            raise ValueError(f"Could not determine SmartRecruiters company ID for {src.get('Company', '')}")
+        company_id = match.group(1)
     endpoint = f"https://api.smartrecruiters.com/v1/companies/{company_id}/postings"
     out = []
     seen_ids = set()
@@ -8592,13 +8596,19 @@ def nbcuniversal_v17(src):
         if len(rows) < limit or (isinstance(total, int) and offset >= total):
             break
 
+    PUBLIC_BOARD_ENUMERATION[clean(src["Company"]).lower()] = rows_checked
+
     print(
-        f"NBCUniversal SmartRecruiters: rows_checked={rows_checked} "
+        f"{src['Company']} SmartRecruiters: rows_checked={rows_checked} "
         f"unique={len(seen_ids)} details={details_fetched} "
         f"foreign={foreign} stale_or_invalid={stale_or_invalid} "
         f"fresh_us_ca={len(out)}"
     )
     return out
+
+
+def nbcuniversal_v17(src):
+    return smartrecruiters_v17(src, "NBCUniversal3")
 
 
 def tegna_v17(src):
@@ -15459,6 +15469,8 @@ def main():
                 if company_route_key == "townsquare"
                 else nbcuniversal_v17(s)
                 if company_key == "nbcuniversal"
+                else smartrecruiters_v17(s)
+                if "smartrecruiters" in a or "smartrecruiters.com" in s.get("URL", "").lower()
                 else greenhouse(s)
                 if company_key == "tegna"
                 else cumulus_v17(s)
