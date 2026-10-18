@@ -10739,10 +10739,8 @@ def hubbard_adp_cx_rendered(src):
                             "button", name=re.compile(r"^Apply$", re.I)
                         )
                         apply_button.last.click(timeout=10000)
-                        page.wait_for_url(
-                            re.compile(r"/auth(?:\?|$)"), timeout=15000
-                        )
                         apply_opened = True
+                        page.wait_for_url(re.compile(r"/auth"), timeout=8000)
                         apply_url = page.url
                         apply_qs = parse_qs(urlparse(apply_url).query)
                         redirect = unquote(
@@ -10834,7 +10832,7 @@ def hubbard_adp_cx_rendered(src):
                             )
                         )
                     finally:
-                        if apply_opened:
+                        if apply_opened and "/auth" in page.url.lower():
                             try:
                                 page.go_back(
                                     wait_until="domcontentloaded", timeout=15000
