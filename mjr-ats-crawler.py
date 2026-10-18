@@ -3907,8 +3907,8 @@ def ukg(src):
                 detail_urls.add(
                     f"{board_root}/OpportunityDetail?opportunityId={m.group(1)}"
                 )
-        except Exception:
-            pass
+        except Exception as exc:
+            print(f"Paycom rendered fallback error: {type(exc).__name__}: {exc}")
 
     out = []
     seen_ids = set()
@@ -4632,9 +4632,11 @@ def paycom(src):
                     page_obj.wait_for_load_state("networkidle", timeout=20000)
                 except Exception:
                     page_obj.wait_for_timeout(12000)
-                for href in page_obj.locator("a[href]").evaluate_all(
+                hrefs = page_obj.locator("a[href]").evaluate_all(
                     "els => els.map(e => e.href)"
-                ):
+                )
+                print(f"Paycom rendered fallback: {len(hrefs)} anchors on portal page")
+                for href in hrefs:
                     hp = urlparse(href)
                     m = re.search(
                         r"/ats/web\\.php/portal/([A-F0-9]{16,64})/jobs/[A-Z0-9_-]+/?$",
