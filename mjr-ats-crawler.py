@@ -4627,11 +4627,11 @@ def paycom(src):
                         "Chrome/152.0.0.0 Safari/537.36"
                     )
                 )
-                page_obj.goto(start, wait_until="domcontentloaded", timeout=60000)
+                page_obj.goto(f"{origin}/v4/ats/web.php/portal/{clientkey}/career-page", wait_until="domcontentloaded", timeout=60000)
                 try:
                     page_obj.wait_for_load_state("networkidle", timeout=20000)
                 except Exception:
-                    page_obj.wait_for_timeout(5000)
+                    page_obj.wait_for_timeout(12000)
                 for href in page_obj.locator("a[href]").evaluate_all(
                     "els => els.map(e => e.href)"
                 ):
