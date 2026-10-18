@@ -10687,6 +10687,16 @@ def townsquare_v23(src):
     return out
 
 
+def _hubbard_adp_job_code(detail_raw):
+    """Return the public Hubbard job code shown near the title."""
+    lines = [clean(line) for line in str(detail_raw or "").splitlines() if clean(line)]
+    for line in lines[1:6]:
+        match = re.fullmatch(r"#?([A-Z0-9]+-\\d{3,})", line, re.I)
+        if match:
+            return match.group(1).upper()
+    return ""
+
+
 def hubbard_adp_cx_rendered(src):
     """Enumerate Hubbard's public ADP CX results through its rendered UI."""
     if sync_playwright is None:
@@ -10744,17 +10754,9 @@ def hubbard_adp_cx_rendered(src):
                             clean(line) for line in detail_raw.splitlines()
                             if clean(line)
                         ]
-                        req_match = next(
-                            (
-                                re.fullmatch(r"#?([A-Z0-9]+-\d{3,})", line, re.I)
-                                for line in lines[1:6]
-                                if re.fullmatch(r"#?([A-Z0-9]+-\d{3,})", line, re.I)
-                            ),
-                            None,
-                        )
-                        if not req_match:
+                        req_id = _hubbard_adp_job_code(detail_raw)
+                        if not req_id:
                             raise ValueError("Rendered detail did not expose a stable Hubbard job code")
-                        req_id = req_match.group(1).upper()
                         if req_id in seen:
                             continue
                         seen.add(req_id)
