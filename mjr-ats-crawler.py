@@ -10838,14 +10838,17 @@ def hubbard_adp_cx_rendered(src):
                 )
                 if not next_page.count() or not next_page.is_enabled():
                     break
-                previous_results = page.locator(".results-fields-redesign").inner_text(timeout=5000)
+                previous_titles = [title for title, _ in cards]
                 next_page.click(timeout=10000)
                 page.wait_for_function(
                     """(previous) => {
-                        const results = document.querySelector('.results-fields-redesign');
-                        return results && results.innerText !== previous;
+                        const current = Array.from(
+                            document.querySelectorAll('cx-result-field h3')
+                        ).map(node => node.innerText.trim()).filter(Boolean);
+                        return current.length > 0
+                            && current.join('|') !== previous.join('|');
                     }""",
-                    arg=previous_results,
+                    arg=previous_titles,
                     timeout=15000,
                 )
             browser.close()
