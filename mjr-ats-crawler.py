@@ -10740,98 +10740,59 @@ def hubbard_adp_cx_rendered(src):
                         if len(clean(detail_raw)) < 200:
                             continue
 
-                        stage = "click Apply"
-                        apply_button = page.get_by_role(
-                            "button", name=re.compile(r"^Apply$", re.I)
-                        )
-                        apply_button.last.click(timeout=10000)
-                        apply_opened = True
-                        stage = "wait for Apply navigation"
-                        page.wait_for_url(re.compile(r"/auth"), timeout=8000)
-                        apply_url = page.url
-                        apply_qs = parse_qs(urlparse(apply_url).query)
-                        redirect = unquote(
-                            (apply_qs.get("redirectUrl") or [""])[0]
-                        )
-                        req_match = re.search(
-                            r"/legacy/job/(\d+)", redirect or apply_url
+                        lines = [
+                            clean(line) for line in detail_raw.splitlines()
+                            if clean(line)
+                        ]
+                        req_match = next(
+                            (
+                                re.fullmatch(r"#?([A-Z0-9]+-\\d{3,})", line, re.I)
+                                for line in lines[1:6]
+                                if re.fullmatch(r"#?([A-Z0-9]+-\\d{3,})", line, re.I)
+                            ),
+                            None,
                         )
                         if not req_match:
-                            req_match = re.search(
-                                r"(?:reqId|jobId)=(\d+)", redirect or apply_url,
-                                re.I,
-                            )
-                        if not req_match:
-                            raise ValueError("Apply target did not expose a requisition ID")
-
-                        req_id = req_match.group(1)
-                        detail_url = (
-                            "https://myjobs.adp.com/hubbardbroadcasting/cx/"
-                            "job-details?reqId={}".format(req_id)
-                        )
-                        if detail_url in seen:
+                            raise ValueError("Rendered detail did not expose a stable Hubbard job code")
+                        req_id = req_match.group(1).upper()
+                        if req_id in seen:
                             continue
-                        seen.add(detail_url)
+                        seen.add(req_id)
 
-                        job = None
-                        try:
-                            response = req("GET", detail_url)
-                            final = str(getattr(response, "url", "") or detail_url)
-                            job = _job_from_detail(src, final, response.text)
-                            if not job:
-                                job = _radio_recovery_job(src, final, response.text)
-                        except Exception as exc:
-                            print(
-                                "Hubbard ADP detail fetch skipped ({}): {}".format(
-                                    title[:70], "{} ({})".format(stage, clean(str(exc))[:180])
-                                )
+                        location = next(
+                            (
+                                line for line in lines
+                                if re.search(r",\\s*(?:United States|Canada)$", line, re.I)
+                            ),
+                            "",
+                        )
+                        description = format_description(detail_raw)
+                        if len(strip_html(description)) < 200:
+                            continue
+                        city, state, country = _split_adp_location(location)
+                        if not country:
+                            country = infer_country(
+                                location, src["Company"], detail_raw
                             )
-
                         saved = load_state().get(
-                            detail_url.rstrip("/").lower(), {}
+                            req_id.lower(), {}
                         ).get("job", {})
-                        if job:
-                            job.date = pdate(saved.get("date")) or job.date or TODAY
-                            out.append(job)
-                        else:
-                            lines = [
-                                clean(line) for line in detail_raw.splitlines()
-                                if clean(line)
-                            ]
-                            location = next(
-                                (
-                                    line for line in lines
-                                    if re.search(
-                                        r",\s*(?:United States|Canada)$",
-                                        line, re.I,
-                                    )
+                        posted = pdate(saved.get("date")) or TODAY
+                        out.append(
+                            Job(
+                                req_id, title, src["Company"], description,
+                                posted, jobtype(title, description),
+                                category(
+                                    title, description, src["Industry"],
+                                    src["Company"],
                                 ),
-                                "",
+                                start, start, "", "",
+                                normalize_work_arrangement(
+                                    description, location, title
+                                ),
+                                city, state, country,
                             )
-                            description = format_description(detail_raw)
-                            if len(strip_html(description)) < 200:
-                                continue
-                            city, state, country = _split_adp_location(location)
-                            if not country:
-                                country = infer_country(
-                                    location, src["Company"], detail_raw
-                                )
-                            posted = pdate(saved.get("date")) or TODAY
-                            out.append(
-                                Job(
-                                    req_id, title, src["Company"], description,
-                                    posted, jobtype(title, description),
-                                    category(
-                                        title, description, src["Industry"],
-                                        src["Company"],
-                                    ),
-                                    detail_url, src["URL"], detail_url, "",
-                                    normalize_work_arrangement(
-                                        description, location, title
-                                    ),
-                                    city, state, country,
-                                )
-                            )
+                        )
                     except Exception as exc:
                         print(
                             "Hubbard ADP rendered detail skipped ({}): {}".format(
