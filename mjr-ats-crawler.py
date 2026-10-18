@@ -3907,8 +3907,8 @@ def ukg(src):
                 detail_urls.add(
                     f"{board_root}/OpportunityDetail?opportunityId={m.group(1)}"
                 )
-        except Exception:
-            pass
+        except Exception as exc:
+            print(f"Paycom rendered fallback error: {type(exc).__name__}: {exc}")
 
     out = []
     seen_ids = set()
@@ -4454,6 +4454,7 @@ def _paycom_job_links(base_url, raw):
         r'https?://[^"\'<>\s]+paycomonline\.net[^"\'<>\s]+',
         r'/(?:v4/)?ats/web\.php/jobs/ViewJobDetails\?[^"\'<>\s]+',
         r'/(?:v4/)?ats/web\.php/jobs\?[^"\'<>\s]*(?:job|jpt|id)=[^"\'<>\s&]+[^"\'<>\s]*',
+        r'/(?:v4/)?ats/web\.php/portal/[A-F0-9]{16,64}/jobs/[A-Z0-9_-]+(?:\?[^"\'<>\s]*)?',
     ]
 
     for pat in pats:
@@ -4574,9 +4575,18 @@ def paycom(src):
                 continue
 
             q = parse_qs(hp.query)
+            portal_job = re.search(
+                r"/ats/web\.php/portal/([A-F0-9]{16,64})/jobs/[A-Z0-9_-]+/?$",
+                hp.path,
+                re.I,
+            )
             if (
                 "viewjobdetails" in hp.path.lower()
                 or any(k.lower() in ("job", "jobid", "id", "jpt") for k in q)
+                or (
+                    portal_job
+                    and portal_job.group(1).lower() == clientkey.lower()
+                )
             ):
                 details.add(h.split("#",1)[0])
                 continue
@@ -4600,6 +4610,65 @@ def paycom(src):
             hck = clean((hq.get("clientkey") or [""])[0])
             if hck and hck.lower() == clientkey.lower() and h.rstrip("/") not in seen_pages:
                 queue.append(h)
+
+    # The rendered shell embeds a session JWT for the portal search API.
+    # Calling that API directly is reliable in CI even when browser hydration is blocked.
+    try:
+        jwt_match = re.search(r'"sessionJWT"\s*:\s*"([^"]+)"', r.text or "")
+        if jwt_match:
+            api_payload = {"skip": 0, "take": 100, "filtersForQuery": {"distanceFrom": 0, "workEnvironments": [], "positionTypes": [], "educationLevels": [], "categories": [], "travelTypes": [], "shiftTypes": [], "otherFilters": [], "keywordSearchText": "", "location": "", "sortOption": ""}}
+            api_resp = req("POST", "https://portal-applicant-tracking.us-cent.paycomonline.net/api/ats/job-posting-previews/search", headers={"Authorization": "Bearer " + jwt_match.group(1), "Locale": "en-US", "Content-Type": "application/json"}, json=api_payload, timeout=30)
+            previews = (api_resp.json() or {}).get("jobPostingPreviews") or []
+            print(f"Paycom portal API returned {len(previews)} previews")
+            for item in previews:
+                jid = clean(str(item.get("jobId") or ""))
+                if jid:
+                    details.add(f"{origin}/v4/ats/web.php/portal/{clientkey}/jobs/{jid}")
+    except Exception as api_exc:
+        print(f"Paycom portal API error: {type(api_exc).__name__}: {api_exc}")
+
+    # Modern Paycom boards render job cards client-side after redirecting the
+    # legacy listing URL to /portal/<clientkey>/career-page. If the initial
+    # HTML has no anchors, use the already-supported Playwright dependency to
+    # enumerate the rendered portal links, then parse them through the normal
+    # detail path below.
+    if (not any(re.search(r"/ats/web\.php/portal/[A-F0-9]{16,64}/jobs/[A-Z0-9_-]+/?$", urlparse(u).path, re.I) for u in details)) and sync_playwright is not None:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page_obj = browser.new_page(
+                    user_agent=(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/152.0.0.0 Safari/537.36"
+                    )
+                )
+                page_obj.goto(f"{origin}/v4/ats/web.php/portal/{clientkey}/career-page", wait_until="domcontentloaded", timeout=60000)
+                try:
+                    page_obj.wait_for_load_state("networkidle", timeout=20000)
+                except Exception:
+                    page_obj.wait_for_timeout(12000)
+                hrefs = []
+                for frame in page_obj.frames:
+                    try:
+                        hrefs.extend(frame.locator("a[href]").evaluate_all(
+                            "els => els.map(e => e.href)"
+                        ))
+                    except Exception:
+                        continue
+                print(f"Paycom rendered fallback: {len(hrefs)} anchors across {len(page_obj.frames)} frames")
+                for href in hrefs:
+                    hp = urlparse(href)
+                    m = re.search(
+                        r"/ats/web\\.php/portal/([A-F0-9]{16,64})/jobs/[A-Z0-9_-]+/?$",
+                        hp.path,
+                        re.I,
+                    )
+                    if m and m.group(1).lower() == clientkey.lower():
+                        details.add(href.split("#", 1)[0])
+                browser.close()
+        except Exception:
+            pass
 
     out = []
     seen_ids = set()
@@ -12349,6 +12418,18 @@ def tbn_careers_jobs(src):
                         rendered[detail_url] = page.content()
                     except Exception as exc:
                         print(f"TBN rendered detail failed for {title}: {type(exc).__name__}")
+                try:
+                    api_payload = {"skip": 0, "take": 100, "filtersForQuery": {"distanceFrom": 0, "workEnvironments": [], "positionTypes": [], "educationLevels": [], "categories": [], "travelTypes": [], "shiftTypes": [], "otherFilters": [], "keywordSearchText": "", "location": "", "sortOption": ""}}
+                    api_text = page_obj.evaluate("""async ({api,payload}) => { const r = await fetch(api, {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(payload)}); return await r.text(); }""", {"api": "https://portal-applicant-tracking.us-cent.paycomonline.net/api/ats/job-posting-previews/search", "payload": api_payload})
+                    api_data = json.loads(api_text)
+                    previews = api_data.get("jobPostingPreviews") or []
+                    print(f"Paycom portal API returned {len(previews)} previews")
+                    for item in previews:
+                        jid = clean(str(item.get("jobId") or item.get("id") or item.get("jobCode") or item.get("requisitionId") or ""))
+                        if jid:
+                            details.add(f"{origin}/v4/ats/web.php/portal/{clientkey}/jobs/{jid}")
+                except Exception as api_exc:
+                    print(f"Paycom portal API error: {type(api_exc).__name__}: {api_exc}")
                 browser.close()
         except Exception as exc:
             print(f"TBN rendered detail collector unavailable: {type(exc).__name__}")

@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import sys
 import unittest
 from datetime import timedelta
@@ -92,6 +93,66 @@ Produce digital and broadcast news content."""
         self.assertEqual((jobs[0].city, jobs[0].state, jobs[0].country), ("Los Angeles", "CA", "US"))
         self.assertEqual(jobs[0].date, crawler.TODAY - timedelta(days=2))
 
+
+    def test_paycom_portal_jobs_route_is_enumerated(self):
+        clientkey = "41E82EC60AAD792EC7018E3AB22DE8D2"
+        src = {
+            "Company": "Woodward Communications",
+            "Industry": "Journalism",
+            "URL": (
+                "https://www.paycomonline.net/v4/ats/web.php/jobs"
+                "?clientkey=" + clientkey
+            ),
+        }
+        detail_url = (
+            "https://www.paycomonline.net/v4/ats/web.php/portal/"
+            + clientkey + "/jobs/351753"
+        )
+        description = "<p>" + "Write and report local news. " * 40 + "</p>"
+        payload = {
+            "@context": "https://schema.org",
+            "@type": "JobPosting",
+            "title": "News & Sports Reporter/Photographer FT",
+            "datePosted": crawler.TODAY.isoformat(),
+            "description": description,
+            "identifier": {"value": "J0NA62351753"},
+            "jobLocation": {
+                "@type": "Place",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Cascade",
+                    "addressRegion": "IA",
+                    "addressCountry": "US",
+                },
+            },
+        }
+        detail_html = (
+            '<script type="application/ld+json">'
+            + json.dumps(payload)
+            + "</script>"
+        )
+
+        def request(method, url, **kwargs):
+            if url == detail_url:
+                return Response(text=detail_html)
+            if url == src["URL"]:
+                return Response(
+                    text=(
+                        '<a href="/v4/ats/web.php/portal/'
+                        + clientkey
+                        + '/jobs/351753">Current opening</a>'
+                    )
+                )
+            raise AssertionError("Unexpected Paycom request: {}".format(url))
+
+        with patch.object(crawler, "req", request):
+            jobs = crawler.paycom(src)
+
+        self.assertEqual(len(jobs), 1)
+        self.assertEqual(jobs[0].id, "J0NA62351753")
+        self.assertEqual(jobs[0].title, "News & Sports Reporter/Photographer FT")
+        self.assertIn("Cascade", jobs[0].city)
+        self.assertEqual(jobs[0].country, "US")
 
 if __name__ == "__main__":
     unittest.main()
