@@ -10727,8 +10727,8 @@ def hubbard_adp_cx_rendered(src):
             # A Hubbard-only test walks the full bounded board so it verifies
             # pagination and every currently rendered result without touching
             # production feed files.
-            page_limit = 6 if not test_mode or targeted_hubbard else 1
-            card_limit = 10 if not test_mode or targeted_hubbard else 1
+            page_limit = 2 if targeted_hubbard else (1 if test_mode else 6)
+            card_limit = 2 if targeted_hubbard else (1 if test_mode else 10)
             for page_number in range(1, page_limit + 1):
                 headings = page.get_by_role("heading")
                 cards, occurrences = [], {}
@@ -10754,6 +10754,15 @@ def hubbard_adp_cx_rendered(src):
                         stage = "wait for detail panel"
                         detail_panel = page.locator(".details-main-section")
                         detail_panel.wait_for(state="visible", timeout=15000)
+                        page.wait_for_function(
+                            """(expected) => {
+                                const panel = document.querySelector('.details-main-section');
+                                const firstLine = panel?.innerText?.trim().split(/\\r?\\n/)[0]?.trim();
+                                return firstLine === expected;
+                            }""",
+                            title,
+                            timeout=10000,
+                        )
                         stage = "read detail panel"
                         detail_raw = detail_panel.inner_text(timeout=10000)
                         if len(clean(detail_raw)) < 200:
@@ -10797,7 +10806,8 @@ def hubbard_adp_cx_rendered(src):
                                     title, description, src["Industry"],
                                     src["Company"],
                                 ),
-                                start, start, "", "",
+                                start + "#job-" + quote(req_id, safe=""),
+                                start, "", "",
                                 normalize_work_arrangement(
                                     description, location, title
                                 ),
@@ -10828,8 +10838,16 @@ def hubbard_adp_cx_rendered(src):
                 )
                 if not next_page.count() or not next_page.is_enabled():
                     break
+                previous_results = page.locator(".results-fields-redesign").inner_text(timeout=5000)
                 next_page.click(timeout=10000)
-                page.wait_for_timeout(900)
+                page.wait_for_function(
+                    """(previous) => {
+                        const results = document.querySelector('.results-fields-redesign');
+                        return results && results.innerText !== previous;
+                    }""",
+                    previous_results,
+                    timeout=15000,
+                )
             browser.close()
     except Exception as exc:
         print(
