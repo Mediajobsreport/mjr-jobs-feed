@@ -10687,6 +10687,185 @@ def townsquare_v23(src):
     return out
 
 
+base64: invalid input
+def hubbard_adp_cx_rendered(src):
+    """Enumerate Hubbard's public ADP CX results through its rendered UI."""
+    if sync_playwright is None:
+        return []
+
+    out, seen = [], set()
+    start = src["URL"]
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1365, "height": 900})
+            page.goto(start, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_timeout(2500)
+            search = page.get_by_role("button", name=re.compile(r"^Search$", re.I))
+            if search.count():
+                search.first.click()
+            page.get_by_text(
+                re.compile(r"Search results loaded|jobs found", re.I)
+            ).wait_for(timeout=30000)
+            page.wait_for_timeout(800)
+
+            for page_number in range(1, 7):
+                headings = page.get_by_role("heading")
+                cards, occurrences = [], {}
+                for idx in range(headings.count()):
+                    try:
+                        title = clean(headings.nth(idx).inner_text(timeout=1000))
+                        matches = page.get_by_role("button", name=title, exact=True)
+                        if title and matches.count():
+                            occurrence = occurrences.get(title, 0)
+                            cards.append((title, occurrence))
+                            occurrences[title] = occurrence + 1
+                    except Exception:
+                        continue
+
+                print("Hubbard ADP CX page {}: {} result cards".format(page_number, len(cards)))
+                for title, occurrence in cards:
+                    apply_opened = False
+                    try:
+                        page.get_by_role("button", name=title, exact=True).nth(
+                            occurrence
+                        ).click(timeout=10000)
+                        detail_panel = page.locator(".cx-job-details-page")
+                        detail_panel.wait_for(state="visible", timeout=15000)
+                        detail_raw = detail_panel.inner_text(timeout=10000)
+                        if len(clean(detail_raw)) < 200:
+                            continue
+
+                        apply_button = page.get_by_role(
+                            "button", name=re.compile(r"^Apply$", re.I)
+                        )
+                        apply_button.last.click(timeout=10000)
+                        page.wait_for_url(
+                            re.compile(r"/auth(?:\?|$)"), timeout=15000
+                        )
+                        apply_opened = True
+                        apply_url = page.url
+                        apply_qs = parse_qs(urlparse(apply_url).query)
+                        redirect = unquote(
+                            (apply_qs.get("redirectUrl") or [""])[0]
+                        )
+                        req_match = re.search(
+                            r"/legacy/job/(\d+)", redirect or apply_url
+                        )
+                        if not req_match:
+                            req_match = re.search(
+                                r"(?:reqId|jobId)=(\d+)", redirect or apply_url,
+                                re.I,
+                            )
+                        if not req_match:
+                            raise ValueError("Apply target did not expose a requisition ID")
+
+                        req_id = req_match.group(1)
+                        detail_url = (
+                            "https://myjobs.adp.com/hubbardbroadcasting/cx/"
+                            "job-details?reqId={}".format(req_id)
+                        )
+                        if detail_url in seen:
+                            continue
+                        seen.add(detail_url)
+
+                        job = None
+                        try:
+                            response = req("GET", detail_url)
+                            final = str(getattr(response, "url", "") or detail_url)
+                            job = _job_from_detail(src, final, response.text)
+                            if not job:
+                                job = _radio_recovery_job(src, final, response.text)
+                        except Exception as exc:
+                            print(
+                                "Hubbard ADP detail fetch skipped ({}): {}".format(
+                                    title[:70], type(exc).__name__
+                                )
+                            )
+
+                        saved = load_state().get(
+                            detail_url.rstrip("/").lower(), {}
+                        ).get("job", {})
+                        if job:
+                            job.date = pdate(saved.get("date")) or job.date or TODAY
+                            out.append(job)
+                        else:
+                            lines = [
+                                clean(line) for line in detail_raw.splitlines()
+                                if clean(line)
+                            ]
+                            location = next(
+                                (
+                                    line for line in lines
+                                    if re.search(
+                                        r",\s*(?:United States|Canada)$",
+                                        line, re.I,
+                                    )
+                                ),
+                                "",
+                            )
+                            description = format_description(detail_raw)
+                            if len(strip_html(description)) < 200:
+                                continue
+                            city, state, country = _split_adp_location(location)
+                            if not country:
+                                country = infer_country(
+                                    location, src["Company"], detail_raw
+                                )
+                            posted = pdate(saved.get("date")) or TODAY
+                            out.append(
+                                Job(
+                                    req_id, title, src["Company"], description,
+                                    posted, jobtype(title, description),
+                                    category(
+                                        title, description, src["Industry"],
+                                        src["Company"],
+                                    ),
+                                    detail_url, src["URL"], detail_url, "",
+                                    normalize_work_arrangement(
+                                        description, location, title
+                                    ),
+                                    city, state, country,
+                                )
+                            )
+                    except Exception as exc:
+                        print(
+                            "Hubbard ADP rendered detail skipped ({}): {}".format(
+                                title[:70], type(exc).__name__
+                            )
+                        )
+                    finally:
+                        if apply_opened:
+                            try:
+                                page.go_back(
+                                    wait_until="domcontentloaded", timeout=15000
+                                )
+                                page.wait_for_timeout(500)
+                            except Exception:
+                                pass
+
+                print("Hubbard ADP CX page {}: collected={}".format(page_number, len(out)))
+                if page_number >= 6:
+                    break
+                next_page = page.get_by_role(
+                    "button", name="Page {}".format(page_number + 1), exact=True
+                )
+                if not next_page.count() or not next_page.is_enabled():
+                    break
+                next_page.click(timeout=10000)
+                page.wait_for_timeout(900)
+            browser.close()
+    except Exception as exc:
+        print(
+            "Hubbard ADP CX render unavailable: {}: {}".format(
+                type(exc).__name__, clean(str(exc))[:160]
+            )
+        )
+        return out
+
+    return out
+
+
 def hubbard_adp_cx(src):
     """Recover Hubbard jobs from its ADP CX board.
 
@@ -10697,8 +10876,8 @@ def hubbard_adp_cx(src):
     requisition URLs, then let ADP's own detail pages/schema provide the job.
     The older rendered-board recovery remains as the automatic fallback.
     """
-    out = []
-    seen = set()
+    out = hubbard_adp_cx_rendered(src)
+    seen = {j.url.rstrip("/").lower() for j in out if j.url}
 
     # Current canonical Hubbard requisitions independently exposed by public
     # station/community job pages. These are only seeds; each ADP detail page
@@ -10743,8 +10922,8 @@ def hubbard_adp_cx(src):
     # Also retain the older public-board discovery path. It can automatically
     # pick up additional jobs whenever ADP exposes detail URLs in rendered HTML.
     for j in hubbard_v23(src):
-        if j.id not in seen:
-            seen.add(j.id)
+        if j.url.rstrip("/").lower() not in seen:
+            seen.add(j.url.rstrip("/").lower())
             out.append(j)
 
     return out
