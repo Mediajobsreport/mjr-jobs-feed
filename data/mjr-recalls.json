@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-17T22:29:58.130Z",
+  "generated": "2026-10-18T04:40:19.729Z",
   "version": "2.4",
   "newestDate": "2026-10-17",
   "stale": false,
@@ -10,11 +10,11 @@
     },
     "CPSC": {
       "ok": true,
-      "count": 10040
+      "count": 10053
     },
     "USDA": {
       "ok": true,
-      "count": 2030
+      "count": 2031
     },
     "NHTSA": {
       "ok": true,
@@ -1101,6 +1101,22 @@
       "score": 71
     },
     {
+      "id": "USDA-2026-10-17-kayem-foods-inc-recalls-meat-and-poultry-products-due-to-possible-temp",
+      "source": "USDA",
+      "category": "food",
+      "title": "Kayem Foods Inc. Recalls Meat and Poultry Products Due to Possible Temperature Abuse",
+      "reason": "Processing Defect",
+      "brand": "",
+      "company": "Kayem Foods Inc.",
+      "product": "",
+      "date": "2026-10-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "http://www.fsis.usda.gov/recalls-alerts/kayem-foods-inc--recalls-meat-and-poultry-products-due-possible-temperature-abuse",
+      "score": 70
+    },
+    {
       "id": "CPSC-11014-onthewei-recalls-baby-bath-seats-due-to-risk-of-serious-injury-or-deat",
       "source": "CPSC",
       "category": "consumer",
@@ -2021,22 +2037,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/fi-recalls-supplements-dogs-because-possible-salmonella-contamination",
-      "score": 45
-    },
-    {
-      "id": "FDA-2026-09-06-made-fresh-salads-northside-ready-to-eat-deli-style-salads-and-cream-c",
-      "source": "FDA",
-      "category": "food",
-      "title": "Made Fresh Salads, Northside Ready to Eat Deli Style Salads and cream cheese Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes",
-      "brand": "Made Fresh Salads, Northside",
-      "company": "Made Fresh Salads Inc.",
-      "product": "Ready to Eat Deli Style Salads and cream cheese",
-      "date": "2026-09-06",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/made-fresh-salads-inc-recalls-ready-eat-deli-style-salads-and-cream-cheese-because-possible-health",
       "score": 45
     }
   ]
