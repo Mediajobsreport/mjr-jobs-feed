@@ -4635,7 +4635,7 @@ def paycom(src):
                 hrefs = page_obj.locator("a[href]").evaluate_all(
                     "els => els.map(e => e.href)"
                 )
-                print(f"Paycom rendered fallback: {len(hrefs)} anchors on portal page")
+                print(f"Paycom rendered fallback: {len(hrefs)} anchors on portal page: {hrefs}")
                 for href in hrefs:
                     hp = urlparse(href)
                     m = re.search(
