@@ -10733,7 +10733,7 @@ def hubbard_adp_cx_rendered(src):
                             occurrence
                         ).click(timeout=10000, force=True)
                         stage = "wait for detail panel"
-                        detail_panel = page.locator(".cx-job-details-page")
+                        detail_panel = page.locator(".details-main-section")
                         detail_panel.wait_for(state="visible", timeout=15000)
                         stage = "read detail panel"
                         detail_raw = detail_panel.inner_text(timeout=10000)
