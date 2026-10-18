@@ -10691,7 +10691,7 @@ def _hubbard_adp_job_code(detail_raw):
     """Return the public Hubbard job code shown near the title."""
     lines = [clean(line) for line in str(detail_raw or "").splitlines() if clean(line)]
     for line in lines[1:6]:
-        match = re.fullmatch(r"#?([A-Z0-9]+-\\d{3,})", line, re.I)
+        match = re.fullmatch(r"#?([A-Z0-9]+-[0-9]{3,})", line, re.I)
         if match:
             return match.group(1).upper()
     return ""
