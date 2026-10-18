@@ -10708,7 +10708,8 @@ def hubbard_adp_cx_rendered(src):
             ).wait_for(timeout=30000)
             page.wait_for_timeout(800)
 
-            for page_number in range(1, 7):
+            page_limit = 1 if os.getenv("MJR_TEST_MODE", "false").lower() == "true" else 6
+            for page_number in range(1, page_limit + 1):
                 headings = page.get_by_role("heading")
                 cards, occurrences = [], {}
                 for idx in range(headings.count()):
@@ -10835,14 +10836,14 @@ def hubbard_adp_cx_rendered(src):
                         if apply_opened and "/auth" in page.url.lower():
                             try:
                                 page.go_back(
-                                    wait_until="domcontentloaded", timeout=15000
+                                    wait_until="commit", timeout=8000
                                 )
-                                page.wait_for_timeout(500)
+                                page.wait_for_timeout(250)
                             except Exception:
                                 pass
 
                 print("Hubbard ADP CX page {}: collected={}".format(page_number, len(out)))
-                if page_number >= 6:
+                if page_number >= page_limit:
                     break
                 next_page = page.get_by_role(
                     "button", name="Page {}".format(page_number + 1), exact=True
