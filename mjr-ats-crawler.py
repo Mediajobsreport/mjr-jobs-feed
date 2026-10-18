@@ -10835,7 +10835,7 @@ def hubbard_adp_cx_rendered(src):
                     except Exception as exc:
                         print(
                             "Hubbard ADP rendered detail skipped ({}): {}".format(
-                                title[:70], type(exc).__name__
+                                title[:70], "{} ({})".format(stage, clean(str(exc))[:180])
                             )
                         )
                     finally:
