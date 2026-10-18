@@ -4454,6 +4454,7 @@ def _paycom_job_links(base_url, raw):
         r'https?://[^"\'<>\s]+paycomonline\.net[^"\'<>\s]+',
         r'/(?:v4/)?ats/web\.php/jobs/ViewJobDetails\?[^"\'<>\s]+',
         r'/(?:v4/)?ats/web\.php/jobs\?[^"\'<>\s]*(?:job|jpt|id)=[^"\'<>\s&]+[^"\'<>\s]*',
+        r'/(?:v4/)?ats/web\.php/portal/[A-F0-9]{16,64}/jobs/[A-Z0-9_-]+(?:\?[^"\'<>\s]*)?',
     ]
 
     for pat in pats:
@@ -4574,9 +4575,18 @@ def paycom(src):
                 continue
 
             q = parse_qs(hp.query)
+            portal_job = re.search(
+                r"/ats/web\\.php/portal/([A-F0-9]{16,64})/jobs/[A-Z0-9_-]+/?$",
+                hp.path,
+                re.I,
+            )
             if (
                 "viewjobdetails" in hp.path.lower()
                 or any(k.lower() in ("job", "jobid", "id", "jpt") for k in q)
+                or (
+                    portal_job
+                    and portal_job.group(1).lower() == clientkey.lower()
+                )
             ):
                 details.add(h.split("#",1)[0])
                 continue
