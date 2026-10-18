@@ -4576,7 +4576,7 @@ def paycom(src):
 
             q = parse_qs(hp.query)
             portal_job = re.search(
-                r"/ats/web\\.php/portal/([A-F0-9]{16,64})/jobs/[A-Z0-9_-]+/?$",
+                r"/ats/web\.php/portal/([A-F0-9]{16,64})/jobs/[A-Z0-9_-]+/?$",
                 hp.path,
                 re.I,
             )
