@@ -4616,7 +4616,7 @@ def paycom(src):
     # HTML has no anchors, use the already-supported Playwright dependency to
     # enumerate the rendered portal links, then parse them through the normal
     # detail path below.
-    if not details and sync_playwright is not None:
+    if (not any(re.search(r"/ats/web\\.php/portal/[A-F0-9]{16,64}/jobs/[A-Z0-9_-]+/?$", urlparse(u).path, re.I) for u in details)) and sync_playwright is not None:
         try:
             with sync_playwright() as p:
                 browser = p.chromium.launch(headless=True)
