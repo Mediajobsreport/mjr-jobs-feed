@@ -7410,7 +7410,7 @@ def disney_public(src):
     starts = [src["URL"]]
     if company == "disney / abc":
         starts += [
-            "https://www.disneycareers.com/en/search-jobs/abc/391/1/1",
+            "https://www.disneycareers.com/en/search-jobs/ABC/391/1",
             "https://jobs.disneycareers.com/search-jobs?k=ABC",
         ]
     elif company == "espn":
