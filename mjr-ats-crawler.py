@@ -3154,12 +3154,19 @@ def _job_from_detail(src, url, html_text):
         r"\d{4}-\d{2}-\d{2}|\d+\s+days?\s+ago)",
     ]
     pd = None
-    for pat in date_patterns:
-        m = re.search(pat, txt, re.I)
-        if m:
-            pd = pdate(m.group(1))
-            if pd:
-                break
+    # TalentBrew/Disney detail pages store the canonical posting date in a
+    # data attribute instead of visible text.
+    for node in soup.select("[data-tm-job-date-posted]"):
+        pd = pdate(node.get("data-tm-job-date-posted"))
+        if pd:
+            break
+    if not pd:
+        for pat in date_patterns:
+            m = re.search(pat, txt, re.I)
+            if m:
+                pd = pdate(m.group(1))
+                if pd:
+                    break
     if not pd or pd < CUTOFF:
         return None
 
