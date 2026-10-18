@@ -1729,9 +1729,14 @@ def greenhouse(src):
         f"https://boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true",
     ).json()
 
+    rows = d.get("jobs", [])
+    if not isinstance(rows, list):
+        raise RuntimeError("Greenhouse jobs response was not a list")
+    PUBLIC_BOARD_ENUMERATION[clean(src["Company"]).lower()] = len(rows)
+
     out = []
 
-    for p in d.get("jobs", []):
+    for p in rows:
         pd = pdate(p.get("created_at")) or pdate(p.get("updated_at"))
         if not pd or pd < CUTOFF:
             continue
