@@ -10840,17 +10840,35 @@ def hubbard_adp_cx_rendered(src):
                     break
                 previous_titles = [title for title, _ in cards]
                 next_page.click(timeout=10000)
-                page.wait_for_function(
-                    """(previous) => {
-                        const current = Array.from(
-                            document.querySelectorAll('cx-result-field h3')
-                        ).map(node => node.innerText.trim()).filter(Boolean);
-                        return current.length > 0
-                            && current.join('|') !== previous.join('|');
-                    }""",
-                    arg=previous_titles,
-                    timeout=15000,
-                )
+                # ADP renders the result list inside a component whose DOM is
+                # not consistently visible to page.evaluate. Poll through
+                # Playwright's role locators, which pierce the component tree.
+                deadline = time.monotonic() + 15
+                page_changed = False
+                while time.monotonic() < deadline:
+                    current_headings = page.get_by_role("heading")
+                    current_titles = []
+                    for idx in range(current_headings.count()):
+                        try:
+                            current_title = clean(
+                                current_headings.nth(idx).inner_text(timeout=500)
+                            )
+                            if current_title and page.get_by_role(
+                                "button", name=current_title, exact=True
+                            ).count():
+                                current_titles.append(current_title)
+                        except Exception:
+                            continue
+                    if current_titles and current_titles != previous_titles:
+                        page_changed = True
+                        break
+                    page.wait_for_timeout(250)
+                if not page_changed:
+                    raise TimeoutError(
+                        "ADP result headings did not change after selecting page {}".format(
+                            page_number + 1
+                        )
+                    )
             browser.close()
     except Exception as exc:
         print(
