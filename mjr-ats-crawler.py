@@ -10687,7 +10687,6 @@ def townsquare_v23(src):
     return out
 
 
-base64: invalid input
 def hubbard_adp_cx_rendered(src):
     """Enumerate Hubbard's public ADP CX results through its rendered UI."""
     if sync_playwright is None:
