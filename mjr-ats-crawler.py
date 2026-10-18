@@ -4611,6 +4611,42 @@ def paycom(src):
             if hck and hck.lower() == clientkey.lower() and h.rstrip("/") not in seen_pages:
                 queue.append(h)
 
+    # Modern Paycom boards render job cards client-side after redirecting the
+    # legacy listing URL to /portal/<clientkey>/career-page. If the initial
+    # HTML has no anchors, use the already-supported Playwright dependency to
+    # enumerate the rendered portal links, then parse them through the normal
+    # detail path below.
+    if not details and sync_playwright is not None:
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page_obj = browser.new_page(
+                    user_agent=(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/152.0.0.0 Safari/537.36"
+                    )
+                )
+                page_obj.goto(start, wait_until="domcontentloaded", timeout=60000)
+                try:
+                    page_obj.wait_for_load_state("networkidle", timeout=20000)
+                except Exception:
+                    page_obj.wait_for_timeout(5000)
+                for href in page_obj.locator("a[href]").evaluate_all(
+                    "els => els.map(e => e.href)"
+                ):
+                    hp = urlparse(href)
+                    m = re.search(
+                        r"/ats/web\\.php/portal/([A-F0-9]{16,64})/jobs/[A-Z0-9_-]+/?$",
+                        hp.path,
+                        re.I,
+                    )
+                    if m and m.group(1).lower() == clientkey.lower():
+                        details.add(href.split("#", 1)[0])
+                browser.close()
+        except Exception:
+            pass
+
     out = []
     seen_ids = set()
     for url in sorted(details):
