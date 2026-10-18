@@ -10760,7 +10760,7 @@ def hubbard_adp_cx_rendered(src):
                                 const firstLine = panel?.innerText?.trim().split(/\\r?\\n/)[0]?.trim();
                                 return firstLine === expected;
                             }""",
-                            title,
+                            arg=title,
                             timeout=10000,
                         )
                         stage = "read detail panel"
@@ -10845,7 +10845,7 @@ def hubbard_adp_cx_rendered(src):
                         const results = document.querySelector('.results-fields-redesign');
                         return results && results.innerText !== previous;
                     }""",
-                    previous_results,
+                    arg=previous_results,
                     timeout=15000,
                 )
             browser.close()
