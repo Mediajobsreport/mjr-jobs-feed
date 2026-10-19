@@ -10597,7 +10597,7 @@ def saga_careers_rss_jobs(src):
         loc_node = item.find("job_listing:location")
         location = clean(loc_node.get_text(" ")) if loc_node else ""
         city, state = "", ""
-        loc_match = re.search(r"^(.+?,\s*([A-Z]{2})$", location)
+        loc_match = re.search(r"^(.+?),\s*([A-Z]{2})$", location)
         if loc_match:
             city, state = clean(loc_match.group(1)), loc_match.group(2)
         identity = f"{src['Company']}|{detail_url}"
