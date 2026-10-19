@@ -10560,42 +10560,35 @@ def saga_careers_rss_jobs(src):
     feed_url = "https://sagacom.com/?feed=job_feed&job_types=freelance%2Cfull-time%2Chybrid%2Cinternship%2Cpart-time%2Cpart-timetemporary%2Ctemporary&search_location&job_categories&search_keywords&author"
     try:
         response = req("GET", feed_url)
+        root = ET.fromstring(response.text)
     except Exception as exc:
         print(f"Saga careers RSS request failed: {type(exc).__name__}")
         return []
-    soup = BeautifulSoup(response.text, "html.parser")
+    content_ns = "http://purl.org/rss/1.0/modules/content/"
+    job_ns = "https://sagacom.com"
     out, seen = [], set()
-    for item in soup.find_all("item"):
-        title_node = item.find("title")
-        link_node = item.find("link")
-        date_node = item.find("pubdate")
-        content_node = item.find("content:encoded")
-        if not title_node or not link_node:
+    for item in root.findall(".//item"):
+        def child_text(tag, namespace=None):
+            node = item.find(f"{{{namespace}}}{tag}" if namespace else tag)
+            return clean(node.text or "") if node is not None else ""
+        title = child_text("title")
+        detail_url = child_text("link")
+        raw_html = item.findtext(f"{{{content_ns}}}encoded", default="")
+        posted_raw = child_text("pubDate")
+        location = child_text("location", job_ns)
+        if not title or not detail_url or not raw_html:
             continue
-        title = clean(title_node.get_text(" "))
-        detail_url = clean(link_node.get_text(" "))
-        if not title or not detail_url:
-            continue
-        raw_html = content_node.decode_contents() if content_node else ""
         body = clean(BeautifulSoup(raw_html, "html.parser").get_text(" "))
         if len(body) < 80:
-            body = clean(item.get_text(" "))
-        if len(body) < 80:
             continue
-        posted = None
-        if date_node:
-            try:
-                posted = dtparser.parse(clean(date_node.get_text(" "))).date()
-            except Exception:
-                posted = None
-        if not posted:
+        try:
+            posted = dtparser.parse(posted_raw).date()
+        except Exception:
             continue
         probe = Job("", title, src["Company"], body, posted, jobtype(title, body), "", detail_url,
                     src["URL"], detail_url, "", "", "", "")
         if not job_is_fresh(probe):
             continue
-        loc_node = item.find("job_listing:location")
-        location = clean(loc_node.get_text(" ")) if loc_node else ""
         city, state = "", ""
         loc_match = re.search(r"^(.+?),\s*([A-Z]{2})$", location)
         if loc_match:
@@ -10605,7 +10598,7 @@ def saga_careers_rss_jobs(src):
         if job_id in seen:
             continue
         seen.add(job_id)
-        description = format_description(raw_html) if raw_html else f"<p>{body}</p>"
+        description = format_description(raw_html)
         out.append(Job(
             job_id, title, src["Company"], description, posted,
             jobtype(title, body),
