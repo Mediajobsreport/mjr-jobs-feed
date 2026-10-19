@@ -10554,6 +10554,69 @@ def midwest_family_direct(src):
     return out
 
 
+
+def saga_careers_rss_jobs(src):
+    """Collect current Saga Communications postings from its official WP Job Manager RSS feed."""
+    feed_url = "https://sagacom.com/?feed=job_feed&job_types=freelance%2Cfull-time%2Chybrid%2Cinternship%2Cpart-time%2Cpart-timetemporary%2Ctemporary&search_location&job_categories&search_keywords&author"
+    try:
+        response = req("GET", feed_url)
+    except Exception as exc:
+        print(f"Saga careers RSS request failed: {type(exc).__name__}")
+        return []
+    soup = BeautifulSoup(response.text, "html.parser")
+    out, seen = [], set()
+    for item in soup.find_all("item"):
+        title_node = item.find("title")
+        link_node = item.find("link")
+        date_node = item.find("pubdate")
+        content_node = item.find("content:encoded")
+        if not title_node or not link_node:
+            continue
+        title = clean(title_node.get_text(" "))
+        detail_url = clean(link_node.get_text(" "))
+        if not title or not detail_url:
+            continue
+        raw_html = content_node.decode_contents() if content_node else ""
+        body = clean(BeautifulSoup(raw_html, "html.parser").get_text(" "))
+        if len(body) < 80:
+            body = clean(item.get_text(" "))
+        if len(body) < 80:
+            continue
+        posted = None
+        if date_node:
+            try:
+                posted = dtparser.parse(clean(date_node.get_text(" "))).date()
+            except Exception:
+                posted = None
+        if not posted:
+            continue
+        probe = Job("", title, src["Company"], body, posted, jobtype(title, body), "", detail_url,
+                    src["URL"], detail_url, "", "", "", "")
+        if not job_is_fresh(probe):
+            continue
+        loc_node = item.find("job_listing:location")
+        location = clean(loc_node.get_text(" ")) if loc_node else ""
+        city, state = "", ""
+        loc_match = re.search(r"^(.+?,\s*([A-Z]{2})$", location)
+        if loc_match:
+            city, state = clean(loc_match.group(1)), loc_match.group(2)
+        identity = f"{src['Company']}|{detail_url}"
+        job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+        if job_id in seen:
+            continue
+        seen.add(job_id)
+        description = format_description(raw_html) if raw_html else f"<p>{body}</p>"
+        out.append(Job(
+            job_id, title, src["Company"], description, posted,
+            jobtype(title, body),
+            category(title, description, src["Industry"], src["Company"]),
+            detail_url, src["URL"], detail_url, "",
+            normalize_work_arrangement(body, location, title),
+            city, state, "United States",
+        ))
+    print(f"Saga official RSS careers feed: {len(out)} current roles")
+    return out
+
 def saga_distributed_direct(src):
     """Collect Saga jobs only from a small first-party employment allowlist.
 
@@ -15733,7 +15796,7 @@ def main():
                 if company_key == "connoisseur media"
                 else midwest_family_direct(s)
                 if company_key == "mid-west family of companies"
-                else saga_distributed_direct(s)
+                else saga_careers_rss_jobs(s)
                 if company_key == "saga communications"
                 else renda_media_direct(s)
                 if company_key == "renda media"
