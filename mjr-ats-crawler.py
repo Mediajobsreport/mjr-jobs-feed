@@ -10554,6 +10554,62 @@ def midwest_family_direct(src):
     return out
 
 
+
+def saga_careers_rss_jobs(src):
+    """Collect current Saga Communications postings from its official WP Job Manager RSS feed."""
+    feed_url = "https://sagacom.com/?feed=job_feed&job_types=freelance%2Cfull-time%2Chybrid%2Cinternship%2Cpart-time%2Cpart-timetemporary%2Ctemporary&search_location&job_categories&search_keywords&author"
+    try:
+        response = req("GET", feed_url)
+        root = ET.fromstring(response.text)
+    except Exception as exc:
+        print(f"Saga careers RSS request failed: {type(exc).__name__}")
+        return []
+    content_ns = "http://purl.org/rss/1.0/modules/content/"
+    job_ns = "https://sagacom.com"
+    out, seen = [], set()
+    for item in root.findall(".//item"):
+        def child_text(tag, namespace=None):
+            node = item.find(f"{{{namespace}}}{tag}" if namespace else tag)
+            return clean(node.text or "") if node is not None else ""
+        title = child_text("title")
+        detail_url = child_text("link")
+        raw_html = item.findtext(f"{{{content_ns}}}encoded", default="")
+        posted_raw = child_text("pubDate")
+        location = child_text("location", job_ns)
+        if not title or not detail_url or not raw_html:
+            continue
+        body = clean(BeautifulSoup(raw_html, "html.parser").get_text(" "))
+        if len(body) < 80:
+            continue
+        try:
+            posted = dtparser.parse(posted_raw).date()
+        except Exception:
+            continue
+        probe = Job("", title, src["Company"], body, posted, jobtype(title, body), "", detail_url,
+                    src["URL"], detail_url, "", "", "", "")
+        if not job_is_fresh(probe):
+            continue
+        city, state = "", ""
+        loc_match = re.search(r"^(.+?)(?:,|\\.)\\s*([A-Z]{2})$", location)
+        if loc_match:
+            city, state = clean(loc_match.group(1)), loc_match.group(2)
+        identity = f"{src['Company']}|{detail_url}"
+        job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+        if job_id in seen:
+            continue
+        seen.add(job_id)
+        description = format_description(raw_html)
+        out.append(Job(
+            job_id, title, src["Company"], description, posted,
+            jobtype(title, body),
+            category(title, description, src["Industry"], src["Company"]),
+            detail_url, src["URL"], detail_url, "",
+            normalize_work_arrangement(body, location, title),
+            city, state, "United States",
+        ))
+    print(f"Saga official RSS careers feed: {len(out)} current roles")
+    return out
+
 def saga_distributed_direct(src):
     """Collect Saga jobs only from a small first-party employment allowlist.
 
@@ -15733,7 +15789,7 @@ def main():
                 if company_key == "connoisseur media"
                 else midwest_family_direct(s)
                 if company_key == "mid-west family of companies"
-                else saga_distributed_direct(s)
+                else saga_careers_rss_jobs(s)
                 if company_key == "saga communications"
                 else renda_media_direct(s)
                 if company_key == "renda media"
