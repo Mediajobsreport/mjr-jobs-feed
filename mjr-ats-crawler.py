@@ -10555,6 +10555,50 @@ def midwest_family_direct(src):
 
 
 
+
+def mbs_radio_jobs(src):
+    """Collect current MBS Radio openings from its first-party career cards."""
+    url = src["URL"]
+    try:
+        response = req("GET", url)
+    except Exception as exc:
+        print(f"MBS careers request failed: {type(exc).__name__}")
+        return []
+    soup = BeautifulSoup(response.text, "html.parser")
+    out, seen = [], set()
+    for card in soup.select("section.career"):
+        title_node = card.find(["h4", "h3"])
+        link_node = card.find("a", href=True)
+        if not title_node or not link_node:
+            continue
+        title = clean(title_node.get_text(" "))
+        detail_url = urljoin(url, link_node.get("href", ""))
+        meta = card.select_one(".meta")
+        location = clean(meta.get_text(" ")) if meta else ""
+        body = clean(card.get_text(" "))
+        if not title or not detail_url or len(body) < 100:
+            continue
+        identity = f"{src['Company']}|{detail_url}"
+        job_id = hashlib.sha1(identity.lower().encode()).hexdigest()[:16]
+        if job_id in seen:
+            continue
+        seen.add(job_id)
+        city, province = "", ""
+        loc_match = re.search(r"^(.+?),\s*([A-Z]{2})$", location)
+        if loc_match:
+            city, province = clean(loc_match.group(1)), loc_match.group(2)
+        description = format_description(card.decode_contents())
+        out.append(Job(
+            job_id, title, src["Company"], description, TODAY,
+            jobtype(title, body),
+            category(title, description, src["Industry"], src["Company"]),
+            detail_url, url, detail_url, "",
+            normalize_work_arrangement(body, location, title),
+            city, province, "Canada",
+        ))
+    print(f"MBS official careers page: {len(out)} current roles")
+    return out
+
 def saga_careers_rss_jobs(src):
     """Collect current Saga Communications postings from its official WP Job Manager RSS feed."""
     feed_url = "https://sagacom.com/?feed=job_feed&job_types=freelance%2Cfull-time%2Chybrid%2Cinternship%2Cpart-time%2Cpart-timetemporary%2Ctemporary&search_location&job_categories&search_keywords&author"
@@ -15789,6 +15833,8 @@ def main():
                 if company_key == "connoisseur media"
                 else midwest_family_direct(s)
                 if company_key == "mid-west family of companies"
+                else mbs_radio_jobs(s)
+                if company_key == "maritime broadcasting system"
                 else saga_careers_rss_jobs(s)
                 if company_key == "saga communications"
                 else renda_media_direct(s)
