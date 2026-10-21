@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-20T23:13:31.815Z",
+  "generated": "2026-10-21T04:55:33.005Z",
   "version": "2.4",
   "newestDate": "2026-10-17",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1089
+      "count": 1072
     },
     "CPSC": {
       "ok": true,
@@ -1920,7 +1920,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V648000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V648-3342.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V648000",
       "score": 38
     },
     {
