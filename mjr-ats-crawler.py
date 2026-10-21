@@ -437,6 +437,15 @@ def category(title, desc, industry, company):
     # 1A) DEFINITIVE TITLE-FIRST OVERRIDES
     # These titles should not be displaced by broad words in descriptions.
     # ------------------------------------------------------------------
+    # Executive/admin support remains Business Office even when the role
+    # supports a sales team.
+    if re.search(
+        r"\b(executive assistant|administrative assistant|personal assistant|"
+        r"assistant to (?:the )?(?:president|ceo|cfo|chief executive|chief financial))\b",
+        t,
+    ):
+        return "Business Office"
+
     # Finance/accounting is the job function even when it supports an ad-sales
     # team. Keep these titles in Business Office before the broad sales match.
     if (
