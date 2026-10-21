@@ -7491,6 +7491,11 @@ def company_scope_rejection_reason(job_or_dict):
             title,
         ):
             return "FOX hospitality role outside media scope"
+        if re.search(
+            r"\b(chef|catering|culinary|food service|restaurant server|banquet server|bartender)\b",
+            title,
+        ):
+            return "FOX catering, culinary or food-service role outside media scope"
 
 
     # Sinclair final scope cleanup.
