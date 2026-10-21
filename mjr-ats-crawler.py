@@ -7068,6 +7068,15 @@ def company_scope_rejection_reason(job_or_dict):
     )).lower()
     text = f" {title} {description} "
 
+    # Empty talent pools are not active vacancies. Keep this title match exact
+    # so jobs such as Talent Community Manager remain eligible.
+    if re.fullmatch(
+        r"(?:join\s+)?(?:our\s+)?(?:the\s+)?talent community!?|"
+        r"future opportunities!?|join our talent network!?",
+        title,
+    ):
+        return "Generic talent-community posting, not a specific vacancy"
+
     if company in {"disney / abc", "espn"}:
         # MJR carries U.S. and Canadian jobs only. Disney's keyword search can
         # silently mix in international openings even when the source is the
@@ -7219,7 +7228,8 @@ def company_scope_rejection_reason(job_or_dict):
         # physical logistics/store roles while retaining software, IT, digital
         # commerce, marketing, finance and genuine media/broadcast positions.
         qvc_hard_nonmedia_title = re.search(
-            r"\b(equipment operator|warehouse|warehouse hiring event|"
+            r"\b(transportation coordinator|fleet coordinator|dispatch coordinator|"
+            r"equipment operator|warehouse|warehouse hiring event|"
             r"fulfillment|distribution center|distribution centre|"
             r"picker|packer|pick[ /-]?pack|material handler|forklift|"
             r"inventory (?:control|specialist|associate|coordinator)|"
@@ -7266,6 +7276,65 @@ def company_scope_rejection_reason(job_or_dict):
             return "QVC fulfillment/distribution operations role outside media scope"
         if qvc_product_merch_title and not qvc_media_or_digital_signal:
             return "QVC physical-product merchandising or sourcing role outside media scope"
+
+    # Hallmark's store-merchandising and factory jobs do not serve the media
+    # audience. Keep corporate finance, HR, creative, marketing, legal and IT.
+    if company == "hallmark":
+        hallmark_nonmedia_title = re.search(
+            r"\b(merchandiser|manufacturing associate|manufacturing planner|"
+            r"production operator|machine operator|factory worker|plant operator)\b",
+            title,
+        )
+        if hallmark_nonmedia_title:
+            return "Hallmark retail merchandising or manufacturing role outside media scope"
+
+    # Newspaper retail-distribution merchandisers are not newsroom or media
+    # business-office roles; other McClatchy vacancies remain eligible.
+    if company == "mcclatchy" and re.search(r"\bmerchandiser\b", title):
+        return "McClatchy retail merchandising role outside media scope"
+
+    # Keep Live Nation booking, marketing, venue management and event operations.
+    # Exclude only front-of-house ticketing, hospitality, culinary and event-crew jobs.
+    if company in {"live nation entertainment", "live nation"}:
+        live_nation_venue_service = re.search(
+            r"\b(box office ticket agent|guest services? (?:manager|supervisor)|"
+            r"(?:executive )?sous chef|chef|event (?:set[ -]?up|setup|tear[ -]?down|crew)|"
+            r"event set[ -]?up/tear[ -]?down crew)\b",
+            title,
+        )
+        if live_nation_venue_service:
+            return "Live Nation venue guest services, culinary or event-crew role outside media scope"
+
+    # Medical-director roles at this healthcare communications agency are
+    # clinical subject-matter positions rather than media/communications jobs.
+    if company == "real chemistry" and re.search(
+        r"\b(associate medical director|medical director|clinical director)\b",
+        title,
+    ):
+        return "Real Chemistry clinical/medical-director role outside media scope"
+
+    # Disney search results include theme-park maintenance, fabrication and
+    # guest-arrival jobs. Require park/Experiences context and protect broadcast,
+    # newsroom, studio and production roles.
+    if company in {"disney / abc", "espn"}:
+        disney_operations_context = re.search(
+            r"\b(disney experiences|walt disney world|disneyland|theme park|"
+            r"parks and resorts|central shops|disney cruise line)\b",
+            text,
+        )
+        disney_operations_title = re.search(
+            r"\b(guest arrival coordinator|arrival coordinator|maintenance engineer|"
+            r"cnc specialist|manufacturing planner|planner.{0,20}manufacturing|"
+            r"manufacturing.{0,20}planner)\b",
+            title,
+        )
+        disney_media_role = re.search(
+            r"\b(abc|espn|broadcast|newsroom|journalis|radio|television|tv|"
+            r"streaming|digital media|production|studio|sports media)\b",
+            text,
+        )
+        if disney_operations_context and disney_operations_title and not disney_media_role:
+            return "Disney theme-park guest operations, maintenance or manufacturing role outside media scope"
 
     if company == "paramount":
         paramount_nonmedia_title = re.search(
@@ -15993,16 +16062,17 @@ def main():
             if not got and not public_board_enumerated and company_key in RADIO_RECOVERY_COMPANIES:
                 got = radio_recovery(s)
 
+            # Apply the narrow source/employer scope filters before state
+            # reconciliation so rejected postings never enter retained state.
             scope_rejected = []
-            if company_key in {"disney / abc", "espn", "meruelo media"}:
-                got, scope_rejected = apply_company_scope_filters(got)
-                if scope_rejected:
-                    print(
-                        f"{s['Company']} scope filter rejected "
-                        f"{len(scope_rejected)} non-media jobs"
-                    )
-                    for rejected_job, reason in scope_rejected[:20]:
-                        print(f"  REJECTED: {rejected_job.title} — {reason}")
+            got, scope_rejected = apply_company_scope_filters(got)
+            if scope_rejected:
+                print(
+                    f"{s['Company']} scope filter rejected "
+                    f"{len(scope_rejected)} non-media jobs"
+                )
+                for rejected_job, reason in scope_rejected[:20]:
+                    print(f"  REJECTED: {rejected_job.title} — {reason}")
 
             jobs += got
 
