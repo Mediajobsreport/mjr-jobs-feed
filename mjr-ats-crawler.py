@@ -437,6 +437,18 @@ def category(title, desc, industry, company):
     # 1A) DEFINITIVE TITLE-FIRST OVERRIDES
     # These titles should not be displaced by broad words in descriptions.
     # ------------------------------------------------------------------
+    # Finance/accounting is the job function even when it supports an ad-sales
+    # team. Keep these titles in Business Office before the broad sales match.
+    if (
+        re.search(
+            r"\b(finance|financial|accounting|accountant|accounts payable|"
+            r"accounts receivable|payroll|tax)\b",
+            t,
+        )
+        and re.search(r"\b(sales|advertising|ad sales)\b", t)
+    ):
+        return "Business Office"
+
     if re.search(r"\b(sales associate|associate,? sales|sales account associate|account associate,? sales|sales representative)\b", t):
         return "Sales & Marketing"
 
