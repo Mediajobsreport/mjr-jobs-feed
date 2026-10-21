@@ -7318,12 +7318,13 @@ def company_scope_rejection_reason(job_or_dict):
     # newsroom, studio and production roles.
     if company in {"disney / abc", "espn"}:
         disney_operations_context = re.search(
-            r"\b(disney experiences|walt disney world|disneyland|theme park|"
+            r"\b(disney experiences|walt disney world|disneyland|disney store|theme park|"
             r"parks and resorts|central shops|disney cruise line)\b",
             text,
         )
         disney_operations_title = re.search(
-            r"\b(guest arrival coordinator|arrival coordinator|maintenance engineer|"
+            r"\b(guest arrival coordinator|arrival coordinator|store sales associate|"
+            r"retail sales associate|sales associate|maintenance engineer|"
             r"cnc specialist|manufacturing planner|planner.{0,20}manufacturing|"
             r"manufacturing.{0,20}planner)\b",
             title,
