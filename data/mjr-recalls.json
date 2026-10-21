@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-21T20:14:07.531Z",
+  "generated": "2026-10-21T23:25:33.249Z",
   "version": "2.4",
-  "newestDate": "2026-10-17",
+  "newestDate": "2026-10-21",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1072
+      "count": 1090
     },
     "CPSC": {
       "ok": true,
@@ -255,7 +255,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V664000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V664000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V664-0680.pdf",
       "score": 123
     },
     {
@@ -407,7 +407,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V612000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V612000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V612-8057.pdf",
       "score": 95
     },
     {
@@ -937,6 +937,22 @@
       "score": 71
     },
     {
+      "id": "FDA-2026-10-21-no-brand-name-compounded-veterinary-medications-wedgewood-pharmacy-llc",
+      "source": "FDA",
+      "category": "health",
+      "title": "No Brand Name Compounded veterinary medications Recalled",
+      "reason": "Potential Potency Issues",
+      "brand": "No Brand Name",
+      "company": "Wedgewood Pharmacy, LLC.",
+      "product": "Compounded veterinary medications",
+      "date": "2026-10-21",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/wedgewood-pharmacy-issues-recall-certain-compounded-veterinary-medications-within-expiry-due",
+      "score": 70
+    },
+    {
       "id": "CPSC-11024-papablic-of-usa-recalls-convertible-bedside-sleepers-due-to-risk-of-se",
       "source": "CPSC",
       "category": "consumer",
@@ -1035,7 +1051,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V611000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V611000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V611-3336.pdf",
       "score": 67
     },
     {
@@ -1069,7 +1085,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E064000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E064000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E064-1957.pdf",
       "score": 67
     },
     {
@@ -1455,7 +1471,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E065000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E065000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E065-6712.pdf",
       "score": 55
     },
     {
@@ -2022,22 +2038,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-two-lots-brevitalr-sodium-500-mgvial-civ-methohexital",
-      "score": 36
-    },
-    {
-      "id": "FDA-2026-10-05-nature-s-own-nature-s-own-hawaiian-bread-20oz-single-loaf-and-40-oz-2-",
-      "source": "FDA",
-      "category": "food",
-      "title": "Nature's Own Nature's Own Hawaiian Bread, 20oz single loaf and 40 oz 2-pack Recalled",
-      "reason": "Undeclared milk allergen",
-      "brand": "Nature's Own",
-      "company": "Flowers Foods, Inc.",
-      "product": "Nature's Own Hawaiian Bread, 20oz single loaf and 40 oz 2-pack",
-      "date": "2026-10-05",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 36
     }
   ]
