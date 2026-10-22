@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-22T13:51:44.774Z",
+  "generated": "2026-10-22T21:36:51.204Z",
   "version": "2.4",
-  "newestDate": "2026-10-21",
+  "newestDate": "2026-10-22",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1073
+      "count": 1091
     },
     "CPSC": {
       "ok": true,
-      "count": 10053
+      "count": 10058
     },
     "USDA": {
       "ok": true,
@@ -88,7 +88,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V621000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V621000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V621-5191.pdf",
       "score": 142
     },
     {
@@ -171,7 +171,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V590000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V590000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V590-2304.pdf",
       "score": 132
     },
     {
@@ -188,42 +188,42 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V578000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V578000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V578-3276.pdf",
       "score": 132
     },
     {
-      "id": "CPSC-11018-dr-power-equipment-recalls-pilot-and-premier-trimmer-mowers-due-to-ris",
+      "id": "CPSC-11028-vqqq-gas-patio-heaters-recalled-due-to-risk-of-serious-injury-or-death",
       "source": "CPSC",
       "category": "consumer",
-      "title": "DR Power Equipment Recalls Pilot and Premier Trimmer Mowers Due to Risk of Serious Injury or Death from…",
-      "reason": "Grass and debris can accumulate in the trimmer mowers and ignite, posing a risk of serious injury or death from fire and burn hazards.",
+      "title": "VQQQ Gas Patio Heaters Recalled Due to Risk of Serious Injury or Death from Fire and Burn Hazards",
+      "reason": "Components on the recalled patio heaters can malfunction causing gas to be released, posing a risk of serious injury or death from fire and burn hazards.",
       "brand": "",
       "company": "",
-      "retailers": "Sold At: Ace, TSC, Bomgaars, other home improvement, hardware and independent power equipment stores nationwide and online at drpower.com from November 2022 through July 2026 for between $380 to $550.",
-      "product": "DR Power Equipment Pilot and Premier Trimmer Mowers",
-      "date": "2026-10-08",
-      "units": 42860,
+      "retailers": "Sold Online At: Amazon.com from July 2024 through August 2026 for about $346., Shanxi Yuhe Sheng Maoyi Youxian Gongsi, dba VQQQ, of China",
+      "product": "VQQQ Natural Gas Patio Heaters",
+      "date": "2026-10-22",
+      "units": 100,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/DR-Power-Equipment-Recalls-Pilot-and-Premier-Trimmer-Mowers-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
-      "score": 111
+      "url": "https://www.cpsc.gov/Recalls/2027/VQQQ-Gas-Patio-Heaters-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
+      "score": 123
     },
     {
-      "id": "CPSC-11000-newdery-power-banks-recalled-due-to-fire-and-burn-hazards-risk-of-seri",
+      "id": "CPSC-11031-bamamon-recalls-led-projecting-finger-light-toys-due-to-risk-of-seriou",
       "source": "CPSC",
       "category": "consumer",
-      "title": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
-      "reason": "The lithium-ion battery in the power banks can explode or ignite, posing fire and burn hazards to consumers.",
+      "title": "BAMAMON Recalls LED Projecting Finger Light Toys Due to Risk of Serious Injury or Death from Battery…",
+      "reason": "None reported.",
       "brand": "",
       "company": "",
-      "retailers": "Sold Online At: Amazon.com from October 2023 to November 2024 for between $27 and $50.",
-      "product": "NEWDERY power banks",
-      "date": "2026-09-24",
-      "units": 21380,
+      "retailers": "Sold At: Amazon.com from March 2025 through August 2026 for about $13 to $14., Shenzhen Maiduoduo Trading Technology Co., Ltd., dba Bamamon, of China",
+      "product": "Bamamon LED Projecting Finger Light Toys",
+      "date": "2026-10-22",
+      "units": 6533,
       "pet": false,
       "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
-      "score": 110
+      "url": "https://www.cpsc.gov/Recalls/2027/BAMAMON-Recalls-LED-Projecting-Finger-Light-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
+      "score": 118
     },
     {
       "id": "FDA-2026-10-16-starfish-seafood-cold-smoked-salmon-krasnyi-oktyabr-inc",
@@ -290,6 +290,57 @@
       "campaign": "26V685000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V685-7183.pdf",
       "score": 113
+    },
+    {
+      "id": "CPSC-11018-dr-power-equipment-recalls-pilot-and-premier-trimmer-mowers-due-to-ris",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "DR Power Equipment Recalls Pilot and Premier Trimmer Mowers Due to Risk of Serious Injury or Death from…",
+      "reason": "Grass and debris can accumulate in the trimmer mowers and ignite, posing a risk of serious injury or death from fire and burn hazards.",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold At: Ace, TSC, Bomgaars, other home improvement, hardware and independent power equipment stores nationwide and online at drpower.com from November 2022 through July 2026 for between $380 to $550.",
+      "product": "DR Power Equipment Pilot and Premier Trimmer Mowers",
+      "date": "2026-10-08",
+      "units": 42860,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/DR-Power-Equipment-Recalls-Pilot-and-Premier-Trimmer-Mowers-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
+      "score": 111
+    },
+    {
+      "id": "CPSC-11030-costway-recalls-convertible-high-chairs-due-to-risk-of-serious-injury-",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Costway Recalls Convertible High Chairs Due to Risk of Serious Injury or Death from Entrapment and Fall…",
+      "reason": "The convertible high chairs violate the mandatory safety standard for high chairs because they do not contain a passive restraint system and a child can slip through the opening between the feeding tray and seat and…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold At: Walmart and Target stores nationwide and online at Costway.com from May 2023 through July 2026 for between $84 and $100., Goplus Corporation, dba Costway, of Fontana, California",
+      "product": "Costway Convertible High Chairs",
+      "date": "2026-10-22",
+      "units": 3332,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/Costway-Recalls-Convertible-High-Chairs-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Fall-Hazards-Violate-Mandatory-Standard-for-High-Chairs",
+      "score": 110
+    },
+    {
+      "id": "CPSC-11000-newdery-power-banks-recalled-due-to-fire-and-burn-hazards-risk-of-seri",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "NEWDERY Power Banks Recalled Due to Fire and Burn Hazards; Risk of Serious Injury; Sold on Amazon",
+      "reason": "The lithium-ion battery in the power banks can explode or ignite, posing fire and burn hazards to consumers.",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Amazon.com from October 2023 to November 2024 for between $27 and $50.",
+      "product": "NEWDERY power banks",
+      "date": "2026-09-24",
+      "units": 21380,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
+      "score": 110
     },
     {
       "id": "CPSC-11012-dollar-tree-stores-recalls-electric-balloon-pumps-due-to-burn-hazard",
@@ -373,7 +424,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V638000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V638000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
       "score": 103
     },
     {
@@ -392,6 +443,23 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/ZCK01-Recalls-Kesyup-Mattresses-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Mattress-Flammability",
       "score": 103
+    },
+    {
+      "id": "CPSC-11029-lithonia-lighting-recalls-rsx-luminaires-with-adjustable-tilt-arm-moun",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Lithonia Lighting Recalls RSX Luminaires with Adjustable Tilt Arm Mountings Due to Risk of Serious…",
+      "reason": "The knuckle of the recalled adjustable tilt arm mountings can fail, allowing the luminaire to fall from the mounting arm, posing a risk of serious injury due to impact hazard.",
+      "brand": "Lithonia Lighting, of Atlanta, Georgia",
+      "company": "Lithonia Lighting, of Atlanta, Georgia",
+      "retailers": "Sold At: Commercial distributors nationwide including Turtle & Hughes Inc. and Consolidated Electrical Distributors for commercial outdoor lighting applications from August 2019 to August 2026 for between $400 and $2200.",
+      "product": "Lithonia Lighting RSX Luminaires with AASP, AARP, AAWB, and AAWSC Adjustable Tilt Arm Mountings used for commercial outdoor lighting.",
+      "date": "2026-10-22",
+      "units": 11532,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://cpsc.gov/Recalls/2027/Lithonia-Lighting-Recalls-RSX-Luminaires-with-Adjustable-Tilt-Arm-Mountings-Due-to-Risk-of-Serious-Injury-from-Impact-Hazard",
+      "score": 100
     },
     {
       "id": "CPSC-11026-hatsanusa-recalls-blitz-air-rifles-due-to-risk-of-serious-injury-or-de",
@@ -954,6 +1022,39 @@
       "score": 71
     },
     {
+      "id": "FDA-2026-10-22-winco-foods-hoagie-rolls-winco-foods-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "WinCo Foods Hoagie Rolls Recalled",
+      "reason": "Undeclared sesame",
+      "brand": "WinCo Foods",
+      "company": "WinCo Foods LLC",
+      "product": "Hoagie Rolls",
+      "date": "2026-10-22",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/winco-foods-boise-id-recalling-following-salsa-bean-dip-trays-due-inclusion-recalled-peperoncini-gl",
+      "score": 70
+    },
+    {
+      "id": "CPSC-11032-foshanshinanhaiqunuoaitongzhuangshanghang-recalls-ciyti-light-up-princ",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "FoShanShiNanHaiQuNuoAiTongZhuangShangHang Recalls CIYTI Light-Up Princess Costumes Due to Risk of…",
+      "reason": "The costumes violate the mandatory safety standard for toys because the button cell batteries can be accessed easily by children, posing a deadly ingestion hazard. If button cell or coin batteries are swallowed, the…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Amazon from February 2025 through June 2025 for between $21 and $35., FoShanShiNanHaiQuNuoAiTongZhuangShangHang, of China",
+      "product": "CIYTI Light-Up Princess Costumes",
+      "date": "2026-10-22",
+      "units": 94,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/FoShanShiNanHaiQuNuoAiTongZhuangShangHang-Recalls-CIYTI-Light-Up-Princess-Costumes-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
+      "score": 70
+    },
+    {
       "id": "FDA-2026-10-21-no-brand-name-compounded-veterinary-medications-wedgewood-pharmacy-llc",
       "source": "FDA",
       "category": "health",
@@ -1473,7 +1574,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V598000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V598000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V598-8506.pdf",
       "score": 55
     },
     {
@@ -1558,7 +1659,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E063000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E063000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E063-9353.pdf",
       "score": 55
     },
     {
@@ -1575,7 +1676,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V582000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V582000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V582-7531.pdf",
       "score": 55
     },
     {
@@ -1939,108 +2040,8 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26E066000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E066000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E066-0581.pdf",
       "score": 40
-    },
-    {
-      "id": "CPSC-10967-guang-zhou-recalls-wantefully-hair-dryer-brushes-due-to-risk-of-seriou",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Guang Zhou Recalls Wantefully Hair Dryer Brushes Due to Risk of Serious Injury or Death from…",
-      "reason": "The recalled hair dryer brushes are in violation of federal regulations for hair dryers as they lack an integrated immersion protection device, which presents a substantial product hazard to consumers and the risk of…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from February 2026 through March 2026 for about $30.",
-      "product": "Wantefully Hair Dryer Brushes",
-      "date": "2026-09-10",
-      "units": 2295,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
-      "score": 40
-    },
-    {
-      "id": "NHTSA-26V648000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Kalmar Ottawa T2 Vehicles Recalled",
-      "reason": "Kalmar Solutions, LLC (Kalmar) is recalling certain 2014-2026 Ottawa T2 4X2 and 2016-2026 T2 6X4 DOT/EPA terminal tractors. The printed circuit board (PCB) insulation may become damaged, resulting in a short circuit.…",
-      "brand": "Kalmar",
-      "company": "Kalmar Solutions, LLC",
-      "product": "Ottawa T2",
-      "date": "2026-10-05",
-      "units": 16127,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V648000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V648-3342.pdf",
-      "score": 38
-    },
-    {
-      "id": "CPSC-11001-love-to-dream-recalls-portable-sleep-machines-due-to-risk-of-injury-fr",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Love To Dream Recalls Portable Sleep Machines Due to Risk of Injury from Fire and Burn Hazards",
-      "reason": "The lithium-ion battery in the recalled portable sleep machines can overheat if the charger is not compatible with the unit, posing a risk of injury from fire and burn hazards.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold At: Target and Nordstrom stores nationwide and online at lovetodream.com, Amazon.com, Walmartmarketplace.com, babylist.com and poshmommy.com from February 2025 through September 2026 for about $60.",
-      "product": "Portable Sleep Machines with Night Light model number LTD-SM23 and date code 7W15TN",
-      "date": "2026-09-24",
-      "units": 4000,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/Love-To-Dream-Recalls-Portable-Sleep-Machines-Due-to-Risk-of-Injury-from-Fire-and-Burn-Hazards",
-      "score": 37
-    },
-    {
-      "id": "CPSC-10965-sqt-recalls-lontcs-busy-boards-due-to-risk-of-serious-injury-from-lead",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "SQT Recalls Lontcs Busy Boards Due to Risk of Serious Injury from Lead Poisoning; Violate Federal Lead…",
-      "reason": "The toys’ zipper contains levels of lead that exceed the standard set in the federal lead paint ban. Lead is toxic if ingested by young children and can cause adverse health issues.",
-      "brand": "Xianyouxianlichengshaungqiaotouqichemeirongdian (Xianyou County Licheng Shuangqiaotou Auto Beauty Shop), dba SQT LLC, of China",
-      "company": "Xianyouxianlichengshaungqiaotouqichemeirongdian (Xianyou County Licheng Shuangqiaotou Auto Beauty Shop), dba SQT LLC, of China",
-      "retailers": "Sold Online At: Amazon.com from May 2024 through July 2026 for about $31.",
-      "product": "Lontcs Busy Board",
-      "date": "2026-09-10",
-      "units": 1835,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/SQT-Recalls-Lontcs-Busy-Boards-Due-to-Risk-of-Serious-Injury-from-Lead-Poisoning-Violate-Federal-Lead-Paint-Ban",
-      "score": 37
-    },
-    {
-      "id": "FDA-2026-10-09-par-pharmaceutical-brevital-sodium-500-mg-vial-for-injection-par-healt",
-      "source": "FDA",
-      "category": "health",
-      "title": "Par Pharmaceutical Brevital Sodium 500 mg/vial for Injection Recalled",
-      "reason": "Presence of particulate matter identified as cellulose",
-      "brand": "Par Pharmaceutical",
-      "company": "Par Health",
-      "product": "Brevital Sodium 500 mg/vial for Injection",
-      "date": "2026-10-09",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-two-lots-brevitalr-sodium-500-mgvial-civ-methohexital",
-      "score": 36
-    },
-    {
-      "id": "FDA-2026-10-05-nature-s-own-nature-s-own-hawaiian-bread-20oz-single-loaf-and-40-oz-2-",
-      "source": "FDA",
-      "category": "food",
-      "title": "Nature's Own Nature's Own Hawaiian Bread, 20oz single loaf and 40 oz 2-pack Recalled",
-      "reason": "Undeclared milk allergen",
-      "brand": "Nature's Own",
-      "company": "Flowers Foods, Inc.",
-      "product": "Nature's Own Hawaiian Bread, 20oz single loaf and 40 oz 2-pack",
-      "date": "2026-10-05",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 36
     }
   ]
 }
