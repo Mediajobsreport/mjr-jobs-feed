@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-22T21:36:51.204Z",
+  "generated": "2026-10-22T23:27:04.501Z",
   "version": "2.4",
   "newestDate": "2026-10-22",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1091
+      "count": 1092
     },
     "CPSC": {
       "ok": true,
@@ -88,7 +88,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V621000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V621-5191.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V621000",
       "score": 142
     },
     {
@@ -171,7 +171,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V590000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V590-2304.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V590000",
       "score": 132
     },
     {
@@ -188,7 +188,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V578000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V578-3276.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V578000",
       "score": 132
     },
     {
@@ -226,20 +226,20 @@
       "score": 118
     },
     {
-      "id": "FDA-2026-10-16-starfish-seafood-cold-smoked-salmon-krasnyi-oktyabr-inc",
+      "id": "FDA-2026-10-22-natural-grocers-2-pound-mung-beans-vitamin-cottage-natural-food-market",
       "source": "FDA",
       "category": "food",
-      "title": "Starfish Seafood Cold Smoked Salmon Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes",
-      "brand": "Starfish Seafood",
-      "company": "Krasnyi Oktyabr Inc.",
-      "product": "Cold Smoked Salmon",
-      "date": "2026-10-16",
+      "title": "Natural Grocers 2 pound Mung Beans Recalled",
+      "reason": "Possible foreign material contamination with glass",
+      "brand": "Natural Grocers",
+      "company": "Vitamin Cottage Natural Food Markets, Inc.",
+      "product": "2 pound Mung Beans",
+      "date": "2026-10-22",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-trio-because-possible-health-risk",
-      "score": 87
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/natural-grocers-recalls-natural-grocers-brand-organic-2-pound-mung-beans-due-potential-presence",
+      "score": 88
     },
     {
       "id": "NHTSA-26V664000",
@@ -259,19 +259,19 @@
       "score": 123
     },
     {
-      "id": "FDA-2026-10-15-family-farmstead-raw-mild-cheddar-cheese-family-farmstead-dairy-llc",
+      "id": "FDA-2026-10-16-starfish-seafood-cold-smoked-salmon-krasnyi-oktyabr-inc",
       "source": "FDA",
       "category": "food",
-      "title": "Family Farmstead Raw Mild Cheddar Cheese Recalled",
-      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (E. Coli O26:H11 and O45:H2)",
-      "brand": "Family Farmstead",
-      "company": "Family Farmstead Dairy, LLC",
-      "product": "Raw Mild Cheddar Cheese",
-      "date": "2026-10-15",
+      "title": "Starfish Seafood Cold Smoked Salmon Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes",
+      "brand": "Starfish Seafood",
+      "company": "Krasnyi Oktyabr Inc.",
+      "product": "Cold Smoked Salmon",
+      "date": "2026-10-16",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/krasnyi-oktyabr-inc-recalls-starfish-seafood-trio-because-possible-health-risk",
       "score": 87
     },
     {
@@ -424,7 +424,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V638000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V638000",
       "score": 103
     },
     {
@@ -613,6 +613,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/ZMC-Group-Expands-Recall-of-Light-Up-Childrens-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Battery-Ingestion-Violate-Mandatory-Standard-for-Toys",
       "score": 90
+    },
+    {
+      "id": "FDA-2026-10-15-family-farmstead-raw-mild-cheddar-cheese-family-farmstead-dairy-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Family Farmstead Raw Mild Cheddar Cheese Recalled",
+      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (E. Coli O26:H11 and O45:H2)",
+      "brand": "Family Farmstead",
+      "company": "Family Farmstead Dairy, LLC",
+      "product": "Raw Mild Cheddar Cheese",
+      "date": "2026-10-15",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
+      "score": 87
     },
     {
       "id": "CPSC-10975-jkmax-recalls-heated-blankets-and-heating-pads-due-to-fire-and-burn-ha",
@@ -1574,7 +1590,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V598000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V598-8506.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V598000",
       "score": 55
     },
     {
@@ -1659,7 +1675,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E063000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E063-9353.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E063000",
       "score": 55
     },
     {
@@ -1676,7 +1692,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V582000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V582-7531.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V582000",
       "score": 55
     },
     {
@@ -2025,23 +2041,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Loving-Thyself-Rocks-Recalls-Crystal-Glass-Cups-Due-to-Risk-of-Serious-Injury-from-Ingestion-and-Laceration-Hazards",
       "score": 42
-    },
-    {
-      "id": "NHTSA-26E066000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Cummins L9 Vehicles Recalled",
-      "reason": "Cummins, Inc. (Cummins) is recalling certain L9 diesel engines, part number D563027BX03. The remote fuel filter hoses may separate from the fitting, causing a fuel leak and an engine stall. 39,052 vehicles or units may…",
-      "brand": "Cummins",
-      "company": "Cummins, Inc.",
-      "product": "L9",
-      "date": "2026-09-28",
-      "units": 39052,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26E066000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E066-0581.pdf",
-      "score": 40
     }
   ]
 }
