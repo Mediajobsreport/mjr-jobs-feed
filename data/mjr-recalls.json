@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-21T23:25:33.249Z",
+  "generated": "2026-10-22T04:55:28.938Z",
   "version": "2.4",
   "newestDate": "2026-10-21",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1090
+      "count": 1073
     },
     "CPSC": {
       "ok": true,
@@ -255,7 +255,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V664000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V664-0680.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V664000",
       "score": 123
     },
     {
@@ -407,7 +407,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V612000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V612-8057.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V612000",
       "score": 95
     },
     {
@@ -1051,7 +1051,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V611000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V611-3336.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V611000",
       "score": 67
     },
     {
@@ -1085,7 +1085,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E064000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E064-1957.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E064000",
       "score": 67
     },
     {
@@ -1471,7 +1471,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E065000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E065-6712.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E065000",
       "score": 55
     },
     {
