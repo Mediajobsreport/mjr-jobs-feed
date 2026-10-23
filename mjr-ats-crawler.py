@@ -7137,7 +7137,8 @@ def company_scope_rejection_reason(job_or_dict):
             r"id|my|th|ae|sa|qa)(?:$|[, /-])",
             location,
         )
-        if foreign_location:
+        country = clean(get("country", "")).upper()
+        if foreign_location or (country and country not in {"US", "USA", "UNITED STATES", "CA", "CAN", "CANADA"}):
             return "Disney/ESPN job outside the United States and Canada"
 
         # Disney/ESPN search surfaces can also return international recruiting
@@ -13018,12 +13019,15 @@ def _normalize_disney_metadata(j):
         return False
     loc, business = (clean(x) for x in location.groups())
     # A country must be explicitly present to replace an existing location.
-    parts = [clean(x) for x in loc.split(",")]
-    country = infer_country(loc)
+    primary_location = loc.split(" / ", 1)[0]
+    parts = [clean(x) for x in primary_location.split(",")]
+    country = infer_country(primary_location)
     if len(parts) >= 3:
         j.city = ", ".join(parts[:-2])
         j.state = parts[-2]
         j.country = country
+    elif len(parts) == 2 and (country not in {"US", "CA"} or re.fullmatch(r"United States(?: of America)?|USA?|Canada|CAN?", parts[-1], re.I)):
+        j.city, j.state, j.country = parts[0], "", country
     if business:
         j.company = business
         j.company_website = "https://www.disneycareers.com/"

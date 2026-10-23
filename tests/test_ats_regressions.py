@@ -45,6 +45,15 @@ class ATSRegressionTests(unittest.TestCase):
         self.assertEqual(crawler._canonical_requisition_key(job), "disney:102302180480")
         job.title = "Hotel Housekeeper"
         self.assertTrue(crawler.company_scope_rejection_reason(job))
+        job.title = "Senior Effects Technical Director"
+        job.description = "Job ID 10163658 Location London, United Kingdom Business Industrial Light & Magic Date posted Oct. 22, 2026"
+        jobs, rejected = crawler.apply_company_scope_filters([job])
+        self.assertEqual(jobs, [])
+        self.assertEqual((job.city, job.country), ("London", "GB"))
+        self.assertEqual(len(rejected), 1)
+        job.description = "Job ID 10163635 Location Glendale, California, United States / Santa Monica, California, United States Business Disney Entertainment and ESPN Product & Technology Date posted Oct. 22, 2026"
+        crawler._normalize_disney_metadata(job)
+        self.assertEqual((job.city, job.state, job.country), ("Glendale", "California", "US"))
 
     def test_sony_foreign_location_is_excluded_even_with_old_us_country(self):
         row = {"company": "Sony Music Entertainment", "title": "Legal Internship", "city": "Germany", "country": "US"}
