@@ -1,0 +1,183 @@
+<div id="mjr-hot-sales-widget" role="region" aria-label="MJR Hot Sales Categories">
+  <div class="mjr-hsw-heading">
+    <span class="mjr-hsw-flame" aria-hidden="true">🔥</span>
+    <div class="mjr-hsw-heading-copy">
+      <strong class="mjr-hsw-title"><span class="mjr-hsw-brand-prefix">MJR</span> HOT SALES CATEGORIES</strong>
+      <span class="mjr-hsw-subtitle">What should you be selling right now?</span>
+    </div>
+  </div>
+  <div class="mjr-hsw-items" aria-live="polite">
+    <div class="mjr-hsw-message"><strong>Loading opportunities…</strong>Connecting to MJR Advertising Trends</div>
+  </div>
+  <div class="mjr-hsw-count" hidden></div>
+  <div class="mjr-hsw-statusbar">
+    <span class="mjr-hsw-status">Live MJR category signals</span>
+    <span class="mjr-hsw-brand">MJR Sales Manager</span>
+  </div>
+  <a class="mjr-hsw-cta" href="https://www.mediajobsreport.com/mjr-sales-manager/#mjrAdvertisingTrends">See All Sales Opportunities&nbsp; →</a>
+  <span class="mjr-hsw-note">National seasonal signals; local conditions may differ.</span>
+</div>
+
+<style>
+#mjr-hot-sales-widget,
+#mjr-hot-sales-widget * ,
+#mjr-hot-sales-widget *::before,
+#mjr-hot-sales-widget *::after{box-sizing:border-box!important}
+#mjr-hot-sales-widget{
+  --hsw-navy:#192a56;--hsw-gold:#f2b233;--hsw-ink:#182235;--hsw-muted:#667085;
+  all:initial!important;display:flex!important;flex-direction:column!important;
+  width:300px!important;max-width:100%!important;min-width:0!important;height:300px!important;
+  margin:0 auto!important;padding:10px!important;overflow:hidden!important;isolation:isolate!important;
+  border:1px solid #d6deea!important;border-radius:12px!important;background:#fff!important;
+  box-shadow:0 5px 18px rgba(25,42,86,.13)!important;
+  color:var(--hsw-ink)!important;font-family:Roboto,Arial,sans-serif!important;
+  font-size:14px!important;line-height:1.35!important;text-align:left!important;
+}
+#mjr-hot-sales-widget .mjr-hsw-heading{
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;flex:0 0 42px!important;
+  min-height:42px!important;margin:-10px -10px 0!important;padding:0 10px!important;
+  border:0!important;border-radius:11px 11px 0 0!important;background:var(--hsw-navy)!important;
+}
+#mjr-hot-sales-widget .mjr-hsw-flame{display:block!important;flex:0 0 auto!important;font-size:16px!important;line-height:1!important}
+#mjr-hot-sales-widget .mjr-hsw-heading-copy{display:block!important;min-width:0!important;text-align:center!important}
+#mjr-hot-sales-widget .mjr-hsw-title{display:block!important;margin:0!important;color:#fff!important;font-size:14px!important;line-height:1.1!important;letter-spacing:.3px!important;font-weight:900!important}
+#mjr-hot-sales-widget .mjr-hsw-brand-prefix{color:var(--hsw-gold)!important;margin-right:3px!important}
+#mjr-hot-sales-widget .mjr-hsw-subtitle{display:block!important;margin:2px 0 0!important;color:rgba(255,255,255,.82)!important;font-size:10.5px!important;line-height:1.1!important;font-weight:600!important;text-align:center!important}
+#mjr-hot-sales-widget .mjr-hsw-items{display:flex!important;flex-direction:column!important;gap:3px!important;margin-top:6px!important;min-width:0!important}
+#mjr-hot-sales-widget .mjr-hsw-item{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:6px!important;
+  width:100%!important;height:29px!important;min-height:29px!important;padding:0 7px!important;
+  border:1px solid #e5eaf1!important;border-left:3px solid var(--hsw-accent)!important;border-radius:6px!important;
+  background:#fbfcfe!important;color:var(--hsw-ink)!important;text-decoration:none!important;
+}
+#mjr-hot-sales-widget .mjr-hsw-item:hover,
+#mjr-hot-sales-widget .mjr-hsw-item:focus-visible{background:#f0f4fa!important;outline:2px solid #8aa3d3!important;outline-offset:1px!important}
+#mjr-hot-sales-widget .mjr-hsw-category{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:10.8px!important;line-height:1.1!important;font-weight:750!important;color:var(--hsw-ink)!important}
+#mjr-hot-sales-widget .mjr-hsw-badge{
+  display:inline-block!important;flex:0 0 auto!important;border-radius:999px!important;padding:3px 5px!important;
+  background:var(--hsw-badge-bg)!important;color:var(--hsw-accent)!important;font-size:7.7px!important;
+  line-height:1!important;text-transform:uppercase!important;letter-spacing:.1px!important;font-weight:900!important;white-space:nowrap!important
+}
+#mjr-hot-sales-widget .mjr-hsw-count{
+  display:block!important;margin:7px 0 0!important;padding:7px 8px!important;border:1px solid #f0dfb3!important;
+  border-left:3px solid #d7a62a!important;border-radius:7px!important;background:#fff8e8!important;
+  color:#57451c!important;font-size:10px!important;line-height:1.3!important
+}
+#mjr-hot-sales-widget .mjr-hsw-count[hidden]{display:none!important}
+#mjr-hot-sales-widget .mjr-hsw-statusbar{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:4px!important;
+  height:14px!important;min-height:14px!important;margin-top:auto!important;padding:0!important;
+  background:transparent!important;color:var(--hsw-muted)!important;font-size:8.5px!important;line-height:1!important
+}
+#mjr-hot-sales-widget .mjr-hsw-status{display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+#mjr-hot-sales-widget .mjr-hsw-status.mjr-hsw-stale{color:#8b590e!important;font-weight:800!important}
+#mjr-hot-sales-widget .mjr-hsw-brand{display:block!important;flex:0 0 auto!important;color:#6c7788!important;font-size:8px!important;font-weight:700!important}
+#mjr-hot-sales-widget .mjr-hsw-cta{
+  display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 30px!important;
+  width:100%!important;height:30px!important;margin:5px 0 0!important;padding:0 8px!important;
+  border:0!important;border-radius:7px!important;background:var(--hsw-navy)!important;color:#fff!important;
+  text-decoration:none!important;text-align:center!important;font-size:10.5px!important;font-weight:800!important;letter-spacing:.1px!important
+}
+#mjr-hot-sales-widget .mjr-hsw-cta:hover,
+#mjr-hot-sales-widget .mjr-hsw-cta:focus-visible{background:#253b70!important;outline:2px solid var(--hsw-gold)!important;outline-offset:2px!important}
+#mjr-hot-sales-widget .mjr-hsw-note{
+  display:block!important;flex:0 0 10px!important;height:10px!important;margin:3px 0 0!important;
+  padding:0!important;text-align:center!important;color:#7a8494!important;font-size:7.7px!important;line-height:10px!important
+}
+#mjr-hot-sales-widget .mjr-hsw-message{
+  display:block!important;padding:12px 8px!important;border:1px solid #e2e8f0!important;border-radius:7px!important;
+  background:#f7f9fc!important;color:var(--hsw-muted)!important;text-align:center!important;font-size:11px!important;line-height:1.4!important
+}
+#mjr-hot-sales-widget .mjr-hsw-message strong{display:block!important;margin:0 0 3px!important;color:var(--hsw-navy)!important;font-size:12px!important}
+</style>
+
+<script>
+(function(){
+  const root=document.getElementById("mjr-hot-sales-widget");
+  if(!root)return;
+  const list=root.querySelector(".mjr-hsw-items");
+  const status=root.querySelector(".mjr-hsw-status");
+  const countNote=root.querySelector(".mjr-hsw-count");
+  const MANAGER_URL="https://www.mediajobsreport.com/mjr-sales-manager/";
+  const FEED_URL="https://raw.githubusercontent.com/Mediajobsreport/mjr-jobs-feed/main/mjr-advertising-trends.json";
+  const LABELS={
+    "441":"Auto & Auto Parts","442":"Furniture & Home","443":"Electronics & Appliances",
+    "444":"Home Improvement & Garden","445":"Grocery & Food Retail","446":"Health & Personal Care",
+    "447":"Gas & Convenience","448":"Clothing & Accessories","451":"Sports & Hobbies",
+    "452":"Department & General Retail","453":"Specialty Retail","454":"Online Retail",
+    "722":"Restaurants & Drinking Places"
+  };
+  const GROUPS=[
+    {key:"sell_now",label:"Sell Now",short:"SELL NOW",accent:"#b42318",bg:"#fef0f0",limit:2},
+    {key:"start_prospecting",label:"Start Prospecting",short:"START PROSPECTING",accent:"#a35c00",bg:"#fff6e8",limit:2},
+    {key:"on_deck",label:"On Deck",short:"ON DECK",accent:"#3159a5",bg:"#eef3ff",limit:1},
+    {key:"watch_ahead",label:"Watch Ahead",short:"WATCH AHEAD",accent:"#596579",bg:"#f0f2f5",limit:5}
+  ];
+  const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const categoryName=item=>LABELS[String(item.category_code||"")]||item.category||"Business Category";
+  function chooseTopFive(groups){
+    const chosen=[],seen=new Set();
+    for(const group of GROUPS){
+      const rows=Array.isArray(groups[group.key])?groups[group.key]:[];
+      let added=0;
+      for(const row of rows){
+        const id=String(row.category_code||row.category||categoryName(row));
+        if(seen.has(id))continue;
+        chosen.push({row,group});seen.add(id);
+        if(++added>=group.limit||chosen.length>=5)break;
+      }
+      if(chosen.length>=5)break;
+    }
+    if(chosen.length<5){
+      for(const group of GROUPS)for(const row of (Array.isArray(groups[group.key])?groups[group.key]:[])){
+        const id=String(row.category_code||row.category||categoryName(row));
+        if(seen.has(id))continue;
+        chosen.push({row,group});seen.add(id);
+        if(chosen.length>=5)return chosen;
+      }
+    }
+    return chosen;
+  }
+  function message(title,detail){
+    list.innerHTML='<div class="mjr-hsw-message"><strong>'+esc(title)+'</strong>'+esc(detail)+'</div>';
+  }
+  async function load(){
+    root.querySelector(".mjr-hsw-cta").href=MANAGER_URL+"#mjrAdvertisingTrends";
+    try{
+      const requestUrl=new URL(FEED_URL);
+      requestUrl.searchParams.set("v",Date.now());
+      const res=await fetch(requestUrl.href,{cache:"no-store",credentials:"same-origin"});
+      if(!res.ok)throw new Error("Feed returned "+res.status);
+      const data=await res.json(),groups=data.groups||{},picks=chooseTopFive(groups);
+      if(!picks.length){message("No current signals are available.","Open MJR Sales Manager for the latest planning guidance.");return}
+      list.innerHTML=picks.map(({row,group})=>{
+        const target=new URL(MANAGER_URL);
+        if(row.category_code)target.searchParams.set("category",String(row.category_code));
+        target.hash="mjrAdvertisingTrends";
+        return '<a class="mjr-hsw-item" href="'+esc(target.toString())+'" style="--hsw-accent:'+group.accent+';--hsw-badge-bg:'+group.bg+'" aria-label="'+esc(categoryName(row)+", "+group.label)+'"><span class="mjr-hsw-category">'+esc(categoryName(row))+'</span><span class="mjr-hsw-badge">'+group.short+'</span></a>';
+      }).join("");
+      if(picks.length<5){
+        countNote.hidden=false;
+        countNote.textContent="Only "+picks.length+" categories currently meet these trend signals.";
+      }
+      if(data.generated_at){
+        const date=new Date(data.generated_at);
+        // The feed runs on the first of each month. Allow two days for the
+        // scheduled import before warning that last month's feed is overdue.
+        const nextRefresh=new Date(Date.UTC(date.getUTCFullYear(),date.getUTCMonth()+1,3));
+        if(Number.isFinite(date.getTime())&&Date.now()>nextRefresh.getTime()){
+          status.classList.add("mjr-hsw-stale");
+          status.textContent="Feed last refreshed "+date.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" · monthly refresh overdue";
+        }else{
+          status.textContent=Number.isNaN(date.getTime())?"Live category signals":"Updated monthly · "+date.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+        }
+      }
+    }catch(error){
+      message("Sales categories are temporarily unavailable.","Use MJR Sales Manager to view current opportunities.");
+      status.textContent="Feed unavailable";
+      status.classList.add("mjr-hsw-stale");
+    }
+  }
+  load();
+})();
+</script>

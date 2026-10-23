@@ -1129,11 +1129,26 @@ def category(title, desc, industry, company):
 def infer_country(location, company="", description=""):
     """
     Infer country conservatively from explicit location text.
-    Default remains US, but Canadian province/territory abbreviations and
-    well-known Canadian place names are mapped to CA.
+    Honor explicit countries and Canadian province/place names. Do not let
+    unrelated office names in a job description override its location.
     """
     loc = clean(location)
-    s = f" {loc.lower()} {strip_html(description)[:1200].lower()} "
+    # Descriptions contain office lists and global boilerplate, not locations.
+    s = f" {loc.lower()} "
+    if re.search(r"\b(?:united states(?: of america)?|u\.?s\.?a\.?)\b|(?:^|[, /-])us(?:$|[, /-])", loc, re.I):
+        return "US"
+    if re.search(r"\bcanada\b|(?:^|[, /-])can(?:$|[, /-])", loc, re.I) or loc.upper() == "CA":
+        return "CA"
+    foreign_countries = {
+        "germany": "DE", "united kingdom": "GB", "england": "GB",
+        "france": "FR", "india": "IN", "japan": "JP", "china": "CN",
+        "australia": "AU", "new zealand": "NZ", "singapore": "SG",
+        "mexico": "MX", "brazil": "BR", "italy": "IT", "spain": "ES",
+        "ireland": "IE", "netherlands": "NL", "hong kong": "HK",
+    }
+    for name, code in foreign_countries.items():
+        if re.search(r"\b" + re.escape(name) + r"\b", loc, re.I):
+            return code
 
     canadian_abbr = re.search(
         r"(?:^|[, /-])(?:ab|bc|mb|nb|nl|ns|nt|nu|on|pe|qc|sk|yt)(?:$|[, /-])",
@@ -3122,6 +3137,9 @@ def _job_from_detail(src, url, html_text):
 
     if json_jobs:
         jp = json_jobs[0]
+        organization = jp.get("hiringOrganization") or {}
+        if _is_disney_url(url) and isinstance(organization, dict) and clean(organization.get("name")):
+            src = {**src, "Company": clean(organization["name"])}
         title = clean(jp.get("title") or "")
         desc_html = jp.get("description") or ""
         desc = format_description(desc_html)
@@ -7088,6 +7106,10 @@ def company_scope_rejection_reason(job_or_dict):
         str(get(field, "") or "") for field in ("city", "state")
     )).lower()
     text = f" {title} {description} "
+    disney_source = _is_disney_url(get("url", "")) or company in {"disney / abc", "espn"}
+
+    if company == "sony music entertainment" and infer_country(location) not in {"US", "CA"}:
+        return "Sony Music job outside the United States and Canada"
 
     # Empty talent pools are not active vacancies. Keep this title match exact
     # so jobs such as Talent Community Manager remain eligible.
@@ -7098,7 +7120,7 @@ def company_scope_rejection_reason(job_or_dict):
     ):
         return "Generic talent-community posting, not a specific vacancy"
 
-    if company in {"disney / abc", "espn"}:
+    if disney_source:
         # MJR carries U.S. and Canadian jobs only. Disney's keyword search can
         # silently mix in international openings even when the source is the
         # ESPN or ABC surface.
@@ -7185,7 +7207,7 @@ def company_scope_rejection_reason(job_or_dict):
     # Employer-specific non-media exclusions. These are intentionally narrow:
     # MJR still keeps legitimate media support functions such as engineering,
     # software/IT, sales, accounting, legal, HR and newsroom administration.
-    if company in {"disney / abc", "espn"}:
+    if disney_source:
         newly_confirmed_disney_nonmedia = re.search(
             r"\b(recreation host(?:ess)?|pbx (?:phone )?operator|catering server|"
             r"costuming project analyst(?: intern)?|costuming.*(?:analyst|intern)|"
@@ -7337,7 +7359,7 @@ def company_scope_rejection_reason(job_or_dict):
     # Disney search results include theme-park maintenance, fabrication and
     # guest-arrival jobs. Require park/Experiences context and protect broadcast,
     # newsroom, studio and production roles.
-    if company in {"disney / abc", "espn"}:
+    if disney_source:
         disney_operations_context = re.search(
             r"\b(disney experiences|walt disney world|disneyland|disney store|theme park|"
             r"parks and resorts|central shops|disney cruise line)\b",
@@ -7563,6 +7585,7 @@ def apply_company_scope_filters(jobs):
     kept = []
     rejected = []
     for job in jobs:
+        _normalize_disney_metadata(job)
         reason = company_scope_rejection_reason(job)
         if reason:
             rejected.append((job, reason))
@@ -12977,11 +13000,41 @@ def _recover_missing_location(j):
     return False
 
 
+def _is_disney_url(url):
+    host = (urlparse(clean(url)).hostname or "").lower()
+    return host == "disneycareers.com" or host.endswith(".disneycareers.com")
+
+
+def _normalize_disney_metadata(j):
+    """Read job-level TalentBrew fields, never the search brand or page footer."""
+    if not _is_disney_url(j.url):
+        return False
+    header = strip_html(j.description)[:1800]
+    location = re.search(
+        r"\bJob ID\s+\S+\s+Location\s+(.{2,250}?)\s+Business\s+"
+        r"(.{2,160}?)\s+Date posted\b", header, re.I,
+    )
+    if not location:
+        return False
+    loc, business = (clean(x) for x in location.groups())
+    # A country must be explicitly present to replace an existing location.
+    parts = [clean(x) for x in loc.split(",")]
+    country = infer_country(loc)
+    if len(parts) >= 3:
+        j.city = ", ".join(parts[:-2])
+        j.state = parts[-2]
+        j.country = country
+    if business:
+        j.company = business
+        j.company_website = "https://www.disneycareers.com/"
+    return True
+
+
 def _canonical_requisition_key(j):
     """Collapse alternate slugs that point to the same underlying requisition."""
     company = clean(j.company).lower()
     url = clean(j.url).rstrip("/")
-    if company in {"espn", "disney / abc"}:
+    if _is_disney_url(url) or company in {"espn", "disney / abc"}:
         m = re.search(r"/(\d{8,})(?:[/?#]|$)", url)
         if m:
             return f"disney:{m.group(1)}"
@@ -13021,6 +13074,7 @@ def finalize_jobs(jobs):
     arrangement_corrections = []
     for j in jobs:
         j.description = format_description(j.description)
+        _normalize_disney_metadata(j)
         if clean(j.company).lower() == "lotus":
             j.description = _clean_lotus_description(j.title, j.description)
         if _recover_missing_location(j):

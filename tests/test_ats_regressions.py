@@ -25,6 +25,33 @@ class Response:
 
 
 class ATSRegressionTests(unittest.TestCase):
+    def test_location_inference_ignores_global_description_boilerplate(self):
+        self.assertEqual(crawler.infer_country("Celebration, Florida, United States", description="Offices in Toronto, Vancouver and Germany"), "US")
+        self.assertEqual(crawler.infer_country("Los Angeles, CA", description="Our Toronto office"), "US")
+        self.assertEqual(crawler.infer_country("Toronto, ON, Canada"), "CA")
+        self.assertEqual(crawler.infer_country("Germany"), "DE")
+
+    def test_disney_metadata_uses_job_header_and_preserves_scope(self):
+        job = crawler.Job("10163635", "Tax Graduate Intern, Spring 2027", "ESPN",
+            "Job ID 10163635 Location Celebration, Florida, United States Business The Walt Disney Company (Corporate) Date posted Oct. 22, 2026 "
+            + "Tax and accounting internship responsibilities. " * 20
+            + "Related Jobs Toronto, Ontario, Canada Business ESPN Date posted October 22, 2026",
+            crawler.TODAY, "Internship", "Internships",
+            "https://www.disneycareers.com/en/job/celebration/tax-intern/391/102302180480", "")
+        jobs, rejected = crawler.apply_company_scope_filters([job])
+        self.assertEqual(rejected, [])
+        self.assertEqual((job.city, job.state, job.country), ("Celebration", "Florida", "US"))
+        self.assertEqual(job.company, "The Walt Disney Company (Corporate)")
+        self.assertEqual(crawler._canonical_requisition_key(job), "disney:102302180480")
+        job.title = "Hotel Housekeeper"
+        self.assertTrue(crawler.company_scope_rejection_reason(job))
+
+    def test_sony_foreign_location_is_excluded_even_with_old_us_country(self):
+        row = {"company": "Sony Music Entertainment", "title": "Legal Internship", "city": "Germany", "country": "US"}
+        self.assertTrue(crawler.company_scope_rejection_reason(row))
+        row["city"] = "New York, NY"
+        self.assertFalse(crawler.company_scope_rejection_reason(row))
+
     def test_hubbard_adp_job_code_uses_rendered_public_code(self):
         detail = """Multiplatform News Producer
 #26-1275
@@ -156,3 +183,4 @@ Produce digital and broadcast news content."""
 
 if __name__ == "__main__":
     unittest.main()
+
