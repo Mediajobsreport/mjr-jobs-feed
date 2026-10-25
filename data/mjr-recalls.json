@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-25T13:14:38.828Z",
+  "generated": "2026-10-25T19:08:22.418Z",
   "version": "2.4",
   "newestDate": "2026-10-24",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1076
+      "count": 1093
     },
     "CPSC": {
       "ok": true,
@@ -475,7 +475,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V685000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V685-7183.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V685000",
       "score": 97
     },
     {
@@ -897,7 +897,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V663000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V663-7659.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V663000",
       "score": 75
     },
     {
@@ -1100,7 +1100,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared",
       "score": 70
     },
     {
@@ -1236,7 +1236,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V600000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V600-3012.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V600000",
       "score": 67
     },
     {
@@ -1355,7 +1355,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V650000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V650-7823.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V650000",
       "score": 63
     },
     {
@@ -1440,7 +1440,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V699000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V699-2595.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V699000",
       "score": 62
     },
     {
@@ -1575,7 +1575,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V622000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V622-0796.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V622000",
       "score": 55
     },
     {
@@ -1592,7 +1592,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V619000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V619-8062.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V619000",
       "score": 55
     },
     {
@@ -1774,7 +1774,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V694000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V694-7815.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V694000",
       "score": 50
     },
     {
