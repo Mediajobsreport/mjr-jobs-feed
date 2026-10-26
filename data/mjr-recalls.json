@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-26T15:16:19.642Z",
+  "generated": "2026-10-26T21:04:26.758Z",
   "version": "2.4",
   "newestDate": "2026-10-24",
   "stale": false,
@@ -577,7 +577,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V623000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V623-3160.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V623000",
       "score": 85
     },
     {
@@ -594,7 +594,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V605000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V605-9379.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V605000",
       "score": 85
     },
     {
@@ -865,7 +865,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V677000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V677-2230.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V677000",
       "score": 73
     },
     {
@@ -1919,7 +1919,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/kayem-foods-inc--recalls-meat-and-poultry-products-due-possible-temperature-abuse",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/kayem-foods-inc--recalls-meat-and-poultry-products-due-possible-temperature-abuse",
       "score": 30
     },
     {
