@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-27T14:54:48.305Z",
+  "generated": "2026-10-27T21:18:45.255Z",
   "version": "2.4",
-  "newestDate": "2026-10-24",
+  "newestDate": "2026-10-27",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1076
+      "count": 1078
     },
     "CPSC": {
       "ok": true,
-      "count": 8975
+      "count": 10058
     },
     "USDA": {
       "ok": true,
@@ -37,7 +37,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V690000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V690-4019.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V690000",
       "score": 174
     },
     {
@@ -71,7 +71,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V673000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V673-0712.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V673000",
       "score": 150
     },
     {
@@ -107,6 +107,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/3M-Company-Recalls-ScotchTM-Thermal-Laminators-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard",
       "score": 131
+    },
+    {
+      "id": "FDA-2026-10-27-h-e-b-bbq-chop-salad-kit-taylor-farms",
+      "source": "FDA",
+      "category": "food",
+      "title": "H-E-B BBQ Chop Salad Kit Recalled",
+      "reason": "Undeclared soy and tree nuts (almonds)",
+      "brand": "H-E-B",
+      "company": "Taylor Farms",
+      "product": "BBQ Chop Salad Kit",
+      "date": "2026-10-27",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/taylor-farms-issues-recall-h-e-b-backyard-bbq-chop-salad-kit-due-potential-undeclared-soy-and-tree",
+      "score": 125
     },
     {
       "id": "NHTSA-26V621000",
@@ -172,24 +188,8 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V653000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V653-6110.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V653000",
       "score": 140
-    },
-    {
-      "id": "FDA-2026-10-17-gelatelli-coffee-vanilla-gelato-with-coffee-sauce-cookie-pieces-lidl-u",
-      "source": "FDA",
-      "category": "food",
-      "title": "Gelatelli Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces Recalled",
-      "reason": "Potential contamination with Listeria monocytogenes",
-      "brand": "Gelatelli",
-      "company": "Lidl US",
-      "product": "Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces",
-      "date": "2026-10-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/lidl-us-recalls-gelatelli-coffee-vanilla-gelato-due-possible-health-risk",
-      "score": 93
     },
     {
       "id": "CPSC-11000-newdery-power-banks-recalled-due-to-fire-and-burn-hazards-risk-of-seri",
@@ -207,6 +207,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
       "score": 110
+    },
+    {
+      "id": "FDA-2026-10-17-gelatelli-coffee-vanilla-gelato-with-coffee-sauce-cookie-pieces-lidl-u",
+      "source": "FDA",
+      "category": "food",
+      "title": "Gelatelli Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces Recalled",
+      "reason": "Potential contamination with Listeria monocytogenes",
+      "brand": "Gelatelli",
+      "company": "Lidl US",
+      "product": "Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces",
+      "date": "2026-10-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/lidl-us-recalls-gelatelli-coffee-vanilla-gelato-due-possible-health-risk",
+      "score": 93
     },
     {
       "id": "NHTSA-26V689000",
@@ -243,36 +259,20 @@
       "score": 103
     },
     {
-      "id": "FDA-2026-10-22-natural-grocers-2-pound-mung-beans-vitamin-cottage-natural-food-market",
+      "id": "FDA-2026-10-27-no-brand-cold-smoked-sprat-fish-d-m-smoked-fish-inc-dba-haifa-smoked-f",
       "source": "FDA",
       "category": "food",
-      "title": "Natural Grocers 2 pound Mung Beans Recalled",
-      "reason": "Possible foreign material contamination with glass",
-      "brand": "Natural Grocers",
-      "company": "Vitamin Cottage Natural Food Markets, Inc.",
-      "product": "2 pound Mung Beans",
-      "date": "2026-10-22",
+      "title": "No Brand Cold Smoked Sprat Fish Recalled",
+      "reason": "Potential contamination with Clostridium botulinum",
+      "brand": "No Brand",
+      "company": "D&M Smoked Fish Inc. dba Haifa Smoked Fish Inc.",
+      "product": "Cold Smoked Sprat Fish",
+      "date": "2026-10-27",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/natural-grocers-recalls-natural-grocers-brand-organic-2-pound-mung-beans-due-potential-presence",
-      "score": 68
-    },
-    {
-      "id": "USDA-2026-10-24-imperio-distribution-llc-recalls-beef-jerky-products-produced-without-",
-      "source": "USDA",
-      "category": "food",
-      "title": "Imperio Distribution LLC Recalls Beef Jerky Products Produced Without the Benefit of Inspection",
-      "reason": "Produced Without Benefit of Inspection",
-      "brand": "",
-      "company": "",
-      "product": "",
-      "date": "2026-10-24",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/imperio-distribution-llc-recalls-beef-jerky-products-produced-without-benefit",
-      "score": 58
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/haifa-smoked-fish-recalls-cold-smoked-sprats-due-potential-health-risk",
+      "score": 88
     },
     {
       "id": "NHTSA-26V688000",
@@ -339,7 +339,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E073000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E073-3158.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E073000",
       "score": 109
     },
     {
@@ -679,7 +679,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V651000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V651-6989.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V651000",
       "score": 83
     },
     {
@@ -921,6 +921,22 @@
       "score": 70
     },
     {
+      "id": "FDA-2026-10-22-natural-grocers-2-pound-mung-beans-vitamin-cottage-natural-food-market",
+      "source": "FDA",
+      "category": "food",
+      "title": "Natural Grocers 2 pound Mung Beans Recalled",
+      "reason": "Possible foreign material contamination with glass",
+      "brand": "Natural Grocers",
+      "company": "Vitamin Cottage Natural Food Markets, Inc.",
+      "product": "2 pound Mung Beans",
+      "date": "2026-10-22",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/natural-grocers-recalls-natural-grocers-brand-organic-2-pound-mung-beans-due-potential-presence",
+      "score": 68
+    },
+    {
       "id": "NHTSA-26V678000",
       "source": "NHTSA",
       "category": "consumer",
@@ -934,7 +950,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V678000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V678-4996.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V678000",
       "score": 68
     },
     {
@@ -1272,6 +1288,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/tonight-we-ride-llc-issues-voluntary-recall-ultimate-forza-male-supplement-due-presence-undeclared",
+      "score": 58
+    },
+    {
+      "id": "USDA-2026-10-24-imperio-distribution-llc-recalls-beef-jerky-products-produced-without-",
+      "source": "USDA",
+      "category": "food",
+      "title": "Imperio Distribution LLC Recalls Beef Jerky Products Produced Without the Benefit of Inspection",
+      "reason": "Produced Without Benefit of Inspection",
+      "brand": "",
+      "company": "",
+      "product": "",
+      "date": "2026-10-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "http://www.fsis.usda.gov/recalls-alerts/imperio-distribution-llc-recalls-beef-jerky-products-produced-without-benefit",
       "score": 58
     },
     {
@@ -1719,7 +1751,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V686000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V686-4308.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V686000",
       "score": 42
     },
     {
@@ -2006,40 +2038,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/LLK-Trading-Recalls-Mochi-Malrang-Mystery-Dumpling-Toys-Due-to-Risk-of-Serious-Injury-or-Death-from-Water-Bead-Ingestion-Violate-Mandatory-Standard-for-Toys",
-      "score": 28
-    },
-    {
-      "id": "CPSC-11004-yunheng-recalls-landtale-bed-rails-due-to-risk-of-serious-injury-or-de",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "YunHeng Recalls LandTale Bed Rails Due to Risk of Serious Injury or Death from Entrapment and…",
-      "reason": "The recalled bed rails violate the mandatory standard for adult portable bed rails because users can become entrapped within the bed rail or between the bed rail and the side of the mattress, posing a serious…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from February 2026 to June 2026 for about $43.",
-      "product": "LandTale Adult Portable Bed Rails",
-      "date": "2026-10-01",
-      "units": 730,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/YunHeng-Recalls-LandTale-Bed-Rails-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails",
-      "score": 28
-    },
-    {
-      "id": "CPSC-10992-5color-recalls-children-s-bicycle-helmet-and-pads-sets-due-to-risk-of-",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "5Color Recalls Children’s Bicycle Helmet and Pads Sets Due to Risk of Serious Injury or Death from Head…",
-      "reason": "The helmets in the recalled sets violate the mandatory safety standard for bicycle helmets because the helmets do not comply with the impact attenuation, retention system, positional stability, labeling and…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com in May 2026 for between $25 and $26., Hengqin Guangwei Consulting Co., Ltd., dba. 5Color, of China",
-      "product": "5Color Children’s Bike Helmet and Pads Sets",
-      "date": "2026-09-24",
-      "units": 324,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2026/5Color-Recalls-Childrens-Bicycle-Helmet-and-Pads-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Head-Injury-Violate-Mandatory-Standard-for-Bicycle-Helmets",
       "score": 28
     }
   ]
