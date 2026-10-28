@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-28T17:17:44Z",
+  "generated_at": "2026-10-28T21:41:28Z",
   "thresholds": {
     "green": "0-2",
     "yellow": "3-4",
@@ -9,14 +9,14 @@
   },
   "summary": {
     "sources": 165,
-    "green": 87,
+    "green": 93,
     "yellow": 5,
-    "orange": 10,
-    "red": 63,
+    "orange": 7,
+    "red": 60,
     "crawl_errors": 2,
     "zero_or_not_enumerable": 35,
-    "new_jobs_this_crawl": 169,
-    "active_jobs": 2562
+    "new_jobs_this_crawl": 92,
+    "active_jobs": 2582
   },
   "sources": [
     {
@@ -27,7 +27,7 @@
       "attention_reason": "Crawl error",
       "days_since_new_job": 42,
       "last_new_job_at": "2026-09-16",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
       "last_successful_crawl_at": "2026-10-23T15:30:57Z",
       "crawl_result": "error",
       "jobs_collected_this_crawl": 0,
@@ -46,8 +46,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -65,8 +65,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
       "new_jobs_this_crawl": 0,
@@ -84,8 +84,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -103,8 +103,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -122,8 +122,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -141,8 +141,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -160,8 +160,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -179,8 +179,8 @@
       "attention_reason": "No newly posted jobs for 8 days",
       "days_since_new_job": 8,
       "last_new_job_at": "2026-10-20",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -206,8 +206,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -225,8 +225,8 @@
       "attention_reason": "No newly posted jobs for 9 days",
       "days_since_new_job": 9,
       "last_new_job_at": "2026-10-19",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -244,8 +244,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "no_qualifying_voiceover_titles",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -263,8 +263,8 @@
       "attention_reason": "No newly posted jobs for 11 days",
       "days_since_new_job": 11,
       "last_new_job_at": "2026-10-17",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -282,8 +282,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -301,15 +301,15 @@
       "attention_reason": "No newly posted jobs for 7 days",
       "days_since_new_job": 7,
       "last_new_job_at": "2026-10-21",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 12,
+      "jobs_collected_this_crawl": 15,
       "new_jobs_this_crawl": 0,
       "active_jobs": 0,
       "latest_jobs": [],
       "error": "",
-      "note": "non_media_scope_rejected=2; feed_filter_rejected=KABC General Assignment Reporter (As-Needed):not_fresh",
+      "note": "feed_filter_rejected=KABC General Assignment Reporter (As-Needed):not_fresh",
       "active_job_ids": []
     },
     {
@@ -320,8 +320,8 @@
       "attention_reason": "No newly posted jobs for 13 days",
       "days_since_new_job": 13,
       "last_new_job_at": "2026-10-15",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -347,7 +347,7 @@
       "attention_reason": "Crawl error",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
       "last_successful_crawl_at": null,
       "crawl_result": "error",
       "jobs_collected_this_crawl": 0,
@@ -366,8 +366,8 @@
       "attention_reason": "No newly posted jobs for 31 days",
       "days_since_new_job": 31,
       "last_new_job_at": "2026-09-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -385,8 +385,8 @@
       "attention_reason": "No newly posted jobs for 28 days",
       "days_since_new_job": 28,
       "last_new_job_at": "2026-09-30",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -404,8 +404,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_no_fresh_voiceover_jobs",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -423,8 +423,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -442,15 +442,15 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 145,
       "new_jobs_this_crawl": 0,
       "active_jobs": 0,
       "latest_jobs": [],
       "error": "",
-      "note": "feed_filter_rejected=Senior Union Payroll Associate:not_fresh ; Tax Manager:not_fresh ; Manager, Corporate Audit:not_fresh ; Senior Analyst, Corporate Audit:not_fresh ; Regional Streaming Director:not_fresh ; Senior Network Engineer, Video Transmission:not_fresh ; Temp Senior Union Payroll Associate:not_fresh ; Manager, Financial Systems:not_fresh ; Manager, Accounting & Financial Reporting:not_fresh ; Real-Time Graphics Artist:not_fresh ; Writer, FOX & Friends First:not_fresh ; Billing Manager (Red Seat Ventures):not_fresh",
+      "note": "feed_filter_rejected=Senior Union Payroll Associate:not_fresh ; Tax Manager:not_fresh ; Manager, Corporate Audit:not_fresh ; Senior Analyst, Corporate Audit:not_fresh ; Regional Streaming Director:not_fresh ; Senior Network Engineer, Video Transmission:not_fresh ; Temp Senior Union Payroll Associate:not_fresh ; Manager, Financial Systems:not_fresh ; Real-Time Graphics Artist:not_fresh ; Writer, FOX & Friends First:not_fresh ; Billing Manager (Red Seat Ventures):not_fresh ; Maintenance Engineer:not_fresh",
       "active_job_ids": []
     },
     {
@@ -461,8 +461,8 @@
       "attention_reason": "No newly posted jobs for 9 days",
       "days_since_new_job": 9,
       "last_new_job_at": "2026-10-19",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -488,8 +488,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -507,8 +507,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -526,8 +526,8 @@
       "attention_reason": "No newly posted jobs for 7 days",
       "days_since_new_job": 7,
       "last_new_job_at": "2026-10-21",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 45,
       "new_jobs_this_crawl": 0,
@@ -583,8 +583,8 @@
       "attention_reason": "No newly posted jobs for 7 days",
       "days_since_new_job": 7,
       "last_new_job_at": "2026-10-21",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 17,
       "new_jobs_this_crawl": 0,
@@ -641,8 +641,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -660,8 +660,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "enumerated_no_fresh_jobs",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -679,8 +679,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -698,8 +698,8 @@
       "attention_reason": "No newly posted jobs for 11 days",
       "days_since_new_job": 11,
       "last_new_job_at": "2026-10-17",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -717,8 +717,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -736,8 +736,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -755,8 +755,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -774,8 +774,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -793,8 +793,8 @@
       "attention_reason": "No newly posted jobs for 15 days",
       "days_since_new_job": 15,
       "last_new_job_at": "2026-10-13",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -812,8 +812,8 @@
       "attention_reason": "No newly posted jobs for 12 days",
       "days_since_new_job": 12,
       "last_new_job_at": "2026-10-16",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -831,8 +831,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -850,8 +850,8 @@
       "attention_reason": "No newly posted jobs for 21 days",
       "days_since_new_job": 21,
       "last_new_job_at": "2026-10-07",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -869,8 +869,8 @@
       "attention_reason": "No newly posted jobs for 28 days",
       "days_since_new_job": 28,
       "last_new_job_at": "2026-09-30",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 5,
       "new_jobs_this_crawl": 0,
@@ -888,8 +888,8 @@
       "attention_reason": "No newly posted jobs for 12 days",
       "days_since_new_job": 12,
       "last_new_job_at": "2026-10-16",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -915,8 +915,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -934,8 +934,8 @@
       "attention_reason": "No newly posted jobs for 7 days",
       "days_since_new_job": 7,
       "last_new_job_at": "2026-10-21",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 12,
       "new_jobs_this_crawl": 0,
@@ -986,15 +986,15 @@
       "attention_reason": "No newly posted jobs for 14 days",
       "days_since_new_job": 14,
       "last_new_job_at": "2026-10-14",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 5,
       "new_jobs_this_crawl": 0,
       "active_jobs": 0,
       "latest_jobs": [],
       "error": "",
-      "note": "feed_filter_rejected=Marketing Project Manager (Malaysia):not_fresh ; Information Security Analyst:not_fresh ; Label Services Manager (Lagos, Nigeria):not_fresh ; Video Growth Specialist:not_fresh ; Desenvolvedor Front-End Senior:not_fresh",
+      "note": "feed_filter_rejected=Label Services Manager (Lagos, Nigeria):not_fresh ; Desenvolvedor Front-End Senior:not_fresh ; Information Security Analyst:not_fresh ; Video Growth Specialist:not_fresh ; Marketing Project Manager (Malaysia):not_fresh",
       "active_job_ids": []
     },
     {
@@ -1005,8 +1005,8 @@
       "attention_reason": "No newly posted jobs for 12 days",
       "days_since_new_job": 12,
       "last_new_job_at": "2026-10-16",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -1024,8 +1024,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1043,8 +1043,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1062,8 +1062,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -1081,8 +1081,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1100,8 +1100,8 @@
       "attention_reason": "No newly posted jobs for 8 days",
       "days_since_new_job": 8,
       "last_new_job_at": "2026-10-20",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 30,
       "new_jobs_this_crawl": 0,
@@ -1120,78 +1120,6 @@
       ]
     },
     {
-      "company": "Splice",
-      "ats": "Greenhouse",
-      "source_url": "https://job-boards.greenhouse.io/splice",
-      "status": "red",
-      "attention_reason": "No newly posted jobs for 7 days",
-      "days_since_new_job": 7,
-      "last_new_job_at": "2026-10-21",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
-      "crawl_result": "ok",
-      "jobs_collected_this_crawl": 3,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 1,
-      "latest_jobs": [
-        {
-          "title": "Senior Brand Marketing Manager, Social and Community",
-          "date": "2026-10-21",
-          "url": "https://job-boards.greenhouse.io/splice/jobs/8904124002"
-        }
-      ],
-      "error": "",
-      "note": "enumerated_jobs=6; feed_filter_rejected=Corporate Development Contractor:not_fresh ; Designer, Brand & Marketing:not_fresh",
-      "active_job_ids": [
-        "811a0db2261c14e6"
-      ]
-    },
-    {
-      "company": "Stagwell",
-      "ats": "iCIMS",
-      "source_url": "https://careers-stagwellglobal.icims.com/jobs/intro",
-      "status": "red",
-      "attention_reason": "No newly posted jobs for 8 days",
-      "days_since_new_job": 8,
-      "last_new_job_at": "2026-10-20",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
-      "crawl_result": "ok",
-      "jobs_collected_this_crawl": 10,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 4,
-      "latest_jobs": [
-        {
-          "title": "Sr Analyst, Maconomy",
-          "date": "2026-10-19",
-          "url": "https://careers-stagwellglobal.icims.com/jobs/9010/sr-analyst%2c-maconomy/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834385692"
-        },
-        {
-          "title": "Global Investment Director",
-          "date": "2026-10-19",
-          "url": "https://careers-stagwellglobal.icims.com/jobs/9011/global-investment-director/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834385692"
-        },
-        {
-          "title": "Director, Client Strategy",
-          "date": "2026-10-16",
-          "url": "https://careers-stagwellglobal.icims.com/jobs/8993/director%2c-client-strategy/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834385692"
-        },
-        {
-          "title": "Sales Director, Strategic Growth",
-          "date": "2026-10-16",
-          "url": "https://careers-stagwellglobal.icims.com/jobs/8994/sales-director%2c-strategic-growth/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834385692"
-        }
-      ],
-      "error": "",
-      "note": "enumerated_detail_urls=46; feed_filter_rejected=Director Business Intelligence:not_fresh ; Vice President, Comms & Advocacy Growth:not_fresh ; Manager, FP&A:not_fresh ; Director, Account Management & Partnerships:not_fresh ; Sales Lead:not_fresh ; Director, Growth:not_fresh",
-      "active_job_ids": [
-        "2d0081243ecb6c34",
-        "4ee7e81192b25397",
-        "97924bd00cb9581f",
-        "d35e35da95697ba8"
-      ]
-    },
-    {
       "company": "Straight Arrow News",
       "ats": "Greenhouse",
       "source_url": "https://job-boards.greenhouse.io/straightarrownews",
@@ -1199,8 +1127,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -1218,8 +1146,8 @@
       "attention_reason": "No newly posted jobs for 40 days",
       "days_since_new_job": 40,
       "last_new_job_at": "2026-09-18",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1237,8 +1165,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1256,8 +1184,8 @@
       "attention_reason": "No newly posted jobs for 8 days",
       "days_since_new_job": 8,
       "last_new_job_at": "2026-10-20",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
       "new_jobs_this_crawl": 0,
@@ -1283,8 +1211,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 102,
       "new_jobs_this_crawl": 0,
@@ -1302,8 +1230,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "enumerated_no_fresh_jobs",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1321,8 +1249,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_no_fresh_voiceover_jobs",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1340,8 +1268,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1352,71 +1280,6 @@
       "active_job_ids": []
     },
     {
-      "company": "Vox Media",
-      "ats": "Greenhouse",
-      "source_url": "https://job-boards.greenhouse.io/voxmedia",
-      "status": "red",
-      "attention_reason": "No newly posted jobs for 9 days",
-      "days_since_new_job": 9,
-      "last_new_job_at": "2026-10-19",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
-      "crawl_result": "ok",
-      "jobs_collected_this_crawl": 19,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 19,
-      "latest_jobs": [
-        {
-          "title": "Photography Director, The Cut",
-          "date": "2026-10-19",
-          "url": "http://boards.greenhouse.io/voxmedia/jobs/8300928?gh_jid=8300928"
-        },
-        {
-          "title": "Staff Software Engineer, New York Magazine",
-          "date": "2026-10-19",
-          "url": "http://boards.greenhouse.io/voxmedia/jobs/8287609?gh_jid=8287609"
-        },
-        {
-          "title": "Assistant Video Editor",
-          "date": "2026-10-15",
-          "url": "http://boards.greenhouse.io/voxmedia/jobs/8282000?gh_jid=8282000"
-        },
-        {
-          "title": "Commerce Analyst",
-          "date": "2026-10-15",
-          "url": "http://boards.greenhouse.io/voxmedia/jobs/8265879?gh_jid=8265879"
-        },
-        {
-          "title": "Don’t see your dream job here? Apply to Vox Media for future openings!",
-          "date": "2026-10-15",
-          "url": "http://boards.greenhouse.io/voxmedia/jobs/1301262?gh_jid=1301262"
-        }
-      ],
-      "error": "",
-      "note": "enumerated_jobs=19",
-      "active_job_ids": [
-        "057428333442f7fe",
-        "1e9c395763a1aabb",
-        "279fe21fac596589",
-        "2a147e57a135d226",
-        "38c146ac74f550dc",
-        "3962afae53bf5a16",
-        "3cfebe02f433066e",
-        "50c8fab5504b85a9",
-        "514fe7783c50d12b",
-        "5fadef83b94cbabc",
-        "6c77a8ae5d1c1374",
-        "71cab55088f142cd",
-        "91f290e958c93f1c",
-        "9775f0b73253aefd",
-        "99456ac2b5196c52",
-        "b2a4faca51f3bcac",
-        "b76a17e38daee8aa",
-        "cfbe752797766ec0",
-        "d1c2fd0cdf5e7ec5"
-      ]
-    },
-    {
       "company": "WaitWhat",
       "ats": "Lever",
       "source_url": "https://jobs.lever.co/waitwhat",
@@ -1424,8 +1287,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1443,8 +1306,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "zero_or_not_enumerable",
       "jobs_collected_this_crawl": 0,
       "new_jobs_this_crawl": 0,
@@ -1455,33 +1318,6 @@
       "active_job_ids": []
     },
     {
-      "company": "Bell Media",
-      "ats": "Company Career Site",
-      "source_url": "https://jobs.bell.ca/ca/en/c/media-jobs",
-      "status": "orange",
-      "attention_reason": "No newly posted jobs for 6 days",
-      "days_since_new_job": 6,
-      "last_new_job_at": "2026-10-22",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
-      "crawl_result": "ok",
-      "jobs_collected_this_crawl": 1,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 1,
-      "latest_jobs": [
-        {
-          "title": "Technician, Vinyl Installation, Night Shift, Bell Media, Astral Media",
-          "date": "2026-10-22",
-          "url": "https://jobs.bell.ca/ca/en/job/BECACA432615EXTERNALENCA/technician-vinyl-installation-night-shift-bell-media-astral-media"
-        }
-      ],
-      "error": "",
-      "note": "",
-      "active_job_ids": [
-        "669d58a1466c3dcb"
-      ]
-    },
-    {
       "company": "Bonneville",
       "ats": "Workday",
       "source_url": "https://bonneville.com/careers/",
@@ -1489,8 +1325,8 @@
       "attention_reason": "No newly posted jobs for 5 days",
       "days_since_new_job": 5,
       "last_new_job_at": "2026-10-23",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 11,
       "new_jobs_this_crawl": 0,
@@ -1542,8 +1378,8 @@
       "attention_reason": "No newly posted jobs for 5 days",
       "days_since_new_job": 5,
       "last_new_job_at": "2026-10-23",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -1569,8 +1405,8 @@
       "attention_reason": "No newly posted jobs for 6 days",
       "days_since_new_job": 6,
       "last_new_job_at": "2026-10-22",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 4,
       "new_jobs_this_crawl": 0,
@@ -1596,8 +1432,8 @@
       "attention_reason": "No newly posted jobs for 5 days",
       "days_since_new_job": 5,
       "last_new_job_at": "2026-10-23",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -1623,8 +1459,8 @@
       "attention_reason": "No newly posted jobs for 6 days",
       "days_since_new_job": 6,
       "last_new_job_at": "2026-10-22",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 4,
       "new_jobs_this_crawl": 0,
@@ -1655,72 +1491,6 @@
       ]
     },
     {
-      "company": "SiriusXM",
-      "ats": "Phenom People",
-      "source_url": "https://careers.siriusxm.com/careers/jobs",
-      "status": "orange",
-      "attention_reason": "No newly posted jobs for 6 days",
-      "days_since_new_job": 6,
-      "last_new_job_at": "2026-10-22",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
-      "crawl_result": "ok",
-      "jobs_collected_this_crawl": 17,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 3,
-      "latest_jobs": [
-        {
-          "title": "Senior Staff Data Engineer",
-          "date": "2026-10-22",
-          "url": "https://careers.siriusxm.com/careers/jobs/17175"
-        },
-        {
-          "title": "Principal Engineer, Data Operations",
-          "date": "2026-10-22",
-          "url": "https://careers.siriusxm.com/careers/jobs/17157"
-        },
-        {
-          "title": "Software Engineer II",
-          "date": "2026-10-16",
-          "url": "https://careers.siriusxm.com/careers/jobs/17625"
-        }
-      ],
-      "error": "",
-      "note": "feed_filter_rejected=Senior Machine Learning Engineer:not_fresh ; Staff Machine Learning Scientist, Recomendations:not_fresh ; Lead Broadcast Infrastructure Technician:not_fresh ; Staff Technical Program Manager:not_fresh ; Senior Staff Machine Learning Engineer:not_fresh ; Staff Engineer, DevSecOps:not_fresh ; NOC Analyst:not_fresh ; Senior Vice President, Data & AI Enablement:not_fresh ; Senior Director, Brand Marketing:not_fresh ; Director, Content Marketing:not_fresh ; Associate Director, Content Marketing:not_fresh ; Operations Engineer III:not_fresh",
-      "active_job_ids": [
-        "5c6a4219f427be88",
-        "b648c365ad86c3eb",
-        "b714acd9c7609e01"
-      ]
-    },
-    {
-      "company": "SoundExchange",
-      "ats": "Greenhouse",
-      "source_url": "https://job-boards.greenhouse.io/soundexchangeinc",
-      "status": "orange",
-      "attention_reason": "No newly posted jobs for 6 days",
-      "days_since_new_job": 6,
-      "last_new_job_at": "2026-10-22",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
-      "crawl_result": "ok",
-      "jobs_collected_this_crawl": 1,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 1,
-      "latest_jobs": [
-        {
-          "title": "Salesforce Developer",
-          "date": "2026-10-22",
-          "url": "https://job-boards.greenhouse.io/soundexchangeinc/jobs/5265152007"
-        }
-      ],
-      "error": "",
-      "note": "enumerated_jobs=1",
-      "active_job_ids": [
-        "4d3b91d029d193e7"
-      ]
-    },
-    {
       "company": "Vista Radio",
       "ats": "Dayforce",
       "source_url": "https://jobs.dayforcehcm.com/en-US/westerkirk/VISTARADIOCORPORATECAREERS",
@@ -1728,8 +1498,8 @@
       "attention_reason": "No newly posted jobs for 5 days",
       "days_since_new_job": 5,
       "last_new_job_at": "2026-10-23",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 9,
       "new_jobs_this_crawl": 0,
@@ -1783,8 +1553,8 @@
       "attention_reason": "No newly posted jobs for 5 days",
       "days_since_new_job": 5,
       "last_new_job_at": "2026-10-23",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 5,
       "new_jobs_this_crawl": 0,
@@ -1822,28 +1592,22 @@
       "attention_reason": "No newly posted jobs for 4 days",
       "days_since_new_job": 4,
       "last_new_job_at": "2026-10-24",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
-      "active_jobs": 2,
+      "active_jobs": 1,
       "latest_jobs": [
         {
           "title": "Producer I, Social (FinLit)",
           "date": "2026-10-24",
           "url": "https://recruiting2.ultipro.com/AME1098APMG/JobBoard/4b7ae4eb-a67b-4318-80fc-6d9467f9c542/OpportunityDetail?opportunityId=da47aadd-21d2-4e3a-b0fd-36415b841b94"
-        },
-        {
-          "title": "Intern, Media Production & Operations",
-          "date": "2026-09-29",
-          "url": "https://recruiting2.ultipro.com/AME1098APMG/JobBoard/4b7ae4eb-a67b-4318-80fc-6d9467f9c542/OpportunityDetail?opportunityId=adae59d8-9f49-48b8-8e3a-815ba2c297ab"
         }
       ],
       "error": "",
       "note": "",
       "active_job_ids": [
-        "348fff3493c424ef",
         "6010704fcacc5ac1"
       ]
     },
@@ -1855,8 +1619,8 @@
       "attention_reason": "No newly posted jobs for 4 days",
       "days_since_new_job": 4,
       "last_new_job_at": "2026-10-24",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -1888,8 +1652,8 @@
       "attention_reason": "No newly posted jobs for 4 days",
       "days_since_new_job": 4,
       "last_new_job_at": "2026-10-24",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 5,
       "new_jobs_this_crawl": 0,
@@ -1921,8 +1685,8 @@
       "attention_reason": "No newly posted jobs for 4 days",
       "days_since_new_job": 4,
       "last_new_job_at": "2026-10-24",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 38,
       "new_jobs_this_crawl": 0,
@@ -1986,8 +1750,8 @@
       "attention_reason": "No newly posted jobs for 4 days",
       "days_since_new_job": 4,
       "last_new_job_at": "2026-10-24",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 6,
       "new_jobs_this_crawl": 0,
@@ -2025,26 +1789,27 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 12,
       "new_jobs_this_crawl": 1,
-      "active_jobs": 7,
+      "active_jobs": 8,
       "latest_jobs": [
         {
-          "title": "Human Resources Intern",
+          "title": "Client Systems Specialist",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/accuweather/jobs/8331085"
+          "url": "https://job-boards.greenhouse.io/accuweather/jobs/8282204"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=18; feed_filter_rejected=Account Executive:not_fresh ; Client Systems Specialist:not_fresh ; Director, Advertising Sales:not_fresh ; General Counsel:not_fresh ; Senior Account Executive - Media:not_fresh",
+      "note": "enumerated_jobs=18; feed_filter_rejected=Account Executive:not_fresh ; Director, Advertising Sales:not_fresh ; General Counsel:not_fresh ; Senior Account Executive - Media:not_fresh",
       "active_job_ids": [
         "1a0eec09156fbb57",
         "2a9a4ef433e9398b",
         "414802ac9c98fd77",
         "5106963456e097fd",
+        "68f9e6487a407f70",
         "8ba8cef523150d0a",
         "c17b8b1191bd66cd",
         "f343d6a39badacb2"
@@ -2056,43 +1821,28 @@
       "source_url": "https://job-boards.greenhouse.io/aegworldwide",
       "status": "green",
       "attention_reason": "Healthy",
-      "days_since_new_job": 1,
-      "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 42,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 27,
+      "jobs_collected_this_crawl": 44,
+      "new_jobs_this_crawl": 2,
+      "active_jobs": 29,
       "latest_jobs": [
         {
-          "title": "LA Kings - Ticket Inventory Coordinator",
-          "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/aegworldwide/jobs/8895696002"
+          "title": "Manager, Fraud Prevention - AXS",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/aegworldwide/jobs/8922590002"
         },
         {
-          "title": "Director, Touring",
-          "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/aegworldwide/jobs/8909385002"
-        },
-        {
-          "title": "Event Crew Lead - PT Internal Only (Crypto.com Arena)",
-          "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/aegworldwide/jobs/8896602002"
-        },
-        {
-          "title": "Accounts Payable Specialist",
-          "date": "2026-10-26",
-          "url": "https://job-boards.greenhouse.io/aegworldwide/jobs/8906507002"
-        },
-        {
-          "title": "Touring Project Manager",
-          "date": "2026-10-26",
-          "url": "https://job-boards.greenhouse.io/aegworldwide/jobs/8913655002"
+          "title": "Salesforce Marketing Cloud (SFMC) Administrator & Solutions Engineer",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/aegworldwide/jobs/8922262002"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=147; feed_filter_rejected=Box Office Manager - Moonline:not_fresh ; Development Security Operations (DevSecOps) Engineer:not_fresh ; Digital Media Buyer:not_fresh ; Dignity Health Sports Park, Facility Operations Lead (Part-Time):not_fresh ; Guest Services Staff - PromoWest PA:not_fresh ; LA Galaxy, Digital Product Manager:not_fresh ; LA Kings - Graphic Design Associate:not_fresh ; LA Kings - Marketing Campaign Manager:not_fresh ; LA Kings - Sr Director Human Resources:not_fresh ; Marketing Director:not_fresh ; Paralegal:not_fresh ; Premium Sales Specialist (Crypto.com Arena):not_fresh",
+      "note": "enumerated_jobs=149; feed_filter_rejected=Box Office Manager - Moonline:not_fresh ; Development Security Operations (DevSecOps) Engineer:not_fresh ; Digital Media Buyer:not_fresh ; Dignity Health Sports Park, Facility Operations Lead (Part-Time):not_fresh ; Guest Services Staff - PromoWest PA:not_fresh ; LA Galaxy, Digital Product Manager:not_fresh ; LA Kings - Graphic Design Associate:not_fresh ; LA Kings - Marketing Campaign Manager:not_fresh ; LA Kings - Sr Director Human Resources:not_fresh ; Marketing Director:not_fresh ; Paralegal:not_fresh ; Premium Sales Specialist (Crypto.com Arena):not_fresh",
       "active_job_ids": [
         "0cd6c2e6afbe90f2",
         "131f72cdb8e0ab54",
@@ -2101,6 +1851,8 @@
         "325f59d80a915cad",
         "48ef102c397962be",
         "4d528883c07bdb82",
+        "4ef1b0ab0001e214",
+        "55f3e241a88a39ca",
         "58af8f5dbb4aa463",
         "7b6058ddfa2aae86",
         "80013a13ec716ac8",
@@ -2131,8 +1883,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 4,
       "new_jobs_this_crawl": 0,
@@ -2176,8 +1928,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 8,
       "new_jobs_this_crawl": 0,
@@ -2200,7 +1952,7 @@
         }
       ],
       "error": "",
-      "note": "feed_filter_rejected=Senior Coordinator, Business & Legal Affairs:not_fresh ; Licensing Senior Account Manager:not_fresh ; Global Member Services Representative:not_fresh ; Licensing Sales Associate:not_fresh ; Repertory Representative:not_fresh",
+      "note": "feed_filter_rejected=Licensing Senior Account Manager:not_fresh ; Senior Coordinator, Business & Legal Affairs:not_fresh ; Global Member Services Representative:not_fresh ; Licensing Sales Associate:not_fresh ; Repertory Representative:not_fresh",
       "active_job_ids": [
         "33ff7a6cf80d53ad",
         "3b22aa6f1b670b7f",
@@ -2215,26 +1967,41 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 110,
-      "new_jobs_this_crawl": 2,
-      "active_jobs": 112,
+      "new_jobs_this_crawl": 0,
+      "active_jobs": 111,
       "latest_jobs": [
         {
-          "title": "News and Traffic Reporter",
+          "title": "Promotions Assistant",
           "date": "2026-10-28",
-          "url": "https://careers-audacy.icims.com/jobs/8341/news-and-traffic-reporter/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834440286"
+          "url": "https://careers-audacy.icims.com/jobs/8355/promotions-assistant/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834440286"
         },
         {
-          "title": "Social Media Producer & Morning Show Co-Host",
+          "title": "Promotions Assistant",
           "date": "2026-10-28",
-          "url": "https://careers-audacy.icims.com/jobs/8340/social-media-producer-%26-morning-show-co-host/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834440286"
+          "url": "https://careers-audacy.icims.com/jobs/8354/promotions-assistant/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834440286"
+        },
+        {
+          "title": "On Air Personality",
+          "date": "2026-10-28",
+          "url": "https://careers-audacy.icims.com/jobs/8353/on-air-personality/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834440286"
+        },
+        {
+          "title": "On Air Personality",
+          "date": "2026-10-28",
+          "url": "https://careers-audacy.icims.com/jobs/8352/on-air-personality/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834440286"
+        },
+        {
+          "title": "Sales Assistant",
+          "date": "2026-10-28",
+          "url": "https://careers-audacy.icims.com/jobs/8350/sales-assistant/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834440286"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=178",
+      "note": "enumerated_jobs=177",
       "active_job_ids": [
         "015477f7694e6bca",
         "065b3babb7e7508f",
@@ -2258,7 +2025,6 @@
         "27e64d0d62875096",
         "29d7ac5e01aa99bd",
         "2b442b3a829b50e6",
-        "33c7f5f6271f49a5",
         "3cabf815f672c575",
         "3d00150a48fc43e2",
         "454dd04ec71f471a",
@@ -2358,8 +2124,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 16,
       "new_jobs_this_crawl": 0,
@@ -2415,8 +2181,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 7,
       "new_jobs_this_crawl": 0,
@@ -2447,6 +2213,34 @@
       ]
     },
     {
+      "company": "Bell Media",
+      "ats": "Company Career Site",
+      "source_url": "https://jobs.bell.ca/ca/en/c/media-jobs",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 2,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 2,
+      "latest_jobs": [
+        {
+          "title": "Programming operations coordinator French channels, Bell Media",
+          "date": "2026-10-28",
+          "url": "https://jobs.bell.ca/ca/en/job/BECACA432709EXTERNALENCA/programming-operations-coordinator-french-channels-bell-media"
+        }
+      ],
+      "error": "",
+      "note": "",
+      "active_job_ids": [
+        "669d58a1466c3dcb",
+        "83ee84a4bfde7b37"
+      ]
+    },
+    {
       "company": "Brunswick Group",
       "ats": "Greenhouse",
       "source_url": "https://job-boards.greenhouse.io/brunswickgroup",
@@ -2454,8 +2248,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 23,
       "new_jobs_this_crawl": 0,
@@ -2508,17 +2302,22 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 71,
-      "new_jobs_this_crawl": 1,
-      "active_jobs": 19,
+      "jobs_collected_this_crawl": 73,
+      "new_jobs_this_crawl": 2,
+      "active_jobs": 21,
       "latest_jobs": [
         {
-          "title": "PR Manager - Contract",
+          "title": "Freelance Senior Account Executive - Social Media",
           "date": "2026-10-28",
-          "url": "https://www.bursonglobal.com/careers/jobs?gh_jid=5465644008"
+          "url": "https://www.bursonglobal.com/careers/jobs?gh_jid=5466199008"
+        },
+        {
+          "title": "PR Account Executive - Technology",
+          "date": "2026-10-28",
+          "url": "https://www.bursonglobal.com/careers/jobs?gh_jid=5253736008"
         }
       ],
       "error": "",
@@ -2532,6 +2331,7 @@
         "27786f59633142f1",
         "3411cb4ae53cba81",
         "3990d892dd0612f9",
+        "45cc5d88c6b0f821",
         "48b519c389aac791",
         "4ba7335aeac89936",
         "59f2893c1193e261",
@@ -2541,6 +2341,7 @@
         "978461f55f9313df",
         "9e1fdfc155542abc",
         "a5f19a5f571e0468",
+        "ab5e68035cd139be",
         "b048823fe6087257",
         "b0cc858a8608c0a4"
       ]
@@ -2553,17 +2354,32 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 7,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 4,
       "latest_jobs": [
         {
           "title": "Radio Account Executive",
           "date": "2026-10-28",
           "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?ccId=19000101_000001&cid=290e1fc8-a28d-477b-b05d-146069c94791&lang=en_US&jobId=9201581621818_11&type=JS"
+        },
+        {
+          "title": "Ticket Scanner",
+          "date": "2026-10-23",
+          "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?ccId=19000101_000001&cid=290e1fc8-a28d-477b-b05d-146069c94791&lang=en_US&jobId=9201579880354_13&type=JS"
+        },
+        {
+          "title": "Manager, Talent Management",
+          "date": "2026-10-22",
+          "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?ccId=19000101_000001&cid=290e1fc8-a28d-477b-b05d-146069c94791&lang=en_US&jobId=9201579398105_1&type=JS"
+        },
+        {
+          "title": "Baseball Operations Trainee",
+          "date": "2026-10-22",
+          "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?ccId=19000101_000001&cid=290e1fc8-a28d-477b-b05d-146069c94791&lang=en_US&jobId=9201579450303_1&type=JS"
         }
       ],
       "error": "",
@@ -2583,17 +2399,37 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 40,
-      "new_jobs_this_crawl": 1,
-      "active_jobs": 41,
+      "new_jobs_this_crawl": 6,
+      "active_jobs": 46,
       "latest_jobs": [
         {
-          "title": "Correspondent, World News Washington DC, CBC News, English Services",
-          "date": "2026-10-27",
-          "url": "https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/job/Washington-DC-USA/Correspondent--World-News-Washington-DC--CBC-News--English-Services_JR00009492"
+          "title": "Senior Producer, Scams Unit (English Services) (On-Site)",
+          "date": "2026-10-28",
+          "url": "https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/job/Toronto-ON/Senior-Producer--Scams-Unit--English-Services---On-Site-_JR00009373"
+        },
+        {
+          "title": "Senior Reporter, Scams Unit (English Services) (On-Site)",
+          "date": "2026-10-28",
+          "url": "https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/job/Toronto-ON/Senior-Reporter--Scams-Unit--English-Services---On-Site-_JR00009435"
+        },
+        {
+          "title": "Senior Writer, Scams Unit (English Services) (On-Site)",
+          "date": "2026-10-28",
+          "url": "https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/job/Toronto-ON/Senior-Writer--Scams-Unit--English-Services---On-Site-_JR00009375-1"
+        },
+        {
+          "title": "Video Producer, Scams Unit (English Services) (On Site)",
+          "date": "2026-10-28",
+          "url": "https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/job/Toronto-ON/Video-Producer--Scams-Unit--English-Services---On-Site-_JR00009374"
+        },
+        {
+          "title": "CBC Money Senior Coordinating Producer (English Services) (On-Site)",
+          "date": "2026-10-28",
+          "url": "https://cbcrc.wd3.myworkdayjobs.com/CBC_Radio-Canada_Jobs/job/Toronto/CBC-Money-Senior-Coordinating-Producer--English-Services---On-Site-_JR00009191"
         }
       ],
       "error": "",
@@ -2606,6 +2442,7 @@
         "1ce1ad706b149b94",
         "1e5897ebb7c53cfd",
         "21e7e3138d97ac7a",
+        "2568602154906ad1",
         "2722e4364ddb14ee",
         "2d906e5d5fd8aeae",
         "3345173e8ac59fcb",
@@ -2625,17 +2462,21 @@
         "8b0432ed2cacd46a",
         "8cbf3ea91f77fc69",
         "a7d7240695f09729",
+        "a8572d69c59e5a8e",
         "ae0ef0e32a359c33",
         "b42fe94113caa92f",
         "b901d766233ace49",
+        "c38a757a250d00e4",
         "c5bb5b3999aa37c8",
         "c7d73fff52c631ad",
         "c7dcb30f46a5e0e6",
+        "c805f22d305f40bf",
         "c84dac70936c1fa3",
         "cbd657882c6a68c1",
+        "cd5428c4baf64438",
         "d87ed05d3e1a90a7",
-        "e51b4910f766520a",
         "e617592db11fa6bc",
+        "eb182a2a62a7173e",
         "f06fbde0f37db829",
         "f6adb4441f97a810",
         "fbbf8363c7a0c951",
@@ -2650,17 +2491,37 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 10,
-      "new_jobs_this_crawl": 1,
-      "active_jobs": 13,
+      "new_jobs_this_crawl": 0,
+      "active_jobs": 10,
       "latest_jobs": [
         {
-          "title": "Product Designer II, New Business",
+          "title": "Producer, CNN en Español",
           "date": "2026-10-21",
-          "url": "https://warnerbros.wd5.myworkdayjobs.com/global/job/NY-New-York-30-Hudson-Yards/Product-Designer-II--New-Business_R000106197/apply"
+          "url": "https://warnerbros.wd5.myworkdayjobs.com/global/job/FL-Miami-6505-Blue-Lagoon-Dri/Producer--CNN-en-Espaol_R000104977/apply"
+        },
+        {
+          "title": "Staff Product Manager, Developer Experience",
+          "date": "2026-10-21",
+          "url": "https://warnerbros.wd5.myworkdayjobs.com/global/job/NY-New-York-30-Hudson-Yards/Staff-Product-Manager--Dev-XP_R000105134/apply"
+        },
+        {
+          "title": "Associate Producer, CNN VOD Streaming",
+          "date": "2026-10-21",
+          "url": "https://warnerbros.wd5.myworkdayjobs.com/global/job/DC-Washington-820-1st-Street-NE/Associate-Producer--CNN-VOD-Streaming_R000105826/apply"
+        },
+        {
+          "title": "Senior Software Engineer",
+          "date": "2026-10-21",
+          "url": "https://warnerbros.wd5.myworkdayjobs.com/global/job/GA-Atlanta-1050-Techwood-Drive-NW/Senior-Full-Stack-JS-Engineer_R000105074/apply"
+        },
+        {
+          "title": "VP, Marketing Planning & Operations, CNN",
+          "date": "2026-10-21",
+          "url": "https://warnerbros.wd5.myworkdayjobs.com/global/job/NY-New-York-30-Hudson-Yards/VP--Campaign-Planning---Operations--CNN-Marketing_R000107012/apply"
         }
       ],
       "error": "",
@@ -2671,11 +2532,8 @@
         "3a3371581ec5e1b5",
         "4a655dccbaae9814",
         "57fafe2cbc1b6f67",
-        "5c38690e81cdfcea",
         "7a10c319ceb5ceaa",
-        "8e0fcc77f8e5905f",
         "92b2e31c958d839e",
-        "af78cf16c08a1279",
         "c8b7180059cd3c33",
         "d21afcd602673de8",
         "e6232f6ae48d463b"
@@ -2689,8 +2547,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 8,
       "new_jobs_this_crawl": 0,
@@ -2741,41 +2599,31 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 94,
-      "new_jobs_this_crawl": 23,
-      "active_jobs": 104,
+      "jobs_collected_this_crawl": 89,
+      "new_jobs_this_crawl": 3,
+      "active_jobs": 105,
       "latest_jobs": [
         {
-          "title": "Account Executive",
+          "title": "Account Executive - Moses Lake, WA",
           "date": "2026-10-28",
-          "url": "https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&id=8a78859e9c72dc3f019c7899577c2aba&source=&lang=en"
+          "url": "https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&id=8a78839f9a5b2f33019a73e3c85825b2&source=&lang=en"
         },
         {
-          "title": "Account Executive",
+          "title": "Network Administrator II (Remote)",
           "date": "2026-10-28",
-          "url": "https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&id=8a7883a89efb878d019f045743f8607c&source=&lang=en"
+          "url": "https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&id=8a7887ac9ddb3110019de05b4a275385&source=&lang=en"
         },
         {
-          "title": "Account Executive",
+          "title": "News Reporter (Part-Time)",
           "date": "2026-10-28",
-          "url": "https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&id=8a7883aca0c941c501a0eef4cab64d7c&source=&lang=en"
-        },
-        {
-          "title": "Account Executive",
-          "date": "2026-10-28",
-          "url": "https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&id=8a78859f9de070d0019df8b6f6e002c0&source=&lang=en"
-        },
-        {
-          "title": "Account Executive",
-          "date": "2026-10-28",
-          "url": "https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&id=8a78839f9fd3ba87019fef03453f29c9&source=&lang=en"
+          "url": "https://recruitingbypaycor.com/career/JobIntroduction.action?clientId=8a7883d082ae53c80182f17d3aba194b&id=8a7887a19fd3ba90019fd8f3655275ce&source=&lang=en"
         }
       ],
       "error": "",
-      "note": "feed_filter_rejected=Account Executive - Moses Lake, WA:not_fresh",
+      "note": "",
       "active_job_ids": [
         "003448ef5001a86e",
         "00ab8b72f97ccb78",
@@ -2801,7 +2649,6 @@
         "377e04c655d32c3b",
         "3814153175ef7ef6",
         "395ea8ed0eabf382",
-        "3c28510f6fa3afef",
         "43d705f2eef4fe99",
         "46a6314d5dbe34b2",
         "49b6406e451907a4",
@@ -2823,6 +2670,7 @@
         "70cf6cb434e7d45c",
         "7334a08f9789b4c0",
         "73d96d114d682837",
+        "74dd81a2a916361c",
         "7523e4097ee61fe7",
         "766acfa002669a24",
         "78664ca3c8e9cb20",
@@ -2850,6 +2698,7 @@
         "b0d853dc52ff0fd1",
         "b125c7da10980e77",
         "b57b6a30df4316b3",
+        "b6c153e7d6490d12",
         "b82e3623519e1793",
         "b89b1fc17f4c2d72",
         "b8e091071038e16b",
@@ -2857,6 +2706,7 @@
         "c177a851faa323a5",
         "c3bbbba1372d2c9d",
         "c4e5051b53c482f0",
+        "c70328e57beab0ab",
         "c98e67c16842c7da",
         "ca0666eba6f44548",
         "ca602c5a5ed0033e",
@@ -2879,8 +2729,7 @@
         "f4b1c43c16cecd19",
         "f4f52da82c237193",
         "f74e6a3acd97c0dc",
-        "f8ff040d10ddc70d",
-        "fb25acb175b086ed"
+        "f8ff040d10ddc70d"
       ]
     },
     {
@@ -2891,8 +2740,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 9,
       "new_jobs_this_crawl": 0,
@@ -2946,37 +2795,17 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 80,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 82,
+      "jobs_collected_this_crawl": 81,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 81,
       "latest_jobs": [
         {
-          "title": "Account Executive - KLSR TV",
+          "title": "Media Consultant - Orlando Radio",
           "date": "2026-10-28",
-          "url": "https://careers.cmg.com/job/Eugene-Account-Executive-KLSR-TV-OR-97408/1362988800/"
-        },
-        {
-          "title": "Promotion Producer - WSOC TV Telemundo",
-          "date": "2026-10-28",
-          "url": "https://careers.cmg.com/job/Charlotte-Promotion-Producer-WSOC-TV-Telemundo-NC-28206/1362987400/"
-        },
-        {
-          "title": "Activation Specialist (Part-Time) - Orlando Radio",
-          "date": "2026-10-28",
-          "url": "https://careers.cmg.com/job/Orlando-Activation-Specialist-%28Part-Time%29-Orlando-Radio-FL-32804/1405329800/"
-        },
-        {
-          "title": "Media Consultant - Long Island Radio",
-          "date": "2026-10-28",
-          "url": "https://careers.cmg.com/job/West-Babylon-Media-Consultant-Long-Island-Radio-NY-11704/1405424500/"
-        },
-        {
-          "title": "Promotions Producer - WFTV Orlando",
-          "date": "2026-10-28",
-          "url": "https://careers.cmg.com/job/Orlando-Promotions-Producer-WFTV-Orlando-FL-32801/1414399000/"
+          "url": "https://careers.cmg.com/job/Orlando-Media-Consultant-Orlando-Radio-FL-32804/1444610300/"
         }
       ],
       "error": "",
@@ -2984,10 +2813,10 @@
       "active_job_ids": [
         "0984f4f4cca3a311",
         "0d134cfea0a4c0cc",
-        "0deda506863d7a0d",
         "0e4b5db1fe704e5f",
         "0f279f9a762b608c",
         "1563d64515dd2f5e",
+        "1d528ae33297ed74",
         "201a2993ccdc0201",
         "295f102f725fe204",
         "2960b7e973f67b26",
@@ -2997,7 +2826,6 @@
         "318fcf2112a035de",
         "31a0b70f1b1e358b",
         "37141c279d786712",
-        "37a71648a987c372",
         "38d1ccf570a6a4d6",
         "3913a10d01c193cf",
         "3ba5a464f10cf5e5",
@@ -3074,32 +2902,32 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 45,
+      "jobs_collected_this_crawl": 49,
       "new_jobs_this_crawl": 4,
-      "active_jobs": 36,
+      "active_jobs": 39,
       "latest_jobs": [
         {
-          "title": "Director of Sales",
+          "title": "Account Executive",
           "date": "2026-10-28",
-          "url": "https://jobs.cumulusmedia.com/jobs/4759?lang=en-us"
-        },
-        {
-          "title": "Director of Sales",
-          "date": "2026-10-28",
-          "url": "https://jobs.cumulusmedia.com/jobs/4760?lang=en-us"
+          "url": "https://jobs.cumulusmedia.com/jobs/4761?lang=en-us"
         },
         {
           "title": "Account Executive",
-          "date": "2026-10-27",
-          "url": "https://jobs.cumulusmedia.com/jobs/4297?lang=en-us"
+          "date": "2026-10-28",
+          "url": "https://jobs.cumulusmedia.com/jobs/4762?lang=en-us"
         },
         {
-          "title": "Promotions Assistant",
-          "date": "2026-10-27",
-          "url": "https://jobs.cumulusmedia.com/jobs/4462?lang=en-us"
+          "title": "Sales Manager",
+          "date": "2026-10-28",
+          "url": "https://jobs.cumulusmedia.com/jobs/4763?lang=en-us"
+        },
+        {
+          "title": "Multi-Media Account Executive",
+          "date": "2026-10-28",
+          "url": "https://jobs.cumulusmedia.com/jobs/4764?lang=en-us"
         }
       ],
       "error": "",
@@ -3111,6 +2939,7 @@
         "3e5c352bfbcffd80",
         "406472fcfc8df9ee",
         "4122c95c85620a7f",
+        "474dd49c663ca44d",
         "4d1c1282467eed4b",
         "51e0604e670b38cd",
         "555d8c3b989f5e21",
@@ -3130,13 +2959,15 @@
         "ae1f976f54734718",
         "af33c5d3f3da3a12",
         "b4357a62479b97b9",
+        "b51ae2211a8f1200",
         "b811264f187ff1ca",
         "bee3fcda9601c8eb",
+        "c031fb9762a31a6e",
         "cc724243be9fe882",
         "d097b9a7dab255a9",
         "e00db83af8d2a3e3",
-        "e3d7d0d99394e306",
         "e6aeb6834a5475f4",
+        "eb271abafb53a0a1",
         "eeb8fcdb7979d407",
         "eec5c883b1cb3fa7",
         "f88b85293ae4594c",
@@ -3151,8 +2982,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
       "new_jobs_this_crawl": 0,
@@ -3178,8 +3009,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 15,
       "new_jobs_this_crawl": 0,
@@ -3231,8 +3062,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 8,
       "new_jobs_this_crawl": 0,
@@ -3280,48 +3111,29 @@
       "source_url": "https://www.disneycareers.com/en/search-jobs/ESPN/391/1",
       "status": "green",
       "attention_reason": "Healthy",
-      "days_since_new_job": 1,
-      "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 16,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 6,
+      "jobs_collected_this_crawl": 18,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 7,
       "latest_jobs": [
         {
-          "title": "Sports Marketing Coordinator",
-          "date": "2026-10-27",
-          "url": "https://www.disneycareers.com/en/job/new-york/sports-marketing-coordinator/391/102510660032"
-        },
-        {
-          "title": "Lead Real Time Graphics Developer",
+          "title": "Technical Director I, Studio Ops",
           "date": "2026-10-22",
-          "url": "https://www.disneycareers.com/en/job/charlotte/lead-real-time-graphics-developer/391/102295070672"
-        },
-        {
-          "title": "Supervising Real Time Graphics Developer",
-          "date": "2026-10-22",
-          "url": "https://www.disneycareers.com/en/job/charlotte/supervising-real-time-graphics-developer/391/102295078192"
-        },
-        {
-          "title": "Associate Editor Apps - Part Time",
-          "date": "2026-10-21",
-          "url": "https://www.disneycareers.com/en/job/bristol/associate-editor-apps-part-time/391/102253026944"
-        },
-        {
-          "title": "Associate Editor - SEO - Part Time",
-          "date": "2026-10-21",
-          "url": "https://www.disneycareers.com/en/job/connecticut/associate-editor-seo-part-time/391/102248244448"
+          "url": "https://www.disneycareers.com/en/job/bristol/technical-director-i-studio-ops/391/102299253600"
         }
       ],
       "error": "",
-      "note": "non_media_scope_rejected=2; feed_filter_rejected=Sr Director, Programming Business Affairs:not_fresh ; Senior Machine Learning Engineer - ESPN:not_fresh",
+      "note": "feed_filter_rejected=Sr Director, Programming Business Affairs:not_fresh ; Senior Machine Learning Engineer - ESPN:not_fresh",
       "active_job_ids": [
         "06bdef90d89efbdb",
         "2c6829023113fc87",
         "629e70f97d9f281e",
         "9903e64e18eed6fe",
+        "d1d030ecb7af725d",
         "fa47cc0a3193a505",
         "fdf36785bd779386"
       ]
@@ -3334,36 +3146,49 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 16,
-      "new_jobs_this_crawl": 2,
-      "active_jobs": 13,
+      "new_jobs_this_crawl": 0,
+      "active_jobs": 11,
       "latest_jobs": [
+        {
+          "title": "Associate Global Public Affairs",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/fgsglobal/jobs/5258666007"
+        },
         {
           "title": "Intern Strategic Corporate & Transaction Communication",
           "date": "2026-10-28",
           "url": "https://job-boards.greenhouse.io/fgsglobal/jobs/5100954007"
         },
         {
-          "title": "Accounting Manager",
+          "title": "Associate Global Public Affairs",
           "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/fgsglobal/jobs/5277852007"
+          "url": "https://job-boards.greenhouse.io/fgsglobal/jobs/5177795007"
+        },
+        {
+          "title": "Director Global Public Affairs Healthcare (all genders)",
+          "date": "2026-10-27",
+          "url": "https://job-boards.greenhouse.io/fgsglobal/jobs/5094306007"
+        },
+        {
+          "title": "Intern Global Public Affairs (all genders)",
+          "date": "2026-10-27",
+          "url": "https://job-boards.greenhouse.io/fgsglobal/jobs/5092857007"
         }
       ],
       "error": "",
       "note": "enumerated_jobs=18; feed_filter_rejected=Associate, Design:not_fresh ; Director, Strategic Communications (Financial Services Policy):not_fresh ; Senior Associate, Creative Project Manager:not_fresh ; Senior Associate, Digital Communications:not_fresh ; Senior Corporate Paralegal:not_fresh",
       "active_job_ids": [
         "0c1e81cdda77537f",
-        "3c042d90fbe78617",
         "7cb172657eb61937",
         "847e84adb50e2011",
         "949cd73b4b124535",
         "963b3ad1dffeadaf",
         "a073633646204f84",
         "a581af5df868de49",
-        "b62493f6ee948c94",
         "b82b76b4026e781f",
         "cc15b4624e4e80a4",
         "dff2c90b7bd50e7c",
@@ -3378,8 +3203,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 34,
       "new_jobs_this_crawl": 0,
@@ -3445,32 +3270,27 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 40,
-      "new_jobs_this_crawl": 4,
-      "active_jobs": 44,
+      "jobs_collected_this_crawl": 39,
+      "new_jobs_this_crawl": 3,
+      "active_jobs": 43,
       "latest_jobs": [
         {
-          "title": "Freelance Production Assistant, FOX Weather",
+          "title": "Director, Engineering – Personalization & Recommendations API (PNR)",
           "date": "2026-10-28",
-          "url": "https://fox.wd1.myworkdayjobs.com/Domestic/job/New-York-New-York-USA/Freelance-Production-Assistant--FOX-Weather_R50030603"
+          "url": "https://fox.wd1.myworkdayjobs.com/Domestic/job/IND-KA-Bengaluru/Director--Engineering---Personalization---Recommendations-API--PNR-_R50034191"
         },
         {
-          "title": "Senior Field Engineer",
+          "title": "Software Development Engineer, Backend ( Golang )",
           "date": "2026-10-28",
-          "url": "https://fox.wd1.myworkdayjobs.com/Domestic/job/New-York-New-York-USA/Senior-Field-Engineer_R50033670"
+          "url": "https://fox.wd1.myworkdayjobs.com/Domestic/job/IND-KA-Bengaluru/Software-Development-Engineer--Backend---Golang--_R50034188"
         },
         {
-          "title": "News Photographer",
-          "date": "2026-10-27",
-          "url": "https://fox.wd1.myworkdayjobs.com/Domestic/job/Austin-Texas-USA/News-Photographer_R50034196"
-        },
-        {
-          "title": "Executive Assistant",
-          "date": "2026-10-27",
-          "url": "https://fox.wd1.myworkdayjobs.com/Domestic/job/Los-Angeles-California-USA/Executive-Assistant_R50034197"
+          "title": "Software Development Engineer, Backend (Java)",
+          "date": "2026-10-28",
+          "url": "https://fox.wd1.myworkdayjobs.com/Domestic/job/IND-KA-Bengaluru/Software-Development-Engineer--Backend--Java-_R50034187"
         }
       ],
       "error": "",
@@ -3479,7 +3299,6 @@
         "00c6c8079ab876de",
         "09ec5b19fa7cfb0e",
         "0eb79c065416b2e6",
-        "19042f365b2cf515",
         "1909aba3b77ad9b8",
         "190dfda702e12c27",
         "207d7fde4a72b8e2",
@@ -3492,7 +3311,6 @@
         "4d44f8547caf4371",
         "4d92661140fba5f9",
         "4e141cdc0695c729",
-        "4ec1aa6bffa155b1",
         "51431194b9151972",
         "5285491671ed593d",
         "58330959eaea7ebe",
@@ -3500,12 +3318,13 @@
         "684663c22540179b",
         "76204f403ee00022",
         "76bfa0c4d2734840",
-        "7975e04a7b1b354a",
         "804bbc08ed0bfd0d",
         "8a1cb2cfbbad5cff",
+        "8c1dc81f341513a5",
         "8cbba932920e79d9",
         "9601c53c23bebc40",
-        "999e9a067dc7ab9e",
+        "990b6fa3ae9ff31b",
+        "9fd396ce90918106",
         "a15a47a06cee27b7",
         "abfe22d3d0b095e6",
         "bed568990f318f26",
@@ -3530,22 +3349,17 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 17,
-      "new_jobs_this_crawl": 2,
+      "jobs_collected_this_crawl": 18,
+      "new_jobs_this_crawl": 1,
       "active_jobs": 18,
       "latest_jobs": [
         {
-          "title": "Financial Accounting Analyst",
+          "title": "Photographer/Videographer",
           "date": "2026-10-28",
-          "url": "https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL/jobs/92175"
-        },
-        {
-          "title": "Director, Product Development - Product Management",
-          "date": "2026-10-28",
-          "url": "https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL/jobs/92172"
+          "url": "https://jobs.dayforcehcm.com/en-US/gannett/CANDIDATEPORTAL/jobs/92179"
         }
       ],
       "error": "",
@@ -3553,12 +3367,12 @@
       "active_job_ids": [
         "0b5f3852b63c1f07",
         "2d0a5b45a1bdb7cd",
-        "328578336fc9054d",
         "5ec4a11af5406a17",
         "67dfdbf9e292dff1",
         "6a0cb3059f8aec4f",
         "7a1b05c4580767c2",
         "7ae347ed3c922317",
+        "914c37013b6f6c3f",
         "9c6586f1329806bf",
         "a2f2a7e7ac3dc9e8",
         "b39dfca2ba4b169a",
@@ -3577,34 +3391,19 @@
       "source_url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US",
       "status": "green",
       "attention_reason": "Healthy",
-      "days_since_new_job": 2,
-      "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 4,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 4,
+      "jobs_collected_this_crawl": 5,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 5,
       "latest_jobs": [
         {
-          "title": "ESPN Milwaukee Spring 2027 Internship",
-          "date": "2026-10-26",
-          "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US&jobId=9202914205963_2&type=JS"
-        },
-        {
-          "title": "ESPN Cleveland Account Executive",
-          "date": "2026-10-23",
-          "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US&jobId=9202912067254_1&type=JS"
-        },
-        {
-          "title": "ESPN Madison Spring 2027 Internship",
-          "date": "2026-10-20",
-          "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US&jobId=9202911192256_1&type=JS"
-        },
-        {
-          "title": "ESPN Cleveland Digital Account Executive",
-          "date": "2026-10-16",
-          "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US&jobId=9202910181545_1&type=JS"
+          "title": "ESPN Cleveland Spring 2027 Internship",
+          "date": "2026-10-28",
+          "url": "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=fc5961f7-407a-4cc5-990c-a15241a03d70&ccId=19000101_000001&lang=en_US&jobId=9205250385189_4&type=JS"
         }
       ],
       "error": "",
@@ -3613,6 +3412,7 @@
         "39edc202a02dcbb1",
         "6b9b88e15862a8a6",
         "719a6498d984f0c2",
+        "8c768ed01a25d15e",
         "b005a668756b3ae2"
       ]
     },
@@ -3624,37 +3424,27 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 294,
-      "new_jobs_this_crawl": 10,
+      "jobs_collected_this_crawl": 297,
+      "new_jobs_this_crawl": 3,
       "active_jobs": 297,
       "latest_jobs": [
         {
-          "title": "GRAY MEDIA SALES TRAINING PROGRAM (SPRING '2027) - WBTV",
+          "title": "NEWS ANCHOR/MULTIMEDIA JOURNALIST - WGGB",
           "date": "2026-10-28",
-          "url": "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/OpportunityDetail?opportunityId=8ea9a150-621f-4b50-9b06-611007133f3f"
+          "url": "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/OpportunityDetail?opportunityId=9a24786e-75ac-4ddc-bdd6-6b97c779f3ab"
         },
         {
-          "title": "GRAY MEDIA SALES TRAINING PROGRAM FALL '26 - WSFA",
+          "title": "DESIGN SUPPORT COORDINATOR (REMOTE/USA) - GDM (GRAY MEDIA GROUP)",
           "date": "2026-10-28",
-          "url": "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/OpportunityDetail?opportunityId=ae4c7a8f-c95c-40d0-abee-e683ffcd74e1"
+          "url": "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/OpportunityDetail?opportunityId=20bb9bac-de67-4194-b3d1-03c88b5ce5c6"
         },
         {
-          "title": "MEDIA EXECUTIVE - WFLX",
+          "title": "DIGITAL SALES ASSISTANT - WSAZ (HUNTINGTON)",
           "date": "2026-10-28",
-          "url": "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/OpportunityDetail?opportunityId=efa0ec10-38f8-4a43-b6c8-cb923165fa71"
-        },
-        {
-          "title": "MEDIA EXECUTIVE - KAIT",
-          "date": "2026-10-28",
-          "url": "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/OpportunityDetail?opportunityId=76320a22-1ea3-4b4e-b280-95f841d9d97f"
-        },
-        {
-          "title": "METEOROLOGIST (W/END) - WHSV",
-          "date": "2026-10-28",
-          "url": "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/OpportunityDetail?opportunityId=e8ada5b1-3007-40fe-a6e9-7654210da919"
+          "url": "https://recruiting.ultipro.com/GRA1017GRYT/JobBoard/ae441110-89bd-444d-8ad2-b76c7b9db7a9/OpportunityDetail?opportunityId=6ca19ceb-23a1-46cb-87b9-9c99a8c6d02f"
         }
       ],
       "error": "",
@@ -3663,6 +3453,7 @@
         "007aef8cd0c874b7",
         "02ceba710d097cf8",
         "04226b252ff09de2",
+        "045eee9f8d78f61e",
         "04fa5e79710c5985",
         "051b2e24db66b0f2",
         "0580f3899e508e1f",
@@ -3670,7 +3461,6 @@
         "06b697654544f577",
         "06ff3de5759f7e0d",
         "073b35285b92b248",
-        "07e6357c7ed64bba",
         "0955c85dac0f802a",
         "0bf2e92459a420f2",
         "0c4e66be6197e797",
@@ -3797,7 +3587,6 @@
         "6f9e0100788ef8a9",
         "707bb5183df7a2d4",
         "716c3eb593426d57",
-        "71fdfbb46c87cf8f",
         "72140a71064475ee",
         "7480478bb1d3a082",
         "74818272517ee3ad",
@@ -3853,7 +3642,6 @@
         "a38420c6cf0a798f",
         "a4e76232b4444ec3",
         "a5a22508ef006a30",
-        "a60e8148893f4737",
         "a63ff16b441263ef",
         "a7229e589d6bb5c4",
         "a76bb6cef78dce9c",
@@ -3861,6 +3649,7 @@
         "a9eea466442b3fbe",
         "aaab068e306e8aaf",
         "ab767343bf02487e",
+        "acce8f5325bb45eb",
         "adcbdb718ee049cf",
         "afc31803cbbd615b",
         "b14b02d32c10fb16",
@@ -3871,6 +3660,7 @@
         "b6e06b559214a940",
         "b792daa3969bc173",
         "b7d16d1e76b5af57",
+        "b98d52e098712e54",
         "ba06d9f037e47819",
         "ba5d9d0233ebf55b",
         "bcbb0817d61a8c9a",
@@ -3967,21 +3757,41 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 6,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 6,
       "latest_jobs": [
         {
           "title": "Hallmark Reset Installation Supervisor (part-time) New Brunswick, NJ 08901 / Central New Jersey",
           "date": "2026-10-28",
           "url": "https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/1af38e50-bef2-48c7-8919-d646ae0bee65/OpportunityDetail?opportunityId=00a63014-4f04-4dd4-bb05-98c283e826fe"
+        },
+        {
+          "title": "Packaging Operator - 1st Shift",
+          "date": "2026-10-26",
+          "url": "https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/1af38e50-bef2-48c7-8919-d646ae0bee65/OpportunityDetail?opportunityId=0e36d1e9-bcad-43cc-902e-e01ad4664eb7"
+        },
+        {
+          "title": "2027 Summer Internship- Creative (Writing/Editorial)",
+          "date": "2026-10-23",
+          "url": "https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/ab752bd2-ff61-4489-a86c-18d808fa6f00/OpportunityDetail?opportunityId=2b520bed-3b5c-4525-abd0-3e1dad4f03bc"
+        },
+        {
+          "title": "Hallmark Territory Supervisor (part-time) Woodstock, GA 30188",
+          "date": "2026-10-22",
+          "url": "https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/1af38e50-bef2-48c7-8919-d646ae0bee65/OpportunityDetail?opportunityId=5ffadbc4-937e-42d8-b3f4-219e65cbe849"
+        },
+        {
+          "title": "Maintenance Mechanic - 1st Shift, Lawrence, KS",
+          "date": "2026-10-15",
+          "url": "https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/1af38e50-bef2-48c7-8919-d646ae0bee65/OpportunityDetail?opportunityId=4c774fe4-ce5d-4a91-9b85-ded8ad009b0a"
         }
       ],
       "error": "",
-      "note": "non_media_scope_rejected=116",
+      "note": "non_media_scope_rejected=120",
       "active_job_ids": [
         "08a05704ca3db34a",
         "1fcc98122cce2fed",
@@ -3999,8 +3809,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
       "new_jobs_this_crawl": 0,
@@ -4038,8 +3848,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -4057,37 +3867,22 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 41,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 41,
+      "jobs_collected_this_crawl": 14,
+      "new_jobs_this_crawl": 2,
+      "active_jobs": 43,
       "latest_jobs": [
         {
-          "title": "Sales Manager",
+          "title": "Account Manager",
           "date": "2026-10-28",
-          "url": "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing#job-26-1336"
+          "url": "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing#job-26-1351"
         },
         {
-          "title": "WTMX-FM Radio Producer",
+          "title": "Digital Account Executive",
           "date": "2026-10-28",
-          "url": "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing#job-26-1335"
-        },
-        {
-          "title": "Executive Producer",
-          "date": "2026-10-28",
-          "url": "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing#job-26-1334"
-        },
-        {
-          "title": "Board Operator",
-          "date": "2026-10-28",
-          "url": "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing#job-26-1332"
-        },
-        {
-          "title": "Account Executive",
-          "date": "2026-10-28",
-          "url": "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing#job-26-1280"
+          "url": "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing#job-26-1022"
         }
       ],
       "error": "",
@@ -4101,6 +3896,7 @@
         "1ba77a20ba5b0e8d",
         "1c8f8837f4fb85ec",
         "1e9e01482a9bc2f4",
+        "2734efed13f04913",
         "278cf5323bb12cbf",
         "29dfcfc639948f11",
         "2f5734801c816be2",
@@ -4114,6 +3910,7 @@
         "57dde84916ff1408",
         "5c1d1ead24797dde",
         "5da919b8d3562cda",
+        "5f6d0cc6fbd4696b",
         "6199dba2e5a1601f",
         "6593a46d8763504b",
         "65c2127b13e72362",
@@ -4144,37 +3941,22 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 39,
-      "new_jobs_this_crawl": 5,
-      "active_jobs": 45,
+      "jobs_collected_this_crawl": 40,
+      "new_jobs_this_crawl": 2,
+      "active_jobs": 41,
       "latest_jobs": [
         {
-          "title": "Outside Account Executive",
+          "title": "Part-Time Promotions Assistant / Event Activation Team",
           "date": "2026-10-28",
-          "url": "https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/job/New-York-NY-55th-St/Outside-Account-Executive_Req38928-4"
+          "url": "https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/job/New-York-NY-55th-St/Part-Time-Promotions-Assistant---Event-Activation-Team_Req39530-5"
         },
         {
-          "title": "Manager, Podcast Partner Relations",
+          "title": "Account Executive",
           "date": "2026-10-28",
-          "url": "https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/job/New-York-NY-55th-St/Manager--Podcast-Partner-Relations_Req39599-1"
-        },
-        {
-          "title": "National Event Coordinator",
-          "date": "2026-10-28",
-          "url": "https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/job/New-York-NY-55th-St/National-Event-Coordinator_Req39598-4"
-        },
-        {
-          "title": "iHeartMedia Activation Team",
-          "date": "2026-10-28",
-          "url": "https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/job/Minneapolis-MN-Utica/iHeartMedia-Activation-Team_Req39596-3"
-        },
-        {
-          "title": "Production Tech/Dubber",
-          "date": "2026-10-27",
-          "url": "https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/job/Phoenix-AZ-Van-Buren/Production-Tech-Dubber_Req39577-3"
+          "url": "https://iheartmedia.wd5.myworkdayjobs.com/External_iHM/job/Minneapolis-MN-Utica/Account-Executive_Req39555-4"
         }
       ],
       "error": "",
@@ -4183,7 +3965,6 @@
         "0e33f87510194866",
         "1075ed572e8d359f",
         "14c498ebbf9ef56a",
-        "1cecf8a795e02686",
         "2325359c797e6b15",
         "2475111e48d2354b",
         "26df9a01060825bc",
@@ -4195,7 +3976,7 @@
         "57982462b3b2adc3",
         "5b1e728f84f721bb",
         "5e2359bff80ba2e6",
-        "62533bd8b2e23f40",
+        "650e507819508b5a",
         "6b5397844f388a79",
         "6c429e1271586e73",
         "6cea135fe298bd6e",
@@ -4206,7 +3987,6 @@
         "94b36ef647da2cae",
         "9544750e5b297909",
         "994d03b444105469",
-        "9a9511604e8c68e6",
         "9cb2cd7aa00512ad",
         "9cc2e5faa5717427",
         "a11aa813d260d91d",
@@ -4215,16 +3995,14 @@
         "aef08987e7e610ad",
         "bccf0e6e61f71e8c",
         "bd653051488a62d8",
-        "c0a774540e931f54",
         "cfb28fb3816674b2",
         "d0b5328762992112",
         "d609c119fb0d2b97",
         "d82cd4842c196381",
         "dc83ae590a9f7015",
-        "e2ffc453983b229b",
         "e352d8e333ed3d3c",
         "f76d3d5195c1917f",
-        "f8c15d0e6aafc38a"
+        "fc4547b00cfb5151"
       ]
     },
     {
@@ -4233,46 +4011,33 @@
       "source_url": "https://kqed.applytojob.com/apply/jobs",
       "status": "green",
       "attention_reason": "Healthy",
-      "days_since_new_job": 1,
-      "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 18,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 11,
+      "jobs_collected_this_crawl": 19,
+      "new_jobs_this_crawl": 2,
+      "active_jobs": 13,
       "latest_jobs": [
         {
-          "title": "Front Doors Product Manager",
-          "date": "2026-10-27",
-          "url": "https://kqed.applytojob.com/apply/Km6ILQQF9Z/Front-Doors-Product-Manager"
+          "title": "Just want to send us your resume?",
+          "date": "2026-10-28",
+          "url": "https://kqed.applytojob.com/apply/jobs/details/JHDX4YVVsL?&"
         },
         {
-          "title": "Equity & Belonging Specialist",
-          "date": "2026-10-16",
-          "url": "https://kqed.applytojob.com/apply/S5d4OAUdWk/Equity-Belonging-Specialist"
-        },
-        {
-          "title": "NABET On-Call Brand and Motion Graphics Designer / Designer 2",
-          "date": "2026-10-16",
-          "url": "https://kqed.applytojob.com/apply/6buvhwl8Y3/NABET-OnCall-Brand-And-Motion-Graphics-Designer-Designer-2"
-        },
-        {
-          "title": "KQED Food & Check, Please! Bay Area Editorial & Audience Engagement Intern",
-          "date": "2026-10-07",
-          "url": "https://kqed.applytojob.com/apply/m7yUBNbzcz/KQED-Food-Check-Please-Bay-Area-Editorial-Audience-Engagement-Intern"
-        },
-        {
-          "title": "Audience Intelligence Analytics Intern",
-          "date": "2026-10-06",
-          "url": "https://kqed.applytojob.com/apply/5Gz2ElMQfy/Audience-Intelligence-Analytics-Intern"
+          "title": "TV Maintenance Engineer",
+          "date": "2026-10-28",
+          "url": "https://kqed.applytojob.com/apply/jobs/details/x2c6rwiKxU?&"
         }
       ],
       "error": "",
       "note": "feed_filter_rejected=Content Analytics Lead:not_fresh ; Director of Membership Programs:not_fresh ; Full-Time Limited Term Branded Content Producer:not_fresh ; Full-Time Limited Term: Digital Campaign Manager, Corporate Sponsorship:not_fresh ; NABET On - Call Member Services Clerk:not_fresh ; Social Video - Visuals Producer:not_fresh ; Social Video Producer:not_fresh",
       "active_job_ids": [
         "09b533a37db37285",
+        "34868a951bf730d2",
         "5a3fc3d1a0e4bfc9",
+        "6e17412088b6b9cf",
         "7b3715355032ba7d",
         "8b473d34bfead59d",
         "942b3ea884dc42c4",
@@ -4290,39 +4055,24 @@
       "source_url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL",
       "status": "green",
       "attention_reason": "Healthy",
-      "days_since_new_job": 2,
-      "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 14,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 14,
+      "jobs_collected_this_crawl": 16,
+      "new_jobs_this_crawl": 2,
+      "active_jobs": 16,
       "latest_jobs": [
         {
-          "title": "Local News Reporter-York, NE",
-          "date": "2026-10-26",
-          "url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/31272"
+          "title": "Climate Reporter",
+          "date": "2026-10-28",
+          "url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/31302"
         },
         {
-          "title": "Distribution Associate PT",
-          "date": "2026-10-26",
-          "url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/31282"
-        },
-        {
-          "title": "Business Development Executive-Waterloo, IA",
-          "date": "2026-10-26",
-          "url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/31277"
-        },
-        {
-          "title": "Inside Sales Representative-Sioux Falls, SD",
-          "date": "2026-10-26",
-          "url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/31298"
-        },
-        {
-          "title": "Business Development Executive-Butte or Helena, MT",
-          "date": "2026-10-26",
-          "url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/31294"
+          "title": "Strategic Account Executive - Digital Media & Advertising",
+          "date": "2026-10-28",
+          "url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL/jobs/31306"
         }
       ],
       "error": "",
@@ -4340,8 +4090,10 @@
         "b3406faea80fac5a",
         "b89695b27dd758e9",
         "b8ac43ccefeea287",
+        "db6aee8ec335ea61",
         "eb4d999fb7e192ba",
-        "ec4ab136c04b5298"
+        "ec4ab136c04b5298",
+        "f60e443d0f3ba219"
       ]
     },
     {
@@ -4352,8 +4104,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 5,
       "new_jobs_this_crawl": 0,
@@ -4403,37 +4155,17 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 29,
-      "new_jobs_this_crawl": 5,
-      "active_jobs": 35,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 30,
       "latest_jobs": [
         {
-          "title": "LN Media & Sponsorship || Associate Counsel",
+          "title": "Server - Brooklyn Bowl Nashville",
           "date": "2026-10-28",
-          "url": "https://livenation.wd503.myworkdayjobs.com/LNExternalSite/job/New-York-NY-USA/LN-Media---Sponsorship----Associate-Counsel_JR-94013"
-        },
-        {
-          "title": "Intermediate Frontend Developer (Cape Town, South Africa)",
-          "date": "2026-10-28",
-          "url": "https://livenation.wd503.myworkdayjobs.com/LNExternalSite/job/Cape-Town-South-Africa/Intermediate-Frontend-Developer--Cape-Town--South-Africa-_JR-93746-2"
-        },
-        {
-          "title": "Housekeeping- Louisville Palace",
-          "date": "2026-10-28",
-          "url": "https://livenation.wd503.myworkdayjobs.com/LNExternalSite/job/Louisville-KY-USA/Housekeeping--Louisville-Palace_JR-93949"
-        },
-        {
-          "title": "Solution Architect",
-          "date": "2026-10-27",
-          "url": "https://livenation.wd503.myworkdayjobs.com/LNExternalSite/job/Work-From-Home---California/Solution-Architect_JR-93001"
-        },
-        {
-          "title": "LN Venues, Recruiter",
-          "date": "2026-10-27",
-          "url": "https://livenation.wd503.myworkdayjobs.com/LNExternalSite/job/Work-From-Home---Pennsylvania/LN-Venues--Recruiter_JR-93941-2"
+          "url": "https://livenation.wd503.myworkdayjobs.com/LNExternalSite/job/Nashville-TN-USA/Server---Brooklyn-Bowl-Nashville_JR-69849"
         }
       ],
       "error": "",
@@ -4441,15 +4173,12 @@
       "active_job_ids": [
         "0b972dda7d0ca688",
         "0d8074fcfab230e7",
-        "18688e0e16ef91d8",
         "18f1e81431ed38bf",
         "1d2a197f0be21f82",
         "1dc56719e2c630f9",
         "2c232456d659fa89",
         "33d8f55dba519f13",
         "4c94b339de09503a",
-        "4f815f8d6b564593",
-        "51a8ccb1b254d5b9",
         "5e5971fc28be3cd2",
         "5f249e31c7c0cb21",
         "64f900aedb38b916",
@@ -4458,9 +4187,7 @@
         "8175174c909c398c",
         "8afaa413f096811c",
         "8e7f41a0a69f4bf2",
-        "952bd3288be2686a",
         "95cce62ba9f19a0a",
-        "9c26fb17ea3aed31",
         "a1249da210855f70",
         "ae5420f6594af4d3",
         "bc5b4a6613f92732",
@@ -4468,10 +4195,10 @@
         "c70e878c21829f02",
         "ca0808fa122fdd2a",
         "d9394e46cc20027f",
+        "dc0e71efb0faa680",
         "e36554da15c37664",
         "ede2bcce8f2e2bff",
         "eff769f50bc84182",
-        "f571927864602d5a",
         "f64de652e3f1dae4",
         "ffbb97aa726698c7"
       ]
@@ -4484,8 +4211,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 6,
       "new_jobs_this_crawl": 0,
@@ -4523,8 +4250,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -4556,8 +4283,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 9,
       "new_jobs_this_crawl": 0,
@@ -4611,8 +4338,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
       "new_jobs_this_crawl": 0,
@@ -4638,8 +4365,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 5,
       "new_jobs_this_crawl": 0,
@@ -4689,8 +4416,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 7,
       "new_jobs_this_crawl": 0,
@@ -4742,24 +4469,24 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 9,
       "new_jobs_this_crawl": 1,
       "active_jobs": 3,
       "latest_jobs": [
         {
-          "title": "Production Trainee - AI Archive Indexing",
-          "date": "2026-10-23",
-          "url": "https://nba.wd108.myworkdayjobs.com/nbacareers/job/Secaucus-USA/Production-Trainee---AI-Archive-Indexing_JR001132/apply"
+          "title": "Project Employee, Social & Digital Publishing - NBA G League",
+          "date": "2026-10-22",
+          "url": "https://nba.wd108.myworkdayjobs.com/nbacareers/job/Secaucus-USA---Non-Off-Staff/Project-Employee--Social---Digital-Publishing---NBA-G-League_JR001049/apply"
         }
       ],
       "error": "",
-      "note": "feed_filter_rejected=Digital Content Publisher, WNBA:not_fresh ; Digital Content Publisher, WNBA:not_fresh ; Highlight Factory Lead:not_fresh ; YouTube Channel and Programming Lead:not_fresh ; Project Employee, Broadcast Support Engineer:not_fresh ; Producer - Local Media Game Production:not_fresh ; Technical Manager, Local Media:not_fresh",
+      "note": "feed_filter_rejected=Digital Content Publisher, WNBA:not_fresh ; Digital Content Publisher, WNBA:not_fresh ; Highlight Factory Lead:not_fresh ; YouTube Channel and Programming Lead:not_fresh ; Technical Manager, Local Media:not_fresh ; Producer - Local Media Game Production:not_fresh",
       "active_job_ids": [
-        "022ac5af187d6ecc",
         "17e504dd7fecd48d",
+        "ae1802f46ae281b5",
         "c2521229a113cd19"
       ]
     },
@@ -4771,41 +4498,31 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 212,
-      "new_jobs_this_crawl": 19,
-      "active_jobs": 113,
+      "jobs_collected_this_crawl": 209,
+      "new_jobs_this_crawl": 3,
+      "active_jobs": 110,
       "latest_jobs": [
         {
-          "title": "Sr. Manager, Enterprise Technology PMO",
+          "title": "Network Engineer",
           "date": "2026-10-28",
-          "url": "https://jobs.smartrecruiters.com/NBCUniversal3/744000158339909-sr-manager-enterprise-technology-pmo?oga=true"
+          "url": "https://jobs.smartrecruiters.com/NBCUniversal3/744000158379625-network-engineer?oga=true"
+        },
+        {
+          "title": "Lead IT GRC Analyst (Policy Management)",
+          "date": "2026-10-28",
+          "url": "https://jobs.smartrecruiters.com/NBCUniversal3/744000158369324-lead-it-grc-analyst-policy-management-?oga=true"
         },
         {
           "title": "Manager, Growth Strategy",
           "date": "2026-10-28",
-          "url": "https://jobs.smartrecruiters.com/NBCUniversal3/744000158329329-manager-growth-strategy?oga=true"
-        },
-        {
-          "title": "Senior Designer, Apparel & Accessories - Licensed Product Development and Design",
-          "date": "2026-10-28",
-          "url": "https://jobs.smartrecruiters.com/NBCUniversal3/744000158318071-senior-designer-apparel-accessories-licensed-product-development-and-design?oga=true"
-        },
-        {
-          "title": "Coordinator Digital Operations, Corporate Communications",
-          "date": "2026-10-28",
-          "url": "https://jobs.smartrecruiters.com/NBCUniversal3/744000158293820-coordinator-digital-operations-corporate-communications-?oga=true"
-        },
-        {
-          "title": "Financial Analyst – Global FP&A",
-          "date": "2026-10-27",
-          "url": "https://jobs.smartrecruiters.com/NBCUniversal3/744000158163739-financial-analyst-global-fp-a?oga=true"
+          "url": "https://jobs.smartrecruiters.com/NBCUniversal3/744000158359619-manager-growth-strategy?oga=true"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=293; feed_filter_rejected=Senior Manager Commerce Growth & Operations:not_fresh ; Production Operations Specialist, Telemundo Utah:not_fresh ; Lead Engine Programmer | Programmeur ou programmeuse moteur Lead:not_fresh ; Manager, Corporate Governance:not_fresh ; Manager, Corporate Governance:not_fresh ; Sr. Product Manager, Customer Data Platforms:not_fresh ; Multi-platform Producer, NBC & Telemundo Dallas/Fort Worth:not_fresh ; Account Executive, NBC Local Boston:not_fresh ; Sr Business Systems Analyst (SuccessFactors):not_fresh ; Senior Manager, Advertising Product Communications:not_fresh ; Manager, Multiplatform Planning:not_fresh ; SVP, Head of Studio Data & Insights:not_fresh",
+      "note": "enumerated_jobs=291; feed_filter_rejected=Senior Manager Commerce Growth & Operations:not_fresh ; Production Operations Specialist, Telemundo Utah:not_fresh ; Lead Engine Programmer | Programmeur ou programmeuse moteur Lead:not_fresh ; Manager, Corporate Governance:not_fresh ; Manager, Corporate Governance:not_fresh ; Sr. Product Manager, Customer Data Platforms:not_fresh ; Multi-platform Producer, NBC & Telemundo Dallas/Fort Worth:not_fresh ; Account Executive, NBC Local Boston:not_fresh ; Sr Business Systems Analyst (SuccessFactors):not_fresh ; Senior Manager, Advertising Product Communications:not_fresh ; Manager, Multiplatform Planning:not_fresh ; SVP, Head of Studio Data & Insights:not_fresh",
       "active_job_ids": [
         "05767da901172d86",
         "05c892369637ec9f",
@@ -4823,13 +4540,12 @@
         "214c06bdfed84494",
         "231c5b397cf19105",
         "23a9e6c4058c33f9",
-        "251baa778aa40e62",
-        "27e274da00b13976",
         "289195bad82e4951",
         "295360a0b09b6871",
         "2bcfd099720848c1",
         "2ea1691010f7b2bb",
         "2f6ef6b71499ea11",
+        "3041e094bff6a39c",
         "309dca8adacf4e02",
         "33b13597246b2b3e",
         "3469077a35dc3e96",
@@ -4844,16 +4560,15 @@
         "572e48434084cdd3",
         "582f5d92f8ead605",
         "5b1488c83c741dfd",
-        "5ce4fae79c6e6ce5",
         "6256b48dca732446",
         "684a6265b52f76a9",
         "6b409c4f24d4187c",
+        "6c746248d594d17d",
         "6fef60faefd68b47",
         "71fd8a9a9b4f61db",
         "72706a05433ef0af",
         "72e046aedfa8f949",
         "7360051aa32c2b5b",
-        "754ea0005a5d626a",
         "76733ea4d6db2c2e",
         "788e07d4c903f804",
         "7ec0fcf454b2c592",
@@ -4895,11 +4610,11 @@
         "ce3f922358cd1471",
         "d186241276869cf8",
         "d1b19ce703a92688",
+        "d2a380a2749b621d",
         "d2e7faa7d80fc84b",
         "d3b8017b13c5e310",
         "d4d072a46730f0f6",
         "d8e31284c282376f",
-        "d99ccf77ac38c040",
         "dbf7d5cc7796acc7",
         "dc4048aaaf5941fd",
         "de23384c7ba64973",
@@ -4908,7 +4623,6 @@
         "e1fcc89d099c2499",
         "e42bafcceed9fe1e",
         "e447b2ae886ebcfe",
-        "e4b654b512512d35",
         "e7bd99afe3a26866",
         "ecfb388028962bd6",
         "ed452dc7da6e9550",
@@ -4928,44 +4642,25 @@
       "source_url": "https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers",
       "status": "green",
       "attention_reason": "Healthy",
-      "days_since_new_job": 2,
-      "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 19,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 6,
+      "jobs_collected_this_crawl": 20,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 7,
       "latest_jobs": [
         {
-          "title": "Photo Editor, California Post",
-          "date": "2026-10-26",
-          "url": "https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers/job/Los-Angeles/Photo-Editor--California-Post_Job_Req_55359-1"
-        },
-        {
-          "title": "On-Call Weekend Writer, Decider.com",
-          "date": "2026-10-22",
-          "url": "https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers/job/NYC---1211-Ave-of-the-Americas/Part-Time-Weekend-Writer--Decidercom_Job_Req_55635"
-        },
-        {
-          "title": "Paid Media Account Manager, Commerce",
-          "date": "2026-10-22",
-          "url": "https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers/job/NYC---1211-Ave-of-the-Americas/Paid-Media-Account-Manager--Commerce_Job_Req_54633"
-        },
-        {
-          "title": "Part-Time Social Media Editor, Sports",
-          "date": "2026-10-22",
-          "url": "https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers/job/NYC---1211-Ave-of-the-Americas/Part-Time-Social-Media-Editor--Sports_Job_Req_54776"
-        },
-        {
-          "title": "Inside Sales Account Executive, Growth",
-          "date": "2026-10-19",
-          "url": "https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers/job/NYC---1211-Ave-of-the-Americas/Inside-Sales-Account-Executive--Growth_Job_Req_56059"
+          "title": "Reporter",
+          "date": "2026-10-28",
+          "url": "https://dowjones.wd1.myworkdayjobs.com/New_York_Post_Careers/job/NYC---1211-Ave-of-the-Americas/Reporter_Job_Req_54631"
         }
       ],
       "error": "",
       "note": "non_media_scope_rejected=1; feed_filter_rejected=Part-Time Social Media Editor, California Post:not_fresh ; Part-Time Photo Editor, California Post:not_fresh ; Commerce Associate:not_fresh ; Page Six Reporter (Tues-Sat):not_fresh ; Prepress Technician:not_fresh ; Part-Time Reporter:not_fresh ; Reporter, California Post:not_fresh ; Part-Time Editor:not_fresh ; Lifestyle News Editor, The California Post:not_fresh ; Design Editor (Nights):not_fresh ; Product Manager, Strategic Programs:not_fresh ; Director of Data & Analytics:not_fresh",
       "active_job_ids": [
+        "4d307c7b9666f46a",
         "75cb08aaf6273de5",
         "79cdbcbd89f88e19",
         "8ad03f0310a1024c",
@@ -4982,48 +4677,50 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 40,
-      "new_jobs_this_crawl": 9,
-      "active_jobs": 46,
+      "new_jobs_this_crawl": 10,
+      "active_jobs": 47,
       "latest_jobs": [
         {
-          "title": "Producer/Editor - PT Seasonal",
+          "title": "Multimedia Journalist",
           "date": "2026-10-28",
-          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/CA-Los-Angeles5800-Sunset-Blvd-Tribune-KTLA/Segment-Producer---PT-Seasonal_REQ-43166-1"
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/NM-Albuquerque/Multimedia-Journalist_REQ-43524"
         },
         {
-          "title": "Strategic Account Manager",
+          "title": "Technical Director",
           "date": "2026-10-28",
-          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/NC-Charlotte/Strategic-Account-Manager_REQ-42995"
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/IA-Des-Moines1801-Grand-Avenue-WHO/Technical-Director_REQ-43521"
         },
         {
-          "title": "Sales Account Executive",
+          "title": "Account Executive",
           "date": "2026-10-28",
-          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/NC-Charlotte/Sales-Account-Executive_REQ-41563"
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/IA-Des-Moines1801-Grand-Avenue-WHO/Account-Executive_REQ-43484"
         },
         {
-          "title": "Digital Sales Coordinator",
+          "title": "Weekend Morning Meteorologist",
           "date": "2026-10-28",
-          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/KY-Lexington/Digital-Sales-Coordinator_REQ-43512"
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/NY-New-York/Weekend-Morning-Meteorologist_REQ-43515"
         },
         {
-          "title": "Sales Manager",
+          "title": "Intern, News",
           "date": "2026-10-28",
-          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/NY-Watertown/Sales-Manager_REQ-43513"
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/OH-Dayton/Intern--News_REQ-43517"
         }
       ],
       "error": "",
       "note": "feed_filter_rejected=Unpaid Intern-1:description_lt_200 ; Unpaid Intern-7:description_lt_200 ; Unpaid Intern-3:description_lt_200",
       "active_job_ids": [
+        "0200264526690454",
         "0cec2ccd47e8cfe3",
+        "109f544182264185",
+        "1794093608c477c6",
         "239f5e092480ef54",
-        "299f13fc627df465",
         "2ab4b4edf5fb8e7b",
         "315ea92efdccbcf5",
-        "31f5db6c39f2ba0e",
+        "3241a43fda652e82",
         "336eced745331e26",
         "33df7c1064cb3cdb",
         "38f8967e9229dbbb",
@@ -5035,30 +4732,29 @@
         "4d0f0c8e4aee2247",
         "4fde9eb3e7de630c",
         "50de25d6ce5fe333",
-        "5217f12418167647",
         "6181786839606117",
         "6aa034ab0c9c8ba4",
-        "760800f53f735be9",
-        "79d98917f8a842aa",
         "7a06c061d5f888b3",
         "7c75f12d947643d3",
-        "7daf4eb9bd52cd1f",
+        "80f4a180a563fed8",
         "869636b4be7d560d",
         "8be13636a14f3e08",
         "8e93c69d5b9d8b36",
         "8f02880139c3445f",
+        "90f019c25e875f20",
+        "9351035e87b7beef",
         "955dd553c41cf5e9",
-        "9ae5ffe85616102f",
+        "9cfddb8d6f18e45f",
         "9d13a03218387de1",
         "9dfb5b76fc342a13",
         "aa4ec68447172ce8",
         "af9c40727c3c328b",
         "b1cb65206cb10f9f",
-        "b79a05d140441d1a",
         "c2b0d7eb7c751824",
+        "c6dd163440f603f1",
         "cdafceac737edb15",
+        "d33d18194f59cd09",
         "dd69d38bbe8b7582",
-        "e15465c0c3963840",
         "e5affb5a06aa623d",
         "e945d66d7e5fd0d4",
         "ed509dcfd3eaaefc",
@@ -5074,17 +4770,17 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 30,
       "new_jobs_this_crawl": 1,
       "active_jobs": 21,
       "latest_jobs": [
         {
-          "title": "Part-Time Digital Video Editor",
-          "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/nflcareers/jobs/5422617008"
+          "title": "Associate, Transmission (External Agency Staff)",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/nflcareers/jobs/5420214008"
         }
       ],
       "error": "",
@@ -5105,8 +4801,8 @@
         "a7012ffe157f5319",
         "aa1bcd74a52b026d",
         "aa67dd025e682a1f",
+        "b3e478f1b265abe8",
         "b483bf8139b7b233",
-        "be68b2316cd1028e",
         "c711f3f37724db52",
         "cb729792d14ea31e",
         "d0545dfc14b3f5ef",
@@ -5121,17 +4817,37 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 10,
-      "new_jobs_this_crawl": 1,
-      "active_jobs": 11,
+      "new_jobs_this_crawl": 0,
+      "active_jobs": 10,
       "latest_jobs": [
         {
           "title": "Multimedia Journalist",
           "date": "2026-10-28",
           "url": "https://myjobs.adp.com/npgexternalcareers/cx/job-details?c=1059541&d=External-Corporate&sor=adprm&__tx_annotation=false&reqId=5001234645000"
+        },
+        {
+          "title": "Master Control Operator",
+          "date": "2026-10-27",
+          "url": "https://myjobs.adp.com/npgexternalcareers/cx/job-details?c=1059541&d=External-Corporate&sor=adprm&__tx_annotation=false&reqId=5001234367506"
+        },
+        {
+          "title": "Production Assistant",
+          "date": "2026-10-21",
+          "url": "https://myjobs.adp.com/npgexternalcareers/cx/job-details?c=1059541&d=External-Corporate&sor=adprm&__tx_annotation=false&reqId=5001233204606"
+        },
+        {
+          "title": "Producer",
+          "date": "2026-10-20",
+          "url": "https://myjobs.adp.com/npgexternalcareers/cx/job-details?c=1059541&d=External-Corporate&sor=adprm&__tx_annotation=false&reqId=5001233074806"
+        },
+        {
+          "title": "News Producer",
+          "date": "2026-10-18",
+          "url": "https://myjobs.adp.com/npgexternalcareers/cx/job-details?c=1059541&d=External-Corporate&sor=adprm&__tx_annotation=false&reqId=5001232174110"
         }
       ],
       "error": "",
@@ -5146,7 +4862,6 @@
         "cb0124051ae896e5",
         "cb79f7137fa9e132",
         "dcf873c57252d39d",
-        "dd32d3fd42725d57",
         "fe3cf085b0a25527"
       ]
     },
@@ -5158,8 +4873,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 9,
       "new_jobs_this_crawl": 0,
@@ -5210,8 +4925,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
       "new_jobs_this_crawl": 0,
@@ -5249,41 +4964,26 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 24,
-      "new_jobs_this_crawl": 13,
-      "active_jobs": 126,
+      "jobs_collected_this_crawl": 239,
+      "new_jobs_this_crawl": 2,
+      "active_jobs": 127,
       "latest_jobs": [
         {
-          "title": "Senior Data Engineer",
+          "title": "Entertainment Tonight - Social Media Producer, Instagram",
           "date": "2026-10-28",
-          "url": "https://careers.paramount.com/job/Burbank-Senior-Data-Engineer-CA-91505/1343190300/"
+          "url": "https://careers.paramount.com/job/Studio-City-Entertainment-Tonight-Social-Media-Producer%2C-Instagram-CA-91604/1444707200/"
         },
         {
-          "title": "MSJ/Reporter",
-          "date": "2026-10-28",
-          "url": "https://careers.paramount.com/job/Miami-MSJReporter-FL-33172/1375373500/"
-        },
-        {
-          "title": "Director",
-          "date": "2026-10-28",
-          "url": "https://careers.paramount.com/job/San-Francisco-Director-CA-94111/1389058700/"
-        },
-        {
-          "title": "Manager, Pension Administration",
-          "date": "2026-10-28",
-          "url": "https://careers.paramount.com/job/New-York-Manager%2C-Pension-Administration-NY-10036/1342930600/"
-        },
-        {
-          "title": "Story Coordinator (Project Based)",
-          "date": "2026-10-28",
-          "url": "https://careers.paramount.com/job/New-York-Story-Coordinator-%28Project-Based%29-NY-10019/1389130000/"
+          "title": "Photographer - PT",
+          "date": "2026-10-26",
+          "url": "https://careers.paramount.com/job/Southfield-Photographer-PT-MI-48033/1443559400/"
         }
       ],
       "error": "",
-      "note": "non_media_scope_rejected=1",
+      "note": "non_media_scope_rejected=16; feed_filter_rejected=Senior Front End Developer:not_fresh ; Senior Software Engineer - Roku:not_fresh ; Senior Software Engineer - CTV:not_fresh ; Sales Assistant:not_fresh ; Data Engineer Data Pipelines and ETL:not_fresh ; Executive Producer:not_fresh ; Software Engineer, Content Engineering:not_fresh ; Finance Leadership Development Program (NYC)- July 2027 Start:not_fresh ; Sr Manager, Retention Marketing:not_fresh ; Product Growth Manager:not_fresh ; Lead Software Engineer - Roku:not_fresh ; Lead Software Engineer - Roku:not_fresh",
       "active_job_ids": [
         "0a8327442a715057",
         "0d40ebc8b8ddf435",
@@ -5311,6 +5011,7 @@
         "32be6f9132c5fd23",
         "33b8937b3856f5c2",
         "33f7a9cad01fa30a",
+        "3441b69cafc16701",
         "359d2bb2da09326c",
         "36afbd7d2c1472f2",
         "3702215d1b6e6a3a",
@@ -5376,7 +5077,6 @@
         "bb2e9ae5278ffb6f",
         "bc06aa2aa77bbcf2",
         "bc5e32e739dd09c3",
-        "bf6516151cddd26b",
         "c258a280f071bc10",
         "c34eb0d00258ea90",
         "c4aa8cffc419832b",
@@ -5391,6 +5091,7 @@
         "d1a1fb3edafb507b",
         "d2e80adaffd80845",
         "d635f6220b119978",
+        "d6d00594d9fc959f",
         "dad96cb6d6f6bd9d",
         "dd26aac7a4c98961",
         "dd594f3094d932d2",
@@ -5421,8 +5122,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
       "new_jobs_this_crawl": 0,
@@ -5460,8 +5161,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 10,
       "new_jobs_this_crawl": 0,
@@ -5499,8 +5200,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 7,
       "new_jobs_this_crawl": 0,
@@ -5551,8 +5252,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 2,
       "last_new_job_at": "2026-10-26",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 18,
       "new_jobs_this_crawl": 0,
@@ -5604,21 +5305,41 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 23,
-      "new_jobs_this_crawl": 1,
+      "jobs_collected_this_crawl": 22,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 23,
       "latest_jobs": [
         {
           "title": "Chef/Food Stylist, On-Call",
           "date": "2026-10-28",
           "url": "https://qvc.wd5.myworkdayjobs.com/QRG/job/USA-PA-West-Chester/Culinary-Stylist--On-Call_R81611"
+        },
+        {
+          "title": "Design Consultant",
+          "date": "2026-10-27",
+          "url": "https://qvc.wd5.myworkdayjobs.com/QRG/job/USA-FLWest-Palm-Beach/Design-Consultant_R83932"
+        },
+        {
+          "title": "Associate Technical Designer - Apparel",
+          "date": "2026-10-26",
+          "url": "https://qvc.wd5.myworkdayjobs.com/QRG/job/USA-NH-Exeter/Associate-Technical-Designer---Apparel_R83886"
+        },
+        {
+          "title": "Talent Acquisition Partner",
+          "date": "2026-10-26",
+          "url": "https://qvc.wd5.myworkdayjobs.com/QRG/job/USA-CA-Ontario/Talent-Acquisition-Partner_R83921"
+        },
+        {
+          "title": "HR Business Partner Manager (People & Organization Manager)",
+          "date": "2026-10-26",
+          "url": "https://qvc.wd5.myworkdayjobs.com/QRG/job/USA-SC-Florence/HR-Business-Partner-Manager--People---Organization-Manager-_R83923"
         }
       ],
       "error": "",
-      "note": "non_media_scope_rejected=17",
+      "note": "non_media_scope_rejected=18; feed_filter_rejected=Lighting Assistant, On-Call:not_fresh",
       "active_job_ids": [
         "0925d8e4ca83cf2e",
         "0fa52898d46a6942",
@@ -5653,8 +5374,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 90,
       "new_jobs_this_crawl": 0,
@@ -5789,11 +5510,11 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 17,
-      "new_jobs_this_crawl": 2,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 9,
       "latest_jobs": [
         {
@@ -5805,6 +5526,21 @@
           "title": "Part-Time Producer - CityNews Vancouver",
           "date": "2026-10-28",
           "url": "https://jobs.rogers.com/job/Vancouver-Part-Time-Producer-CityNews-Vancouver-BC/1435137000/"
+        },
+        {
+          "title": "Radio Traffic Coordinator - 6 & 12 Month Contract",
+          "date": "2026-10-27",
+          "url": "https://jobs.rogers.com/job/Toronto-Radio-Traffic-Coordinator-6-&-12-Month-Contract-ON/1444238200/"
+        },
+        {
+          "title": "Video Journalist - Edmonton",
+          "date": "2026-10-23",
+          "url": "https://jobs.rogers.com/job/Edmonton-Video-Journalist-Edmonton-AB/1443138100/"
+        },
+        {
+          "title": "Part-Time Show Execution Coordinator - Today's Shopping Choice",
+          "date": "2026-10-23",
+          "url": "https://jobs.rogers.com/job/Mississauga-Part-Time-Show-Execution-Coordinator-Today&apos;s-Shopping-Choice-ON/1443176700/"
         }
       ],
       "error": "",
@@ -5829,17 +5565,37 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 23,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 8,
       "latest_jobs": [
         {
           "title": "Executive Producer - Daily Show",
           "date": "2026-10-28",
           "url": "https://careers.rtdna.org/job/executive-producer-daily-show-tacoma-washington-0327"
+        },
+        {
+          "title": "Assistant Professor of Sports Media and Communication",
+          "date": "2026-10-27",
+          "url": "https://careers.rtdna.org/job/assistant-professor-of-sports-media-and-communication-des-moines-iowa-0326"
+        },
+        {
+          "title": "Executive Producer",
+          "date": "2026-10-25",
+          "url": "https://careers.rtdna.org/job/executive-producer-stuart-fl-d0c08ee9d4fd124afd97836120fb8bedb"
+        },
+        {
+          "title": "Producer",
+          "date": "2026-10-21",
+          "url": "https://careers.rtdna.org/job/producer-san-diego-ca-48d6644637a63c86aafe18ccf65ba7f3b"
+        },
+        {
+          "title": "Field Producer",
+          "date": "2026-10-21",
+          "url": "https://careers.rtdna.org/job/field-producer-boca-raton-fl-265f31d2fd69a643b1fe4082d6f0490bb"
         }
       ],
       "error": "",
@@ -5863,8 +5619,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -5896,40 +5652,61 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 26,
-      "new_jobs_this_crawl": 3,
-      "active_jobs": 18,
+      "jobs_collected_this_crawl": 39,
+      "new_jobs_this_crawl": 13,
+      "active_jobs": 31,
       "latest_jobs": [
         {
-          "title": "Sr. Mgr., Community Connections, WEWS",
+          "title": "Sr Mgr, Community Connections, KRIS",
           "date": "2026-10-28",
-          "url": "https://scripps.wd115.myworkdayjobs.com/Scripps_Careers/job/Cleveland-OH---WEWS/Sr-Mgr--Community-Connections--WEWS_JR036925-1"
+          "url": "https://scripps.wd115.myworkdayjobs.com/Scripps_Careers/job/Corpus-Christi-TX---KRISKAJA/Sr-Mgr--Community-Connections--KRIS_JR036931-2"
         },
         {
-          "title": "Executive Reporter, KERO",
+          "title": "Sr Mgr, Community Connections, KGUN",
           "date": "2026-10-28",
-          "url": "https://scripps.wd115.myworkdayjobs.com/Scripps_Careers/job/Bakersfield-CA---KERO/Executive-Reporter--KERO_JR036917-1"
+          "url": "https://scripps.wd115.myworkdayjobs.com/Scripps_Careers/job/Tucson-AZ---KGUNKWBA/Sr-Mgr--Community-Connections--KGUN_JR036930-2"
         },
         {
-          "title": "Account Executive, WCPO",
+          "title": "Sr Mgr, Community Connections, KXXV",
           "date": "2026-10-28",
-          "url": "https://scripps.wd115.myworkdayjobs.com/Scripps_Careers/job/Cincinnati-OH---WCPO/Account-Executive--WCPO_JR036915-1"
+          "url": "https://scripps.wd115.myworkdayjobs.com/Scripps_Careers/job/Waco-TX---KXXVKRHD/Sr-Mgr--Community-Connections--KXXV_JR036927-2"
+        },
+        {
+          "title": "Sr Mgr, Community Connections, KMTV",
+          "date": "2026-10-28",
+          "url": "https://scripps.wd115.myworkdayjobs.com/Scripps_Careers/job/Omaha-NE---KMTV/Sr-Mgr--Community-Connections--KMTV_JR036921-1"
+        },
+        {
+          "title": "Sr Mgr, Community Connections, KJRH",
+          "date": "2026-10-28",
+          "url": "https://scripps.wd115.myworkdayjobs.com/Scripps_Careers/job/Tulsa-OK---KJRH/Sr-Mgr--Community-Connections--KJRH_JR036920-1"
         }
       ],
       "error": "",
       "note": "feed_filter_rejected=Creative Services Producer KTVQ:not_fresh ; Multimedia Journalist, WKBW:not_fresh ; Multimedia Journalist, WMAR (Annapolis/Anne Arundel County):not_fresh ; Meteorologist, WMAR:not_fresh ; Administrative Assistant, KIVI - Boise, ID:not_fresh ; Scripps Sports Partnership Lead, Nashville:not_fresh ; Meteorologist, KIVI:not_fresh ; Meteorologist, KGUN:not_fresh",
       "active_job_ids": [
+        "0f017c5d8137fd8a",
+        "17b89d2c7eed2cd2",
+        "28b8c58f51ecd3aa",
+        "2fdbd45cbd04f2a2",
         "344cd279a29e84d9",
+        "34ecb3467f53d081",
+        "3a97e64fb47b597a",
+        "3f45a856654e5989",
+        "4f0bc790aa342a4d",
         "53888ea3ad94ef60",
         "5b83510160f44d38",
         "6872137aab253496",
+        "68ff6daf43954e6f",
         "78d69d9ff192edba",
         "80963ed29132a8c3",
         "811d6593ed01b7dc",
+        "a7dbb60d90c706ae",
         "b169e1c07837eb1f",
+        "b614a3f014fd6b6c",
         "b6e1dc6da1f7793d",
         "b78693637f57f662",
         "ba510d354017e1a4",
@@ -5939,6 +5716,8 @@
         "daa69ac64f151930",
         "e30fc518417bf98e",
         "e5af2f7f6c44746f",
+        "eba9276da3b22a1b",
+        "ed4cb5810b377fd5",
         "fe917d2026c19f49"
       ]
     },
@@ -5950,37 +5729,37 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 21,
-      "new_jobs_this_crawl": 15,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 20,
       "latest_jobs": [
         {
-          "title": "Asia Editor",
+          "title": "Publicist",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/semafor/jobs/4717606005"
+          "url": "https://job-boards.greenhouse.io/semafor/jobs/4743206005"
         },
         {
-          "title": "Briefing Coordinator, Live Journalism",
+          "title": "Audience Booker - Private Roundtables (Contract)",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/semafor/jobs/4739356005"
+          "url": "https://job-boards.greenhouse.io/semafor/jobs/4743578005"
         },
         {
-          "title": "Director, Partnership Management",
+          "title": "Audience Development Coordinator (Contract)",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/semafor/jobs/4704014005"
+          "url": "https://job-boards.greenhouse.io/semafor/jobs/4743568005"
         },
         {
-          "title": "Director, Sales & Strategic Partnerships",
+          "title": "Audience Development - Events (Contract)",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/semafor/jobs/4647095005"
+          "url": "https://job-boards.greenhouse.io/semafor/jobs/4744127005"
         },
         {
-          "title": "Editorial Event Producer - Contract Opportunity",
+          "title": "Digital & Social Platform Editor",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/semafor/jobs/4726092005"
+          "url": "https://job-boards.greenhouse.io/semafor/jobs/4706572005"
         }
       ],
       "error": "",
@@ -6016,8 +5795,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
       "new_jobs_this_crawl": 0,
@@ -6049,10 +5828,10 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 79,
+      "jobs_collected_this_crawl": 78,
       "new_jobs_this_crawl": 0,
       "active_jobs": 72,
       "latest_jobs": [
@@ -6160,6 +5939,36 @@
       ]
     },
     {
+      "company": "SiriusXM",
+      "ats": "Phenom People",
+      "source_url": "https://careers.siriusxm.com/careers/jobs",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 17,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 4,
+      "latest_jobs": [
+        {
+          "title": "NOC Analyst",
+          "date": "2026-10-28",
+          "url": "https://careers.siriusxm.com/careers/jobs/17629"
+        }
+      ],
+      "error": "",
+      "note": "feed_filter_rejected=Senior Machine Learning Engineer:not_fresh ; Staff Machine Learning Scientist, Recomendations:not_fresh ; Lead Broadcast Infrastructure Technician:not_fresh ; Staff Technical Program Manager:not_fresh ; Senior Staff Machine Learning Engineer:not_fresh ; Staff Engineer, DevSecOps:not_fresh ; Senior Vice President, Data & AI Enablement:not_fresh ; Senior Director, Brand Marketing:not_fresh ; Director, Content Marketing:not_fresh ; Associate Director, Content Marketing:not_fresh ; Operations Engineer III:not_fresh ; Senior Software Engineer, Salesforce:not_fresh",
+      "active_job_ids": [
+        "5c6a4219f427be88",
+        "b648c365ad86c3eb",
+        "b714acd9c7609e01",
+        "bd62bb5c1112e382"
+      ]
+    },
+    {
       "company": "Sony Music Entertainment",
       "ats": "Greenhouse",
       "source_url": "https://job-boards.greenhouse.io/sonymusicentertainment",
@@ -6167,31 +5976,21 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 99,
-      "new_jobs_this_crawl": 3,
-      "active_jobs": 19,
+      "jobs_collected_this_crawl": 100,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 20,
       "latest_jobs": [
         {
-          "title": "Manager, Corporate Development, Asia",
+          "title": "Content Creator - AWAL",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/sonymusicentertainment/jobs/8921440002"
-        },
-        {
-          "title": "Manager, Frontline Business & Media PR",
-          "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/sonymusicentertainment/jobs/8522205002"
-        },
-        {
-          "title": "Performance Marketing Manager",
-          "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/sonymusicentertainment/jobs/8922180002"
+          "url": "https://job-boards.greenhouse.io/sonymusicentertainment/jobs/8544540002"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=141; non_media_scope_rejected=42; feed_filter_rejected=Account Coordinator - The Merch Collective:not_fresh ; Account Manager - Ceremony of Roses:not_fresh ; Agent - RoadCo:not_fresh ; Analyst, A&R Admin - Santa Anna:not_fresh ; A&R Analyst - Sony Music Nashville:not_fresh ; A&R Operations Manager - Sony US Latin:not_fresh ; Associate Director, Creative - Alamo:not_fresh ; Associate Director, Digital Marketing - Alamo:not_fresh ; Associate Director, Domestic Marketing:not_fresh ; Associate Director, Marketing - Alamo:not_fresh ; Associate Director, Relationship Manager - The Orchard:not_fresh ; Associate Manager, Frontline Repertoire:not_fresh",
+      "note": "enumerated_jobs=142; non_media_scope_rejected=42; feed_filter_rejected=Account Coordinator - The Merch Collective:not_fresh ; Account Manager - Ceremony of Roses:not_fresh ; Agent - RoadCo:not_fresh ; Analyst, A&R Admin - Santa Anna:not_fresh ; A&R Analyst - Sony Music Nashville:not_fresh ; A&R Operations Manager - Sony US Latin:not_fresh ; Associate Director, Creative - Alamo:not_fresh ; Associate Director, Digital Marketing - Alamo:not_fresh ; Associate Director, Domestic Marketing:not_fresh ; Associate Director, Marketing - Alamo:not_fresh ; Associate Director, Relationship Manager - The Orchard:not_fresh ; Associate Manager, Frontline Repertoire:not_fresh",
       "active_job_ids": [
         "05c6a9325471e852",
         "086d5eb2d82d8eb4",
@@ -6211,6 +6010,7 @@
         "c75ddab6f03f5759",
         "d15ff15d564b96ba",
         "ee6099d0375c44b8",
+        "fab7bff13aa113f8",
         "fec86b646c374099"
       ]
     },
@@ -6222,8 +6022,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 14,
       "new_jobs_this_crawl": 0,
@@ -6267,6 +6067,93 @@
       ]
     },
     {
+      "company": "SoundExchange",
+      "ats": "Greenhouse",
+      "source_url": "https://job-boards.greenhouse.io/soundexchangeinc",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 2,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 2,
+      "latest_jobs": [
+        {
+          "title": "Account Manager",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/soundexchangeinc/jobs/5275553007"
+        }
+      ],
+      "error": "",
+      "note": "enumerated_jobs=2",
+      "active_job_ids": [
+        "4d3b91d029d193e7",
+        "5da4b31a790e92e1"
+      ]
+    },
+    {
+      "company": "Splice",
+      "ats": "Greenhouse",
+      "source_url": "https://job-boards.greenhouse.io/splice",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 4,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 2,
+      "latest_jobs": [
+        {
+          "title": "Data Engineer II (Remote US)",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/splice/jobs/8707299002"
+        }
+      ],
+      "error": "",
+      "note": "enumerated_jobs=6; feed_filter_rejected=Corporate Development Contractor:not_fresh ; Designer, Brand & Marketing:not_fresh",
+      "active_job_ids": [
+        "811a0db2261c14e6",
+        "cc040d55d0d7103f"
+      ]
+    },
+    {
+      "company": "Stagwell",
+      "ats": "iCIMS",
+      "source_url": "https://careers-stagwellglobal.icims.com/jobs/intro",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 11,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 5,
+      "latest_jobs": [
+        {
+          "title": "Enterprise Account Executive",
+          "date": "2026-10-28",
+          "url": "https://careers-stagwellglobal.icims.com/jobs/8203/enterprise-account-executive/job?mode=apply&apply=yes&in_iframe=1&hashed=-1834385692"
+        }
+      ],
+      "error": "",
+      "note": "enumerated_detail_urls=48; feed_filter_rejected=Director Business Intelligence:not_fresh ; Vice President, Comms & Advocacy Growth:not_fresh ; Manager, FP&A:not_fresh ; Director, Account Management & Partnerships:not_fresh ; Sales Lead:not_fresh ; Director, Growth:not_fresh",
+      "active_job_ids": [
+        "2d0081243ecb6c34",
+        "4ee7e81192b25397",
+        "665bd6e193fb5f80",
+        "97924bd00cb9581f",
+        "d35e35da95697ba8"
+      ]
+    },
+    {
       "company": "Stephens Media Group",
       "ats": "Company Career Site",
       "source_url": "https://cherryfm.com/smg-jobs/",
@@ -6274,8 +6161,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
       "new_jobs_this_crawl": 0,
@@ -6301,22 +6188,37 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 15,
-      "new_jobs_this_crawl": 2,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 15,
       "latest_jobs": [
         {
           "title": "Stingray Jobs",
           "date": "2026-10-28",
-          "url": "https://jobs.stingray.com/job/customer-support-specialist/"
+          "url": "https://jobs.stingray.com/job/dev_digit/"
         },
         {
           "title": "Stingray Jobs",
           "date": "2026-10-28",
-          "url": "https://jobs.stingray.com/job/ui-en/"
+          "url": "https://jobs.stingray.com/job/devai2/"
+        },
+        {
+          "title": "Stingray Jobs",
+          "date": "2026-10-28",
+          "url": "https://jobs.stingray.com/job/digital-marketing-project-manager/"
+        },
+        {
+          "title": "Stingray Jobs",
+          "date": "2026-10-28",
+          "url": "https://jobs.stingray.com/job/fpa-analyst/"
+        },
+        {
+          "title": "Stingray Jobs",
+          "date": "2026-10-28",
+          "url": "https://jobs.stingray.com/job/internal-auditor-internal-controls/"
         }
       ],
       "error": "",
@@ -6347,11 +6249,11 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 4,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 1,
       "latest_jobs": [
         {
@@ -6374,10 +6276,10 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 22,
+      "jobs_collected_this_crawl": 21,
       "new_jobs_this_crawl": 0,
       "active_jobs": 11,
       "latest_jobs": [
@@ -6431,47 +6333,43 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 224,
-      "new_jobs_this_crawl": 6,
-      "active_jobs": 55,
+      "jobs_collected_this_crawl": 225,
+      "new_jobs_this_crawl": 4,
+      "active_jobs": 59,
       "latest_jobs": [
         {
-          "title": "Account Executive",
+          "title": "Meteorologist",
           "date": "2026-10-28",
-          "url": "https://boards.greenhouse.io/tegnainc/jobs/5274944007?gh_jid=5274944007"
+          "url": "https://boards.greenhouse.io/tegnainc/jobs/5234688007?gh_jid=5234688007"
         },
         {
-          "title": "Account Executive",
+          "title": "Morning News Anchor",
           "date": "2026-10-28",
-          "url": "https://boards.greenhouse.io/tegnainc/jobs/5271632007?gh_jid=5271632007"
+          "url": "https://boards.greenhouse.io/tegnainc/jobs/5239702007?gh_jid=5239702007"
         },
         {
-          "title": "Broadcast Engineer",
+          "title": "Project Manager, Sponsorships",
           "date": "2026-10-28",
-          "url": "https://boards.greenhouse.io/tegnainc/jobs/5274968007?gh_jid=5274968007"
+          "url": "https://boards.greenhouse.io/tegnainc/jobs/5275353007?gh_jid=5275353007"
         },
         {
-          "title": "Lifestyle Host/Reporter",
+          "title": "WLTX IT Specialist",
           "date": "2026-10-28",
-          "url": "https://boards.greenhouse.io/tegnainc/jobs/5272091007?gh_jid=5272091007"
-        },
-        {
-          "title": "Local Sales Manager",
-          "date": "2026-10-28",
-          "url": "https://boards.greenhouse.io/tegnainc/jobs/5271822007?gh_jid=5271822007"
+          "url": "https://boards.greenhouse.io/tegnainc/jobs/5278215007?gh_jid=5278215007"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=281; feed_filter_rejected=2027 Summer News Intern | Multiple Locations:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive - Twin Falls:not_fresh",
+      "note": "enumerated_jobs=282; feed_filter_rejected=2027 Summer News Intern | Multiple Locations:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive:not_fresh ; Account Executive - Twin Falls:not_fresh",
       "active_job_ids": [
         "07509a96afbe3c04",
         "0e3425b2805edc37",
         "1058e88f242193d1",
         "132467e327b2a88e",
         "13efd99b963fb052",
+        "14616068016b7028",
         "1b0b183c0f8ace35",
         "1f42f35807a0efdb",
         "228ec1ecd6db81cd",
@@ -6490,6 +6388,7 @@
         "527d92b6ad55ee69",
         "536cba21df5bf216",
         "59f7765fe152894f",
+        "5c51895940a1497b",
         "5d21bfba1a2d458a",
         "5d8b48be001d3042",
         "5e057f368c9bfe8c",
@@ -6508,10 +6407,12 @@
         "9684e5a779e3bb16",
         "9e68e2f684f673e0",
         "a600e452630c8140",
+        "ab79fc19f9eaba4d",
         "aeab0b959ffd2b67",
         "b69f04a364c255c8",
         "bb201978791075cd",
         "bedf8f64c22c2e41",
+        "c3210940ad427319",
         "c41aca838ae3be13",
         "ce986ae875ef2c27",
         "d0e313f970aa1dca",
@@ -6532,22 +6433,27 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 40,
-      "new_jobs_this_crawl": 2,
-      "active_jobs": 25,
+      "new_jobs_this_crawl": 3,
+      "active_jobs": 27,
       "latest_jobs": [
         {
-          "title": "Stagehand",
+          "title": "Audio Operator - SEASONAL",
           "date": "2026-10-28",
-          "url": "https://univision.wd1.myworkdayjobs.com/External/job/Miami-FL/Stagehand_R021412"
+          "url": "https://univision.wd1.myworkdayjobs.com/External/job/Miami-FL/Audio-Operator---SEASONAL_R021421"
         },
         {
-          "title": "Multimedia Video Producer - Temp",
+          "title": "Camera Operator - Seasonal",
           "date": "2026-10-28",
-          "url": "https://univision.wd1.myworkdayjobs.com/External/job/San-Antonio-TX/Multimedia-Video-Producer---Temp_R021410"
+          "url": "https://univision.wd1.myworkdayjobs.com/External/job/Miami-FL/Camera-Operator---Seasonal_R021420"
+        },
+        {
+          "title": "Audio Operator",
+          "date": "2026-10-28",
+          "url": "https://univision.wd1.myworkdayjobs.com/External/job/Miami-FL/Audio-Operator_R021419"
         }
       ],
       "error": "",
@@ -6559,10 +6465,11 @@
         "2744fa4b6b6e78cc",
         "2a6ecd65dfaa0656",
         "42ae500709429276",
-        "56e0e977ed960c5c",
+        "4f98a5d008594d12",
         "59287a51ee73c885",
         "6019cee98fe05dcf",
         "6f1f91e12ee119eb",
+        "7ca254c3bd5cb2e0",
         "83c07588787a44c9",
         "8e68b32f3533e3e2",
         "92cad68f047081a7",
@@ -6571,6 +6478,7 @@
         "9d62c6ae371905c7",
         "9f8a3ab684988605",
         "a9b1a90185a64906",
+        "b45686f29a14c0b9",
         "be08c8e08159ae88",
         "c078e02eaea75999",
         "c325ba58577f5f6f",
@@ -6588,17 +6496,22 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 2,
       "latest_jobs": [
         {
           "title": "Photo Editor - U.K.",
           "date": "2026-10-28",
           "url": "https://careers.jobscore.com/careers/iac/jobs/photo-editor-u-k-a_fs3AXL9cw435KEmvlBd3"
+        },
+        {
+          "title": "Associate Executive Editor",
+          "date": "2026-10-15",
+          "url": "https://careers.jobscore.com/careers/iac/jobs/associate-executive-editor-aU4_MxV3vfm5HfB4nlind_"
         }
       ],
       "error": "",
@@ -6616,11 +6529,11 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 13,
-      "new_jobs_this_crawl": 2,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 11,
       "latest_jobs": [
         {
@@ -6632,6 +6545,21 @@
           "title": "Picture editor, Feast",
           "date": "2026-10-28",
           "url": "https://fa-euxy-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/1387"
+        },
+        {
+          "title": "Temp-to-Perm Finance Analyst",
+          "date": "2026-10-26",
+          "url": "https://fa-euxy-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/1339"
+        },
+        {
+          "title": "Account Executive",
+          "date": "2026-10-22",
+          "url": "https://fa-euxy-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/1381"
+        },
+        {
+          "title": "Arts and Culture Correspondent",
+          "date": "2026-10-22",
+          "url": "https://fa-euxy-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/1262"
         }
       ],
       "error": "",
@@ -6658,31 +6586,41 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 147,
-      "new_jobs_this_crawl": 3,
-      "active_jobs": 112,
+      "jobs_collected_this_crawl": 146,
+      "new_jobs_this_crawl": 0,
+      "active_jobs": 111,
       "latest_jobs": [
         {
-          "title": "Senior Customer Service Agent, NYT Wirecutter (Temporary)",
+          "title": "Senior Producer, Opinion Video",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/thenewyorktimes/jobs/4741106005"
+          "url": "https://job-boards.greenhouse.io/thenewyorktimes/jobs/4654009005"
         },
         {
-          "title": "Senior Manager, Strategic Business Communications",
+          "title": "Graphics/Multimedia Editor, News",
           "date": "2026-10-28",
-          "url": "https://job-boards.greenhouse.io/thenewyorktimes/jobs/4748014005"
+          "url": "https://job-boards.greenhouse.io/thenewyorktimes/jobs/4741427005"
         },
         {
-          "title": "Assistant White House Editor",
-          "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/thenewyorktimes/jobs/4748035005"
+          "title": "Staff Photo Editor, Business",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/thenewyorktimes/jobs/4744509005"
+        },
+        {
+          "title": "Video Journalist, Reporter Video",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/thenewyorktimes/jobs/4744526005"
+        },
+        {
+          "title": "Fellow, Opinion Design",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/thenewyorktimes/jobs/4742424005"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=147; feed_filter_rejected=Analyst, Technical Trainer:not_fresh ; Art Director:not_fresh ; Associate Creative Director, Earned Marketing (Temporary):not_fresh ; Associate Creative Director, Events:not_fresh ; Campaign Manager, Audience Development and Insights:not_fresh ; Compensation Manager:not_fresh ; Delivery Driver (RSH):not_fresh ; Delivery Driver (RSH):not_fresh ; Designer, Marketing:not_fresh ; Designer, Marketing (Games):not_fresh ; Director, HR Business Partner - Product Engineering:not_fresh ; HR Generalist:not_fresh",
+      "note": "enumerated_jobs=146; feed_filter_rejected=Analyst, Technical Trainer:not_fresh ; Art Director:not_fresh ; Associate Creative Director, Earned Marketing (Temporary):not_fresh ; Associate Creative Director, Events:not_fresh ; Campaign Manager, Audience Development and Insights:not_fresh ; Compensation Manager:not_fresh ; Delivery Driver (RSH):not_fresh ; Delivery Driver (RSH):not_fresh ; Designer, Marketing:not_fresh ; Designer, Marketing (Games):not_fresh ; Director, HR Business Partner - Product Engineering:not_fresh ; HR Generalist:not_fresh",
       "active_job_ids": [
         "0274c0dbc254c8f0",
         "04af37955fb3221e",
@@ -6725,7 +6663,6 @@
         "59f00b0f817cb6d3",
         "5a793f14ad3e56ca",
         "5aac6a98bf8c018b",
-        "5bb049352d6624b4",
         "5bbe1c4683422be6",
         "5d63ecde63b0726b",
         "5e4ba46dc9d6c4da",
@@ -6806,69 +6743,70 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 34,
-      "new_jobs_this_crawl": 12,
-      "active_jobs": 45,
+      "jobs_collected_this_crawl": 37,
+      "new_jobs_this_crawl": 9,
+      "active_jobs": 43,
       "latest_jobs": [
         {
-          "title": "Manager, Campaign Planning and Activation",
+          "title": "Practice Innovation Advisor- Corporates",
           "date": "2026-10-28",
-          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/United-States-of-America-Eagan-Minnesota/Manager--Campaign-Planning-and-Activation_JREQ204870"
+          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/United-States-of-America-New-York-New-York/Strategic-Innovation-Advisor--Corporates_JREQ204885"
         },
         {
-          "title": "Customer Success Manager, Indirect Tax",
+          "title": "Associate Sales Executive II, Print",
           "date": "2026-10-28",
-          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/United-States-of-America-Frisco-Texas/Customer-Success-Manager--Indirect-Tax_JREQ201398"
+          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/United-States-of-America-Eagan-Minnesota/Associate-Sales-Executive-II--Print_JREQ204884"
         },
         {
-          "title": "Senior Product Manager, Data Platform",
+          "title": "Agent au soutien/Support Agent",
           "date": "2026-10-28",
-          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/United-States-of-America-New-York-New-York/Senior-Product-Manager--Noetica-Financial-Services_JREQ201452"
+          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/Canada-Montreal-Quebec/Agent-au-soutien-Support-Agent_JREQ204541"
         },
         {
-          "title": "Senior Software Engineer",
+          "title": "Agent au soutien/Support Agent",
           "date": "2026-10-28",
-          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/India-Bengaluru-Karnataka/Senior-Software-Engineer_JREQ204516"
+          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/Canada-Montreal-Quebec/Agent-au-soutien-Support-Agent_JREQ204564-1"
         },
         {
-          "title": "Senior Software Engineer II",
+          "title": "Practice Innovation Advisor- Legal Professionals",
           "date": "2026-10-28",
-          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/Mexico-Mexico-City/Senior-Software-Engineer-II_JREQ202776"
+          "url": "https://thomsonreuters.wd5.myworkdayjobs.com/External_Career_Site/job/United-States-of-America-New-York-New-York/Practice-Innovation-Advisor--Legal-Professionals_JREQ204878"
         }
       ],
       "error": "",
       "note": "",
       "active_job_ids": [
+        "047449559e484bfe",
         "047fa10e821e661c",
-        "1ce639bddec4f92f",
-        "2b548a3453b8a84f",
+        "1cff3c4928ba5fef",
         "2dc70050274513f3",
         "31abd6a2f0ff6012",
         "32760942d80613c1",
         "33bbd5aaac7854b4",
         "372f8c9e5addaf89",
-        "377474b7fac56653",
-        "38c0f176128a92fe",
         "3b30aaa4f7bb708a",
         "3d2d262009eb525a",
+        "3e587555ca2f3f06",
         "3f50c894d34cccca",
         "4571ddfdfd4653a1",
-        "47dfb879744be1c1",
-        "4aea2ba918efc5bd",
-        "5696c679dfb36b18",
         "5a463a6b12774a32",
         "5bfb4a46fabc4fc1",
         "5daa57cbc5e02c96",
         "65f231db00a5c2e3",
+        "663ec53f4c60bec8",
+        "667725ae88266ae2",
+        "6c5cac77c37c29d0",
+        "6e89a6604c22d424",
         "738322b67f54936d",
-        "7c53afd29e7733af",
+        "7a3bd6cc57b54ae9",
         "7d831f7ed250c2be",
         "8558f2fb206e60f7",
         "8958b6215e5a365b",
         "99550bd3b66e238e",
+        "9db1f7bf07102bbc",
         "9df82e20710ba0fb",
         "a82c8fa67b478844",
         "adda9e3fe012e20c",
@@ -6879,10 +6817,7 @@
         "ce6abf0a0d3776a2",
         "d0583523d0d324fc",
         "d1de47625d855055",
-        "d8d77759943cc9ea",
-        "db93f267bbc13222",
         "e0e42138e4faf5b3",
-        "e2f3468ea418dc05",
         "ea6954de91213ed8",
         "eba9541b3a566da6",
         "fabcb02298175426",
@@ -6897,10 +6832,10 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 103,
+      "jobs_collected_this_crawl": 102,
       "new_jobs_this_crawl": 0,
       "active_jobs": 103,
       "latest_jobs": [
@@ -7044,45 +6979,26 @@
       "source_url": "https://job-boards.greenhouse.io/unitedmasterstranslation",
       "status": "green",
       "attention_reason": "Healthy",
-      "days_since_new_job": 1,
-      "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 14,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 5,
+      "jobs_collected_this_crawl": 15,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 6,
       "latest_jobs": [
         {
-          "title": "Sr. Context Planner",
-          "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/unitedmasterstranslation/jobs/8868519002"
-        },
-        {
-          "title": "Temporary People Business Partner",
-          "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/unitedmasterstranslation/jobs/8919433002"
-        },
-        {
-          "title": "People & Culture Generalist",
-          "date": "2026-10-27",
-          "url": "https://job-boards.greenhouse.io/unitedmasterstranslation/jobs/8920339002"
-        },
-        {
-          "title": "Sr. Strategy Director",
-          "date": "2026-10-22",
-          "url": "https://job-boards.greenhouse.io/unitedmasterstranslation/jobs/8907980002"
-        },
-        {
-          "title": "Lead Site Reliability Engineer",
-          "date": "2026-10-16",
-          "url": "https://job-boards.greenhouse.io/unitedmasterstranslation/jobs/8895093002"
+          "title": "Sr. Business Affairs Manager",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/unitedmasterstranslation/jobs/8922601002"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=23; feed_filter_rejected=Business Director:not_fresh ; Business Supervisor:not_fresh ; Commerce & Artist Marketing Coordinator:not_fresh ; Creative Operations Lead:not_fresh ; Executive Producer:not_fresh ; Jr. Producer:not_fresh ; Sr. Business Director:not_fresh ; Strategy Director:not_fresh ; VP, Brand Marketing:not_fresh",
+      "note": "enumerated_jobs=24; feed_filter_rejected=Business Director:not_fresh ; Business Supervisor:not_fresh ; Commerce & Artist Marketing Coordinator:not_fresh ; Creative Operations Lead:not_fresh ; Executive Producer:not_fresh ; Jr. Producer:not_fresh ; Sr. Business Director:not_fresh ; Strategy Director:not_fresh ; VP, Brand Marketing:not_fresh",
       "active_job_ids": [
         "4306030fdfd7fb44",
+        "49a8d9fb9385e88f",
         "9365dad07559676f",
         "b83f58027d84b4c3",
         "e68fe1cc17f49fd6",
@@ -7097,22 +7013,37 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 24,
-      "new_jobs_this_crawl": 2,
-      "active_jobs": 17,
+      "new_jobs_this_crawl": 0,
+      "active_jobs": 16,
       "latest_jobs": [
+        {
+          "title": "Senior Data Product Manager- eCommerce",
+          "date": "2026-10-28",
+          "url": "https://umusic.wd5.myworkdayjobs.com/UMGUS/job/Philadelphia-Pennsylvania/Senior-Manager--Data-Product-Ecommerce_UMG-27137"
+        },
         {
           "title": "Director, Privacy and Data Protection",
           "date": "2026-10-28",
           "url": "https://umusic.wd5.myworkdayjobs.com/UMGUS/job/USA-NY-1755-Broadway/Director--Privacy-and-Data-Protection_UMG-27845"
         },
         {
-          "title": "Senior Manager, Identity Governance",
+          "title": "Manager, Social Media",
           "date": "2026-10-27",
-          "url": "https://umusic.wd5.myworkdayjobs.com/UMGUS/job/Nashville-Tennessee/Senior-Manager--Identity-Governance_UMG-27880"
+          "url": "https://umusic.wd5.myworkdayjobs.com/UMGUS/job/USA-NY-Broadway-1140/Manager--Social-Media_UMG-27948"
+        },
+        {
+          "title": "IAM Engineer",
+          "date": "2026-10-27",
+          "url": "https://umusic.wd5.myworkdayjobs.com/UMGUS/job/Nashville-Tennessee/IAM-Engineer_UMG-23764-1"
+        },
+        {
+          "title": "Coordinator, Paid Media",
+          "date": "2026-10-27",
+          "url": "https://umusic.wd5.myworkdayjobs.com/UMGUS/job/Los-Angeles-California/Coordinator--Paid-Media_UMG-27836"
         }
       ],
       "error": "",
@@ -7132,9 +7063,54 @@
         "a5a9fe6ba80793ae",
         "ae70149393805153",
         "c28f7f980d4b4264",
-        "c82481be35be7cf2",
         "d8c4db7dadae2ffb",
         "fe7f1bbf31128fd4"
+      ]
+    },
+    {
+      "company": "Vox Media",
+      "ats": "Greenhouse",
+      "source_url": "https://job-boards.greenhouse.io/voxmedia",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-10-28",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 20,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 20,
+      "latest_jobs": [
+        {
+          "title": "Part-Time Producer, Create or Destroy",
+          "date": "2026-10-28",
+          "url": "http://boards.greenhouse.io/voxmedia/jobs/8328885?gh_jid=8328885"
+        }
+      ],
+      "error": "",
+      "note": "enumerated_jobs=20",
+      "active_job_ids": [
+        "057428333442f7fe",
+        "1154b4bb27f84265",
+        "1e9c395763a1aabb",
+        "279fe21fac596589",
+        "2a147e57a135d226",
+        "38c146ac74f550dc",
+        "3962afae53bf5a16",
+        "3cfebe02f433066e",
+        "50c8fab5504b85a9",
+        "514fe7783c50d12b",
+        "5fadef83b94cbabc",
+        "6c77a8ae5d1c1374",
+        "71cab55088f142cd",
+        "91f290e958c93f1c",
+        "9775f0b73253aefd",
+        "99456ac2b5196c52",
+        "b2a4faca51f3bcac",
+        "b76a17e38daee8aa",
+        "cfbe752797766ec0",
+        "d1c2fd0cdf5e7ec5"
       ]
     },
     {
@@ -7145,8 +7121,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 18,
       "new_jobs_this_crawl": 0,
@@ -7197,17 +7173,37 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 15,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 7,
       "latest_jobs": [
         {
           "title": "B2B Engagement Marketing Lead",
           "date": "2026-10-28",
           "url": "https://washpost.wd5.myworkdayjobs.com/washingtonpostcareers/job/DC-Washington-TWP-Headquarters/B2B-Engagement-Marketing-Lead_JR-90275793-1"
+        },
+        {
+          "title": "Senior Financial Accountant",
+          "date": "2026-10-26",
+          "url": "https://washpost.wd5.myworkdayjobs.com/washingtonpostcareers/job/DC-Washington-TWP-Headquarters/Senior-Financial-Accountant_JR-90275871"
+        },
+        {
+          "title": "Congressional Reporter (5-month contract)",
+          "date": "2026-10-26",
+          "url": "https://washpost.wd5.myworkdayjobs.com/washingtonpostcareers/job/DC-Washington-TWP-Headquarters/Congressional-Reporter--5-month-contract-_JR-90275964"
+        },
+        {
+          "title": "Executive Assistant to the CFO",
+          "date": "2026-10-22",
+          "url": "https://washpost.wd5.myworkdayjobs.com/washingtonpostcareers/job/DC-Washington-TWP-Headquarters/Executive-Assistant-to-the-CFO_JR-90275961"
+        },
+        {
+          "title": "Senior Software Engineer",
+          "date": "2026-10-20",
+          "url": "https://washpost.wd5.myworkdayjobs.com/washingtonpostcareers/job/MEX-TWP-Remote-Office/Senior-Software-Engineer_JR-90275962"
         }
       ],
       "error": "",
@@ -7230,17 +7226,32 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 5,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 4,
       "latest_jobs": [
         {
           "title": "Master Control Operator",
           "date": "2026-10-28",
           "url": "https://recruiting.paylocity.com/Recruiting/Jobs/Details/4621933"
+        },
+        {
+          "title": "Account Executive",
+          "date": "2026-10-27",
+          "url": "https://recruiting.paylocity.com/Recruiting/Jobs/Details/3566070"
+        },
+        {
+          "title": "Director of Network Affiliate and Marketing Strategy",
+          "date": "2026-10-26",
+          "url": "https://recruiting.paylocity.com/Recruiting/Jobs/Details/4311731"
+        },
+        {
+          "title": "Part-Time Video Editor",
+          "date": "2026-10-15",
+          "url": "https://recruiting.paylocity.com/Recruiting/Jobs/Details/4588482"
         }
       ],
       "error": "",
@@ -7260,8 +7271,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 6,
       "new_jobs_this_crawl": 0,
@@ -7305,13 +7316,23 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
-      "jobs_collected_this_crawl": 210,
-      "new_jobs_this_crawl": 2,
-      "active_jobs": 214,
+      "jobs_collected_this_crawl": 209,
+      "new_jobs_this_crawl": 0,
+      "active_jobs": 210,
       "latest_jobs": [
+        {
+          "title": "Landor | Senior Designer, Japan",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/wpp/jobs/8358145002"
+        },
+        {
+          "title": "Managing Director, Litigation - Burson Buchanan",
+          "date": "2026-10-28",
+          "url": "https://job-boards.greenhouse.io/wpp/jobs/8782036002"
+        },
         {
           "title": "Growth Marketing Manager",
           "date": "2026-10-28",
@@ -7321,10 +7342,15 @@
           "title": "Senior Vice President, Go to Market",
           "date": "2026-10-28",
           "url": "https://job-boards.greenhouse.io/wpp/jobs/8911744002"
+        },
+        {
+          "title": "WPP Media | Media Planning Director",
+          "date": "2026-10-27",
+          "url": "https://job-boards.greenhouse.io/wpp/jobs/8530788002"
         }
       ],
       "error": "",
-      "note": "enumerated_jobs=210",
+      "note": "enumerated_jobs=209",
       "active_job_ids": [
         "00837f2eb1b6a7a4",
         "00b23063a9b69300",
@@ -7374,13 +7400,11 @@
         "330d70ef22908171",
         "3387b7ee3bc74674",
         "3485825c2c8fe797",
-        "37709eabf23a683d",
         "382fac54e8c931bb",
         "38a6a51a55183a11",
         "3a84e1a03e8f48db",
         "3b2c0a8087d88d2b",
         "3b6cd56f7763f1ca",
-        "3cf700e5da782ce3",
         "3cfed09a80108ca6",
         "3d5157319faf1cb7",
         "3ee3597931bf844f",
@@ -7450,7 +7474,6 @@
         "8f386916b8711c43",
         "8f4c1a8c0ca5a6cf",
         "90987df750a22beb",
-        "91466741c8747b48",
         "915566be7d25efab",
         "92380f75357f2ca7",
         "9271cf391867c0b4",
@@ -7506,7 +7529,6 @@
         "d26faaa775411e5a",
         "d456424a91211766",
         "d90be203d048885f",
-        "d962721df78ec65f",
         "d9decb220384dd00",
         "d9fe587d635b2ee7",
         "dd04b3695cd3e2f8",
@@ -7550,12 +7572,12 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 103,
-      "new_jobs_this_crawl": 2,
-      "active_jobs": 82,
+      "new_jobs_this_crawl": 0,
+      "active_jobs": 80,
       "latest_jobs": [
         {
           "title": "VP, Video Sales & Strategy",
@@ -7566,6 +7588,21 @@
           "title": "Customer Service Associate",
           "date": "2026-10-28",
           "url": "https://dowjones.wd1.myworkdayjobs.com/Dow_Jones_Career/job/Los-Angeles/Customer-Service-Associate_Job_Req_56171"
+        },
+        {
+          "title": "Senior Manager, Creative Operations & Business Enablement",
+          "date": "2026-10-27",
+          "url": "https://dowjones.wd1.myworkdayjobs.com/Dow_Jones_Career/job/NYC---1211-Ave-of-the-Americas/Senior-Manager--Creative-Operations---Business-Enablement_Job_Req_55998-1"
+        },
+        {
+          "title": "Senior Research Analyst I - Aromatics & Fibers (Dow Jones Energy)",
+          "date": "2026-10-26",
+          "url": "https://dowjones.wd1.myworkdayjobs.com/Dow_Jones_Career/job/Houston-TX---OPIS/Senior-Research-Analyst-I---Aromatics---Fibers--Dow-Jones-Energy-_Job_Req_55847"
+        },
+        {
+          "title": "Associate Director - Strategic Insights (Dow Jones Energy)",
+          "date": "2026-10-26",
+          "url": "https://dowjones.wd1.myworkdayjobs.com/Dow_Jones_Career/job/Houston-TX---OPIS/Associate-Director---Strategic-Insights--Dow-Jones-Energy-_Job_Req_55735"
         }
       ],
       "error": "",
@@ -7582,7 +7619,6 @@
         "1ae98c8289338d26",
         "1bf9e800c8fa7382",
         "1c695541b06c5216",
-        "1ced9986e8d2f6c5",
         "1ee0757be8b8c5ec",
         "1f3ddd0248a19836",
         "206b673dfe701033",
@@ -7612,7 +7648,6 @@
         "6701a32d6bbac037",
         "69c813c49b576e42",
         "6b5c53db827132cf",
-        "6c991ad80867bc52",
         "6d8ff11122692dee",
         "6e74343dfea4a71a",
         "6f56980c498d3e73",
@@ -7663,8 +7698,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 1,
       "last_new_job_at": "2026-10-27",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 5,
       "new_jobs_this_crawl": 0,
@@ -7696,8 +7731,8 @@
       "attention_reason": "Healthy",
       "days_since_new_job": 0,
       "last_new_job_at": "2026-10-28",
-      "last_crawl_at": "2026-10-28T17:17:44Z",
-      "last_successful_crawl_at": "2026-10-28T17:17:44Z",
+      "last_crawl_at": "2026-10-28T21:41:28Z",
+      "last_successful_crawl_at": "2026-10-28T21:41:28Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 8,
       "new_jobs_this_crawl": 0,
