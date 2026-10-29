@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-29T05:54:30.912Z",
+  "generated": "2026-10-29T15:36:44.749Z",
   "version": "2.4",
   "newestDate": "2026-10-27",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1078
+      "count": 1095
     },
     "CPSC": {
       "ok": true,
-      "count": 10058
+      "count": 9445
     },
     "USDA": {
       "ok": true,
@@ -58,23 +58,6 @@
       "score": 155
     },
     {
-      "id": "NHTSA-26V673000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Toyota Land Cruiser Hybrid Vehicles Recalled",
-      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2024-2027 Toyota Land Cruiser Hybrid vehicles. The fuel tube connection near the fuel tank may disconnect and leak fuel. 105,794 vehicles or units…",
-      "brand": "Toyota",
-      "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Land Cruiser Hybrid",
-      "date": "2026-10-14",
-      "units": 105794,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V673000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V673-0712.pdf",
-      "score": 150
-    },
-    {
       "id": "NHTSA-26V621000",
       "source": "NHTSA",
       "category": "consumer",
@@ -109,6 +92,23 @@
       "score": 131
     },
     {
+      "id": "NHTSA-26V673000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Toyota Land Cruiser Hybrid Vehicles Recalled",
+      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2024-2027 Toyota Land Cruiser Hybrid vehicles. The fuel tube connection near the fuel tank may disconnect and leak fuel. 105,794 vehicles or units…",
+      "brand": "Toyota",
+      "company": "Toyota Motor Engineering & Manufacturing",
+      "product": "Land Cruiser Hybrid",
+      "date": "2026-10-14",
+      "units": 105794,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V673000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V673-0712.pdf",
+      "score": 140
+    },
+    {
       "id": "FDA-2026-10-27-h-e-b-bbq-chop-salad-kit-taylor-farms",
       "source": "FDA",
       "category": "food",
@@ -122,7 +122,7 @@
       "pet": false,
       "majorBrand": true,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/taylor-farms-issues-recall-h-e-b-backyard-bbq-chop-salad-kit-due-potential-undeclared-soy-and-tree",
-      "score": 125
+      "score": 119
     },
     {
       "id": "FDA-2026-10-02-great-value-trader-joe-s-organic-blueberries-triple-berry-blend-and-mi",
@@ -209,22 +209,6 @@
       "score": 110
     },
     {
-      "id": "FDA-2026-10-27-no-brand-cold-smoked-sprat-fish-d-m-smoked-fish-inc-dba-haifa-smoked-f",
-      "source": "FDA",
-      "category": "food",
-      "title": "No Brand Cold Smoked Sprat Fish Recalled",
-      "reason": "Potential contamination with Clostridium botulinum",
-      "brand": "No Brand",
-      "company": "D&M Smoked Fish Inc. dba Haifa Smoked Fish Inc.",
-      "product": "Cold Smoked Sprat Fish",
-      "date": "2026-10-27",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/haifa-smoked-fish-recalls-cold-smoked-sprats-due-potential-health-risk",
-      "score": 88
-    },
-    {
       "id": "CPSC-10991-zck01-recalls-kesyup-mattresses-due-to-risk-of-serious-injury-or-death",
       "source": "CPSC",
       "category": "consumer",
@@ -240,6 +224,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/ZCK01-Recalls-Kesyup-Mattresses-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Mattress-Flammability",
       "score": 103
+    },
+    {
+      "id": "FDA-2026-10-27-no-brand-cold-smoked-sprat-fish-d-m-smoked-fish-inc-dba-haifa-smoked-f",
+      "source": "FDA",
+      "category": "food",
+      "title": "No Brand Cold Smoked Sprat Fish Recalled",
+      "reason": "Potential contamination with Clostridium botulinum",
+      "brand": "No Brand",
+      "company": "D&M Smoked Fish Inc. dba Haifa Smoked Fish Inc.",
+      "product": "Cold Smoked Sprat Fish",
+      "date": "2026-10-27",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/haifa-smoked-fish-recalls-cold-smoked-sprats-due-potential-health-risk",
+      "score": 82
     },
     {
       "id": "NHTSA-26V701000",
@@ -292,23 +292,6 @@
       "score": 125
     },
     {
-      "id": "NHTSA-26V698000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Audi Vehicles Recalled",
-      "reason": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2024-2025 Q4 E-Tron and Q4 Sportback E-Tron vehicles. The high voltage battery may fail and cause a fire. 9,048 vehicles or units may be affected.",
-      "brand": "Audi",
-      "company": "Volkswagen Group of America, Inc.",
-      "product": "Q4 Sportback E-Tron, Q4 E-Tron",
-      "date": "2026-10-21",
-      "units": 9048,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V698000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V698-3069.pdf",
-      "score": 117
-    },
-    {
       "id": "NHTSA-26V688000",
       "source": "NHTSA",
       "category": "consumer",
@@ -356,8 +339,25 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E076000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E076000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E076-8231.pdf",
       "score": 109
+    },
+    {
+      "id": "NHTSA-26V698000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Audi Vehicles Recalled",
+      "reason": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2024-2025 Q4 E-Tron and Q4 Sportback E-Tron vehicles. The high voltage battery may fail and cause a fire. 9,048 vehicles or units may be affected.",
+      "brand": "Audi",
+      "company": "Volkswagen Group of America, Inc.",
+      "product": "Q4 Sportback E-Tron, Q4 E-Tron",
+      "date": "2026-10-21",
+      "units": 9048,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V698000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V698-3069.pdf",
+      "score": 105
     },
     {
       "id": "NHTSA-26V597000",
@@ -377,23 +377,6 @@
       "score": 105
     },
     {
-      "id": "NHTSA-26V659000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Toyota RAV4 Plug-In Hybrid Vehicles Recalled",
-      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2026 RAV4 Plug-In Hybrid vehicles. The motor generator ECU may encounter an error, causing the plug-in-hybrid system to reduce power or shutdown…",
-      "brand": "Toyota",
-      "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "RAV4 Plug-In Hybrid",
-      "date": "2026-10-07",
-      "units": 30978,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V659000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V659-5102.pdf",
-      "score": 103
-    },
-    {
       "id": "CPSC-11018-dr-power-equipment-recalls-pilot-and-premier-trimmer-mowers-due-to-ris",
       "source": "CPSC",
       "category": "consumer",
@@ -409,23 +392,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/DR-Power-Equipment-Recalls-Pilot-and-Premier-Trimmer-Mowers-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
       "score": 101
-    },
-    {
-      "id": "NHTSA-26E075000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Nissan Spare Tire Kit Vehicles Recalled",
-      "reason": "Nissan North America, Inc. (Nissan) is recalling certain spare tire accessory kits, part number T99MB7SF0A, sold for certain 2026 Sentra vehicles. The spare tire size and inflation information on the tire placard is…",
-      "brand": "Nissan",
-      "company": "Nissan North America, Inc.",
-      "product": "Spare Tire Kit",
-      "date": "2026-10-21",
-      "units": 392,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E075000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E075-1835.pdf",
-      "score": 97
     },
     {
       "id": "NHTSA-26E073000",
@@ -476,6 +442,23 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/VQQQ-Gas-Patio-Heaters-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
+      "score": 95
+    },
+    {
+      "id": "NHTSA-26V659000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Toyota RAV4 Plug-In Hybrid Vehicles Recalled",
+      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2026 RAV4 Plug-In Hybrid vehicles. The motor generator ECU may encounter an error, causing the plug-in-hybrid system to reduce power or shutdown…",
+      "brand": "Toyota",
+      "company": "Toyota Motor Engineering & Manufacturing",
+      "product": "RAV4 Plug-In Hybrid",
+      "date": "2026-10-07",
+      "units": 30978,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V659000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V659-5102.pdf",
       "score": 95
     },
     {
@@ -564,6 +547,23 @@
       "score": 87
     },
     {
+      "id": "NHTSA-26E075000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Nissan Spare Tire Kit Vehicles Recalled",
+      "reason": "Nissan North America, Inc. (Nissan) is recalling certain spare tire accessory kits, part number T99MB7SF0A, sold for certain 2026 Sentra vehicles. The spare tire size and inflation information on the tire placard is…",
+      "brand": "Nissan",
+      "company": "Nissan North America, Inc.",
+      "product": "Spare Tire Kit",
+      "date": "2026-10-21",
+      "units": 392,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26E075000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E075-1835.pdf",
+      "score": 85
+    },
+    {
       "id": "NHTSA-26V692000",
       "source": "NHTSA",
       "category": "consumer",
@@ -611,7 +611,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V685000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V685000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V685-7183.pdf",
       "score": 85
     },
     {
@@ -717,23 +717,6 @@
       "score": 82
     },
     {
-      "id": "NHTSA-26V700000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Kenworth Vehicles Recalled",
-      "reason": "PACCAR Incorporated (PACCAR) is recalling certain 2022-2023 Kenworth T370, T270, 2022-2027 Kenworth T280, Peterbilt 548, 2023-2027 Kenworth T480, T380, Peterbilt 536, 537, and 2025 Peterbilt 567 vehicles. The remote…",
-      "brand": "Kenworth",
-      "company": "PACCAR Incorporated",
-      "product": "T380, 548, T480, 567, T280, 537, T370, T270",
-      "date": "2026-10-21",
-      "units": 26729,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V700000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V700-4837.pdf",
-      "score": 82
-    },
-    {
       "id": "CPSC-11026-hatsanusa-recalls-blitz-air-rifles-due-to-risk-of-serious-injury-or-de",
       "source": "CPSC",
       "category": "consumer",
@@ -764,24 +747,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V663000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V663000",
-      "score": 75
-    },
-    {
-      "id": "NHTSA-26V658000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "BMW R 18 Vehicles Recalled",
-      "reason": "BMW of North America, LLC (BMW) is recalling certain 2021-2024 R 18 motorcycles equipped with the optional reverse gear. The seal for the reverse gear control unit may deteriorate and allow moisture inside the control…",
-      "brand": "BMW",
-      "company": "BMW of North America, LLC",
-      "product": "R 18",
-      "date": "2026-10-07",
-      "units": 4630,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V658000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V658-0458.pdf",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V663-7659.pdf",
       "score": 75
     },
     {
@@ -938,20 +904,20 @@
       "score": 71
     },
     {
-      "id": "NHTSA-26V708000",
+      "id": "NHTSA-26V700000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Great Dane Vehicles Recalled",
-      "reason": "Great Dane Trailers (Great Dane) is recalling certain 2027 Champion and Everest van trailers. The trailer landing gear k-brace welds may fail, resulting in the landing gear collapsing. 6,810 vehicles or units may be…",
-      "brand": "Great Dane",
-      "company": "Great Dane Trailers",
-      "product": "Champion, Everest",
-      "date": "2026-10-23",
-      "units": 6810,
+      "title": "Kenworth Vehicles Recalled",
+      "reason": "PACCAR Incorporated (PACCAR) is recalling certain 2022-2023 Kenworth T370, T270, 2022-2027 Kenworth T280, Peterbilt 548, 2023-2027 Kenworth T480, T380, Peterbilt 536, 537, and 2025 Peterbilt 567 vehicles. The remote…",
+      "brand": "Kenworth",
+      "company": "PACCAR Incorporated",
+      "product": "T380, 548, T480, 567, T280, 537, T370, T270",
+      "date": "2026-10-21",
+      "units": 26729,
       "pet": false,
       "majorBrand": false,
-      "campaign": "26V708000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V708-9409.pdf",
+      "campaign": "26V700000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V700-4837.pdf",
       "score": 70
     },
     {
@@ -1055,6 +1021,23 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/Colerinsec-Recalls-Jerify-Magnetic-Stick-Figure-Toy-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Magnet-Ingestion-Violate-Mandatory-Standard-for-Toys",
       "score": 68
+    },
+    {
+      "id": "NHTSA-26V658000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "BMW R 18 Vehicles Recalled",
+      "reason": "BMW of North America, LLC (BMW) is recalling certain 2021-2024 R 18 motorcycles equipped with the optional reverse gear. The seal for the reverse gear control unit may deteriorate and allow moisture inside the control…",
+      "brand": "BMW",
+      "company": "BMW of North America, LLC",
+      "product": "R 18",
+      "date": "2026-10-07",
+      "units": 4630,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V658000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V658-0458.pdf",
+      "score": 67
     },
     {
       "id": "NHTSA-26V655000",
@@ -1310,6 +1293,23 @@
       "score": 63
     },
     {
+      "id": "NHTSA-26V708000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Great Dane Vehicles Recalled",
+      "reason": "Great Dane Trailers (Great Dane) is recalling certain 2027 Champion and Everest van trailers. The trailer landing gear k-brace welds may fail, resulting in the landing gear collapsing. 6,810 vehicles or units may be…",
+      "brand": "Great Dane",
+      "company": "Great Dane Trailers",
+      "product": "Champion, Everest",
+      "date": "2026-10-23",
+      "units": 6810,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V708000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V708-9409.pdf",
+      "score": 62
+    },
+    {
       "id": "FDA-2026-10-22-natural-grocers-2-pound-mung-beans-vitamin-cottage-natural-food-market",
       "source": "FDA",
       "category": "food",
@@ -1356,7 +1356,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V650000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V650000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V650-7823.pdf",
       "score": 55
     },
     {
@@ -1407,7 +1407,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V622000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V622000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V622-0796.pdf",
       "score": 55
     },
     {
@@ -1424,7 +1424,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V619000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V619000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V619-8062.pdf",
       "score": 55
     },
     {
@@ -1478,23 +1478,6 @@
       "score": 55
     },
     {
-      "id": "NHTSA-26V699000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Autocar Xpeditor Vehicles Recalled",
-      "reason": "Autocar, LLC (Autocar) is recalling certain 2022-2027 ACX (Xpeditor) vehicles equipped with Cummins L9 diesel engines, part number D563027BX03. The remote fuel filter hoses may separate from the fitting, causing a fuel…",
-      "brand": "Autocar",
-      "company": "Autocar, LLC",
-      "product": "Xpeditor",
-      "date": "2026-10-21",
-      "units": 1339,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V699000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V699000",
-      "score": 54
-    },
-    {
       "id": "FDA-2026-10-09-starfish-seafood-cold-smoked-salmon-halibut-and-trout-krasnyi-oktyabr-",
       "source": "FDA",
       "category": "food",
@@ -1524,22 +1507,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/gardeners-basics-recalls-waltham-29-broccoli-sprouting-seeds-due-possible-salmonella-contamination",
-      "score": 53
-    },
-    {
-      "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "EDEN BROTHERS Broccoli Seeds - Calabrese Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "EDEN BROTHERS",
-      "company": "Eden Brothers LLC",
-      "product": "Broccoli Seeds - Calabrese",
-      "date": "2026-10-07",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
       "score": 53
     },
     {
@@ -1624,6 +1591,22 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/usOpal-Recalls-Xalirium-Portable-Bed-Rails-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails",
       "score": 46
+    },
+    {
+      "id": "FDA-2026-10-07-eden-brothers-broccoli-seeds-calabrese-eden-brothers-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "EDEN BROTHERS Broccoli Seeds - Calabrese Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "EDEN BROTHERS",
+      "company": "Eden Brothers LLC",
+      "product": "Broccoli Seeds - Calabrese",
+      "date": "2026-10-07",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eden-brothers-recalls-calabrese-broccoli-seeds-due-possible-salmonella-contamination",
+      "score": 45
     },
     {
       "id": "FDA-2026-10-02-home-grown-green-sprouting-calabrese-broccoli-seeds-eak-distribution-l",
@@ -1756,53 +1739,20 @@
       "score": 42
     },
     {
-      "id": "FDA-2026-10-21-no-brand-name-compounded-veterinary-medications-wedgewood-pharmacy-llc",
-      "source": "FDA",
-      "category": "health",
-      "title": "No Brand Name Compounded veterinary medications Recalled",
-      "reason": "Potential Potency Issues",
-      "brand": "No Brand Name",
-      "company": "Wedgewood Pharmacy, LLC.",
-      "product": "Compounded veterinary medications",
-      "date": "2026-10-21",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/wedgewood-pharmacy-issues-recall-certain-compounded-veterinary-medications-within-expiry-due",
-      "score": 42
-    },
-    {
-      "id": "NHTSA-26V697000",
+      "id": "NHTSA-26V699000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Thomas Built Buses Saf-T-Liner C2 Vehicles Recalled",
-      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain Thomas Built Buses 2027 Saf-T-Liner C2 school buses. The heater hose may rupture, which can result in hot coolant leaking inside the passenger compartment.…",
-      "brand": "Thomas Built Buses",
-      "company": "Daimler Trucks North America, LLC",
-      "product": "Saf-T-Liner C2",
+      "title": "Autocar Xpeditor Vehicles Recalled",
+      "reason": "Autocar, LLC (Autocar) is recalling certain 2022-2027 ACX (Xpeditor) vehicles equipped with Cummins L9 diesel engines, part number D563027BX03. The remote fuel filter hoses may separate from the fitting, causing a fuel…",
+      "brand": "Autocar",
+      "company": "Autocar, LLC",
+      "product": "Xpeditor",
       "date": "2026-10-21",
-      "units": 8,
+      "units": 1339,
       "pet": false,
       "majorBrand": false,
-      "campaign": "26V697000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V697-7807.pdf",
-      "score": 42
-    },
-    {
-      "id": "NHTSA-26V694000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Koenigsegg CC850 Vehicles Recalled",
-      "reason": "Koenigsegg Automotive AB (Koenigsegg) is recalling certain 2025-2026 CC850 vehicles. The electronic parking brake may not engage properly when the vehicle is in reverse, allowing in unintended vehicle movement. 7…",
-      "brand": "Koenigsegg",
-      "company": "Koenigsegg Automotive AB",
-      "product": "CC850",
-      "date": "2026-10-21",
-      "units": 7,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V694000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V694000",
+      "campaign": "26V699000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V699-2595.pdf",
       "score": 42
     },
     {
@@ -1891,22 +1841,6 @@
       "score": 37
     },
     {
-      "id": "FDA-2026-10-14-par-health-and-endo-usa-argatroban-injection-250-mg-2-5-ml-100-mg-ml-p",
-      "source": "FDA",
-      "category": "health",
-      "title": "Par Health and Endo USA Argatroban Injection 250 mg/2.5 mL (100 mg/mL) Recalled",
-      "reason": "Presence of particulate matter, identified as cellulose, polystyrene, polyethylene terephthalate, stopper material, and possibly stainless steel",
-      "brand": "Par Health and Endo USA",
-      "company": "Par Health USA, LLC",
-      "product": "Argatroban Injection 250 mg/2.5 mL (100 mg/mL)",
-      "date": "2026-10-14",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-argatroban-injection-due-presence-particulate-matter",
-      "score": 36
-    },
-    {
       "id": "CPSC-11019-the-conqueror-recalls-avengers-medals-due-to-risk-of-serious-injury-or",
       "source": "CPSC",
       "category": "consumer",
@@ -1922,6 +1856,56 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/The-Conqueror-Recalls-Avengers-Medals-Due-to-Risk-of-Serious-Injury-or-Death-from-Magnet-Ingestion-Violate-Mandatory-Standard-for-Magnets",
       "score": 36
+    },
+    {
+      "id": "FDA-2026-10-21-no-brand-name-compounded-veterinary-medications-wedgewood-pharmacy-llc",
+      "source": "FDA",
+      "category": "health",
+      "title": "No Brand Name Compounded veterinary medications Recalled",
+      "reason": "Potential Potency Issues",
+      "brand": "No Brand Name",
+      "company": "Wedgewood Pharmacy, LLC.",
+      "product": "Compounded veterinary medications",
+      "date": "2026-10-21",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/wedgewood-pharmacy-issues-recall-certain-compounded-veterinary-medications-within-expiry-due",
+      "score": 30
+    },
+    {
+      "id": "NHTSA-26V697000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Thomas Built Buses Saf-T-Liner C2 Vehicles Recalled",
+      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain Thomas Built Buses 2027 Saf-T-Liner C2 school buses. The heater hose may rupture, which can result in hot coolant leaking inside the passenger compartment.…",
+      "brand": "Thomas Built Buses",
+      "company": "Daimler Trucks North America, LLC",
+      "product": "Saf-T-Liner C2",
+      "date": "2026-10-21",
+      "units": 8,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V697000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V697-7807.pdf",
+      "score": 30
+    },
+    {
+      "id": "NHTSA-26V694000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Koenigsegg CC850 Vehicles Recalled",
+      "reason": "Koenigsegg Automotive AB (Koenigsegg) is recalling certain 2025-2026 CC850 vehicles. The electronic parking brake may not engage properly when the vehicle is in reverse, allowing in unintended vehicle movement. 7…",
+      "brand": "Koenigsegg",
+      "company": "Koenigsegg Automotive AB",
+      "product": "CC850",
+      "date": "2026-10-21",
+      "units": 7,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V694000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V694-7815.pdf",
+      "score": 30
     },
     {
       "id": "NHTSA-26E074000",
@@ -2022,7 +2006,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V648000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V648000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V648-3342.pdf",
       "score": 30
     },
     {
@@ -2040,6 +2024,23 @@
       "majorBrand": false,
       "campaign": "26V616000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V616-5975.pdf",
+      "score": 30
+    },
+    {
+      "id": "CPSC-10986-char-broil-recalls-bistro-pro-electric-grills-due-to-risk-of-electric-",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Char-Broil Recalls Bistro Pro Electric Grills Due to Risk of Electric Shock",
+      "reason": "The grounding wire for the grill's heating element can disconnect and lose fault protection, posing an electric shock hazard.",
+      "brand": "",
+      "company": "",
+      "retailers": "Ace Hardware, Lowe's, Walmart, Wayfair, QVC and other hardware stores nationwide online at Amazon.com, Charbroil.com, Ace Hardware.com, Lowes.com, Walmart.com, Wayfair.com, QVC.com and other online retailers from October 2025 through June 2026 for between $150 and $250.",
+      "product": "Charbroil Bistro Pro Electric Grills",
+      "date": "2026-09-17",
+      "units": 10605,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://cpsc.gov/Recalls/2026/Char-Broil-Recalls-Bistro-Pro-Electric-Grills-Due-to-Risk-of-Electric-Shock",
       "score": 30
     }
   ]
