@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-29T21:32:19.775Z",
+  "generated": "2026-10-30T05:55:49.366Z",
   "version": "2.4",
   "newestDate": "2026-10-29",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1095
+      "count": 1096
     },
     "CPSC": {
       "ok": true,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 110
+      "count": 111
     }
   },
   "count": 120,
@@ -165,7 +165,7 @@
       "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2022-2024 Lexus NX250, NX350, NX350 Hybrid, and NX450h+ vehicles. The instrument panel cluster combination meter may fail to display certain…",
       "brand": "Lexus",
       "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Nx Plug-In Hybrid, Nx Hybrid, Nx",
+      "product": "Nx, Nx Plug-In Hybrid, Nx Hybrid",
       "date": "2026-10-20",
       "units": 68356,
       "pet": false,
@@ -283,7 +283,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 F-150, 2026 F-250 SD, F-350 SD, and F-450 SD vehicles. The left-side tailgate cable may fail under certain heavy load conditions. 30,123 vehicles or units may be…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "F-250 Sd, F-350 Sd, F-150, F-450 Sd",
+      "product": "F-250 Sd, F-350 Sd, F-450 Sd, F-150",
       "date": "2026-10-20",
       "units": 30123,
       "pet": false,
@@ -391,7 +391,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E076000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E076000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E076-8231.pdf",
       "score": 109
     },
     {
@@ -419,7 +419,7 @@
       "reason": "Rivian Automotive, LLC (Rivian) is recalling certain 2022-2027 R1S, 2022-2026 R1T, and 2027 R2 vehicles. The rearview camera image may be obstructed by a notification when in reverse. As such, these vehicles fail to…",
       "brand": "Rivian",
       "company": "Rivian Automotive, LLC",
-      "product": "R1S, R1T, R2",
+      "product": "R2, R1T, R1S",
       "date": "2026-09-16",
       "units": 98828,
       "pet": false,
@@ -725,13 +725,13 @@
       "reason": "Subaru of America, Inc. (Subaru) is recalling certain 2026 Crosstrek and Forester vehicles. The castle nut on the left-front lower control arm ball joint may be improperly fastened, which can lead to the ball joint…",
       "brand": "Subaru",
       "company": "Subaru of America, Inc.",
-      "product": "Crosstrek, Forester",
+      "product": "Forester, Crosstrek",
       "date": "2026-10-19",
       "units": 8,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V685000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V685000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V685-7183.pdf",
       "score": 85
     },
     {
@@ -877,13 +877,13 @@
       "reason": "Honda (American Honda Motor Co.) is recalling certain 2023-2026 CR-V Hybrid, Accord Hybrid, and 2025 CR-V Fuel Cell EV vehicles that were previously remedied under NHTSA recall number 26V366. When using the tire repair…",
       "brand": "Honda",
       "company": "Honda (American Honda Motor Co.)",
-      "product": "Cr-V Fuel Cell EV, Accord Hybrid, Cr-V Hybrid",
+      "product": "Cr-V Hybrid, Accord Hybrid, Cr-V Fuel Cell EV",
       "date": "2026-10-08",
       "units": 4804,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V663000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V663000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V663-7659.pdf",
       "score": 75
     },
     {
@@ -1038,6 +1038,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/Snow-Peak-Recalls-Propane-Fireplace-Inserts-and-Lava-Rocks-Due-to-Risk-of-Serious-Injury-or-Death-from-Burn-and-Fire-Hazards",
       "score": 71
+    },
+    {
+      "id": "FDA-2026-10-29-wise-wife-ground-cinnamon-slr-food-distribution-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Wise Wife Ground cinnamon Recalled",
+      "reason": "Potential to be contaminated with elevated levels of lead.",
+      "brand": "Wise Wife",
+      "company": "SLR Food Distribution Inc.",
+      "product": "Ground cinnamon",
+      "date": "2026-10-29",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/galil-importing-corp-recalls-lior-cinnamon-ground-seasoning-due-elevated-lead-levels",
+      "score": 70
     },
     {
       "id": "NHTSA-26V700000",
@@ -1492,7 +1508,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V650000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V650000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V650-7823.pdf",
       "score": 55
     },
     {
@@ -1543,7 +1559,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V622000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V622000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V622-0796.pdf",
       "score": 55
     },
     {
@@ -1554,13 +1570,13 @@
       "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain 2025-2027 VNL (4) and 2026-2027 VNR (4) vehicles equipped with a tanker application package. Inaccurate axle load calculations may cause reduced braking…",
       "brand": "Volvo",
       "company": "Volvo Trucks North America",
-      "product": "Vnl (4), Vnr (4)",
+      "product": "Vnr (4), Vnl (4)",
       "date": "2026-09-28",
       "units": 392,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V619000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V619000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V619-8062.pdf",
       "score": 55
     },
     {
@@ -1875,6 +1891,23 @@
       "score": 42
     },
     {
+      "id": "NHTSA-26V703000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Byd/Ride Type A Vehicles Recalled",
+      "reason": "BYD Coach & Bus (BYD) is recalling certain 2023-2024 Ride Type A school buses. The electrical contactor may fail, preventing the controls from stopping the lift. 15 vehicles or units may be affected.",
+      "brand": "Byd/Ride",
+      "company": "BYD Coach & Bus",
+      "product": "Type A",
+      "date": "2026-10-22",
+      "units": 15,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V703000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V703-1925.pdf",
+      "score": 42
+    },
+    {
       "id": "NHTSA-26V699000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1888,7 +1921,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V699000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V699000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V699-2595.pdf",
       "score": 42
     },
     {
@@ -1933,7 +1966,7 @@
       "reason": "Prevost Car (US) Inc. (Prevost) is recalling certain Prevost buses. Please see the above list of models. The entrance door is missing the emergency exit operating instruction label. As such, these vehicles fail to…",
       "brand": "Prevost",
       "company": "Prevost Car (US) Inc.",
-      "product": "H3-41, H3-40, H3-45, Xl-40, Xl-45, X3-45, Xlii-45, X3-45 Commuter",
+      "product": "H3-41, H3-45, H3-40, Xl-45, Xl-40, X3-45, Xlii-45, X3-45 Commuter",
       "date": "2026-10-15",
       "units": 7509,
       "pet": false,
@@ -2007,40 +2040,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/wedgewood-pharmacy-issues-recall-certain-compounded-veterinary-medications-within-expiry-due",
-      "score": 30
-    },
-    {
-      "id": "NHTSA-26V697000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Thomas Built Buses Saf-T-Liner C2 Vehicles Recalled",
-      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain Thomas Built Buses 2027 Saf-T-Liner C2 school buses. The heater hose may rupture, which can result in hot coolant leaking inside the passenger compartment.…",
-      "brand": "Thomas Built Buses",
-      "company": "Daimler Trucks North America, LLC",
-      "product": "Saf-T-Liner C2",
-      "date": "2026-10-21",
-      "units": 8,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V697000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V697-7807.pdf",
-      "score": 30
-    },
-    {
-      "id": "NHTSA-26V694000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Koenigsegg CC850 Vehicles Recalled",
-      "reason": "Koenigsegg Automotive AB (Koenigsegg) is recalling certain 2025-2026 CC850 vehicles. The electronic parking brake may not engage properly when the vehicle is in reverse, allowing in unintended vehicle movement. 7…",
-      "brand": "Koenigsegg",
-      "company": "Koenigsegg Automotive AB",
-      "product": "CC850",
-      "date": "2026-10-21",
-      "units": 7,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V694000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V694000",
       "score": 30
     }
   ]
