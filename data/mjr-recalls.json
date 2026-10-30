@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-30T15:06:51.909Z",
+  "generated": "2026-10-30T20:51:26.281Z",
   "version": "2.4",
-  "newestDate": "2026-10-29",
+  "newestDate": "2026-10-30",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1096
+      "count": 1080
     },
     "CPSC": {
       "ok": true,
@@ -23,6 +23,22 @@
   },
   "count": 120,
   "items": [
+    {
+      "id": "FDA-2026-10-30-365-whole-foods-market-standardized-full-spectrum-blend-ashwagandha-ca",
+      "source": "FDA",
+      "category": "health",
+      "title": "365 Whole Foods Market Standardized + Full Spectrum Blend Ashwagandha Capsules Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "365 Whole Foods Market",
+      "company": "Vitality Works Inc.",
+      "product": "Standardized + Full Spectrum Blend Ashwagandha Capsules",
+      "date": "2026-10-30",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/vitality-works-inc-recalls-365-whole-foods-market-ashwagandha-capsules-sold-nationwide-due-potential",
+      "score": 170
+    },
     {
       "id": "CPSC-11038-dreo-recalls-dr-hsh015-space-heaters-due-to-fire-and-burn-hazards",
       "source": "CPSC",
@@ -193,22 +209,6 @@
       "score": 135
     },
     {
-      "id": "FDA-2026-10-27-h-e-b-bbq-chop-salad-kit-taylor-farms",
-      "source": "FDA",
-      "category": "food",
-      "title": "H-E-B BBQ Chop Salad Kit Recalled",
-      "reason": "Undeclared soy and tree nuts (almonds)",
-      "brand": "H-E-B",
-      "company": "Taylor Farms",
-      "product": "BBQ Chop Salad Kit",
-      "date": "2026-10-27",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/taylor-farms-issues-recall-h-e-b-backyard-bbq-chop-salad-kit-due-potential-undeclared-soy-and-tree",
-      "score": 113
-    },
-    {
       "id": "NHTSA-26V653000",
       "source": "NHTSA",
       "category": "consumer",
@@ -226,6 +226,22 @@
       "score": 132
     },
     {
+      "id": "FDA-2026-10-27-h-e-b-bbq-chop-salad-kit-taylor-farms",
+      "source": "FDA",
+      "category": "food",
+      "title": "H-E-B BBQ Chop Salad Kit Recalled",
+      "reason": "Undeclared soy and tree nuts (almonds)",
+      "brand": "H-E-B",
+      "company": "Taylor Farms",
+      "product": "BBQ Chop Salad Kit",
+      "date": "2026-10-27",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/taylor-farms-issues-recall-h-e-b-backyard-bbq-chop-salad-kit-due-potential-undeclared-soy-and-tree",
+      "score": 113
+    },
+    {
       "id": "CPSC-11042-yinklev-recalls-jocoevol-6-drawer-dressers-due-to-risk-of-serious-inju",
       "source": "CPSC",
       "category": "consumer",
@@ -241,22 +257,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Yinklev-Recalls-Jocoevol-6-Drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 138
-    },
-    {
-      "id": "FDA-2026-10-17-gelatelli-coffee-vanilla-gelato-with-coffee-sauce-cookie-pieces-lidl-u",
-      "source": "FDA",
-      "category": "food",
-      "title": "Gelatelli Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces Recalled",
-      "reason": "Potential contamination with Listeria monocytogenes",
-      "brand": "Gelatelli",
-      "company": "Lidl US",
-      "product": "Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces",
-      "date": "2026-10-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/lidl-us-recalls-gelatelli-coffee-vanilla-gelato-due-possible-health-risk",
-      "score": 81
     },
     {
       "id": "NHTSA-26V689000",
@@ -852,6 +852,22 @@
       "campaign": "26V671000",
       "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V671000",
       "score": 83
+    },
+    {
+      "id": "FDA-2026-10-17-gelatelli-coffee-vanilla-gelato-with-coffee-sauce-cookie-pieces-lidl-u",
+      "source": "FDA",
+      "category": "food",
+      "title": "Gelatelli Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces Recalled",
+      "reason": "Potential contamination with Listeria monocytogenes",
+      "brand": "Gelatelli",
+      "company": "Lidl US",
+      "product": "Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces",
+      "date": "2026-10-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/lidl-us-recalls-gelatelli-coffee-vanilla-gelato-due-possible-health-risk",
+      "score": 81
     },
     {
       "id": "CPSC-11031-bamamon-recalls-led-projecting-finger-light-toys-due-to-risk-of-seriou",
@@ -1763,7 +1779,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 53
     },
     {
@@ -2025,23 +2041,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/ONTHEWEI-Recalls-Baby-Bath-Seats-Due-to-Risk-of-Serious-Injury-or-Death-to-Children-from-Drowning-Violate-Mandatory-Standard-for-Infant-Bath-Seats",
-      "score": 40
-    },
-    {
-      "id": "CPSC-11008-agrish-reannounces-and-expands-recall-of-adult-portable-bed-rails-due-",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Agrish Reannounces and Expands Recall of Adult Portable Bed Rails Due to Risk of Serious Injury or…",
-      "reason": "The recalled bed rails violate the mandatory standard for adult portable bed rails because when the bed rails are attached to a bed, users can become entrapped within the bed rail or between the bed rail and the side…",
-      "brand": "Zhongshan Lebo Medical Co., Ltd., of China",
-      "company": "Zhongshan Lebo Medical Co., Ltd., of China",
-      "retailers": "Sold Online At: Amazon.com from April 2025 through May 2026 for between $50 and $80.",
-      "product": "Agrish Adult Portable Bed Rails, models 12014, AG-12011 and 12016",
-      "date": "2026-10-01",
-      "units": 35083,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2027/Agrish-Reannounces-and-Expands-Recall-of-Adult-Portable-Bed-Rails-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Additional-Units-Added",
       "score": 40
     }
   ]
