@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-31T14:35:21.440Z",
+  "generated": "2026-10-31T20:01:37.824Z",
   "version": "2.4",
   "newestDate": "2026-10-30",
   "stale": false,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 119
+      "count": 117
     }
   },
   "count": 120,
@@ -216,7 +216,7 @@
       "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2022-2024 Lexus NX250, NX350, NX350 Hybrid, and NX450h+ vehicles. The instrument panel cluster combination meter may fail to display certain…",
       "brand": "Lexus",
       "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Nx, Nx Hybrid, Nx Plug-In Hybrid",
+      "product": "Nx Plug-In Hybrid, Nx Hybrid, Nx",
       "date": "2026-10-20",
       "units": 68356,
       "pet": false,
@@ -350,7 +350,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 F-150, 2026 F-250 SD, F-350 SD, and F-450 SD vehicles. The left-side tailgate cable may fail under certain heavy load conditions. 30,123 vehicles or units may be…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "F-350 Sd, F-250 Sd, F-150, F-450 Sd",
+      "product": "F-150, F-450 Sd, F-350 Sd, F-250 Sd",
       "date": "2026-10-20",
       "units": 30123,
       "pet": false,
@@ -384,7 +384,7 @@
       "reason": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2024-2025 Q4 E-Tron and Q4 Sportback E-Tron vehicles. The high voltage battery may fail and cause a fire. 9,048 vehicles or units may be affected.",
       "brand": "Audi",
       "company": "Volkswagen Group of America, Inc.",
-      "product": "Q4 Sportback E-Tron, Q4 E-Tron",
+      "product": "Q4 E-Tron, Q4 Sportback E-Tron",
       "date": "2026-10-21",
       "units": 9048,
       "pet": false,
@@ -475,7 +475,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V688000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V688-0857.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V688000",
       "score": 103
     },
     {
@@ -554,7 +554,7 @@
       "reason": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2022-2025 S 500 4MATIC, Maybach S 580 4MATIC, Maybach S 680 4MATIC, S 580 4MATIC, 2023-2025 S 580 E 4MATIC, and 2024-2025 AMG S 63 E Performance vehicles. The front…",
       "brand": "Mercedes-Benz",
       "company": "Mercedes-Benz USA, LLC",
-      "product": "S 580 E 4MATIC, S 580 4MATIC, S 680 4MATIC, Amg S 63 E 4matic+, S 500 4MATIC",
+      "product": "S 580 4MATIC, S 500 4MATIC, Amg S 63 E 4matic+, S 680 4MATIC, S 580 E 4MATIC",
       "date": "2026-10-02",
       "units": 30064,
       "pet": false,
@@ -683,20 +683,20 @@
       "score": 87
     },
     {
-      "id": "NHTSA-26V696000",
+      "id": "NHTSA-26E075000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Chevrolet Vehicles Recalled",
-      "reason": "General Motors, LLC (GM) is recalling certain 2026 Chevrolet Traverse, and GMC Acadia vehicles. The driver or front passenger seat may not have sufficient welds where the seat back recliner pivot mechanism attaches to…",
-      "brand": "Chevrolet",
-      "company": "General Motors, LLC",
-      "product": "Traverse, Acadia",
+      "title": "Nissan Spare Tire Kit Vehicles Recalled",
+      "reason": "Nissan North America, Inc. (Nissan) is recalling certain spare tire accessory kits, part number T99MB7SF0A, sold for certain 2026 Sentra vehicles. The spare tire size and inflation information on the tire placard is…",
+      "brand": "Nissan",
+      "company": "Nissan North America, Inc.",
+      "product": "Spare Tire Kit",
       "date": "2026-10-21",
-      "units": 4,
+      "units": 392,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26V696000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V696-1278.pdf",
+      "campaign": "26E075000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E075-1835.pdf",
       "score": 85
     },
     {
@@ -717,20 +717,20 @@
       "score": 85
     },
     {
-      "id": "NHTSA-26E075000",
+      "id": "NHTSA-26V696000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Nissan Spare Tire Kit Vehicles Recalled",
-      "reason": "Nissan North America, Inc. (Nissan) is recalling certain spare tire accessory kits, part number T99MB7SF0A, sold for certain 2026 Sentra vehicles. The spare tire size and inflation information on the tire placard is…",
-      "brand": "Nissan",
-      "company": "Nissan North America, Inc.",
-      "product": "Spare Tire Kit",
+      "title": "GMC Vehicles Recalled",
+      "reason": "General Motors, LLC (GM) is recalling certain 2026 Chevrolet Traverse, and GMC Acadia vehicles. The driver or front passenger seat may not have sufficient welds where the seat back recliner pivot mechanism attaches to…",
+      "brand": "GMC",
+      "company": "General Motors, LLC",
+      "product": "Acadia, Traverse",
       "date": "2026-10-21",
-      "units": 392,
+      "units": 4,
       "pet": false,
       "majorBrand": true,
-      "campaign": "26E075000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E075-1835.pdf",
+      "campaign": "26V696000",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V696000",
       "score": 85
     },
     {
@@ -849,7 +849,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V671000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V671-9754.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V671000",
       "score": 75
     },
     {
@@ -955,6 +955,23 @@
       "score": 75
     },
     {
+      "id": "NHTSA-26V693000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Hyundai Vehicles Recalled",
+      "reason": "Hyundai Motor America (Hyundai) is recalling certain 2026 Venue, Elantra N, Elantra Hybrid, and Elantra vehicles. The wheel lug nuts may loosen and allow the wheel to detach. 17 vehicles or units may be affected.",
+      "brand": "Hyundai",
+      "company": "Hyundai Motor America",
+      "product": "Elantra N, Venue, Elantra Hybrid, Elantra",
+      "date": "2026-10-20",
+      "units": 17,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V693000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V693-4020.pdf",
+      "score": 73
+    },
+    {
       "id": "NHTSA-26V692000",
       "source": "NHTSA",
       "category": "consumer",
@@ -972,23 +989,6 @@
       "score": 73
     },
     {
-      "id": "NHTSA-26V693000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Hyundai Vehicles Recalled",
-      "reason": "Hyundai Motor America (Hyundai) is recalling certain 2026 Venue, Elantra N, Elantra Hybrid, and Elantra vehicles. The wheel lug nuts may loosen and allow the wheel to detach. 17 vehicles or units may be affected.",
-      "brand": "Hyundai",
-      "company": "Hyundai Motor America",
-      "product": "Elantra, Elantra Hybrid, Venue, Elantra N",
-      "date": "2026-10-20",
-      "units": 17,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V693000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V693-4020.pdf",
-      "score": 73
-    },
-    {
       "id": "NHTSA-26V685000",
       "source": "NHTSA",
       "category": "consumer",
@@ -996,7 +996,7 @@
       "reason": "Subaru of America, Inc. (Subaru) is recalling certain 2026 Crosstrek and Forester vehicles. The castle nut on the left-front lower control arm ball joint may be improperly fastened, which can lead to the ball joint…",
       "brand": "Subaru",
       "company": "Subaru of America, Inc.",
-      "product": "Forester, Crosstrek",
+      "product": "Crosstrek, Forester",
       "date": "2026-10-19",
       "units": 8,
       "pet": false,
@@ -1036,7 +1036,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V700000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V700-4837.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V700000",
       "score": 70
     },
     {
@@ -1131,7 +1131,7 @@
       "reason": "Honda (American Honda Motor Co.) is recalling certain 2023-2026 CR-V Hybrid, Accord Hybrid, and 2025 CR-V Fuel Cell EV vehicles that were previously remedied under NHTSA recall number 26V366. When using the tire repair…",
       "brand": "Honda",
       "company": "Honda (American Honda Motor Co.)",
-      "product": "Cr-V Hybrid, Accord Hybrid, Cr-V Fuel Cell EV",
+      "product": "Cr-V Fuel Cell EV, Accord Hybrid, Cr-V Hybrid",
       "date": "2026-10-08",
       "units": 4804,
       "pet": false,
@@ -1154,7 +1154,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V658000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V658-0458.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V658000",
       "score": 67
     },
     {
@@ -1205,7 +1205,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V611000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V611-3336.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V611000",
       "score": 67
     },
     {
@@ -1357,7 +1357,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V677000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V677-2230.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V677000",
       "score": 63
     },
     {
@@ -1374,7 +1374,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E072000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E072-9951.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E072000",
       "score": 63
     },
     {
@@ -1514,23 +1514,6 @@
       "score": 60
     },
     {
-      "id": "NHTSA-26V714000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ember E-Series Vehicles Recalled",
-      "reason": "Ember Recreational Vehicles, INC (Ember) is recalling certain 2024 E-Series travel trailers equipped with certain power seating assemblies. The power cord fuse may not provide adequate circuit protection. 259 vehicles…",
-      "brand": "Ember",
-      "company": "Ember Recreational Vehicles, INC",
-      "product": "E-Series",
-      "date": "2026-10-28",
-      "units": 259,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V714000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V714-9344.pdf",
-      "score": 58
-    },
-    {
       "id": "NHTSA-26V678000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1646,7 +1629,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V625000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V625-5393.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V625000",
       "score": 55
     },
     {
@@ -1657,7 +1640,7 @@
       "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain 2025-2027 VNL (4) and 2026-2027 VNR (4) vehicles equipped with a tanker application package. Inaccurate axle load calculations may cause reduced braking…",
       "brand": "Volvo",
       "company": "Volvo Trucks North America",
-      "product": "Vnr (4), Vnl (4)",
+      "product": "Vnl (4), Vnr (4)",
       "date": "2026-09-28",
       "units": 392,
       "pet": false,
@@ -1707,7 +1690,7 @@
       "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2026 Lexus TX350, RX350 Hybrid, RX350, RX500 Hybrid, TX500 Hybrid, Toyota Grand Highlander, and Grand Highlander Hybrid vehicles. Due to a…",
       "brand": "Lexus",
       "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Rx, Grand Highlander, Grand Highlander Hybrid, Rx Hybrid, Tx, Tx Hybrid",
+      "product": "Tx Hybrid, Tx, Rx Hybrid, Rx, Grand Highlander Hybrid, Grand Highlander",
       "date": "2026-09-17",
       "units": 617,
       "pet": false,
@@ -1749,23 +1732,6 @@
       "score": 53
     },
     {
-      "id": "NHTSA-26V712000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Nova Bus Vehicles Recalled",
-      "reason": "Nova Bus (US) Inc. (Nova Bus) is recalling certain 2022-2024 LFS and 2023 LFS Artic transit buses. The remote fuel filter hoses may separate from the fitting, causing a fuel leak and an engine stall. 453 vehicles or…",
-      "brand": "Nova Bus",
-      "company": "Nova Bus (US) Inc.",
-      "product": "Lfs, Lfs Artic",
-      "date": "2026-10-27",
-      "units": 453,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V712000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V712-3941.pdf",
-      "score": 50
-    },
-    {
       "id": "NHTSA-26V710000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1773,7 +1739,7 @@
       "reason": "Heartland Recreational Vehicles, LLC (Heartland) is recalling certain 2024 Torque, Bighorn, Cyclone, 2022-2023 Gravity, and Road Warrior fifth wheel recreational trailers equipped with certain power seating assemblies.…",
       "brand": "Heartland",
       "company": "Heartland Recreational Vehicles, LLC",
-      "product": "Bighorn, Cyclone, Torque, Gravity, Road Warrior",
+      "product": "Road Warrior, Gravity, Torque, Cyclone, Bighorn",
       "date": "2026-10-27",
       "units": 518,
       "pet": false,
@@ -2043,6 +2009,40 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Agrish-Reannounces-and-Expands-Recall-of-Adult-Portable-Bed-Rails-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails-Additional-Units-Added",
       "score": 40
+    },
+    {
+      "id": "NHTSA-26E066000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Cummins L9 Vehicles Recalled",
+      "reason": "Cummins, Inc. (Cummins) is recalling certain L9 diesel engines, part number D563027BX03. The remote fuel filter hoses may separate from the fitting, causing a fuel leak and an engine stall. 39,052 vehicles or units may…",
+      "brand": "Cummins",
+      "company": "Cummins, Inc.",
+      "product": "L9",
+      "date": "2026-09-28",
+      "units": 39052,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26E066000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E066-0581.pdf",
+      "score": 40
+    },
+    {
+      "id": "CPSC-11005-designs-direct-recalls-cupcakes-and-cashmere-brand-three-light-floor-l",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Designs Direct Recalls Cupcakes and Cashmere Brand Three-Light Floor Lamps, Due to Risk of Serious…",
+      "reason": "When plugged in or switched on, the lamp cord or internal wiring can smoke, melt, spark, overheat or ignite, posing a risk of serious injury from fire and burn hazards.",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold At: HomeGoods retail stores from June 2025 through July 2026 for between $79 and $89.",
+      "product": "Designs Direct Cupcakes and Cashmere Brand Three-Light Floor Lamps",
+      "date": "2026-10-01",
+      "units": 4200,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://cpsc.gov/Recalls/2027/Designs-Direct-Recalls-Cupcakes-and-Cashmere-Brand-Three-Light-Floor-Lamps-Due-to-Risk-of-Serious-Injury-from-Fire-and-Burn-Hazards",
+      "score": 37
     }
   ]
 }
