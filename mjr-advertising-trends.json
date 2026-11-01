@@ -1,186 +1,186 @@
 {
-  "generated_at": "2026-10-05T15:05:58.451Z",
+  "generated_at": "2026-11-01T15:17:55.029Z",
   "source": "U.S. Census Bureau Monthly Retail Trade; MJR analysis",
-  "methodology": "This immediate refresh groups each category's four highest average monthly sales shares into their separate upcoming action windows, so seasonal opportunities can appear more than once per year. The monthly Census workflow has been updated to use the RAB-style 8.6% hot-month threshold on its next scheduled data rebuild. Sell Now is the current month, Start Prospecting is about 30 days ahead, On Deck is about 60–90 days ahead, and Watch Ahead is four or more months ahead.",
+  "methodology": "MJR calculates each month as a share of annual not-seasonally-adjusted sales for the latest three complete years available and averages those monthly shares. Following the RAB example, a hot month averages at least 8.6% of annual category sales. Categories can appear in multiple action windows so separate strong selling periods remain visible: Sell Now (current month), Start Prospecting (about 30 days ahead), On Deck (about 60–90 days ahead), or Watch Ahead (four or more months ahead). If no category reaches the hot-month mark in a window, MJR shows the strongest available month there as a clearly labeled planning prompt.",
   "years_requested": [
     2025,
     2024,
     2023
   ],
-  "current_month": "October",
+  "current_month": "November",
   "hot_month_share_threshold": 8.6,
   "group_counts": {
-    "sell_now": 4,
-    "start_prospecting": 6,
-    "on_deck": 9,
-    "watch_ahead": 11
+    "sell_now": 6,
+    "start_prospecting": 9,
+    "on_deck": 1,
+    "watch_ahead": 15
   },
   "categories_analyzed": 13,
-  "seasonal_windows": 30,
+  "seasonal_windows": 31,
   "groups": {
     "sell_now": [
       {
-        "category": "Miscellaneous Store Retailers",
-        "category_code": "453",
+        "category": "Electronics & Appliance Stores",
+        "category_code": "443",
         "signal": "sell_now",
-        "stronger_months": "May, June, October, December",
-        "strong_months": "May, June, October, December",
-        "peak_months": "May, June, October, December",
-        "target_month": "October",
-        "target_window": "October",
-        "lead_time": "October is active now",
-        "target_month_avg_share": 9.1,
-        "current_month": "October",
+        "stronger_months": "November, December",
+        "strong_months": "November, December",
+        "peak_months": "November, December",
+        "target_month": "November",
+        "target_window": "November",
+        "lead_time": "Selling window is active now",
+        "target_month_avg_share": 9.56,
+        "current_month": "November",
         "current_month_rank": 2,
-        "current_month_avg_share": 9.06,
+        "current_month_avg_share": 9.56,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, June, October, December as this category's four highest average monthly sales shares. This is a separate planning window for October.",
-        "sales_angle": "Identify the specific retail niche, then connect the stronger window to a concrete offer, event or customer need."
+        "rationale": "MJR identifies November as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Connect campaigns to upgrade cycles, product launches, home projects, major shopping periods and gift demand."
       },
       {
-        "category": "Health & Personal Care Stores",
-        "category_code": "446",
+        "category": "Clothing & Accessories",
+        "category_code": "448",
         "signal": "sell_now",
-        "stronger_months": "October, December",
-        "strong_months": "October, December",
-        "peak_months": "October, December",
-        "target_month": "October",
-        "target_window": "October",
-        "lead_time": "October is active now",
-        "target_month_avg_share": 9.52,
-        "current_month": "October",
+        "stronger_months": "May, August, November, December",
+        "strong_months": "May, August, November, December",
+        "peak_months": "May, August, November, December",
+        "target_month": "November",
+        "target_window": "November",
+        "lead_time": "Selling window is active now",
+        "target_month_avg_share": 9.45,
+        "current_month": "November",
         "current_month_rank": 2,
-        "current_month_avg_share": 8.9,
+        "current_month_avg_share": 9.45,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies October, December as this category's four highest average monthly sales shares. This is a separate planning window for October.",
-        "sales_angle": "Use wellness seasons, benefits timing, back-to-school health, allergy periods and holiday/self-care demand."
+        "rationale": "MJR identifies November as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Start before key shopping periods with seasonal wardrobe, gifting, events, back-to-school and promotional urgency."
       },
       {
-        "category": "Building Material & Garden Supply",
-        "category_code": "444",
+        "category": "Nonstore Retailers",
+        "category_code": "454",
         "signal": "sell_now",
-        "stronger_months": "April, May, June, July, August, October",
-        "strong_months": "April, May, June, July, August, October",
-        "peak_months": "April, May, June, July, August, October",
-        "target_month": "October",
-        "target_window": "October",
-        "lead_time": "October is active now",
-        "target_month_avg_share": 9.06,
-        "current_month": "October",
-        "current_month_rank": 5,
-        "current_month_avg_share": 8.79,
+        "stronger_months": "November, December",
+        "strong_months": "November, December",
+        "peak_months": "November, December",
+        "target_month": "November",
+        "target_window": "November",
+        "lead_time": "Selling window is active now",
+        "target_month_avg_share": 9.44,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.44,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies April, May, June, July, August, October as this category's four highest average monthly sales shares. This is a separate planning window for October.",
-        "sales_angle": "Use project season, weather, home improvement, storm preparation and contractor/homeowner demand."
+        "rationale": "MJR identifies November as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Use shopping peaks, gifting, promotions, digital response, retargeting and customer-acquisition timing."
       },
       {
-        "category": "Gasoline Stations",
-        "category_code": "447",
+        "category": "Sporting Goods, Hobby, Book & Music Stores",
+        "category_code": "451",
         "signal": "sell_now",
-        "stronger_months": "May, June, July, August, October",
-        "strong_months": "May, June, July, August, October",
-        "peak_months": "May, June, July, August, October",
-        "target_month": "October",
-        "target_window": "October",
-        "lead_time": "October is active now",
+        "stronger_months": "August, November, December",
+        "strong_months": "August, November, December",
+        "peak_months": "August, November, December",
+        "target_month": "November",
+        "target_window": "November",
+        "lead_time": "Selling window is active now",
+        "target_month_avg_share": 9.32,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.32,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies November as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Use sports seasons, hobbies, recreation, school calendars, gifting and major local events as timely hooks."
+      },
+      {
+        "category": "Furniture & Home Furnishings",
+        "category_code": "442",
+        "signal": "sell_now",
+        "stronger_months": "August, November, December",
+        "strong_months": "August, November, December",
+        "peak_months": "August, November, December",
+        "target_month": "November",
+        "target_window": "November",
+        "lead_time": "Selling window is active now",
+        "target_month_avg_share": 8.92,
+        "current_month": "November",
+        "current_month_rank": 1,
+        "current_month_avg_share": 8.92,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies November as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Use home projects, financing, moving activity, seasonal refreshes and promotional events as conversation starters."
+      },
+      {
+        "category": "General Merchandise Stores",
+        "category_code": "452",
+        "signal": "sell_now",
+        "stronger_months": "November, December",
+        "strong_months": "November, December",
+        "peak_months": "November, December",
+        "target_month": "November",
+        "target_window": "November",
+        "lead_time": "Selling window is active now",
         "target_month_avg_share": 8.86,
-        "current_month": "October",
-        "current_month_rank": 4,
-        "current_month_avg_share": 8.74,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 8.86,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, June, July, August, October as this category's four highest average monthly sales shares. This is a separate planning window for October.",
-        "sales_angle": "Connect to travel periods, commuter behavior, holiday weekends, convenience-store traffic and loyalty programs."
+        "rationale": "MJR identifies November as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Lead ahead of major shopping periods, seasonal resets, gift buying, school calendars and promotional events."
       }
     ],
     "start_prospecting": [
       {
-        "category": "Electronics & Appliance Stores",
-        "category_code": "443",
-        "signal": "start_prospecting",
-        "stronger_months": "November, December",
-        "strong_months": "November, December",
-        "peak_months": "November, December",
-        "target_month": "November",
-        "target_window": "November",
-        "lead_time": "About 30 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8.02,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies November, December as this category's four highest average monthly sales shares. This is a separate planning window for November.",
-        "sales_angle": "Connect campaigns to upgrade cycles, product launches, home projects, major shopping periods and gift demand."
-      },
-      {
         "category": "Clothing & Accessories",
         "category_code": "448",
         "signal": "start_prospecting",
         "stronger_months": "May, August, November, December",
         "strong_months": "May, August, November, December",
         "peak_months": "May, August, November, December",
-        "target_month": "November",
-        "target_window": "November",
+        "target_month": "December",
+        "target_window": "December",
         "lead_time": "About 30 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8,
+        "target_month_avg_share": 13.08,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.45,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for November.",
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Start before key shopping periods with seasonal wardrobe, gifting, events, back-to-school and promotional urgency."
-      },
-      {
-        "category": "Nonstore Retailers",
-        "category_code": "454",
-        "signal": "start_prospecting",
-        "stronger_months": "November, December",
-        "strong_months": "November, December",
-        "peak_months": "November, December",
-        "target_month": "November",
-        "target_window": "November",
-        "lead_time": "About 30 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 3,
-        "current_month_avg_share": 8.6,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies November, December as this category's four highest average monthly sales shares. This is a separate planning window for November.",
-        "sales_angle": "Use shopping peaks, gifting, promotions, digital response, retargeting and customer-acquisition timing."
       },
       {
         "category": "Sporting Goods, Hobby, Book & Music Stores",
@@ -189,44 +189,67 @@
         "stronger_months": "August, November, December",
         "strong_months": "August, November, December",
         "peak_months": "August, November, December",
-        "target_month": "November",
-        "target_window": "November",
+        "target_month": "December",
+        "target_window": "December",
         "lead_time": "About 30 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 8,
-        "current_month_avg_share": 7.94,
+        "target_month_avg_share": 12.1,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.32,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for November.",
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Use sports seasons, hobbies, recreation, school calendars, gifting and major local events as timely hooks."
       },
       {
-        "category": "Furniture & Home Furnishings",
-        "category_code": "442",
+        "category": "Electronics & Appliance Stores",
+        "category_code": "443",
         "signal": "start_prospecting",
-        "stronger_months": "August, November, December",
-        "strong_months": "August, November, December",
-        "peak_months": "August, November, December",
-        "target_month": "November",
-        "target_window": "November",
+        "stronger_months": "November, December",
+        "strong_months": "November, December",
+        "peak_months": "November, December",
+        "target_month": "December",
+        "target_window": "December",
         "lead_time": "About 30 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 9,
-        "current_month_avg_share": 8.15,
+        "target_month_avg_share": 11.21,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.56,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for November.",
-        "sales_angle": "Use home projects, financing, moving activity, seasonal refreshes and promotional events as conversation starters."
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Connect campaigns to upgrade cycles, product launches, home projects, major shopping periods and gift demand."
+      },
+      {
+        "category": "Nonstore Retailers",
+        "category_code": "454",
+        "signal": "start_prospecting",
+        "stronger_months": "November, December",
+        "strong_months": "November, December",
+        "peak_months": "November, December",
+        "target_month": "December",
+        "target_window": "December",
+        "lead_time": "About 30 days ahead",
+        "target_month_avg_share": 10.67,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.44,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Use shopping peaks, gifting, promotions, digital response, retargeting and customer-acquisition timing."
       },
       {
         "category": "General Merchandise Stores",
@@ -235,208 +258,116 @@
         "stronger_months": "November, December",
         "strong_months": "November, December",
         "peak_months": "November, December",
-        "target_month": "November",
-        "target_window": "November",
-        "lead_time": "About 30 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 5,
-        "current_month_avg_share": 8.38,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies November, December as this category's four highest average monthly sales shares. This is a separate planning window for November.",
-        "sales_angle": "Lead ahead of major shopping periods, seasonal resets, gift buying, school calendars and promotional events."
-      }
-    ],
-    "on_deck": [
-      {
-        "category": "Miscellaneous Store Retailers",
-        "category_code": "453",
-        "signal": "on_deck",
-        "stronger_months": "May, June, October, December",
-        "strong_months": "May, June, October, December",
-        "peak_months": "May, June, October, December",
         "target_month": "December",
         "target_window": "December",
-        "lead_time": "About 60 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
+        "lead_time": "About 30 days ahead",
+        "target_month_avg_share": 10.3,
+        "current_month": "November",
         "current_month_rank": 2,
-        "current_month_avg_share": 9.06,
+        "current_month_avg_share": 8.86,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, June, October, December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
-        "sales_angle": "Identify the specific retail niche, then connect the stronger window to a concrete offer, event or customer need."
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Lead ahead of major shopping periods, seasonal resets, gift buying, school calendars and promotional events."
       },
       {
         "category": "Health & Personal Care Stores",
         "category_code": "446",
-        "signal": "on_deck",
+        "signal": "start_prospecting",
         "stronger_months": "October, December",
         "strong_months": "October, December",
         "peak_months": "October, December",
         "target_month": "December",
         "target_window": "December",
-        "lead_time": "About 60 days ahead",
+        "lead_time": "About 30 days ahead",
         "target_month_avg_share": 9.52,
-        "current_month": "October",
-        "current_month_rank": 2,
-        "current_month_avg_share": 8.9,
+        "current_month": "November",
+        "current_month_rank": 5,
+        "current_month_avg_share": 8.37,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies October, December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Use wellness seasons, benefits timing, back-to-school health, allergy periods and holiday/self-care demand."
       },
       {
-        "category": "Electronics & Appliance Stores",
-        "category_code": "443",
-        "signal": "on_deck",
-        "stronger_months": "November, December",
-        "strong_months": "November, December",
-        "peak_months": "November, December",
+        "category": "Food & Beverage Stores",
+        "category_code": "445",
+        "signal": "start_prospecting",
+        "stronger_months": "December",
+        "strong_months": "December",
+        "peak_months": "December",
         "target_month": "December",
         "target_window": "December",
-        "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 11.21,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8.02,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies November, December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
-        "sales_angle": "Connect campaigns to upgrade cycles, product launches, home projects, major shopping periods and gift demand."
-      },
-      {
-        "category": "Clothing & Accessories",
-        "category_code": "448",
-        "signal": "on_deck",
-        "stronger_months": "May, August, November, December",
-        "strong_months": "May, August, November, December",
-        "peak_months": "May, August, November, December",
-        "target_month": "December",
-        "target_window": "December",
-        "lead_time": "About 60 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
-        "sales_angle": "Start before key shopping periods with seasonal wardrobe, gifting, events, back-to-school and promotional urgency."
-      },
-      {
-        "category": "Nonstore Retailers",
-        "category_code": "454",
-        "signal": "on_deck",
-        "stronger_months": "November, December",
-        "strong_months": "November, December",
-        "peak_months": "November, December",
-        "target_month": "December",
-        "target_window": "December",
-        "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 10.67,
-        "current_month": "October",
+        "lead_time": "About 30 days ahead",
+        "target_month_avg_share": 9.06,
+        "current_month": "November",
         "current_month_rank": 3,
-        "current_month_avg_share": 8.6,
+        "current_month_avg_share": 8.53,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies November, December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
-        "sales_angle": "Use shopping peaks, gifting, promotions, digital response, retargeting and customer-acquisition timing."
-      },
-      {
-        "category": "Sporting Goods, Hobby, Book & Music Stores",
-        "category_code": "451",
-        "signal": "on_deck",
-        "stronger_months": "August, November, December",
-        "strong_months": "August, November, December",
-        "peak_months": "August, November, December",
-        "target_month": "December",
-        "target_window": "December",
-        "lead_time": "About 60 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 8,
-        "current_month_avg_share": 7.94,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
-        "sales_angle": "Use sports seasons, hobbies, recreation, school calendars, gifting and major local events as timely hooks."
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Build around seasonal entertaining, holidays, game days, meal occasions, promotions and local shopping behavior."
       },
       {
         "category": "Furniture & Home Furnishings",
         "category_code": "442",
-        "signal": "on_deck",
+        "signal": "start_prospecting",
         "stronger_months": "August, November, December",
         "strong_months": "August, November, December",
         "peak_months": "August, November, December",
         "target_month": "December",
         "target_window": "December",
-        "lead_time": "About 60 days ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 9,
-        "current_month_avg_share": 8.15,
+        "lead_time": "About 30 days ahead",
+        "target_month_avg_share": 8.89,
+        "current_month": "November",
+        "current_month_rank": 1,
+        "current_month_avg_share": 8.92,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Use home projects, financing, moving activity, seasonal refreshes and promotional events as conversation starters."
       },
       {
-        "category": "General Merchandise Stores",
-        "category_code": "452",
-        "signal": "on_deck",
-        "stronger_months": "November, December",
-        "strong_months": "November, December",
-        "peak_months": "November, December",
+        "category": "Miscellaneous Store Retailers",
+        "category_code": "453",
+        "signal": "start_prospecting",
+        "stronger_months": "May, June, October, December",
+        "strong_months": "May, June, October, December",
+        "peak_months": "May, June, October, December",
         "target_month": "December",
         "target_window": "December",
-        "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 10.3,
-        "current_month": "October",
-        "current_month_rank": 5,
-        "current_month_avg_share": 8.38,
+        "lead_time": "About 30 days ahead",
+        "target_month_avg_share": 8.85,
+        "current_month": "November",
+        "current_month_rank": 9,
+        "current_month_avg_share": 8.14,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies November, December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
-        "sales_angle": "Lead ahead of major shopping periods, seasonal resets, gift buying, school calendars and promotional events."
-      },
+        "rationale": "MJR identifies December as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Identify the specific retail niche, then connect the stronger window to a concrete offer, event or customer need."
+      }
+    ],
+    "on_deck": [
       {
         "category": "Food & Beverage Stores",
         "category_code": "445",
@@ -444,20 +375,19 @@
         "stronger_months": "December",
         "strong_months": "December",
         "peak_months": "December",
-        "target_month": "December",
-        "target_window": "December",
+        "target_month": "January",
+        "target_window": "January",
         "lead_time": "About 60 days ahead",
-        "target_month_avg_share": 9.06,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8.42,
+        "target_month_avg_share": 8.08,
+        "current_month": "November",
+        "current_month_rank": 3,
         "years_used": [
           2025,
           2024,
           2023
         ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies December as this category's four highest average monthly sales shares. This is a separate planning window for December.",
+        "is_fallback": true,
+        "rationale": "No category reached the 8.6% hot-month mark in this timing window. This is the strongest average monthly share available in the window; use it as a planning prompt.",
         "sales_angle": "Build around seasonal entertaining, holidays, game days, meal occasions, promotions and local shopping behavior."
       }
     ],
@@ -471,18 +401,18 @@
         "peak_months": "March, April, May, July, August",
         "target_month": "March",
         "target_window": "March–May",
-        "lead_time": "5 months ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 8,
-        "current_month_avg_share": 8.25,
+        "lead_time": "About 120 days ahead",
+        "target_month_avg_share": 8.98,
+        "current_month": "November",
+        "current_month_rank": 10,
+        "current_month_avg_share": 7.88,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies March, April, May, July, August as this category's four highest average monthly sales shares. This is a separate planning window for March–May.",
+        "rationale": "MJR identifies March–May as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Lead with inventory movement, service growth, trade-ins, event timing and integrated lead generation."
       },
       {
@@ -494,18 +424,18 @@
         "peak_months": "April, May, June, July, August, October",
         "target_month": "April",
         "target_window": "April–August",
-        "lead_time": "6 months ahead",
+        "lead_time": "5 months ahead",
         "target_month_avg_share": 9.06,
-        "current_month": "October",
-        "current_month_rank": 5,
-        "current_month_avg_share": 8.79,
+        "current_month": "November",
+        "current_month_rank": 9,
+        "current_month_avg_share": 8.03,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies April, May, June, July, August, October as this category's four highest average monthly sales shares. This is a separate planning window for April–August.",
+        "rationale": "MJR identifies April–August as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Use project season, weather, home improvement, storm preparation and contractor/homeowner demand."
       },
       {
@@ -517,18 +447,18 @@
         "peak_months": "May, June, October, December",
         "target_month": "May",
         "target_window": "May–June",
-        "lead_time": "7 months ahead",
+        "lead_time": "6 months ahead",
         "target_month_avg_share": 9.1,
-        "current_month": "October",
-        "current_month_rank": 2,
-        "current_month_avg_share": 9.06,
+        "current_month": "November",
+        "current_month_rank": 9,
+        "current_month_avg_share": 8.14,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, June, October, December as this category's four highest average monthly sales shares. This is a separate planning window for May–June.",
+        "rationale": "MJR identifies May–June as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Identify the specific retail niche, then connect the stronger window to a concrete offer, event or customer need."
       },
       {
@@ -540,42 +470,19 @@
         "peak_months": "May, June, July, August, October",
         "target_month": "May",
         "target_window": "May–August",
-        "lead_time": "7 months ahead",
+        "lead_time": "6 months ahead",
         "target_month_avg_share": 8.86,
-        "current_month": "October",
-        "current_month_rank": 4,
-        "current_month_avg_share": 8.74,
+        "current_month": "November",
+        "current_month_rank": 9,
+        "current_month_avg_share": 7.93,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, June, July, August, October as this category's four highest average monthly sales shares. This is a separate planning window for May–August.",
+        "rationale": "MJR identifies May–August as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Connect to travel periods, commuter behavior, holiday weekends, convenience-store traffic and loyalty programs."
-      },
-      {
-        "category": "Clothing & Accessories",
-        "category_code": "448",
-        "signal": "watch_ahead",
-        "stronger_months": "May, August, November, December",
-        "strong_months": "May, August, November, December",
-        "peak_months": "May, August, November, December",
-        "target_month": "May",
-        "target_window": "May",
-        "lead_time": "7 months ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for May.",
-        "sales_angle": "Start before key shopping periods with seasonal wardrobe, gifting, events, back-to-school and promotional urgency."
       },
       {
         "category": "Restaurants & Drinking Places",
@@ -586,19 +493,42 @@
         "peak_months": "May, August",
         "target_month": "May",
         "target_window": "May",
-        "lead_time": "7 months ahead",
-        "target_month_avg_share": null,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8.52,
+        "lead_time": "6 months ahead",
+        "target_month_avg_share": 8.82,
+        "current_month": "November",
+        "current_month_rank": 10,
+        "current_month_avg_share": 8.14,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, August as this category's four highest average monthly sales shares. This is a separate planning window for May.",
+        "rationale": "MJR identifies May as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Build around dayparts, game days, events, holidays, catering, gift cards, traffic needs and limited-time offers."
+      },
+      {
+        "category": "Clothing & Accessories",
+        "category_code": "448",
+        "signal": "watch_ahead",
+        "stronger_months": "May, August, November, December",
+        "strong_months": "May, August, November, December",
+        "peak_months": "May, August, November, December",
+        "target_month": "May",
+        "target_window": "May",
+        "lead_time": "6 months ahead",
+        "target_month_avg_share": 8.66,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.45,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies May as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Start before key shopping periods with seasonal wardrobe, gifting, events, back-to-school and promotional urgency."
       },
       {
         "category": "Motor Vehicle & Parts Dealers",
@@ -609,42 +539,19 @@
         "peak_months": "March, April, May, July, August",
         "target_month": "July",
         "target_window": "July–August",
-        "lead_time": "9 months ahead",
+        "lead_time": "8 months ahead",
         "target_month_avg_share": 8.62,
-        "current_month": "October",
-        "current_month_rank": 8,
-        "current_month_avg_share": 8.25,
+        "current_month": "November",
+        "current_month_rank": 10,
+        "current_month_avg_share": 7.88,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies March, April, May, July, August as this category's four highest average monthly sales shares. This is a separate planning window for July–August.",
+        "rationale": "MJR identifies July–August as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Lead with inventory movement, service growth, trade-ins, event timing and integrated lead generation."
-      },
-      {
-        "category": "Clothing & Accessories",
-        "category_code": "448",
-        "signal": "watch_ahead",
-        "stronger_months": "May, August, November, December",
-        "strong_months": "May, August, November, December",
-        "peak_months": "May, August, November, December",
-        "target_month": "August",
-        "target_window": "August",
-        "lead_time": "10 months ahead",
-        "target_month_avg_share": 8.72,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8,
-        "years_used": [
-          2025,
-          2024,
-          2023
-        ],
-        "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for August.",
-        "sales_angle": "Start before key shopping periods with seasonal wardrobe, gifting, events, back-to-school and promotional urgency."
       },
       {
         "category": "Sporting Goods, Hobby, Book & Music Stores",
@@ -655,42 +562,42 @@
         "peak_months": "August, November, December",
         "target_month": "August",
         "target_window": "August",
-        "lead_time": "10 months ahead",
+        "lead_time": "9 months ahead",
         "target_month_avg_share": 9.07,
-        "current_month": "October",
-        "current_month_rank": 8,
-        "current_month_avg_share": 7.94,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.32,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for August.",
+        "rationale": "MJR identifies August as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Use sports seasons, hobbies, recreation, school calendars, gifting and major local events as timely hooks."
       },
       {
-        "category": "Furniture & Home Furnishings",
-        "category_code": "442",
+        "category": "Clothing & Accessories",
+        "category_code": "448",
         "signal": "watch_ahead",
-        "stronger_months": "August, November, December",
-        "strong_months": "August, November, December",
-        "peak_months": "August, November, December",
+        "stronger_months": "May, August, November, December",
+        "strong_months": "May, August, November, December",
+        "peak_months": "May, August, November, December",
         "target_month": "August",
         "target_window": "August",
-        "lead_time": "10 months ahead",
-        "target_month_avg_share": 8.66,
-        "current_month": "October",
-        "current_month_rank": 9,
-        "current_month_avg_share": 8.15,
+        "lead_time": "9 months ahead",
+        "target_month_avg_share": 8.72,
+        "current_month": "November",
+        "current_month_rank": 2,
+        "current_month_avg_share": 9.45,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies August, November, December as this category's four highest average monthly sales shares. This is a separate planning window for August.",
-        "sales_angle": "Use home projects, financing, moving activity, seasonal refreshes and promotional events as conversation starters."
+        "rationale": "MJR identifies August as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Start before key shopping periods with seasonal wardrobe, gifting, events, back-to-school and promotional urgency."
       },
       {
         "category": "Restaurants & Drinking Places",
@@ -701,317 +608,138 @@
         "peak_months": "May, August",
         "target_month": "August",
         "target_window": "August",
-        "lead_time": "10 months ahead",
+        "lead_time": "9 months ahead",
         "target_month_avg_share": 8.7,
-        "current_month": "October",
-        "current_month_rank": 6,
-        "current_month_avg_share": 8.52,
+        "current_month": "November",
+        "current_month_rank": 10,
+        "current_month_avg_share": 8.14,
         "years_used": [
           2025,
           2024,
           2023
         ],
         "is_fallback": false,
-        "rationale": "MJR's current three-year feed identifies May, August as this category's four highest average monthly sales shares. This is a separate planning window for August.",
+        "rationale": "MJR identifies August as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
         "sales_angle": "Build around dayparts, game days, events, holidays, catering, gift cards, traffic needs and limited-time offers."
+      },
+      {
+        "category": "Furniture & Home Furnishings",
+        "category_code": "442",
+        "signal": "watch_ahead",
+        "stronger_months": "August, November, December",
+        "strong_months": "August, November, December",
+        "peak_months": "August, November, December",
+        "target_month": "August",
+        "target_window": "August",
+        "lead_time": "9 months ahead",
+        "target_month_avg_share": 8.66,
+        "current_month": "November",
+        "current_month_rank": 1,
+        "current_month_avg_share": 8.92,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies August as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Use home projects, financing, moving activity, seasonal refreshes and promotional events as conversation starters."
+      },
+      {
+        "category": "Miscellaneous Store Retailers",
+        "category_code": "453",
+        "signal": "watch_ahead",
+        "stronger_months": "May, June, October, December",
+        "strong_months": "May, June, October, December",
+        "peak_months": "May, June, October, December",
+        "target_month": "October",
+        "target_window": "October",
+        "lead_time": "11 months ahead",
+        "target_month_avg_share": 9.06,
+        "current_month": "November",
+        "current_month_rank": 9,
+        "current_month_avg_share": 8.14,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies October as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Identify the specific retail niche, then connect the stronger window to a concrete offer, event or customer need."
+      },
+      {
+        "category": "Health & Personal Care Stores",
+        "category_code": "446",
+        "signal": "watch_ahead",
+        "stronger_months": "October, December",
+        "strong_months": "October, December",
+        "peak_months": "October, December",
+        "target_month": "October",
+        "target_window": "October",
+        "lead_time": "11 months ahead",
+        "target_month_avg_share": 8.9,
+        "current_month": "November",
+        "current_month_rank": 5,
+        "current_month_avg_share": 8.37,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies October as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Use wellness seasons, benefits timing, back-to-school health, allergy periods and holiday/self-care demand."
+      },
+      {
+        "category": "Building Material & Garden Supply",
+        "category_code": "444",
+        "signal": "watch_ahead",
+        "stronger_months": "April, May, June, July, August, October",
+        "strong_months": "April, May, June, July, August, October",
+        "peak_months": "April, May, June, July, August, October",
+        "target_month": "October",
+        "target_window": "October",
+        "lead_time": "11 months ahead",
+        "target_month_avg_share": 8.79,
+        "current_month": "November",
+        "current_month_rank": 9,
+        "current_month_avg_share": 8.03,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies October as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Use project season, weather, home improvement, storm preparation and contractor/homeowner demand."
+      },
+      {
+        "category": "Gasoline Stations",
+        "category_code": "447",
+        "signal": "watch_ahead",
+        "stronger_months": "May, June, July, August, October",
+        "strong_months": "May, June, July, August, October",
+        "peak_months": "May, June, July, August, October",
+        "target_month": "October",
+        "target_window": "October",
+        "lead_time": "11 months ahead",
+        "target_month_avg_share": 8.74,
+        "current_month": "November",
+        "current_month_rank": 9,
+        "current_month_avg_share": 7.93,
+        "years_used": [
+          2025,
+          2024,
+          2023
+        ],
+        "is_fallback": false,
+        "rationale": "MJR identifies October as a hot selling period for this category, with each listed month averaging at least 8.6% of annual category sales across the years analyzed.",
+        "sales_angle": "Connect to travel periods, commuter behavior, holiday weekends, convenience-store traffic and loyalty programs."
       }
     ]
   },
   "category_summary": [
-    {
-      "category_code": "453",
-      "category": "Miscellaneous Store Retailers",
-      "signal": "sell_now",
-      "strong_months": [
-        "May",
-        "June",
-        "October",
-        "December"
-      ],
-      "windows": {
-        "sell_now": [
-          "October"
-        ],
-        "start_prospecting": [],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": [
-          "May–June"
-        ]
-      },
-      "current_month_rank": 2,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "446",
-      "category": "Health & Personal Care Stores",
-      "signal": "sell_now",
-      "strong_months": [
-        "October",
-        "December"
-      ],
-      "windows": {
-        "sell_now": [
-          "October"
-        ],
-        "start_prospecting": [],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": []
-      },
-      "current_month_rank": 2,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "444",
-      "category": "Building Material & Garden Supply",
-      "signal": "sell_now",
-      "strong_months": [
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "October"
-      ],
-      "windows": {
-        "sell_now": [
-          "October"
-        ],
-        "start_prospecting": [],
-        "on_deck": [],
-        "watch_ahead": [
-          "April–August"
-        ]
-      },
-      "current_month_rank": 5,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "447",
-      "category": "Gasoline Stations",
-      "signal": "sell_now",
-      "strong_months": [
-        "May",
-        "June",
-        "July",
-        "August",
-        "October"
-      ],
-      "windows": {
-        "sell_now": [
-          "October"
-        ],
-        "start_prospecting": [],
-        "on_deck": [],
-        "watch_ahead": [
-          "May–August"
-        ]
-      },
-      "current_month_rank": 4,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "443",
-      "category": "Electronics & Appliance Stores",
-      "signal": "start_prospecting",
-      "strong_months": [
-        "November",
-        "December"
-      ],
-      "windows": {
-        "sell_now": [],
-        "start_prospecting": [
-          "November"
-        ],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": []
-      },
-      "current_month_rank": 6,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "448",
-      "category": "Clothing & Accessories",
-      "signal": "start_prospecting",
-      "strong_months": [
-        "May",
-        "August",
-        "November",
-        "December"
-      ],
-      "windows": {
-        "sell_now": [],
-        "start_prospecting": [
-          "November"
-        ],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": [
-          "May",
-          "August"
-        ]
-      },
-      "current_month_rank": 6,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "454",
-      "category": "Nonstore Retailers",
-      "signal": "start_prospecting",
-      "strong_months": [
-        "November",
-        "December"
-      ],
-      "windows": {
-        "sell_now": [],
-        "start_prospecting": [
-          "November"
-        ],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": []
-      },
-      "current_month_rank": 3,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "451",
-      "category": "Sporting Goods, Hobby, Book & Music Stores",
-      "signal": "start_prospecting",
-      "strong_months": [
-        "August",
-        "November",
-        "December"
-      ],
-      "windows": {
-        "sell_now": [],
-        "start_prospecting": [
-          "November"
-        ],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": [
-          "August"
-        ]
-      },
-      "current_month_rank": 8,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "442",
-      "category": "Furniture & Home Furnishings",
-      "signal": "start_prospecting",
-      "strong_months": [
-        "August",
-        "November",
-        "December"
-      ],
-      "windows": {
-        "sell_now": [],
-        "start_prospecting": [
-          "November"
-        ],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": [
-          "August"
-        ]
-      },
-      "current_month_rank": 9,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "452",
-      "category": "General Merchandise Stores",
-      "signal": "start_prospecting",
-      "strong_months": [
-        "November",
-        "December"
-      ],
-      "windows": {
-        "sell_now": [],
-        "start_prospecting": [
-          "November"
-        ],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": []
-      },
-      "current_month_rank": 5,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
-    {
-      "category_code": "445",
-      "category": "Food & Beverage Stores",
-      "signal": "on_deck",
-      "strong_months": [
-        "December"
-      ],
-      "windows": {
-        "sell_now": [],
-        "start_prospecting": [],
-        "on_deck": [
-          "December"
-        ],
-        "watch_ahead": []
-      },
-      "current_month_rank": 6,
-      "years_used": [
-        2025,
-        2024,
-        2023
-      ]
-    },
     {
       "category_code": "441",
       "category": "Motor Vehicle & Parts Dealers",
@@ -1032,7 +760,298 @@
           "July–August"
         ]
       },
-      "current_month_rank": 8,
+      "current_month_rank": 10,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "442",
+      "category": "Furniture & Home Furnishings",
+      "signal": "sell_now",
+      "strong_months": [
+        "August",
+        "November",
+        "December"
+      ],
+      "windows": {
+        "sell_now": [
+          "November"
+        ],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": [
+          "August"
+        ]
+      },
+      "current_month_rank": 1,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "443",
+      "category": "Electronics & Appliance Stores",
+      "signal": "sell_now",
+      "strong_months": [
+        "November",
+        "December"
+      ],
+      "windows": {
+        "sell_now": [
+          "November"
+        ],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": []
+      },
+      "current_month_rank": 2,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "444",
+      "category": "Building Material & Garden Supply",
+      "signal": "watch_ahead",
+      "strong_months": [
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "October"
+      ],
+      "windows": {
+        "sell_now": [],
+        "start_prospecting": [],
+        "on_deck": [],
+        "watch_ahead": [
+          "April–August",
+          "October"
+        ]
+      },
+      "current_month_rank": 9,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "445",
+      "category": "Food & Beverage Stores",
+      "signal": "start_prospecting",
+      "strong_months": [
+        "December"
+      ],
+      "windows": {
+        "sell_now": [],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": []
+      },
+      "current_month_rank": 3,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "446",
+      "category": "Health & Personal Care Stores",
+      "signal": "start_prospecting",
+      "strong_months": [
+        "October",
+        "December"
+      ],
+      "windows": {
+        "sell_now": [],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": [
+          "October"
+        ]
+      },
+      "current_month_rank": 5,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "447",
+      "category": "Gasoline Stations",
+      "signal": "watch_ahead",
+      "strong_months": [
+        "May",
+        "June",
+        "July",
+        "August",
+        "October"
+      ],
+      "windows": {
+        "sell_now": [],
+        "start_prospecting": [],
+        "on_deck": [],
+        "watch_ahead": [
+          "May–August",
+          "October"
+        ]
+      },
+      "current_month_rank": 9,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "448",
+      "category": "Clothing & Accessories",
+      "signal": "sell_now",
+      "strong_months": [
+        "May",
+        "August",
+        "November",
+        "December"
+      ],
+      "windows": {
+        "sell_now": [
+          "November"
+        ],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": [
+          "May",
+          "August"
+        ]
+      },
+      "current_month_rank": 2,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "451",
+      "category": "Sporting Goods, Hobby, Book & Music Stores",
+      "signal": "sell_now",
+      "strong_months": [
+        "August",
+        "November",
+        "December"
+      ],
+      "windows": {
+        "sell_now": [
+          "November"
+        ],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": [
+          "August"
+        ]
+      },
+      "current_month_rank": 2,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "452",
+      "category": "General Merchandise Stores",
+      "signal": "sell_now",
+      "strong_months": [
+        "November",
+        "December"
+      ],
+      "windows": {
+        "sell_now": [
+          "November"
+        ],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": []
+      },
+      "current_month_rank": 2,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "453",
+      "category": "Miscellaneous Store Retailers",
+      "signal": "start_prospecting",
+      "strong_months": [
+        "May",
+        "June",
+        "October",
+        "December"
+      ],
+      "windows": {
+        "sell_now": [],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": [
+          "May–June",
+          "October"
+        ]
+      },
+      "current_month_rank": 9,
+      "years_used": [
+        2025,
+        2024,
+        2023
+      ]
+    },
+    {
+      "category_code": "454",
+      "category": "Nonstore Retailers",
+      "signal": "sell_now",
+      "strong_months": [
+        "November",
+        "December"
+      ],
+      "windows": {
+        "sell_now": [
+          "November"
+        ],
+        "start_prospecting": [
+          "December"
+        ],
+        "on_deck": [],
+        "watch_ahead": []
+      },
+      "current_month_rank": 2,
       "years_used": [
         2025,
         2024,
@@ -1056,7 +1075,7 @@
           "August"
         ]
       },
-      "current_month_rank": 6,
+      "current_month_rank": 10,
       "years_used": [
         2025,
         2024,
@@ -1113,52 +1132,52 @@
     },
     "category_type_month_counts": {
       "2025:441": {
-        "IR": 12,
-        "E_IR": 12,
         "MPCIM": 4,
         "E_MPCIM": 12,
-        "MPCSM": 5,
-        "E_MPCSM": 12,
-        "SM": 12,
         "IM": 12,
         "E_IM": 12,
-        "E_SM": 12
+        "IR": 12,
+        "E_IR": 12,
+        "E_SM": 12,
+        "MPCSM": 5,
+        "E_MPCSM": 12,
+        "SM": 12
       },
       "2025:442": {
-        "MPCSM": 6,
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
-      },
-      "2025:443": {
         "SM": 12,
         "E_SM": 12,
         "MPCSM": 6,
         "E_MPCSM": 12
       },
-      "2025:444": {
-        "IM": 12,
-        "E_IM": 12,
-        "E_MPCSM": 12,
-        "SM": 12,
-        "IR": 12,
+      "2025:443": {
         "E_SM": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12,
+        "SM": 12
+      },
+      "2025:444": {
         "E_IR": 12,
         "MPCIM": 7,
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "SM": 12,
+        "E_SM": 12,
         "E_MPCIM": 12,
-        "MPCSM": 5
+        "MPCSM": 5,
+        "E_MPCSM": 12
       },
       "2025:445": {
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
         "E_IR": 12,
         "MPCIM": 8,
         "E_MPCIM": 12,
         "MPCSM": 5,
-        "IM": 12,
-        "E_IM": 12,
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12,
-        "IR": 12
+        "E_MPCSM": 12
       },
       "2025:446": {
         "MPCSM": 6,
@@ -1167,12 +1186,13 @@
         "E_SM": 12
       },
       "2025:447": {
-        "SM": 12,
-        "E_SM": 12,
         "MPCSM": 5,
-        "E_MPCSM": 12
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
       },
       "2025:448": {
+        "E_MPCIM": 12,
         "SM": 12,
         "E_SM": 12,
         "IM": 12,
@@ -1180,7 +1200,6 @@
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 9,
-        "E_MPCIM": 12,
         "MPCSM": 8,
         "E_MPCSM": 12
       },
@@ -1191,15 +1210,15 @@
         "E_SM": 12
       },
       "2025:452": {
-        "IR": 12,
-        "E_IR": 12,
+        "MPCSM": 7,
         "E_MPCSM": 9,
-        "SM": 12,
         "IM": 12,
         "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
         "MPCIM": 9,
         "E_MPCIM": 10,
-        "MPCSM": 7,
+        "SM": 12,
         "E_SM": 12
       },
       "2025:453": {
@@ -1209,10 +1228,10 @@
         "E_SM": 12
       },
       "2025:454": {
-        "MPCSM": 7,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "E_MPCSM": 12,
+        "MPCSM": 7
       },
       "2025:722": {
         "MPCSM": 6,
@@ -1221,22 +1240,22 @@
         "E_SM": 12
       },
       "2024:441": {
-        "IM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
+        "E_MPCSM": 12,
+        "IM": 12,
+        "E_IM": 12,
         "MPCIM": 8,
         "E_MPCIM": 12,
         "MPCSM": 7,
-        "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
       "2024:442": {
-        "SM": 12,
-        "E_SM": 12,
         "MPCSM": 8,
-        "E_MPCSM": 12
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
       },
       "2024:443": {
         "MPCSM": 6,
@@ -1245,28 +1264,28 @@
         "E_SM": 12
       },
       "2024:444": {
+        "E_IM": 12,
+        "IR": 12,
         "MPCSM": 6,
         "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12,
         "IM": 12,
-        "E_IM": 12,
-        "IR": 12,
         "E_IR": 12,
         "MPCIM": 9,
-        "E_MPCIM": 12
+        "E_MPCIM": 12,
+        "SM": 12,
+        "E_SM": 12
       },
       "2024:445": {
-        "SM": 12,
-        "E_SM": 12,
-        "IM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
+        "IM": 12,
+        "E_IM": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12,
         "MPCIM": 5,
         "E_MPCIM": 12,
-        "MPCSM": 6,
-        "E_MPCSM": 12
+        "SM": 12,
+        "E_SM": 12
       },
       "2024:446": {
         "MPCSM": 6,
@@ -1275,22 +1294,22 @@
         "E_SM": 12
       },
       "2024:447": {
-        "MPCSM": 6,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "E_MPCSM": 12,
+        "MPCSM": 6
       },
       "2024:448": {
+        "IM": 12,
+        "E_IM": 12,
+        "IR": 12,
+        "E_IR": 12,
         "MPCIM": 7,
         "E_MPCIM": 12,
         "MPCSM": 8,
         "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12,
-        "IM": 12,
-        "E_IM": 12,
-        "IR": 12,
-        "E_IR": 12
+        "E_SM": 12
       },
       "2024:451": {
         "MPCSM": 7,
@@ -1317,34 +1336,34 @@
         "E_SM": 12
       },
       "2024:454": {
-        "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12,
-        "MPCSM": 7
-      },
-      "2024:722": {
-        "MPCSM": 6,
+        "MPCSM": 7,
         "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
-      "2023:441": {
+      "2024:722": {
         "SM": 12,
         "E_SM": 12,
-        "IR": 12,
-        "E_IR": 12,
+        "MPCSM": 6,
+        "E_MPCSM": 12
+      },
+      "2023:441": {
+        "IM": 12,
+        "E_IM": 12,
         "MPCIM": 11,
         "E_MPCIM": 12,
         "MPCSM": 5,
         "E_MPCSM": 12,
-        "IM": 12,
-        "E_IM": 12
+        "SM": 12,
+        "E_SM": 12,
+        "IR": 12,
+        "E_IR": 12
       },
       "2023:442": {
+        "E_SM": 12,
         "MPCSM": 4,
         "E_MPCSM": 12,
-        "SM": 12,
-        "E_SM": 12
+        "SM": 12
       },
       "2023:443": {
         "MPCSM": 6,
@@ -1354,33 +1373,33 @@
       },
       "2023:444": {
         "IM": 12,
+        "E_MPCIM": 12,
+        "E_SM": 12,
         "E_IM": 12,
-        "E_MPCSM": 12,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 7,
-        "E_MPCIM": 12,
         "MPCSM": 5,
-        "SM": 12,
-        "E_SM": 12
+        "E_MPCSM": 12,
+        "SM": 12
       },
       "2023:445": {
+        "MPCIM": 8,
+        "E_MPCIM": 12,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
-        "MPCIM": 8,
-        "E_MPCIM": 12,
         "MPCSM": 6,
         "E_MPCSM": 12,
         "SM": 12,
         "E_SM": 12
       },
       "2023:446": {
+        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12,
         "MPCSM": 5,
-        "E_MPCSM": 12
+        "E_SM": 12
       },
       "2023:447": {
         "E_SM": 12,
@@ -1389,16 +1408,16 @@
         "SM": 12
       },
       "2023:448": {
-        "SM": 12,
-        "E_SM": 12,
+        "E_MPCIM": 12,
         "IM": 12,
         "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
         "MPCIM": 7,
-        "E_MPCIM": 12,
         "MPCSM": 8,
-        "E_MPCSM": 12
+        "E_MPCSM": 12,
+        "SM": 12,
+        "E_SM": 12
       },
       "2023:451": {
         "MPCSM": 6,
@@ -1407,12 +1426,12 @@
         "E_SM": 12
       },
       "2023:452": {
-        "SM": 12,
-        "IM": 12,
-        "E_SM": 12,
-        "E_IM": 12,
         "IR": 12,
         "E_IR": 12,
+        "SM": 12,
+        "E_SM": 12,
+        "IM": 12,
+        "E_IM": 12,
         "MPCIM": 6,
         "E_MPCIM": 7,
         "MPCSM": 8,
@@ -1425,10 +1444,10 @@
         "SM": 12
       },
       "2023:454": {
-        "MPCSM": 7,
-        "E_MPCSM": 12,
         "SM": 12,
-        "E_SM": 12
+        "E_SM": 12,
+        "MPCSM": 7,
+        "E_MPCSM": 12
       },
       "2023:722": {
         "MPCSM": 5,
