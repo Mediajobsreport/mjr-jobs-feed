@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-03T12:00:12.543Z",
+  "generated": "2026-11-03T19:35:13.313Z",
   "version": "2.4",
-  "newestDate": "2026-11-02",
+  "newestDate": "2026-11-03",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1098
+      "count": 1082
     },
     "CPSC": {
       "ok": true,
@@ -24,22 +24,6 @@
   "count": 120,
   "items": [
     {
-      "id": "FDA-2026-10-30-365-whole-foods-market-standardized-full-spectrum-blend-ashwagandha-ca",
-      "source": "FDA",
-      "category": "health",
-      "title": "365 Whole Foods Market Standardized + Full Spectrum Blend Ashwagandha Capsules Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "365 Whole Foods Market",
-      "company": "Vitality Works Inc.",
-      "product": "Standardized + Full Spectrum Blend Ashwagandha Capsules",
-      "date": "2026-10-30",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/vitality-works-inc-recalls-365-whole-foods-market-ashwagandha-capsules-sold-nationwide-due-potential",
-      "score": 158
-    },
-    {
       "id": "CPSC-11009-walmart-recalls-over-4-4-million-expert-grill-brushes-due-to-ingestion",
       "source": "CPSC",
       "category": "consumer",
@@ -55,6 +39,22 @@
       "majorBrand": true,
       "url": "https://www.cpsc.gov/Recalls/2027/Walmart-Recalls-Over-4-4-Million-Expert-Grill-Brushes-Due-to-Ingestion-Hazard",
       "score": 155
+    },
+    {
+      "id": "FDA-2026-10-30-365-whole-foods-market-standardized-full-spectrum-blend-ashwagandha-ca",
+      "source": "FDA",
+      "category": "health",
+      "title": "365 Whole Foods Market Standardized + Full Spectrum Blend Ashwagandha Capsules Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "365 Whole Foods Market",
+      "company": "Vitality Works Inc.",
+      "product": "Standardized + Full Spectrum Blend Ashwagandha Capsules",
+      "date": "2026-10-30",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/vitality-works-inc-recalls-365-whole-foods-market-ashwagandha-capsules-sold-nationwide-due-potential",
+      "score": 150
     },
     {
       "id": "NHTSA-26V690000",
@@ -849,7 +849,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V695000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V695-8268.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V695000",
       "score": 73
     },
     {
@@ -883,7 +883,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V693000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V693-4020.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V693000",
       "score": 73
     },
     {
@@ -916,8 +916,24 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/lidl-us-recalls-gelatelli-coffee-vanilla-gelato-due-possible-health-risk",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 71
+    },
+    {
+      "id": "FDA-2026-11-03-brad-s-crunchy-kale-and-veggie-chips-kale-snack-right-super-foods-dba-",
+      "source": "FDA",
+      "category": "food",
+      "title": "Brad’s Crunchy Kale and Veggie Chips Kale Recalled",
+      "reason": "Product may contain thallium.",
+      "brand": "Brad’s",
+      "company": "Snack Right Super Foods dba Brad’s Raw Chips",
+      "product": "Crunchy Kale and Veggie Chips Kale",
+      "date": "2026-11-03",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/snack-right-super-foods-inc-dba-brads-raw-chips-recalls-brads-crunchy-kale-veggie-chips-due",
+      "score": 70
     },
     {
       "id": "CPSC-11013-abc-trading-recalls-squishy-toys-due-to-risk-of-serious-injury-or-deat",
@@ -1822,7 +1838,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V708000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V708-9409.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V708000",
       "score": 38
     },
     {
@@ -2025,23 +2041,6 @@
       "campaign": "26V616000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V616-5975.pdf",
       "score": 30
-    },
-    {
-      "id": "NHTSA-26V675000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Prevost Vehicles Recalled",
-      "reason": "Prevost Car (US) Inc. (Prevost) is recalling certain Prevost buses. Please see the above list of models. The entrance door is missing the emergency exit operating instruction label. As such, these vehicles fail to…",
-      "brand": "Prevost",
-      "company": "Prevost Car (US) Inc.",
-      "product": "H3-45, Xl-40, Xl-45, H3-40, H3-41, X3-45, X3-45 Commuter, Xlii-45",
-      "date": "2026-10-15",
-      "units": 7509,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V675000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V675-9965.pdf",
-      "score": 28
     }
   ]
 }
