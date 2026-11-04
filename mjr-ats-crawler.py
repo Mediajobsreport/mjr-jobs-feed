@@ -5072,6 +5072,7 @@ def federated_media(src):
         "https://www.federatedmedia.com",
     ]
     detail_urls = set()
+    rss_dates = {}
 
     # WP Job Manager commonly exposes a job_listing post type.
     api_paths = [
@@ -5103,7 +5104,23 @@ def federated_media(src):
         ):
             try:
                 r = req("GET", feed_url)
-                raw = html.unescape(r.text or "")
+                feed_text = r.text or ""
+                raw = html.unescape(feed_text)
+                try:
+                    feed_root = ET.fromstring(feed_text)
+                    for item in feed_root.findall(".//item"):
+                        link = clean(item.findtext("link") or "")
+                        if not link or "/job/" not in link.lower():
+                            continue
+                        detail_urls.add(link)
+                        pub_date = clean(item.findtext("pubDate") or "")
+                        if pub_date:
+                            try:
+                                rss_dates[link] = dtparser.parse(pub_date).date()
+                            except Exception:
+                                pass
+                except Exception:
+                    pass
                 for m in re.finditer(r"https?://[^<\"'\s]+/job/[^<\"'\s]+", raw, re.I):
                     detail_urls.add(m.group(0).rstrip(".,)"))
             except Exception:
@@ -5120,12 +5137,14 @@ def federated_media(src):
             # Prefer schema.org JobPosting if provided.
             j = _job_from_detail(src, url, rr.text)
             if j:
-                if j.url not in seen:
+                if not j.date:
+                    j.date = rss_dates.get(url)
+                if j.url not in seen and job_is_fresh(j):
                     seen.add(j.url)
                     out.append(j)
                 continue
 
-            pd = None
+            pd = rss_dates.get(url)
             m = re.search(
                 r"(?:Posted|Date Posted|Posted Date)\s*:?\s*"
                 r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|"
@@ -5157,7 +5176,7 @@ def federated_media(src):
                 loc = clean(mloc.group(1))
 
             jid = hashlib.sha1(url.encode()).hexdigest()[:16]
-            out.append(Job(
+            job = Job(
                 jid,
                 title,
                 src["Company"],
@@ -5173,7 +5192,10 @@ def federated_media(src):
                 loc,
                 "",
                 infer_country(loc or txt, src["Company"], desc),
-            ))
+            )
+            if not job_is_fresh(job):
+                continue
+            out.append(job)
             seen.add(url)
         except Exception:
             continue
