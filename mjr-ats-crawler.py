@@ -4938,11 +4938,19 @@ def jazzhr_active_board(src):
             title = clean(ss.title.get_text(" "))
             title = re.sub(r"\s*[-|]\s*(?:Beasley Media Group|Career Page).*$", "", title, flags=re.I)
 
-        main = (
-            ss.find("div", class_=re.compile(r"(job|description|posting)", re.I))
-            or ss.find("main")
-            or ss.find("article")
-            or ss
+        # JazzHR detail pages vary: the first matching "job" div can be
+        # only a short header or metadata panel. Choose the largest substantive
+        # posting container so live roles with a separate description section
+        # are not silently discarded.
+        main_candidates = ss.find_all(["main", "article"])
+        main_candidates.extend(
+            ss.find_all("div", class_=re.compile(r"(job|description|posting)", re.I))
+        )
+        main_candidates = list(dict.fromkeys(main_candidates))
+        main = max(
+            main_candidates,
+            key=lambda node: len(clean(node.get_text(" "))),
+            default=ss,
         )
         desc = format_description(str(main))
         plain = clean(main.get_text(" "))
