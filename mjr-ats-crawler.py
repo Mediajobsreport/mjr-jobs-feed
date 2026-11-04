@@ -5099,6 +5099,7 @@ def federated_media(src):
         for feed_url in (
             base + "/feed/?post_type=job_listing",
             base + "/careers/feed/",
+            base + "/?feed=job_feed&job_types=full-time%2Cinternship%2Cpart-time%2Ctemporary&search_location&job_categories&search_keywords&author",
         ):
             try:
                 r = req("GET", feed_url)
