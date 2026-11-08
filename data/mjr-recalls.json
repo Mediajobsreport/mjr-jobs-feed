@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-08T06:09:07.216Z",
+  "generated": "2026-11-08T15:17:33.185Z",
   "version": "2.4",
   "newestDate": "2026-11-06",
   "stale": false,
@@ -18,7 +18,7 @@
     },
     "NHTSA": {
       "ok": true,
-      "count": 120
+      "count": 116
     }
   },
   "count": 120,
@@ -38,7 +38,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/Little-Giant-Recalls-Ladders-with-Rapid-Locks-Due-to-Risk-of-Serious-Injury-from-Fall-Hazard",
-      "score": 164
+      "score": 158
     },
     {
       "id": "CPSC-11009-walmart-recalls-over-4-4-million-expert-grill-brushes-due-to-ingestion",
@@ -58,23 +58,6 @@
       "score": 155
     },
     {
-      "id": "NHTSA-26V728000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Hyundai Vehicles Recalled",
-      "reason": "Hyundai Motor America (Hyundai) is recalling certain 2019-2022 Veloster N, 2019-2023 Kona Electric vehicles. A software error in the air bag control unit (ACU) may improperly deactivate the air bag system and seat belt…",
-      "brand": "Hyundai",
-      "company": "Hyundai Motor America",
-      "product": "Kona Electric, Veloster N",
-      "date": "2026-11-02",
-      "units": 37901,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V728000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V728-4779.pdf",
-      "score": 145
-    },
-    {
       "id": "NHTSA-26V621000",
       "source": "NHTSA",
       "category": "consumer",
@@ -92,6 +75,23 @@
       "score": 142
     },
     {
+      "id": "NHTSA-26V690000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Toyota Sienna Hybrid Vehicles Recalled",
+      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2022-2026 Sienna Hybrid 7-passenger vehicles. The second-row seat backs may fail to remain secured in the event of a crash. 228,367 vehicles or…",
+      "brand": "Toyota",
+      "company": "Toyota Motor Engineering & Manufacturing",
+      "product": "Sienna Hybrid",
+      "date": "2026-10-20",
+      "units": 228367,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V690000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V690-4019.pdf",
+      "score": 140
+    },
+    {
       "id": "CPSC-11046-gourmia-recalls-9-slice-digital-air-fryer-ovens-due-to-burn-hazard",
       "source": "CPSC",
       "category": "consumer",
@@ -106,24 +106,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/Gourmia-Recalls-9-Slice-Digital-Air-Fryer-Ovens-Due-to-Burn-Hazard",
-      "score": 151
-    },
-    {
-      "id": "NHTSA-26V690000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Toyota Sienna Hybrid Vehicles Recalled",
-      "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2022-2026 Sienna Hybrid 7-passenger vehicles. The second-row seat backs may fail to remain secured in the event of a crash. 228,367 vehicles or…",
-      "brand": "Toyota",
-      "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Sienna Hybrid",
-      "date": "2026-10-20",
-      "units": 228367,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V690000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V690000",
-      "score": 140
+      "score": 145
     },
     {
       "id": "FDA-2026-10-30-365-whole-foods-market-standardized-full-spectrum-blend-ashwagandha-ca",
@@ -142,6 +125,23 @@
       "score": 130
     },
     {
+      "id": "NHTSA-26V728000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Hyundai Vehicles Recalled",
+      "reason": "Hyundai Motor America (Hyundai) is recalling certain 2019-2022 Veloster N, 2019-2023 Kona Electric vehicles. A software error in the air bag control unit (ACU) may improperly deactivate the air bag system and seat belt…",
+      "brand": "Hyundai",
+      "company": "Hyundai Motor America",
+      "product": "Kona Electric, Veloster N",
+      "date": "2026-11-02",
+      "units": 37901,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V728000",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V728000",
+      "score": 137
+    },
+    {
       "id": "CPSC-11047-kikea-store-recalls-x-vesolje-nursing-pillows-due-to-risk-of-serious-i",
       "source": "CPSC",
       "category": "consumer",
@@ -156,24 +156,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/Kikea-Store-Recalls-X-VESOLJE-Nursing-Pillows-Due-to-Risk-of-Serious-Injury-or-Death-from-Suffocation-Violate-Mandatory-Standards-for-Nursing-Pillows",
-      "score": 147
-    },
-    {
-      "id": "CPSC-11048-bose-recalls-lithium-ion-battery-packs-for-s1-pro-and-s1-pro-bluetooth",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Bose Recalls Lithium-Ion Battery Packs for S1 Pro and S1 Pro+ Bluetooth Speaker Systems Due to Risk of…",
-      "reason": "The recalled lithium-ion battery packs can overheat and ignite, posing a risk of injury from fire and overheating hazards.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold At: Bose, Best Buy and other retail stores and distributors nationwide and online at Amazon.com, Bose.com, BestBuy.com, Walmart.com and other websites from December 2017 through July 2026 for between $100 and $160 for the individual battery packs. The speaker systems were sold with the battery packs for $700.",
-      "product": "Bose S1 Pro System Battery Pack and S1 Pro+ System Battery Packs for use with Bose S1 Pro and Bose S1 Pro+ Speaker Systems.",
-      "date": "2026-11-05",
-      "units": 634759,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/Bose-Recalls-Lithium-Ion-Battery-Packs-for-S1-Pro-and-S1-Pro-Bluetooth-Speaker-Systems-Due-to-Risk-of-Injury-from-Fire-and-Overheating-Hazards-0",
-      "score": 146
+      "score": 141
     },
     {
       "id": "FDA-2026-10-02-great-value-trader-joe-s-organic-blueberries-triple-berry-blend-and-mi",
@@ -209,6 +192,23 @@
       "score": 135
     },
     {
+      "id": "CPSC-11048-bose-recalls-lithium-ion-battery-packs-for-s1-pro-and-s1-pro-bluetooth",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Bose Recalls Lithium-Ion Battery Packs for S1 Pro and S1 Pro+ Bluetooth Speaker Systems Due to Risk of…",
+      "reason": "The recalled lithium-ion battery packs can overheat and ignite, posing a risk of injury from fire and overheating hazards.",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold At: Bose, Best Buy and other retail stores and distributors nationwide and online at Amazon.com, Bose.com, BestBuy.com, Walmart.com and other websites from December 2017 through July 2026 for between $100 and $160 for the individual battery packs. The speaker systems were sold with the battery packs for $700.",
+      "product": "Bose S1 Pro System Battery Pack and S1 Pro+ System Battery Packs for use with Bose S1 Pro and Bose S1 Pro+ Speaker Systems.",
+      "date": "2026-11-05",
+      "units": 634759,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/Bose-Recalls-Lithium-Ion-Battery-Packs-for-S1-Pro-and-S1-Pro-Bluetooth-Speaker-Systems-Due-to-Risk-of-Injury-from-Fire-and-Overheating-Hazards-0",
+      "score": 140
+    },
+    {
       "id": "NHTSA-26V673000",
       "source": "NHTSA",
       "category": "consumer",
@@ -239,7 +239,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-beef-and-pork-products-due-misbranding-and",
-      "score": 98
+      "score": 92
     },
     {
       "id": "CPSC-11056-sanven-technology-recalls-vevor-bmx-bicycles-due-to-risk-of-serious-in",
@@ -256,7 +256,7 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Sanven-Technology-Recalls-Vevor-BMX-Bicycles-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard-Violate-Federal-Requirements-for-Bicycles",
-      "score": 139
+      "score": 133
     },
     {
       "id": "NHTSA-26V653000",
@@ -266,7 +266,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2025-2026 F-250 SD, F-350 SD, F-450 SD, F-550 SD, F-600, 2026 F-150, and F-750 SD vehicles. The analog cluster’s tachometer and speedometer may become stuck or move…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "F-750 Sd, F-150, F-250 Sd, F-350 Sd, F-450 Sd, F-550 Sd, F-600 Sd",
+      "product": "F-250 Sd, F-350 Sd, F-450 Sd, F-550 Sd, F-600 Sd, F-750 Sd, F-150",
       "date": "2026-10-06",
       "units": 102159,
       "pet": false,
@@ -274,23 +274,6 @@
       "campaign": "26V653000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V653-6110.pdf",
       "score": 132
-    },
-    {
-      "id": "CPSC-11054-baby-brezza-enterprises-recalls-superfast-sterilizer-dryers-due-to-ove",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Baby Brezza Enterprises Recalls SuperFast Sterilizer Dryers Due to Overheating and Burn Hazards",
-      "reason": "The recalled sterilizer dryers can overheat when plugged in and operating, posing a risk of injury from a burn hazard if the surface is handled.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold At: TJ Maxx and Marshall’s storesnationwide and online at babybrezza.com, target.com and babylist.com from January 2024 through October 2026 for between $160 and $180.",
-      "product": "SuperFast Sterilizer Dryers",
-      "date": "2026-11-05",
-      "units": 29000,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/Baby-Brezza-Enterprises-Recalls-SuperFast-Sterilizer-Dryers-Due-to-Overheating-and-Burn-Hazards",
-      "score": 129
     },
     {
       "id": "CPSC-11038-dreo-recalls-dr-hsh015-space-heaters-due-to-fire-and-burn-hazards",
@@ -308,6 +291,23 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/DREO-Recalls-DR-HSH015-Space-Heaters-Due-to-Fire-and-Burn-Hazards",
       "score": 127
+    },
+    {
+      "id": "CPSC-11054-baby-brezza-enterprises-recalls-superfast-sterilizer-dryers-due-to-ove",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Baby Brezza Enterprises Recalls SuperFast Sterilizer Dryers Due to Overheating and Burn Hazards",
+      "reason": "The recalled sterilizer dryers can overheat when plugged in and operating, posing a risk of injury from a burn hazard if the surface is handled.",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold At: TJ Maxx and Marshall’s storesnationwide and online at babybrezza.com, target.com and babylist.com from January 2024 through October 2026 for between $160 and $180.",
+      "product": "SuperFast Sterilizer Dryers",
+      "date": "2026-11-05",
+      "units": 29000,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/Baby-Brezza-Enterprises-Recalls-SuperFast-Sterilizer-Dryers-Due-to-Overheating-and-Burn-Hazards",
+      "score": 123
     },
     {
       "id": "CPSC-11037-pillani-recalls-nursing-pillows-due-to-risk-of-serious-injury-or-death",
@@ -341,23 +341,23 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Arlopu-Recalls-Slide-Playsets-Due-to-Risk-of-Serious-Injury-and-Death-from-Head-and-Neck-Entrapment-Hazards",
-      "score": 122
+      "score": 116
     },
     {
       "id": "NHTSA-26V718000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Chevrolet Vehicles Recalled",
+      "title": "GMC Vehicles Recalled",
       "reason": "General Motors, LLC (GM) is recalling certain 2025-2026 Chevrolet Express and GMC Savana vehicles. The steering gear assembly may have a nut that was not properly tightened. 12,715 vehicles or units may be affected.",
-      "brand": "Chevrolet",
+      "brand": "GMC",
       "company": "General Motors, LLC",
-      "product": "Express, Savana",
+      "product": "Savana, Express",
       "date": "2026-10-29",
       "units": 12715,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V718000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V718-4302.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V718000",
       "score": 115
     },
     {
@@ -402,7 +402,7 @@
       "reason": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2022-2024 Lexus NX250, NX350, NX350 Hybrid, and NX450h+ vehicles. The instrument panel cluster combination meter may fail to display certain…",
       "brand": "Lexus",
       "company": "Toyota Motor Engineering & Manufacturing",
-      "product": "Nx Hybrid, Nx Plug-In Hybrid, Nx",
+      "product": "Nx Plug-In Hybrid, Nx Hybrid, Nx",
       "date": "2026-10-20",
       "units": 68356,
       "pet": false,
@@ -429,23 +429,6 @@
       "score": 113
     },
     {
-      "id": "CPSC-11049-magnetopia-recalls-magnetic-building-cubes-and-blocks-due-to-risk-of-s",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Magnetopia Recalls Magnetic Building Cubes and Blocks Due to Risk of Serious Injury or Death from…",
-      "reason": "The recalled magnetic building cubes contain magnets that can become loose if the cubes break or open, posing a magnet ingestion hazard to children. When high-powered magnets are swallowed, the ingested magnets can…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Magnetopia.comfrom April 2025 through October 2026 for between $20 and $40.",
-      "product": "Magnetopia Magnetic Building Cubes and Blocks",
-      "date": "2026-11-05",
-      "units": 7600,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/Magnetopia-Recalls-Magnetic-Building-Cubes-and-Blocks-Due-to-Risk-of-Serious-Injury-or-Death-from-Magnet-Ingestion-Hazard",
-      "score": 112
-    },
-    {
       "id": "CPSC-11000-newdery-power-banks-recalled-due-to-fire-and-burn-hazards-risk-of-seri",
       "source": "CPSC",
       "category": "consumer",
@@ -461,6 +444,23 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/NEWDERY-Power-Banks-Recalled-Due-to-Fire-and-Burn-Hazards-Risk-of-Serious-Injury-Sold-on-Amazon",
       "score": 110
+    },
+    {
+      "id": "CPSC-11049-magnetopia-recalls-magnetic-building-cubes-and-blocks-due-to-risk-of-s",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Magnetopia Recalls Magnetic Building Cubes and Blocks Due to Risk of Serious Injury or Death from…",
+      "reason": "The recalled magnetic building cubes contain magnets that can become loose if the cubes break or open, posing a magnet ingestion hazard to children. When high-powered magnets are swallowed, the ingested magnets can…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Magnetopia.comfrom April 2025 through October 2026 for between $20 and $40.",
+      "product": "Magnetopia Magnetic Building Cubes and Blocks",
+      "date": "2026-11-05",
+      "units": 7600,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/Magnetopia-Recalls-Magnetic-Building-Cubes-and-Blocks-Due-to-Risk-of-Serious-Injury-or-Death-from-Magnet-Ingestion-Hazard",
+      "score": 106
     },
     {
       "id": "NHTSA-26V664000",
@@ -480,40 +480,6 @@
       "score": 105
     },
     {
-      "id": "CPSC-11053-c-a-m-p-recalls-mountain-ice-axes-due-to-risk-of-serious-injury-or-dea",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "C.A.M.P. Recalls Mountain Ice Axes Due to Risk of Serious Injury or Death from Fall Hazard",
-      "reason": "A screw on the recalled mountain ice axes can loosen during use, causing the handle or pick to detach, posing a risk of serious injury or death from fall hazard.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold At: REI stores nationwide and online at Camp-usa.com, Backcountry.com, Amazon.com and REI.com from November 2025 through September 2026 for between $30 and $330.",
-      "product": "X-Dream, X-Dream Total Dry, X-All Mountain Hammer and X-All Mountain Adze",
-      "date": "2026-11-05",
-      "units": 2230,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/CAMP-Recalls-Mountain-Ice-Axes-Due-to-Risk-of-Serious-Injury-or-Death-from-Fall-Hazard",
-      "score": 104
-    },
-    {
-      "id": "CPSC-11052-jiastfeng-recalls-hauoms-eight-drawer-dressers-due-to-risk-of-serious-",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Jiastfeng Recalls HAUOMS Eight-drawer Dressers Due to Risk of Serious Injury or Death from Tip-Over and…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from May 2025 through September 2026 for about $150., Zhengzhoushi Rupiao Electronic Commerce Co., Ltd., dba Jiastfeng, of China",
-      "product": "HAUOMS Eight-drawer Dressers",
-      "date": "2026-11-05",
-      "units": 1392,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/Jiastfeng-Recalls-HAUOMS-Eight-drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
-      "score": 104
-    },
-    {
       "id": "NHTSA-26V689000",
       "source": "NHTSA",
       "category": "consumer",
@@ -521,7 +487,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 F-150, 2026 F-250 SD, F-350 SD, and F-450 SD vehicles. The left-side tailgate cable may fail under certain heavy load conditions. 30,123 vehicles or units may be…",
       "brand": "Ford",
       "company": "Ford Motor Company",
-      "product": "F-150, F-450 Sd, F-350 Sd, F-250 Sd",
+      "product": "F-250 Sd, F-350 Sd, F-150, F-450 Sd",
       "date": "2026-10-20",
       "units": 30123,
       "pet": false,
@@ -563,6 +529,40 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2026/ZCK01-Recalls-Kesyup-Mattresses-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Mattress-Flammability",
       "score": 103
+    },
+    {
+      "id": "CPSC-11053-c-a-m-p-recalls-mountain-ice-axes-due-to-risk-of-serious-injury-or-dea",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "C.A.M.P. Recalls Mountain Ice Axes Due to Risk of Serious Injury or Death from Fall Hazard",
+      "reason": "A screw on the recalled mountain ice axes can loosen during use, causing the handle or pick to detach, posing a risk of serious injury or death from fall hazard.",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold At: REI stores nationwide and online at Camp-usa.com, Backcountry.com, Amazon.com and REI.com from November 2025 through September 2026 for between $30 and $330.",
+      "product": "X-Dream, X-Dream Total Dry, X-All Mountain Hammer and X-All Mountain Adze",
+      "date": "2026-11-05",
+      "units": 2230,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/CAMP-Recalls-Mountain-Ice-Axes-Due-to-Risk-of-Serious-Injury-or-Death-from-Fall-Hazard",
+      "score": 98
+    },
+    {
+      "id": "CPSC-11052-jiastfeng-recalls-hauoms-eight-drawer-dressers-due-to-risk-of-serious-",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Jiastfeng Recalls HAUOMS Eight-drawer Dressers Due to Risk of Serious Injury or Death from Tip-Over and…",
+      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Amazon.com from May 2025 through September 2026 for about $150., Zhengzhoushi Rupiao Electronic Commerce Co., Ltd., dba Jiastfeng, of China",
+      "product": "HAUOMS Eight-drawer Dressers",
+      "date": "2026-11-05",
+      "units": 1392,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/Jiastfeng-Recalls-HAUOMS-Eight-drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
+      "score": 98
     },
     {
       "id": "CPSC-11042-yinklev-recalls-jocoevol-6-drawer-dressers-due-to-risk-of-serious-inju",
@@ -623,7 +623,7 @@
       "reason": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2022-2025 S 500 4MATIC, Maybach S 580 4MATIC, Maybach S 680 4MATIC, S 580 4MATIC, 2023-2025 S 580 E 4MATIC, and 2024-2025 AMG S 63 E Performance vehicles. The front…",
       "brand": "Mercedes-Benz",
       "company": "Mercedes-Benz USA, LLC",
-      "product": "S 580 E 4MATIC, S 580 4MATIC, S 680 4MATIC, Amg S 63 E 4matic+, S 500 4MATIC",
+      "product": "S 580 4MATIC, S 500 4MATIC, Amg S 63 E 4matic+, S 680 4MATIC, S 580 E 4MATIC",
       "date": "2026-10-02",
       "units": 30064,
       "pet": false,
@@ -663,7 +663,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V701000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V701-2086.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V701000",
       "score": 93
     },
     {
@@ -674,7 +674,7 @@
       "reason": "Ford Motor Company (Ford) is recalling certain 2026-2027 Nautilus Hybrid and 2027 Corsair Hybrid vehicles. The vehicle may unexpectedly shift into neutral while driving, due to corrosion in the transmission's park lock…",
       "brand": "Lincoln",
       "company": "Ford Motor Company",
-      "product": "Corsair Hybrid, Nautilus Hybrid",
+      "product": "Nautilus Hybrid, Corsair Hybrid",
       "date": "2026-10-20",
       "units": 11623,
       "pet": false,
@@ -701,23 +701,6 @@
       "score": 93
     },
     {
-      "id": "CPSC-11055-u-s-titan-recalls-x-pro-youth-all-terrain-vehicles-atvs-due-to-risk-of",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "U.S. Titan Recalls X-Pro Youth All-Terrain Vehicles (ATVs) Due to Risk of Serious Injury or Death from…",
-      "reason": "The recalled ATVs violate the mandatory ATV safety standard because the speed-adjusting module included with the vehicle allows for the ATV’s speed to be adjusted in excess of the maximum speed for vehicles intended…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Walmart.com, Powersportsmax.com, Xprousa.com, Amazon.com and eBay.comfrom July 2025 through September 2025for between $680 and $980., Moshin, LLC., dba. X-PRO, of Carrollton, Texas",
-      "product": "X-PRO’s Eagle Youth All-Terrain Vehicles (ATVs)",
-      "date": "2026-11-05",
-      "units": 117,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2027/U-S-Titan-Recalls-X-Pro-Youth-All-Terrain-Vehicles-ATVs-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard-Violate-Mandatory-Standard-for-ATVs",
-      "score": 92
-    },
-    {
       "id": "CPSC-11035-rootstim-recalls-minoxidil-hair-regrowth-treatment-bottles-due-to-risk",
       "source": "CPSC",
       "category": "consumer",
@@ -733,6 +716,23 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/RootStim-Recalls-Minoxidil-Hair-Regrowth-Treatment-Bottles-Due-to-Risk-of-Serious-Injury-or-Death-from-Child-Poisoning-Violate-Mandatory-Standard-for-Child-Resistant-Packaging",
       "score": 88
+    },
+    {
+      "id": "CPSC-11055-u-s-titan-recalls-x-pro-youth-all-terrain-vehicles-atvs-due-to-risk-of",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "U.S. Titan Recalls X-Pro Youth All-Terrain Vehicles (ATVs) Due to Risk of Serious Injury or Death from…",
+      "reason": "The recalled ATVs violate the mandatory ATV safety standard because the speed-adjusting module included with the vehicle allows for the ATV’s speed to be adjusted in excess of the maximum speed for vehicles intended…",
+      "brand": "",
+      "company": "",
+      "retailers": "Sold Online At: Walmart.com, Powersportsmax.com, Xprousa.com, Amazon.com and eBay.comfrom July 2025 through September 2025for between $680 and $980., Moshin, LLC., dba. X-PRO, of Carrollton, Texas",
+      "product": "X-PRO’s Eagle Youth All-Terrain Vehicles (ATVs)",
+      "date": "2026-11-05",
+      "units": 117,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://cpsc.gov/Recalls/2027/U-S-Titan-Recalls-X-Pro-Youth-All-Terrain-Vehicles-ATVs-Due-to-Risk-of-Serious-Injury-or-Death-from-Crash-Hazard-Violate-Mandatory-Standard-for-ATVs",
+      "score": 86
     },
     {
       "id": "NHTSA-26V630000",
@@ -776,30 +776,14 @@
       "reason": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2024-2025 Q4 E-Tron and Q4 Sportback E-Tron vehicles. The high voltage battery may fail and cause a fire. 9,048 vehicles or units may be affected.",
       "brand": "Audi",
       "company": "Volkswagen Group of America, Inc.",
-      "product": "Q4 Sportback E-Tron, Q4 E-Tron",
+      "product": "Q4 E-Tron, Q4 Sportback E-Tron",
       "date": "2026-10-21",
       "units": 9048,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V698000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V698000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V698-3069.pdf",
       "score": 83
-    },
-    {
-      "id": "FDA-2026-11-02-once-upon-a-farm-tractor-wheels-organic-toddler-soft-baked-bars-all-lo",
-      "source": "FDA",
-      "category": "food",
-      "title": "Once Upon a Farm Tractor Wheels Organic Toddler Soft-Baked Bars (all lots and varieties) Recalled",
-      "reason": "Potential choking hazard",
-      "brand": "Once Upon a Farm",
-      "company": "Once Upon a Farm",
-      "product": "Tractor Wheels Organic Toddler Soft-Baked Bars (all lots and varieties)",
-      "date": "2026-11-02",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/once-upon-farm-recalls-all-lots-and-varieties-tractor-wheels-organic-toddler-soft-baked-bars-due",
-      "score": 75
     },
     {
       "id": "NHTSA-26E076000",
@@ -843,7 +827,7 @@
       "reason": "Volvo Car USA, LLC (Volvo Car) is recalling certain 2025-2026 EX30 and 2026 EX30CC vehicles. The head restraint cushion may detach during a crash. 9,930 vehicles or units may be affected.",
       "brand": "Volvo",
       "company": "Volvo Car USA, LLC",
-      "product": "EX30, EX30CC",
+      "product": "EX30CC, EX30",
       "date": "2026-10-09",
       "units": 9930,
       "pet": false,
@@ -954,22 +938,6 @@
       "score": 73
     },
     {
-      "id": "FDA-2026-10-17-gelatelli-coffee-vanilla-gelato-with-coffee-sauce-cookie-pieces-lidl-u",
-      "source": "FDA",
-      "category": "food",
-      "title": "Gelatelli Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces Recalled",
-      "reason": "Potential contamination with Listeria monocytogenes",
-      "brand": "Gelatelli",
-      "company": "Lidl US",
-      "product": "Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces",
-      "date": "2026-10-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 71
-    },
-    {
       "id": "CPSC-11033-harkla-recalls-children-s-sensory-swings-due-to-risk-of-serious-injury",
       "source": "CPSC",
       "category": "consumer",
@@ -1055,6 +1023,22 @@
       "score": 68
     },
     {
+      "id": "FDA-2026-11-02-once-upon-a-farm-tractor-wheels-organic-toddler-soft-baked-bars-all-lo",
+      "source": "FDA",
+      "category": "food",
+      "title": "Once Upon a Farm Tractor Wheels Organic Toddler Soft-Baked Bars (all lots and varieties) Recalled",
+      "reason": "Potential choking hazard",
+      "brand": "Once Upon a Farm",
+      "company": "Once Upon a Farm",
+      "product": "Tractor Wheels Organic Toddler Soft-Baked Bars (all lots and varieties)",
+      "date": "2026-11-02",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/once-upon-farm-recalls-all-lots-and-varieties-tractor-wheels-organic-toddler-soft-baked-bars-due",
+      "score": 67
+    },
+    {
       "id": "NHTSA-26V663000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1062,7 +1046,7 @@
       "reason": "Honda (American Honda Motor Co.) is recalling certain 2023-2026 CR-V Hybrid, Accord Hybrid, and 2025 CR-V Fuel Cell EV vehicles that were previously remedied under NHTSA recall number 26V366. When using the tire repair…",
       "brand": "Honda",
       "company": "Honda (American Honda Motor Co.)",
-      "product": "Cr-V Hybrid, Accord Hybrid, Cr-V Fuel Cell EV",
+      "product": "Cr-V Fuel Cell EV, Accord Hybrid, Cr-V Hybrid",
       "date": "2026-10-08",
       "units": 4804,
       "pet": false,
@@ -1102,7 +1086,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V655000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V655000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V655-6119.pdf",
       "score": 67
     },
     {
@@ -1113,7 +1097,7 @@
       "reason": "Honda (American Honda Motor Co.) is recalling certain 2023-2025 VT1300CX and 2024-2025 VT750 motorcycles. The fuel pump may malfunction due to a manufacturing defect. 4,206 vehicles or units may be affected.",
       "brand": "Honda",
       "company": "Honda (American Honda Motor Co.)",
-      "product": "VT1300CX, Shadow Phantom",
+      "product": "Shadow Phantom, VT1300CX",
       "date": "2026-10-01",
       "units": 4206,
       "pet": false,
@@ -1130,7 +1114,7 @@
       "reason": "General Motors, LLC (GM) is recalling certain 2016 Chevrolet Silverado 2500/3500, GMC Sierra 2500/3500 vehicles, and 2016-2017 Chevrolet Silverado 1500 and GMC Sierra 1500 vehicles. The left-side or right-side roof…",
       "brand": "Chevrolet",
       "company": "General Motors, LLC",
-      "product": "Silverado 1500, Sierra 3500, Sierra 2500, Sierra 1500, Silverado 3500, Silverado 2500",
+      "product": "Silverado 1500, Silverado 2500, Silverado 3500, Sierra 1500, Sierra 2500, Sierra 3500",
       "date": "2026-09-24",
       "units": 1559,
       "pet": false,
@@ -1157,21 +1141,21 @@
       "score": 65
     },
     {
-      "id": "CPSC-11050-vanderhall-north-america-recalls-all-model-year-2024-2026-brawley-elec",
-      "source": "CPSC",
+      "id": "NHTSA-26E075000",
+      "source": "NHTSA",
       "category": "consumer",
-      "title": "Vanderhall North America Recalls All Model Year 2024-2026 Brawley Electric Recreational Off-road…",
-      "reason": "The seat belts in Brawley ROVs can permanently lockup in the fully retracted position. If this occurs, consumers would be unable to reset the seat belt and put it on when the vehicle is operating, posing injury and…",
-      "brand": "Vanderhall North America LLC, of Provo, Utah",
-      "company": "Vanderhall North America LLC, of Provo, Utah",
-      "retailers": "Sold At: Vanderhall dealers in Utah, Ohio, Michigan, Texas, Montana, North Carolina, Oklahoma and Arizona from April 2024 to June 2026 for about $50,000.",
-      "product": "Model Year 2024-2026 Brawley GTS Electric Recreational Off-road Vehicles (ROVs)",
-      "date": "2026-11-05",
-      "units": 190,
+      "title": "Nissan Spare Tire Kit Vehicles Recalled",
+      "reason": "Nissan North America, Inc. (Nissan) is recalling certain spare tire accessory kits, part number T99MB7SF0A, sold for certain 2026 Sentra vehicles. The spare tire size and inflation information on the tire placard is…",
+      "brand": "Nissan",
+      "company": "Nissan North America, Inc.",
+      "product": "Spare Tire Kit",
+      "date": "2026-10-21",
+      "units": 392,
       "pet": false,
-      "majorBrand": false,
-      "url": "https://www.cpsc.gov/Recalls/2027/Vanderhall-North-America-Recalls-All-Model-Year-2024-2026-Brawley-Electric-Recreational-Off-road-Vehicles-Due-to-Injury-and-Crash-Hazards",
-      "score": 64
+      "majorBrand": true,
+      "campaign": "26E075000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E075-1835.pdf",
+      "score": 63
     },
     {
       "id": "NHTSA-26V696000",
@@ -1198,30 +1182,13 @@
       "reason": "BMW of North America, LLC is recalling certain 2018 740Le xDrive, 2018-2020 530e iPerformance, and 2018-2020 530e xDrive vehicles. The postive battery cable on the engine starter may loosen. 45 vehicles or units may be…",
       "brand": "BMW",
       "company": "BMW of North America, LLC",
-      "product": "530E Xdrive Iperformance, 530E Iperformance, 740LE Xdrive Iperformance",
+      "product": "530E Xdrive Iperformance, 740LE Xdrive Iperformance, 530E Iperformance",
       "date": "2026-10-21",
       "units": 45,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V695000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V695-8268.pdf",
-      "score": 63
-    },
-    {
-      "id": "NHTSA-26E075000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Nissan Spare Tire Kit Vehicles Recalled",
-      "reason": "Nissan North America, Inc. (Nissan) is recalling certain spare tire accessory kits, part number T99MB7SF0A, sold for certain 2026 Sentra vehicles. The spare tire size and inflation information on the tire placard is…",
-      "brand": "Nissan",
-      "company": "Nissan North America, Inc.",
-      "product": "Spare Tire Kit",
-      "date": "2026-10-21",
-      "units": 392,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E075000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E075000",
       "score": 63
     },
     {
@@ -1232,7 +1199,7 @@
       "reason": "Hyundai Motor America (Hyundai) is recalling certain 2026 Tucson Hybrid and Elantra vehicles. The front strut assembly fasteners may not be tightened properly, which can result in a loss of vehicle steering control. 24…",
       "brand": "Hyundai",
       "company": "Hyundai Motor America",
-      "product": "Tucson Hybrid, Elantra",
+      "product": "Elantra, Tucson Hybrid",
       "date": "2026-10-20",
       "units": 24,
       "pet": false,
@@ -1249,7 +1216,7 @@
       "reason": "Hyundai Motor America (Hyundai) is recalling certain 2026 Venue, Elantra N, Elantra Hybrid, and Elantra vehicles. The wheel lug nuts may loosen and allow the wheel to detach. 17 vehicles or units may be affected.",
       "brand": "Hyundai",
       "company": "Hyundai Motor America",
-      "product": "Elantra N, Venue, Elantra, Elantra Hybrid",
+      "product": "Elantra Hybrid, Elantra, Venue, Elantra N",
       "date": "2026-10-20",
       "units": 17,
       "pet": false,
@@ -1266,13 +1233,29 @@
       "reason": "Subaru of America, Inc. (Subaru) is recalling certain 2026 Crosstrek and Forester vehicles. The castle nut on the left-front lower control arm ball joint may be improperly fastened, which can lead to the ball joint…",
       "brand": "Subaru",
       "company": "Subaru of America, Inc.",
-      "product": "Forester, Crosstrek",
+      "product": "Crosstrek, Forester",
       "date": "2026-10-19",
       "units": 8,
       "pet": false,
       "majorBrand": true,
       "campaign": "26V685000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V685-7183.pdf",
+      "score": 63
+    },
+    {
+      "id": "FDA-2026-10-17-gelatelli-coffee-vanilla-gelato-with-coffee-sauce-cookie-pieces-lidl-u",
+      "source": "FDA",
+      "category": "food",
+      "title": "Gelatelli Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces Recalled",
+      "reason": "Potential contamination with Listeria monocytogenes",
+      "brand": "Gelatelli",
+      "company": "Lidl US",
+      "product": "Coffee & Vanilla Gelato with Coffee Sauce & Cookie Pieces",
+      "date": "2026-10-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 63
     },
     {
@@ -1376,6 +1359,23 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/VQQQ-Gas-Patio-Heaters-Recalled-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-and-Burn-Hazards",
       "score": 61
+    },
+    {
+      "id": "CPSC-11050-vanderhall-north-america-recalls-all-model-year-2024-2026-brawley-elec",
+      "source": "CPSC",
+      "category": "consumer",
+      "title": "Vanderhall North America Recalls All Model Year 2024-2026 Brawley Electric Recreational Off-road…",
+      "reason": "The seat belts in Brawley ROVs can permanently lockup in the fully retracted position. If this occurs, consumers would be unable to reset the seat belt and put it on when the vehicle is operating, posing injury and…",
+      "brand": "Vanderhall North America LLC, of Provo, Utah",
+      "company": "Vanderhall North America LLC, of Provo, Utah",
+      "retailers": "Sold At: Vanderhall dealers in Utah, Ohio, Michigan, Texas, Montana, North Carolina, Oklahoma and Arizona from April 2024 to June 2026 for about $50,000.",
+      "product": "Model Year 2024-2026 Brawley GTS Electric Recreational Off-road Vehicles (ROVs)",
+      "date": "2026-11-05",
+      "units": 190,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.cpsc.gov/Recalls/2027/Vanderhall-North-America-Recalls-All-Model-Year-2024-2026-Brawley-Electric-Recreational-Off-road-Vehicles-Due-to-Injury-and-Crash-Hazards",
+      "score": 58
     },
     {
       "id": "CPSC-11039-fashion-brand-apparel-recalls-qzh-duao-pajama-sets-due-to-risk-of-seri",
@@ -1497,23 +1497,6 @@
       "score": 56
     },
     {
-      "id": "NHTSA-26E072000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Volvo Vnl Sleeper Cab Vehicles Recalled",
-      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain replacement sleeper cabs, model VNL660 with part number 78785681, and model VNL860 with part number 78785689. The sleeper cabs may have loose or missing…",
-      "brand": "Volvo",
-      "company": "Volvo Trucks North America",
-      "product": "Vnl Sleeper Cab",
-      "date": "2026-10-15",
-      "units": 8,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26E072000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E072000",
-      "score": 55
-    },
-    {
       "id": "NHTSA-26V677000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1528,6 +1511,23 @@
       "majorBrand": true,
       "campaign": "26V677000",
       "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V677000",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26E072000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Volvo Vnl Sleeper Cab Vehicles Recalled",
+      "reason": "Volvo Trucks North America (Volvo Trucks) is recalling certain replacement sleeper cabs, model VNL660 with part number 78785681, and model VNL860 with part number 78785689. The sleeper cabs may have loose or missing…",
+      "brand": "Volvo",
+      "company": "Volvo Trucks North America",
+      "product": "Vnl Sleeper Cab",
+      "date": "2026-10-15",
+      "units": 8,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26E072000",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E072000",
       "score": 55
     },
     {
@@ -1565,23 +1565,6 @@
       "score": 55
     },
     {
-      "id": "NHTSA-26V622000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Ram 1500 Vehicles Recalled",
-      "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Ram 1500 vehicles. A connector for the driver and front passenger side air bags may not be secured properly, which can cause the air bags not to deploy as intended. As…",
-      "brand": "Ram",
-      "company": "Chrysler (FCA US, LLC)",
-      "product": "1500",
-      "date": "2026-09-29",
-      "units": 5,
-      "pet": false,
-      "majorBrand": true,
-      "campaign": "26V622000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V622-0796.pdf",
-      "score": 55
-    },
-    {
       "id": "NHTSA-26V625000",
       "source": "NHTSA",
       "category": "consumer",
@@ -1596,6 +1579,23 @@
       "majorBrand": true,
       "campaign": "26V625000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V625-5393.pdf",
+      "score": 55
+    },
+    {
+      "id": "NHTSA-26V622000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Ram 1500 Vehicles Recalled",
+      "reason": "Chrysler (FCA US, LLC) is recalling certain 2026 Ram 1500 vehicles. A connector for the driver and front passenger side air bags may not be secured properly, which can cause the air bags not to deploy as intended. As…",
+      "brand": "Ram",
+      "company": "Chrysler (FCA US, LLC)",
+      "product": "1500",
+      "date": "2026-09-29",
+      "units": 5,
+      "pet": false,
+      "majorBrand": true,
+      "campaign": "26V622000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V622-0796.pdf",
       "score": 55
     },
     {
@@ -1639,7 +1639,7 @@
       "reason": "Spencer Manufacturing, Inc. (Spencer) is recalling certain 2026 Rescue, 2025 Initial Attack, and 2024-2025 Pumper emergency vehicles. The display may stop responding to touch commands or fail to power on, preventing…",
       "brand": "Spencer",
       "company": "Spencer Manufacturing, Inc.",
-      "product": "Initial Attack, Rescue, Pumper",
+      "product": "Rescue, Initial Attack, Pumper",
       "date": "2026-11-03",
       "units": 5,
       "pet": false,
@@ -1686,11 +1686,11 @@
       "id": "NHTSA-26V700000",
       "source": "NHTSA",
       "category": "consumer",
-      "title": "Peterbilt Vehicles Recalled",
+      "title": "Kenworth Vehicles Recalled",
       "reason": "PACCAR Incorporated (PACCAR) is recalling certain 2022-2023 Kenworth T370, T270, 2022-2027 Kenworth T280, Peterbilt 548, 2023-2027 Kenworth T480, T380, Peterbilt 536, 537, and 2025 Peterbilt 567 vehicles. The remote…",
-      "brand": "Peterbilt",
+      "brand": "Kenworth",
       "company": "PACCAR Incorporated",
-      "product": "536, T270, T370, T280, 537, 567, T480, 548",
+      "product": "T380, 548, T480, 567, T280, 537, T370, T270",
       "date": "2026-10-21",
       "units": 26729,
       "pet": false,
@@ -1842,22 +1842,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/sierra-nevada-cheese-company-recalls-graziers-raw-milk-cheese-because-possible-health-risk",
-      "score": 45
-    },
-    {
-      "id": "FDA-2026-09-23-berlin-seeds-alfalfa-sprouting-seeds-berlin-seeds",
-      "source": "FDA",
-      "category": "food",
-      "title": "Berlin Seeds Alfalfa sprouting seeds Recalled",
-      "reason": "Potential to be contaminated with Shiga toxin-producing Escherichia coli (STEC) and/or Salmonella",
-      "brand": "Berlin Seeds",
-      "company": "Berlin Seeds",
-      "product": "Alfalfa sprouting seeds",
-      "date": "2026-09-23",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/berlin-seeds-recalls-alfalfa-sprouting-seed-because-possible-health-risk",
       "score": 45
     },
     {
@@ -2042,7 +2026,24 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V719000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V719-1661.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V719000",
+      "score": 30
+    },
+    {
+      "id": "NHTSA-26V648000",
+      "source": "NHTSA",
+      "category": "consumer",
+      "title": "Kalmar Ottawa T2 Vehicles Recalled",
+      "reason": "Kalmar Solutions, LLC (Kalmar) is recalling certain 2014-2026 Ottawa T2 4X2 and 2016-2026 T2 6X4 DOT/EPA terminal tractors. The printed circuit board (PCB) insulation may become damaged, resulting in a short circuit.…",
+      "brand": "Kalmar",
+      "company": "Kalmar Solutions, LLC",
+      "product": "Ottawa T2",
+      "date": "2026-10-05",
+      "units": 16127,
+      "pet": false,
+      "majorBrand": false,
+      "campaign": "26V648000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V648-3342.pdf",
       "score": 30
     }
   ]
