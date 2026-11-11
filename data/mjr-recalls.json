@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-10T21:57:42.628Z",
+  "generated": "2026-11-11T06:32:20.262Z",
   "version": "2.4",
-  "newestDate": "2026-11-09",
+  "newestDate": "2026-11-10",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1084
+      "count": 1103
     },
     "CPSC": {
       "ok": true,
@@ -192,6 +192,22 @@
       "score": 132
     },
     {
+      "id": "FDA-2026-11-10-family-farmstead-raw-mild-cheddar-raw-sharp-cheddar-family-farmstead-d",
+      "source": "FDA",
+      "category": "food",
+      "title": "Family Farmstead Raw Mild Cheddar; Raw Sharp Cheddar Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes.",
+      "brand": "Family Farmstead",
+      "company": "Family Farmstead Dairy",
+      "product": "Raw Mild Cheddar; Raw Sharp Cheddar",
+      "date": "2026-11-10",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-all-cheddar-cheese-products-because-possible-health-risk",
+      "score": 115
+    },
+    {
       "id": "CPSC-11048-bose-recalls-lithium-ion-battery-packs-for-s1-pro-and-s1-pro-bluetooth",
       "source": "CPSC",
       "category": "consumer",
@@ -209,22 +225,6 @@
       "score": 132
     },
     {
-      "id": "FDA-2026-11-08-fresh-to-you-sausage-egg-cheese-biscuit-sandwich-fresh-ready-foods-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Fresh to You Sausage, Egg & Cheese Biscuit Sandwich Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes.",
-      "brand": "Fresh to You",
-      "company": "Fresh & Ready Foods LLC",
-      "product": "Sausage, Egg & Cheese Biscuit Sandwich",
-      "date": "2026-11-08",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/fresh-ready-foods-llc-recalls-fresh-you-brand-sausage-egg-cheese-biscuit-sandwich-due-possible",
-      "score": 109
-    },
-    {
       "id": "NHTSA-26V728000",
       "source": "NHTSA",
       "category": "consumer",
@@ -240,6 +240,22 @@
       "campaign": "26V728000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V728-4779.pdf",
       "score": 125
+    },
+    {
+      "id": "FDA-2026-11-08-fresh-to-you-sausage-egg-cheese-biscuit-sandwich-fresh-ready-foods-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Fresh to You Sausage, Egg & Cheese Biscuit Sandwich Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes.",
+      "brand": "Fresh to You",
+      "company": "Fresh & Ready Foods LLC",
+      "product": "Sausage, Egg & Cheese Biscuit Sandwich",
+      "date": "2026-11-08",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/fresh-ready-foods-llc-recalls-fresh-you-brand-sausage-egg-cheese-biscuit-sandwich-due-possible",
+      "score": 109
     },
     {
       "id": "USDA-2026-11-06-fsis-issues-public-health-alert-for-meat-and-poultry-products-due-to-m",
@@ -288,7 +304,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V717000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V717-3733.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V717000",
       "score": 123
     },
     {
@@ -407,7 +423,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V664000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V664-0680.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V664000",
       "score": 105
     },
     {
@@ -647,6 +663,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/Jiastfeng-Recalls-HAUOMS-Eight-drawer-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 90
+    },
+    {
+      "id": "FDA-2026-11-10-laub-s-feeding-cubing-grade-a-mini-hay-cubes-laub-s-feeding-cubing",
+      "source": "FDA",
+      "category": "food",
+      "title": "Laub’s Feeding & Cubing Grade A Mini Hay Cubes Recalled",
+      "reason": "Potential to be contaminated with Clostridium Botulinum",
+      "brand": "Laub’s Feeding & Cubing",
+      "company": "Laub’s Feeding & Cubing",
+      "product": "Grade A Mini Hay Cubes",
+      "date": "2026-11-10",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/laubs-feeding-cubing-inc-voluntary-recalls-grade-mini-hay-cubes-because-potential-clostridium",
+      "score": 88
     },
     {
       "id": "FDA-2026-11-09-eugia-vancomycin-hydrochloride-for-injection-usp-1-25g-vial-30ml-singl",
@@ -1068,7 +1100,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V696000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V696-1278.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V696000",
       "score": 63
     },
     {
@@ -1102,7 +1134,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V692000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V692-7473.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V692000",
       "score": 63
     },
     {
@@ -1423,7 +1455,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V625000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V625-5393.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V625000",
       "score": 55
     },
     {
@@ -1591,7 +1623,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-all-cheddar-cheese-products-because-possible-health-risk",
       "score": 45
     },
     {
@@ -1737,7 +1769,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V729000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V729-3900.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V729000",
       "score": 42
     },
     {
@@ -2009,39 +2041,6 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/YunHeng-Recalls-LandTale-Bed-Rails-Due-to-Risk-of-Serious-Injury-or-Death-from-Entrapment-and-Asphyxiation-Violate-Mandatory-Standard-for-Adult-Portable-Bed-Rails",
       "score": 28
-    },
-    {
-      "id": "FDA-2026-10-22-natural-grocers-2-pound-mung-beans-vitamin-cottage-natural-food-market",
-      "source": "FDA",
-      "category": "food",
-      "title": "Natural Grocers 2 pound Mung Beans Recalled",
-      "reason": "Possible foreign material contamination with glass",
-      "brand": "Natural Grocers",
-      "company": "Vitamin Cottage Natural Food Markets, Inc.",
-      "product": "2 pound Mung Beans",
-      "date": "2026-10-22",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 26
-    },
-    {
-      "id": "NHTSA-26V707000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Gillig Low Floor Vehicles Recalled",
-      "reason": "Gillig, LLC (Gillig) is recalling certain 2021-2026 Low Floor transit buses. The remote fuel filter hoses may separate from the fitting, causing a fuel leak and an engine stall. 1,853 vehicles or units may be affected.",
-      "brand": "Gillig",
-      "company": "Gillig, LLC",
-      "product": "Low Floor",
-      "date": "2026-10-23",
-      "units": 1853,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V707000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V707-5667.pdf",
-      "score": 20
     }
   ]
 }
