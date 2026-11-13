@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-12T16:51:57.527Z",
+  "generated": "2026-11-13T01:08:40.250Z",
   "version": "2.4",
   "newestDate": "2026-11-12",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1104
+      "count": 1105
     },
     "CPSC": {
       "ok": true,
@@ -166,9 +166,9 @@
       "brand": "",
       "company": "",
       "retailers": "Sold Online At: Amazon.com from September 2026 through October 2026 for between $30 and $65., Boshengya Dianzi Shangwu (Tianjin) Youxian Gongsi (Boshengya E-Commerce Tianjin Co., Ltd.), dba Boshengya, of China",
-      "product": "",
+      "product": "Boshengya Shag Area Rugs",
       "date": "2026-11-12",
-      "units": 0,
+      "units": 83,
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Boshengya-Recalls-Rugs-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Carpets-and-Rugs",
@@ -1051,6 +1051,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eros-apothecary-issues-recall-candy-power-man-organic-honey-due-undeclared-tadalafil",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-11-12-10-day-forecast-10-day-forecast-capsules-3200mg-game-changer-products-",
+      "source": "FDA",
+      "category": "health",
+      "title": "10 Day Forecast 10 Day Forecast Capsules 3200mg Recalled",
+      "reason": "Tainted with Sildenafil and Acetaminophen",
+      "brand": "10 Day Forecast",
+      "company": "Game Changer Products, LLC",
+      "product": "10 Day Forecast Capsules 3200mg",
+      "date": "2026-11-12",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/game-changer-products-llc-issues-voluntary-nationwide-recall-10-day-forecast-capsules-due-presence",
       "score": 70
     },
     {
@@ -2025,23 +2041,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Lithonia-Lighting-Recalls-RSX-Luminaires-with-Adjustable-Tilt-Arm-Mountings-Due-to-Risk-of-Serious-Injury-from-Impact-Hazard",
-      "score": 38
-    },
-    {
-      "id": "NHTSA-26V702000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Thomas Built Buses Vehicles Recalled",
-      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain 2023-2027 Thomas Built SAF-T-LINER C2 Jouley, 2025-2027 Thomas Built SAF-T-LINER C2, 2026-2027 Thomas Built SAF-T-LINER HDX2, and Thomas Built SAF-T-LINER…",
-      "brand": "Thomas Built Buses",
-      "company": "Daimler Trucks North America, LLC",
-      "product": "Saf-T-Liner HDX2, Saf-T-Liner EFX2, Saf-T-Liner C2 Jouley, Saf-T-Liner C2",
-      "date": "2026-10-22",
-      "units": 13593,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V702000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V702000",
       "score": 38
     }
   ]
