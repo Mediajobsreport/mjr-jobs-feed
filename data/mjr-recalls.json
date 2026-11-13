@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-13T12:17:43.722Z",
+  "generated": "2026-11-13T19:54:27.113Z",
   "version": "2.4",
   "newestDate": "2026-11-12",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1088
+      "count": 1105
     },
     "CPSC": {
       "ok": true,
@@ -105,7 +105,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V621000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V621-5191.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V621000",
       "score": 142
     },
     {
@@ -338,7 +338,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V728000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V728-4779.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V728000",
       "score": 113
     },
     {
@@ -491,7 +491,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V664000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V664-0680.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V664000",
       "score": 105
     },
     {
@@ -593,7 +593,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V691000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V691-7161.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V691000",
       "score": 95
     },
     {
@@ -627,7 +627,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V638000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V638-6146.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V638000",
       "score": 95
     },
     {
@@ -644,7 +644,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V724000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V724-4684.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V724000",
       "score": 93
     },
     {
@@ -661,7 +661,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V718000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V718-4302.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V718000",
       "score": 93
     },
     {
@@ -763,7 +763,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V701000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V701-2086.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V701000",
       "score": 85
     },
     {
@@ -780,7 +780,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V688000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V688-0857.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V688000",
       "score": 85
     },
     {
@@ -1004,22 +1004,6 @@
       "score": 73
     },
     {
-      "id": "FDA-2026-11-12-10-day-forecast-10-day-forecast-capsules-3200mg-game-changer-products-",
-      "source": "FDA",
-      "category": "health",
-      "title": "10 Day Forecast 10 Day Forecast Capsules 3200mg Recalled",
-      "reason": "Tainted with Sildenafil and Acetaminophen",
-      "brand": "10 Day Forecast",
-      "company": "Game Changer Products, LLC",
-      "product": "10 Day Forecast Capsules 3200mg",
-      "date": "2026-11-12",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/game-changer-products-llc-issues-voluntary-nationwide-recall-10-day-forecast-capsules-due-presence",
-      "score": 70
-    },
-    {
       "id": "FDA-2026-11-12-candy-power-for-man-honey-dietary-supplement-eros-apothecary",
       "source": "FDA",
       "category": "health",
@@ -1033,6 +1017,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eros-apothecary-issues-recall-candy-power-man-organic-honey-due-undeclared-tadalafil",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-11-12-10-day-forecast-10-day-forecast-capsules-3200mg-game-changer-products-",
+      "source": "FDA",
+      "category": "health",
+      "title": "10 Day Forecast 10 Day Forecast Capsules 3200mg Recalled",
+      "reason": "Tainted with Sildenafil and Acetaminophen",
+      "brand": "10 Day Forecast",
+      "company": "Game Changer Products, LLC",
+      "product": "10 Day Forecast Capsules 3200mg",
+      "date": "2026-11-12",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/game-changer-products-llc-issues-voluntary-nationwide-recall-10-day-forecast-capsules-due-presence",
       "score": 70
     },
     {
@@ -1522,7 +1522,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V677000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V677-2230.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V677000",
       "score": 55
     },
     {
@@ -1539,7 +1539,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E072000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E072-9951.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E072000",
       "score": 55
     },
     {
@@ -1921,7 +1921,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V700000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V700-4837.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V700000",
       "score": 40
     },
     {
