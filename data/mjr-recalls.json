@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-14T18:11:24.673Z",
+  "generated": "2026-11-14T23:58:24.915Z",
   "version": "2.4",
-  "newestDate": "2026-11-13",
+  "newestDate": "2026-11-14",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1107
+      "count": 1090
     },
     "CPSC": {
       "ok": true,
@@ -14,7 +14,7 @@
     },
     "USDA": {
       "ok": true,
-      "count": 2033
+      "count": 2034
     },
     "NHTSA": {
       "ok": true,
@@ -225,6 +225,22 @@
       "score": 105
     },
     {
+      "id": "USDA-2026-11-14-fsis-issues-public-health-alert-for-ready-to-eat-meat-products-contain",
+      "source": "USDA",
+      "category": "food",
+      "title": "FSIS Issues Public Health Alert for Ready-to-Eat Meat Products Containing Biscuits Recalled Due to…",
+      "reason": "Product Contamination",
+      "brand": "",
+      "company": "Fresh & Ready Foods LLC",
+      "product": "",
+      "date": "2026-11-14",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-ready-eat-chicken-and-bacon-wrap-products-due",
+      "score": 88
+    },
+    {
       "id": "NHTSA-26V735000",
       "source": "NHTSA",
       "category": "consumer",
@@ -256,22 +272,6 @@
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/bioquad-life-sciences-issues-allergy-alert-undeclared-milk-osteodenxr-dietary-supplement",
       "score": 98
-    },
-    {
-      "id": "FDA-2026-11-10-family-farmstead-raw-mild-cheddar-raw-sharp-cheddar-family-farmstead-d",
-      "source": "FDA",
-      "category": "food",
-      "title": "Family Farmstead Raw Mild Cheddar; Raw Sharp Cheddar Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes.",
-      "brand": "Family Farmstead",
-      "company": "Family Farmstead Dairy",
-      "product": "Raw Mild Cheddar; Raw Sharp Cheddar",
-      "date": "2026-11-10",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-all-cheddar-cheese-products-because-possible-health-risk",
-      "score": 95
     },
     {
       "id": "CPSC-11046-gourmia-recalls-9-slice-digital-air-fryer-ovens-due-to-burn-hazard",
@@ -529,6 +529,22 @@
       "score": 97
     },
     {
+      "id": "FDA-2026-11-10-family-farmstead-raw-mild-cheddar-raw-sharp-cheddar-family-farmstead-d",
+      "source": "FDA",
+      "category": "food",
+      "title": "Family Farmstead Raw Mild Cheddar; Raw Sharp Cheddar Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes.",
+      "brand": "Family Farmstead",
+      "company": "Family Farmstead Dairy",
+      "product": "Raw Mild Cheddar; Raw Sharp Cheddar",
+      "date": "2026-11-10",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-all-cheddar-cheese-products-because-possible-health-risk",
+      "score": 95
+    },
+    {
       "id": "CPSC-11054-baby-brezza-enterprises-recalls-superfast-sterilizer-dryers-due-to-ove",
       "source": "CPSC",
       "category": "consumer",
@@ -576,7 +592,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V689000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V689-9986.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V689000",
       "score": 95
     },
     {
@@ -593,7 +609,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V659000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V659-5102.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V659000",
       "score": 95
     },
     {
@@ -779,7 +795,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V731000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V731-8682.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V731000",
       "score": 85
     },
     {
@@ -1134,7 +1150,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V658000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V658-0458.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V658000",
       "score": 67
     },
     {
@@ -1334,7 +1350,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V739000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V739-7125.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V739000",
       "score": 62
     },
     {
@@ -1368,7 +1384,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V743000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V743-5098.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V743000",
       "score": 58
     },
     {
@@ -1384,7 +1400,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-beef-and-pork-products-due-misbranding-and",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-due-misbranding-and",
       "score": 58
     },
     {
@@ -1537,7 +1553,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V692000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V692-7473.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V692000",
       "score": 55
     },
     {
@@ -2023,23 +2039,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Longjili-Trading-Recalls-Pamag-Pieeoo-Mattresses-Due-to-Risk-of-Serious-Injury-or-Death-from-Fire-Hazard-Violate-Mandatory-Standard-for-Mattress-Flammability",
-      "score": 36
-    },
-    {
-      "id": "CPSC-11034-soowery-recalls-8-drawer-fabric-dressers-due-to-risk-of-serious-injury",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "SOOWERY Recalls 8-Drawer Fabric Dressers Due to Risk of Serious Injury or Death from Tip-Over and…",
-      "reason": "The recalled dressers are unstable if they are not anchored to the wall, posing tip-over and entrapment hazards that can result in risks of serious injuries or death to children. The dressers violate the mandatory…",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from December 2025 through August 2026 for about $106., Shenzhen Zhongyuantong Technology Co., Ltd., dba SOOWERY of China",
-      "product": "SOOWERY 8-Drawer Fabric Dresser",
-      "date": "2026-10-29",
-      "units": 138,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2027/SOOWERY-Recalls-8-Drawer-Fabric-Dressers-Due-to-Risk-of-Serious-Injury-or-Death-from-Tip-Over-and-Entrapment-Hazards-Violate-Mandatory-Standard-for-Clothing-Storage-Units",
       "score": 36
     }
   ]
