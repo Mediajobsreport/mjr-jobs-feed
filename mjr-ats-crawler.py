@@ -7590,21 +7590,27 @@ def company_scope_rejection_reason(job_or_dict):
             r"project engineer|field engineer|site manager|jobsite manager|"
             r"general contractor|foreman|carpenter|concrete|drywall|"
             r"electrician|plumber|hvac|heavy equipment|construction laborer|"
-            r"safety manager|preconstruction|land development)\b",
+            r"safety manager|preconstruction|land development|paving|asphalt|"
+            r"roadway construction|road construction|construction coordinator)\b",
             title,
         )
         construction_context = re.search(
             r"\b(construction company|construction project|general contractor|"
             r"commercial construction|residential construction|jobsite|job site|"
             r"preconstruction|real estate development|land development|"
-            r"concrete|drywall|building contractor|meruelo builders|"
+            r"concrete|drywall|building contractor|paving|asphalt|"
+            r"street reconstruction|roadway construction|road construction|"
+            r"utility restoration|utility construction|public works projects?|"
+            r"traffic control plans?|temporary parking restrictions|"
+            r"no parking.{0,40}(?:restrictions|signs)|meruelo builders|"
             r"meruelo enterprises)\b",
             description,
         )
         generic_project_title = re.search(
             r"\b(project manager|project coordinator|project engineer|"
             r"operations manager|estimator|superintendent|field engineer|"
-            r"safety manager|accounting manager)\b",
+            r"safety manager|accounting manager|field coordinator|"
+            r"coordinator|project administrator|project assistant)\b",
             title,
         )
         if construction_title or (construction_context and generic_project_title):
