@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-14T23:58:24.915Z",
+  "generated": "2026-11-15T06:40:51.923Z",
   "version": "2.4",
   "newestDate": "2026-11-14",
   "stale": false,
@@ -592,7 +592,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V689000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V689000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V689-9986.pdf",
       "score": 95
     },
     {
@@ -609,7 +609,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V659000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V659000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V659-5102.pdf",
       "score": 95
     },
     {
@@ -795,7 +795,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V731000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V731000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V731-8682.pdf",
       "score": 85
     },
     {
@@ -1150,7 +1150,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V658000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V658000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V658-0458.pdf",
       "score": 67
     },
     {
@@ -1350,7 +1350,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V739000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V739000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V739-7125.pdf",
       "score": 62
     },
     {
@@ -1384,7 +1384,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V743000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V743000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V743-5098.pdf",
       "score": 58
     },
     {
@@ -1553,7 +1553,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V692000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V692000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V692-7473.pdf",
       "score": 55
     },
     {
