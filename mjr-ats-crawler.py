@@ -7139,6 +7139,44 @@ def company_scope_rejection_reason(job_or_dict):
     text = f" {title} {description} "
     disney_source = _is_disney_url(get("url", "")) or company in {"disney / abc", "espn"}
 
+    # Theme-park businesses share recruiting portals with broadcasters.
+    # Use the title and role opening, not conglomerate boilerplate at the end.
+    # Generic "production", "studio", "audio" or "video" cannot rescue a ride,
+    # stage show or park-operations job.
+    park_pattern = (
+        r"\b(theme parks?|amusement parks?|water parks?|disney experiences|"
+        r"walt disney world|disneyland|disney california adventure|"
+        r"disney cruise line|disney vacation club|walt disney imagineering|"
+        r"universal (?:orlando|studios hollywood|studios japan|studios singapore|"
+        r"epic universe|destinations|creative)|universal islands of adventure|"
+        r"universal studios (?:theme )?parks?|universal resorts?|"
+        r"parks (?:and|&) resorts|parks, resorts)\b"
+    )
+    role_opening = re.split(
+        r"\b(?:our (?:company|businesses|portfolio)|about (?:us|the company|nbcuniversal|disney))\b",
+        description[:2200], maxsplit=1,
+    )[0]
+    park_in_title = re.search(park_pattern, title)
+    park_in_role = re.search(park_pattern, role_opening)
+    broadcast_title = re.search(
+        r"\b(broadcast(?:ing)?|newscast|newsroom|journalis\w*|"
+        r"television|radio|on[- ]air|news (?:anchor|reporter|producer)|"
+        r"master control|transmission|streaming)\b",
+        title,
+    )
+    broadcast_duties = re.search(
+        r"\b(broadcast (?:engineer\w*|operations|production|systems|"
+        r"technolog\w*|network|studio|facilit\w*)|"
+        r"(?:produce|producing|direct|directing|support|supporting|maintain|"
+        r"maintaining|operate|operating)\b.{0,70}\b"
+        r"(?:broadcasts?|newscasts?|newsroom|television|radio station)|"
+        r"live (?:television|radio|broadcast)|"
+        r"(?:television|radio) (?:production|programming|station|network))\b",
+        role_opening,
+    )
+    if (park_in_title or park_in_role) and not (broadcast_title or broadcast_duties):
+        return "Theme-park/resort role without broadcasting duties outside media scope"
+
     if company == "sony music entertainment" and infer_country(location) not in {"US", "CA"}:
         return "Sony Music job outside the United States and Canada"
 
