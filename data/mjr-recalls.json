@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-15T15:42:14.778Z",
+  "generated": "2026-11-15T21:04:58.113Z",
   "version": "2.4",
   "newestDate": "2026-11-14",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1107
+      "count": 1090
     },
     "CPSC": {
       "ok": true,
@@ -1271,22 +1271,6 @@
       "score": 60
     },
     {
-      "id": "FDA-2026-11-12-candy-power-for-man-honey-dietary-supplement-eros-apothecary",
-      "source": "FDA",
-      "category": "health",
-      "title": "Candy Power For Man Honey Dietary Supplement Recalled",
-      "reason": "Contain Undeclared Tadalafil",
-      "brand": "Candy Power For Man",
-      "company": "Eros Apothecary",
-      "product": "Honey Dietary Supplement",
-      "date": "2026-11-12",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eros-apothecary-issues-recall-candy-power-man-organic-honey-due-undeclared-tadalafil",
-      "score": 58
-    },
-    {
       "id": "FDA-2026-11-12-10-day-forecast-10-day-forecast-capsules-3200mg-game-changer-products-",
       "source": "FDA",
       "category": "health",
@@ -1300,6 +1284,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/game-changer-products-llc-issues-voluntary-nationwide-recall-10-day-forecast-capsules-due-presence",
+      "score": 58
+    },
+    {
+      "id": "FDA-2026-11-12-candy-power-for-man-honey-dietary-supplement-eros-apothecary",
+      "source": "FDA",
+      "category": "health",
+      "title": "Candy Power For Man Honey Dietary Supplement Recalled",
+      "reason": "Contain Undeclared Tadalafil",
+      "brand": "Candy Power For Man",
+      "company": "Eros Apothecary",
+      "product": "Honey Dietary Supplement",
+      "date": "2026-11-12",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eros-apothecary-issues-recall-candy-power-man-organic-honey-due-undeclared-tadalafil",
       "score": 58
     },
     {
