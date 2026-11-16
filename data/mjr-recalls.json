@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-15T21:04:58.113Z",
+  "generated": "2026-11-16T06:37:45.367Z",
   "version": "2.4",
   "newestDate": "2026-11-14",
   "stale": false,
@@ -105,7 +105,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V690000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V690000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V690-4019.pdf",
       "score": 132
     },
     {
@@ -155,7 +155,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V673000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V673000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V673-0712.pdf",
       "score": 132
     },
     {
@@ -812,7 +812,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V653000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V653000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V653-6110.pdf",
       "score": 85
     },
     {
@@ -931,7 +931,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V651000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V651000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V651-6989.pdf",
       "score": 75
     },
     {
@@ -1100,7 +1100,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V663000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V663000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V663-7659.pdf",
       "score": 67
     },
     {
@@ -1151,7 +1151,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V633000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V633000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V633-2413.pdf",
       "score": 67
     },
     {
@@ -1271,22 +1271,6 @@
       "score": 60
     },
     {
-      "id": "FDA-2026-11-12-10-day-forecast-10-day-forecast-capsules-3200mg-game-changer-products-",
-      "source": "FDA",
-      "category": "health",
-      "title": "10 Day Forecast 10 Day Forecast Capsules 3200mg Recalled",
-      "reason": "Tainted with Sildenafil and Acetaminophen",
-      "brand": "10 Day Forecast",
-      "company": "Game Changer Products, LLC",
-      "product": "10 Day Forecast Capsules 3200mg",
-      "date": "2026-11-12",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/game-changer-products-llc-issues-voluntary-nationwide-recall-10-day-forecast-capsules-due-presence",
-      "score": 58
-    },
-    {
       "id": "FDA-2026-11-12-candy-power-for-man-honey-dietary-supplement-eros-apothecary",
       "source": "FDA",
       "category": "health",
@@ -1300,6 +1284,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eros-apothecary-issues-recall-candy-power-man-organic-honey-due-undeclared-tadalafil",
+      "score": 58
+    },
+    {
+      "id": "FDA-2026-11-12-10-day-forecast-10-day-forecast-capsules-3200mg-game-changer-products-",
+      "source": "FDA",
+      "category": "health",
+      "title": "10 Day Forecast 10 Day Forecast Capsules 3200mg Recalled",
+      "reason": "Tainted with Sildenafil and Acetaminophen",
+      "brand": "10 Day Forecast",
+      "company": "Game Changer Products, LLC",
+      "product": "10 Day Forecast Capsules 3200mg",
+      "date": "2026-11-12",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/game-changer-products-llc-issues-voluntary-nationwide-recall-10-day-forecast-capsules-due-presence",
       "score": 58
     },
     {
@@ -1468,7 +1468,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E075000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E075000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E075-1835.pdf",
       "score": 55
     },
     {
@@ -1519,7 +1519,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V685000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V685000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V685-7183.pdf",
       "score": 55
     },
     {
@@ -1587,7 +1587,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V636000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V636000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V636-8765.pdf",
       "score": 55
     },
     {
@@ -1655,7 +1655,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V734000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V734000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V734-4007.pdf",
       "score": 50
     },
     {
@@ -1672,7 +1672,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V678000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V678000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V678-4996.pdf",
       "score": 50
     },
     {
