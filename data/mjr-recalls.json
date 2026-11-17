@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-17T13:31:45.137Z",
+  "generated": "2026-11-17T23:40:21.122Z",
   "version": "2.4",
-  "newestDate": "2026-11-14",
+  "newestDate": "2026-11-17",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1090
+      "count": 1092
     },
     "CPSC": {
       "ok": true,
@@ -73,6 +73,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/Allstar-Recalls-Sharper-Image-Tabletop-and-Infinity-Fire-Pits-Due-to-Risk-of-Serious-Injury-from-Burn-and-Fire-Hazards",
       "score": 157
+    },
+    {
+      "id": "FDA-2026-11-17-priano-protein-carbonara-tortelloni-and-protein-herb-cheese-tortelloni",
+      "source": "FDA",
+      "category": "food",
+      "title": "Priano Protein Carbonara Tortelloni and Protein Herb & Cheese Tortelloni Recalled",
+      "reason": "Potential to be contaminated with Clostridium botulinum",
+      "brand": "Priano",
+      "company": "ALDI",
+      "product": "Protein Carbonara Tortelloni and Protein Herb & Cheese Tortelloni",
+      "date": "2026-11-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/aldi-recalls-priano-protein-carbonara-tortelloni-and-priano-protein-herb-cheese-tortelloni-because",
+      "score": 125
     },
     {
       "id": "NHTSA-26V690000",
@@ -176,20 +192,20 @@
       "score": 113
     },
     {
-      "id": "FDA-2026-11-10-family-farmstead-raw-mild-cheddar-raw-sharp-cheddar-family-farmstead-d",
+      "id": "FDA-2026-11-17-naia-chocolate-banana-bar-sorbetto-naia-inc",
       "source": "FDA",
       "category": "food",
-      "title": "Family Farmstead Raw Mild Cheddar; Raw Sharp Cheddar Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes.",
-      "brand": "Family Farmstead",
-      "company": "Family Farmstead Dairy",
-      "product": "Raw Mild Cheddar; Raw Sharp Cheddar",
-      "date": "2026-11-10",
+      "title": "Naia Chocolate Banana Bar Sorbetto Recalled",
+      "reason": "Undeclared Allergen – milk, eggs, tree nut (pistachio)",
+      "brand": "Naia",
+      "company": "Naia, Inc.",
+      "product": "Chocolate Banana Bar Sorbetto",
+      "date": "2026-11-17",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
-      "score": 87
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naia-inc-recalls-chocolate-banana-bar-sorbetto-because-undeclared-milk-eggs-and-nuts",
+      "score": 98
     },
     {
       "id": "NHTSA-26V727000",
@@ -242,36 +258,20 @@
       "score": 76
     },
     {
-      "id": "FDA-2026-11-13-medline-beds-rails-mattresses-and-accessories-medline",
+      "id": "FDA-2026-11-10-family-farmstead-raw-mild-cheddar-raw-sharp-cheddar-family-farmstead-d",
       "source": "FDA",
-      "category": "health",
-      "title": "Medline Beds, Rails, Mattresses, and accessories Recalled",
-      "reason": "Potential Fire Hazard and Entrapment Risk",
-      "brand": "Medline",
-      "company": "Medline",
-      "product": "Beds, Rails, Mattresses, and accessories",
-      "date": "2026-11-13",
+      "category": "food",
+      "title": "Family Farmstead Raw Mild Cheddar; Raw Sharp Cheddar Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes.",
+      "brand": "Family Farmstead",
+      "company": "Family Farmstead Dairy",
+      "product": "Raw Mild Cheddar; Raw Sharp Cheddar",
+      "date": "2026-11-10",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/medline-updates-customers-and-patients-repair-and-replace-program-recall-medline-brand-beds-rails",
-      "score": 85
-    },
-    {
-      "id": "FDA-2026-11-13-osteodenx-osteodenx-capsules-bioquad-life-sciences",
-      "source": "FDA",
-      "category": "health",
-      "title": "OsteoDenx OsteoDenx capsules Recalled",
-      "reason": "Contain undeclared milk.",
-      "brand": "OsteoDenx",
-      "company": "bioQuad Life Sciences",
-      "product": "OsteoDenx capsules",
-      "date": "2026-11-13",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/bioquad-life-sciences-issues-allergy-alert-undeclared-milk-osteodenxr-dietary-supplement",
-      "score": 78
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
+      "score": 87
     },
     {
       "id": "NHTSA-26V717000",
@@ -631,6 +631,22 @@
       "score": 87
     },
     {
+      "id": "FDA-2026-11-13-medline-beds-rails-mattresses-and-accessories-medline",
+      "source": "FDA",
+      "category": "health",
+      "title": "Medline Beds, Rails, Mattresses, and accessories Recalled",
+      "reason": "Potential Fire Hazard and Entrapment Risk",
+      "brand": "Medline",
+      "company": "Medline",
+      "product": "Beds, Rails, Mattresses, and accessories",
+      "date": "2026-11-13",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/medline-updates-customers-and-patients-repair-and-replace-program-recall-medline-brand-beds-rails",
+      "score": 85
+    },
+    {
       "id": "NHTSA-26V732000",
       "source": "NHTSA",
       "category": "consumer",
@@ -731,6 +747,22 @@
       "campaign": "26V724000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V724-4684.pdf",
       "score": 83
+    },
+    {
+      "id": "FDA-2026-11-13-osteodenx-osteodenx-capsules-bioquad-life-sciences",
+      "source": "FDA",
+      "category": "health",
+      "title": "OsteoDenx OsteoDenx capsules Recalled",
+      "reason": "Contain undeclared milk.",
+      "brand": "OsteoDenx",
+      "company": "bioQuad Life Sciences",
+      "product": "OsteoDenx capsules",
+      "date": "2026-11-13",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/bioquad-life-sciences-issues-allergy-alert-undeclared-milk-osteodenxr-dietary-supplement",
+      "score": 78
     },
     {
       "id": "CPSC-11057-kakgold-recalls-4wd-remote-controlled-car-toys-due-to-risk-of-serious-",
@@ -1358,22 +1390,6 @@
       "score": 53
     },
     {
-      "id": "FDA-2026-11-12-10-day-forecast-10-day-forecast-capsules-3200mg-game-changer-products-",
-      "source": "FDA",
-      "category": "health",
-      "title": "10 Day Forecast 10 Day Forecast Capsules 3200mg Recalled",
-      "reason": "Tainted with Sildenafil and Acetaminophen",
-      "brand": "10 Day Forecast",
-      "company": "Game Changer Products, LLC",
-      "product": "10 Day Forecast Capsules 3200mg",
-      "date": "2026-11-12",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/game-changer-products-llc-issues-voluntary-nationwide-recall-10-day-forecast-capsules-due-presence",
-      "score": 50
-    },
-    {
       "id": "FDA-2026-11-12-candy-power-for-man-honey-dietary-supplement-eros-apothecary",
       "source": "FDA",
       "category": "health",
@@ -1387,6 +1403,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/eros-apothecary-issues-recall-candy-power-man-organic-honey-due-undeclared-tadalafil",
+      "score": 50
+    },
+    {
+      "id": "FDA-2026-11-12-10-day-forecast-10-day-forecast-capsules-3200mg-game-changer-products-",
+      "source": "FDA",
+      "category": "health",
+      "title": "10 Day Forecast 10 Day Forecast Capsules 3200mg Recalled",
+      "reason": "Tainted with Sildenafil and Acetaminophen",
+      "brand": "10 Day Forecast",
+      "company": "Game Changer Products, LLC",
+      "product": "10 Day Forecast Capsules 3200mg",
+      "date": "2026-11-12",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/game-changer-products-llc-issues-voluntary-nationwide-recall-10-day-forecast-capsules-due-presence",
       "score": 50
     },
     {
@@ -2006,40 +2038,6 @@
       "majorBrand": false,
       "campaign": "26V716000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V716-6380.pdf",
-      "score": 20
-    },
-    {
-      "id": "NHTSA-26V708000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Great Dane Vehicles Recalled",
-      "reason": "Great Dane Trailers (Great Dane) is recalling certain 2027 Champion and Everest van trailers. The trailer landing gear k-brace welds may fail, resulting in the landing gear collapsing. 6,810 vehicles or units may be…",
-      "brand": "Great Dane",
-      "company": "Great Dane Trailers",
-      "product": "Everest, Champion",
-      "date": "2026-10-23",
-      "units": 6810,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V708000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V708-9409.pdf",
-      "score": 20
-    },
-    {
-      "id": "NHTSA-26V704000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Forest River Vehicles Recalled",
-      "reason": "Forest River, Inc. (Forest River) is recalling certain 2022-2027 Cedar Creek, 2023-2027 FR3, 2023-2026 Palomino, 2024 Cardinal, Wildcat, Shasta Oasis, 2024-2026 Forest River Hardside, Palomino Real-Lite Camper, 2026…",
-      "brand": "Forest River",
-      "company": "Forest River, Inc.",
-      "product": "Puma, Puma Tracks, Palomino, Palomino Real-Lite Camper, Hardside, FR3, Cedar Creek, Shasta Oasis",
-      "date": "2026-10-22",
-      "units": 5612,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V704000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V704-3375.pdf",
       "score": 20
     }
   ]
