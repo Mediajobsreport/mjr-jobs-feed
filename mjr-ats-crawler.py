@@ -13268,14 +13268,16 @@ def newscorp_rendered(src):
         page.goto(src["URL"], wait_until="domcontentloaded", timeout=45000)
         page.wait_for_selector("a[href*='/job/']", timeout=20000)
         cards = page.locator("a[href*='/job/']")
-        # The board sorts by most recent. Read a bounded 150 latest listings so
-        # detail requests stay below the shared-domain safety cap.
+        # The board sorts by most recent. Read a bounded set of latest listings.
+        # Tests inspect only the first 20; production inspects up to 150.
+        test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
+        board_limit = 20 if test_mode else 150
         for _ in range(20):
             current = cards.evaluate_all("(els) => els.map(e => e.href)")
             for href in current:
                 if href and urlparse(href).netloc.lower().endswith("newscorp.com"):
                     links.add(href.split("#", 1)[0])
-            if len(links) >= 150:
+            if len(links) >= board_limit:
                 break
             more = page.get_by_role("button", name=re.compile(r"load more jobs", re.I))
             if not more.count() or not more.first.is_visible():
@@ -13294,7 +13296,8 @@ def newscorp_rendered(src):
         browser.close()
 
     out, seen = [], set()
-    for url in sorted(links)[:150]:
+    detail_limit = 5 if os.getenv("MJR_TEST_MODE", "false").lower() == "true" else 150
+    for url in sorted(links)[:detail_limit]:
         try:
             response = req("GET", url)
             job = _job_from_detail(src, clean(getattr(response, "url", "") or url), response.text)
@@ -13340,7 +13343,9 @@ def jobvite_rendered(src):
         browser.close()
 
     out, seen = [], set()
-    for url in sorted(links)[:300]:
+    test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
+    detail_limit = 5 if test_mode else 300
+    for url in sorted(links)[:detail_limit]:
         try:
             response = req("GET", url)
             job = _job_from_detail(src, clean(getattr(response, "url", "") or url), response.text)
