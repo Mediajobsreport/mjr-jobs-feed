@@ -12670,9 +12670,15 @@ def advance_local_adp_cx_rendered(src):
                         detail_url = page.url
                         req_id = (parse_qs(urlparse(detail_url).query).get("reqId") or [""])[0]
                         if not req_id:
-                            raise ValueError("ADP detail panel did not expose reqId in its URL")
-                        if req_id in seen:
-                            continue
+                            try:
+                                page.wait_for_function(
+                                    """() => new URL(window.location.href).searchParams.has('reqId')""",
+                                    timeout=5000,
+                                )
+                                detail_url = page.url
+                                req_id = (parse_qs(urlparse(detail_url).query).get("reqId") or [""])[0]
+                            except Exception:
+                                pass
 
                         lines = [clean(line) for line in detail_raw.splitlines() if clean(line)]
                         code_match = next(
@@ -12682,6 +12688,16 @@ def advance_local_adp_cx_rendered(src):
                             None,
                         )
                         job_code = code_match.group(1).upper() if code_match else req_id
+                        identity = req_id or job_code
+                        if not identity:
+                            raise ValueError("ADP detail panel did not expose a job ID")
+                        if identity in seen:
+                            continue
+                        if not req_id:
+                            # Some ADP CX tenants open a valid detail panel
+                            # without updating the URL. Keep the job using its
+                            # visible posting code and link back to the board.
+                            detail_url = start
                         actual_title = re.sub(
                             r"\s+#?[A-Z0-9]+-[0-9]{3,}\s*$", "", lines[0]
                         ) if lines else title
@@ -12702,7 +12718,7 @@ def advance_local_adp_cx_rendered(src):
                             detail_url.rstrip("/").lower(), {}
                         ).get("job", {})
                         posted = pdate(saved.get("date")) or TODAY
-                        seen.add(req_id)
+                        seen.add(identity)
                         out.append(
                             Job(
                                 job_code, actual_title, src["Company"], description,
