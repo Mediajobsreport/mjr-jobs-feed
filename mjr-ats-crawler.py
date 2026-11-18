@@ -2353,7 +2353,7 @@ def adp(src):
     """
     u = urlparse(src["URL"])
     qs = parse_qs(u.query)
-    cid = clean((qs.get("cid") or [""])[0])
+    cid = clean((qs.get("cid") or qs.get("c") or [""])[0])
     if not cid:
         # myjobs.adp.com and branded ADP pages occasionally carry the career
         # center id in initial application state rather than the URL.
@@ -13022,6 +13022,84 @@ def tbn_careers_jobs(src):
     return out
 
 
+def workable(src):
+    """Collect published jobs from Workable's public employer jobs API."""
+    parsed = urlparse(src.get("URL", ""))
+    parts = [p for p in parsed.path.split("/") if p]
+    if not parts:
+        raise RuntimeError("Workable account slug not inferable")
+    account = parts[0]
+    endpoint = f"https://www.workable.com/api/accounts/{account}?details=true"
+    payload = req("GET", endpoint, headers={"Accept": "application/json"}).json()
+    rows = payload.get("jobs", []) if isinstance(payload, dict) else payload
+    if not isinstance(rows, list):
+        raise RuntimeError("Workable jobs response has unexpected format")
+
+    out, seen = [], set()
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        title = clean(row.get("title") or "")
+        if not title:
+            continue
+        posted = pdate(row.get("published_on") or row.get("created_at") or row.get("updated_at"))
+        if not posted or posted < CUTOFF:
+            continue
+        desc = format_description(row.get("description") or row.get("description_html") or "")
+        if not desc:
+            desc = clean(row.get("description_plain") or "")
+        location = row.get("location") or {}
+        if isinstance(location, str):
+            location_text = clean(location)
+            location = {}
+        elif isinstance(location, dict):
+            location_text = clean(", ".join(str(location.get(k) or "") for k in ("city", "region", "country")))
+        else:
+            location_text = ""
+            location = {}
+        locations = row.get("locations") or []
+        if not location_text and isinstance(locations, list) and locations:
+            location_text = clean(", ".join(
+                str(loc.get(k) or "") for loc in locations[:3] if isinstance(loc, dict)
+                for k in ("city", "region", "country") if loc.get(k)
+            ))
+        city = clean(location.get("city") or "")
+        state = clean(location.get("region") or location.get("state") or "")
+        country = clean(location.get("country") or "")
+        url = clean(row.get("url") or row.get("shortlink") or row.get("application_url") or "")
+        if url and not url.startswith("http"):
+            url = urljoin("https://apply.workable.com/", url)
+        if not url:
+            shortcode = clean(row.get("shortcode") or row.get("id") or "")
+            if shortcode:
+                url = f"https://apply.workable.com/{account}/j/{shortcode}/"
+        if not url or url in seen:
+            continue
+        seen.add(url)
+        plain = strip_html(desc)
+        if len(plain) < 80:
+            continue
+        out.append(Job(
+            hashlib.sha1(url.encode()).hexdigest()[:16],
+            title,
+            src["Company"],
+            desc,
+            posted,
+            jobtype(title, plain),
+            category(title, plain, src.get("Industry", ""), src["Company"]),
+            url,
+            src["URL"],
+            src["URL"],
+            "",
+            normalize_work_arrangement(plain, location_text),
+            city,
+            state,
+            infer_country(country or location_text, src["Company"], plain),
+        ))
+    print(f"Workable {src['Company']}: enumerated={len(rows)} current={len(out)}")
+    return out
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -16409,6 +16487,8 @@ def main():
                 if company_key == "hubbard broadcasting"
                 else npg_adp_cx_rendered(s)
                 if company_key == "npg"
+                else workable(s)
+                if _ats_family(s) == "workable"
                 else adp(s)
                 if "adp" in a
                 else dayforce(s)
