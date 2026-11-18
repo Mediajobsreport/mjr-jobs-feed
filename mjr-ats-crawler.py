@@ -16504,8 +16504,6 @@ def main():
                 if _ats_family(s) == "workable"
                 else generic(s)
                 if company_key == "advance local media"
-                else workable(s)
-                if _ats_family(s) == "workable"
                 else adp(s)
                 if "adp" in a
                 else dayforce(s)
@@ -16532,6 +16530,8 @@ def main():
                 if _ats_family(s) == "betterteam"
                 else jazzhr_active_board(s)
                 if _ats_family(s) == "jazzhr"
+                else workable(s)
+                if _ats_family(s) == "workable"
                 else ats_html(s)
                 if _ats_family(s)
                 else amazon_music_jobs(s)
