@@ -13562,7 +13562,7 @@ def ogilvy_jobs(src):
                 continue
 
         test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
-        detail_limit = 3 if test_mode else 100
+        detail_limit = 3 if test_mode else 30
         out, seen_ids = [], set()
         for url, card_label in links[:detail_limit]:
             try:
