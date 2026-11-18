@@ -274,5 +274,6 @@ jobs:
             echo "No feed changes to commit."
           else
             git commit -m "Update MJR jobs feed"
+            git pull --rebase origin main
             git push origin main
           fi
