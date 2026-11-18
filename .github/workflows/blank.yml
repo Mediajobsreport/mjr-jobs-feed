@@ -4,7 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       test_companies:
-        description: "Optional: company name(s) to test, comma-separated. Leave blank for full production crawl."
+        description: "Optional: company name(s) to test without publishing, comma-separated."
+        required: false
+        default: ""
+      publish_companies:
+        description: "Optional: crawl and publish only these companies, comma-separated. Leave blank for a full production crawl."
         required: false
         default: ""
 
@@ -44,6 +48,7 @@ jobs:
         shell: bash
         run: |
           TEST="${{ github.event.inputs.test_companies }}"
+          TARGET="${{ github.event.inputs.publish_companies }}"
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "$TEST" ]]; then
             echo "MJR_TEST_MODE=true" >> "$GITHUB_ENV"
             echo "MJR_OUTPUT=mjr-jboard-test.xml" >> "$GITHUB_ENV"
@@ -52,6 +57,16 @@ jobs:
             echo "MJR_QUALITY_REPORT=mjr-job-quality-report-test.csv" >> "$GITHUB_ENV"
             echo "MJR_DIAGNOSTIC=mjr-salem-diagnostic.txt" >> "$GITHUB_ENV"
             echo "TARGETED TEST: $TEST"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "$TARGET" ]]; then
+            echo "MJR_TEST_MODE=false" >> "$GITHUB_ENV"
+            echo "MJR_TARGETED_CRAWL=true" >> "$GITHUB_ENV"
+            echo "MJR_OUTPUT=mjr-jboard-master.xml" >> "$GITHUB_ENV"
+            echo "MJR_AUDIT=mjr-ats-audit-targeted.csv" >> "$GITHUB_ENV"
+            echo "MJR_STATE=mjr-job-state.json" >> "$GITHUB_ENV"
+            echo "MJR_QUALITY_REPORT=mjr-job-quality-report.csv" >> "$GITHUB_ENV"
+            echo "MJR_HEALTH_OUTPUT=mjr-job-source-health.json" >> "$GITHUB_ENV"
+            echo "MJR_DIAGNOSTIC=mjr-salem-diagnostic.txt" >> "$GITHUB_ENV"
+            echo "TARGETED PRODUCTION: $TARGET"
           else
             echo "MJR_TEST_MODE=false" >> "$GITHUB_ENV"
             echo "MJR_OUTPUT=mjr-jboard-master.xml" >> "$GITHUB_ENV"
@@ -73,6 +88,7 @@ jobs:
           MJR_WINDOW_DAYS: "30"
           MJR_SOURCES: "mjr-ats-sources.csv"
           MJR_TEST_COMPANIES: "${{ github.event.inputs.test_companies }}"
+          MJR_TARGET_COMPANIES: "${{ github.event.inputs.publish_companies }}"
           MJR_REQUEST_DELAY_MIN: "0.20"
           MJR_REQUEST_DELAY_MAX: "0.65"
           MJR_DOMAIN_REQUEST_CAP: "175"
@@ -169,6 +185,41 @@ jobs:
       - name: Build source health dashboard data
         if: ${{ !(github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '') }}
         run: python mjr-build-source-health.py
+      - name: Merge targeted audit into production audit
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.publish_companies != '' }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          target_path = Path("mjr-ats-audit-targeted.csv")
+          production_path = Path("mjr-ats-audit.csv")
+          with target_path.open("r", encoding="utf-8-sig", newline="") as handle:
+              target_rows = list(csv.DictReader(handle))
+              fields = handle.seek(0) or None
+          with production_path.open("r", encoding="utf-8-sig", newline="") as handle:
+              reader = csv.DictReader(handle)
+              fieldnames = reader.fieldnames
+              production_rows = list(reader)
+          replacements = {row["company"].strip().casefold(): row for row in target_rows if row.get("company")}
+          merged = []
+          seen = set()
+          for row in production_rows:
+              key = row.get("company", "").strip().casefold()
+              if key in replacements:
+                  merged.append(replacements[key])
+                  seen.add(key)
+              else:
+                  merged.append(row)
+          merged.extend(row for key, row in replacements.items() if key not in seen)
+          with production_path.open("w", encoding="utf-8", newline="") as handle:
+              writer = csv.DictWriter(handle, fieldnames=fieldnames or list(target_rows[0]))
+              writer.writeheader()
+              writer.writerows(merged)
+          print(f"Merged {len(replacements)} targeted audit rows into {production_path}")
+          PY
+
 
       - name: Upload targeted test files
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_companies != '' }}
@@ -204,6 +255,7 @@ jobs:
           path: |
             mjr-jboard-master.xml
             mjr-ats-audit.csv
+            mjr-ats-audit-targeted.csv
             mjr-job-quality-report.csv
             mjr-job-state.json
             mjr-job-source-health.json
