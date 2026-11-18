@@ -13106,6 +13106,65 @@ def workable(src):
     return out
 
 
+def ogilvy_jobs(src):
+    """Render Ogilvy's JavaScript careers widget, then parse official job details."""
+    if sync_playwright is None:
+        raise RuntimeError("Playwright unavailable for Ogilvy careers widget")
+    browser = None
+    links = set()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--disable-dev-shm-usage", "--no-sandbox"],
+        )
+        page = browser.new_page(
+            user_agent=("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                        "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"),
+            viewport={"width": 1440, "height": 1000},
+        )
+        page.set_default_timeout(12000)
+        page.goto(src["URL"], wait_until="domcontentloaded", timeout=45000)
+        cards = page.locator("a[id='jobLink']")
+        if not cards.count():
+            # The job widget fetches and paints its opportunities when the
+            # Region filter is opened, even if the selection remains "All".
+            page.locator("button").filter(has_text="All").first.click()
+            page.wait_for_selector("a[id='jobLink']", timeout=20000)
+            cards = page.locator("a[id='jobLink']")
+        for _ in range(4):
+            more = page.get_by_role("button", name=re.compile(r"view more|load more|show more", re.I))
+            try:
+                if not more.count() or not more.first.is_visible():
+                    break
+                before = cards.count()
+                more.first.click()
+                page.wait_for_timeout(700)
+                cards = page.locator("a[id='jobLink']")
+                if cards.count() <= before:
+                    break
+            except Exception:
+                break
+        for href in cards.evaluate_all("(els) => els.map(e => e.href)"):
+            if href and re.search(r"/careers/\d+/?$", href):
+                links.add(href)
+        browser.close()
+
+    out, seen = [], set()
+    for url in sorted(links):
+        try:
+            response = req("GET", url)
+            job = _job_from_detail(src, clean(getattr(response, "url", "") or url), response.text)
+            if job and job_is_fresh(job):
+                key = job.url.rstrip("/").lower()
+                if key not in seen:
+                    seen.add(key)
+                    out.append(job)
+        except Exception:
+            continue
+    print(f"Ogilvy rendered careers: listed={len(links)} current={len(out)}")
+    return out
+
+
 def generic(src):
     # Strict fallback: only individual pages with an explicit recent posted
     # date and a substantial description.
@@ -16548,6 +16607,8 @@ def main():
                 if company_key == "lotus"
                 else tbn_careers_jobs(s)
                 if company_key == "tbn"
+                else ogilvy_jobs(s)
+                if company_key == "ogilvy"
                 else generic(s)
             )
 
