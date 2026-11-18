@@ -13106,6 +13106,52 @@ def workable(src):
     return out
 
 
+def jobvite_rendered(src):
+    """Render Jobvite's client-side public board, then parse official job details."""
+    if sync_playwright is None:
+        raise RuntimeError("Playwright unavailable for Jobvite careers board")
+    links = set()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--disable-dev-shm-usage", "--no-sandbox"],
+        )
+        page = browser.new_page(
+            user_agent=("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                        "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"),
+            viewport={"width": 1440, "height": 1000},
+        )
+        page.set_default_timeout(12000)
+        page.goto(src["URL"], wait_until="domcontentloaded", timeout=45000)
+        page.wait_for_timeout(900)
+        cards = page.locator("a[href*='/job/']")
+        if not cards.count():
+            view_all = page.get_by_role("link", name=re.compile(r"view all|open positions", re.I))
+            if view_all.count():
+                page.goto(view_all.first.get_attribute("href"), wait_until="domcontentloaded", timeout=45000)
+                page.wait_for_timeout(900)
+                cards = page.locator("a[href*='/job/']")
+        for href in cards.evaluate_all("(els) => els.map(e => e.href)"):
+            if href and "jobs.jobvite.com" in urlparse(href).netloc.lower():
+                links.add(href.split("#", 1)[0])
+        browser.close()
+
+    out, seen = [], set()
+    for url in sorted(links)[:300]:
+        try:
+            response = req("GET", url)
+            job = _job_from_detail(src, clean(getattr(response, "url", "") or url), response.text)
+            if job and job_is_fresh(job):
+                key = job.url.rstrip("/").lower()
+                if key not in seen:
+                    seen.add(key)
+                    out.append(job)
+        except Exception:
+            continue
+    print(f"Jobvite rendered {src['Company']}: listed={len(links)} current={len(out)}")
+    return out
+
+
 def ogilvy_jobs(src):
     """Render Ogilvy's JavaScript careers widget, then parse official job details."""
     if sync_playwright is None:
@@ -16559,6 +16605,8 @@ def main():
                 if company_key == "hubbard broadcasting"
                 else npg_adp_cx_rendered(s)
                 if company_key == "npg"
+                else jobvite_rendered(s)
+                if _ats_family(s) == "jobvite"
                 else workable(s)
                 if _ats_family(s) == "workable"
                 else generic(s)
