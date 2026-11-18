@@ -47,7 +47,7 @@ Hallmark,UKG Pro,https://recruiting2.ultipro.com/HAL1009HLLI/JobBoard/1af38e50-b
 Hearst,Oracle Recruiting Cloud,https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_6/jobs,ok,8,feed_filter_rejected=Multimedia Technician:not_fresh ; Digital Content Producer:not_fresh ; Morning Meteorologist:not_fresh ; Part-Time Operations Technician:not_fresh ; Producer:not_fresh ; Stagehand:not_fresh ; Part-Time Storm Chaser:not_fresh ; Account Executive:not_fresh
 Morgan Murphy Media,Breezy HR,https://morgan-murphy-media.breezy.hr/,ok,4,
 Newsmax,UKG Pro,https://recruiting.ultipro.com/NEW1027/JobBoard/3d5ae180-49c4-20f7-d7b4-adfe940978a7/?q=&o=postedDateDesc,ok,6,
-Nexstar,Workday,https://nexstar.wd5.myworkdayjobs.com/nexstar,error,0,RuntimeError('HTTP 429 for https://nexstar.wd5.myworkdayjobs.com/wday/cxs/nexstar/nexstar/jobs')
+Nexstar,Workday,https://nexstar.wd5.myworkdayjobs.com/nexstar,ok,35,
 NFL,Greenhouse,https://job-boards.greenhouse.io/nflcareers?keyword=broadcast&offices%5B%5D=4003941008,ok,40,enumerated_jobs=40
 NPG,ADP CX Rendered,https://myjobs.adp.com/npgexternalcareers/cx/job-listing?c=1059541&d=External-Corporate&sor=adprm,ok,8,
 PGA,Workday,https://pgahq.wd1.myworkdayjobs.com/PGAHQ,ok,3,
@@ -134,7 +134,7 @@ The Daily Beast,JobScore,https://careers.jobscore.com/careers/iac,ok,3,"feed_fil
 Straight Arrow News,Greenhouse,https://job-boards.greenhouse.io/straightarrownews,enumerated_no_fresh_jobs,0,enumerated_jobs=3
 Recording Academy,Workday,https://grammy.wd5.myworkdayjobs.com/the_recording_academy_career_site,ok,1,
 KQED,ApplyToJob / JazzHR,https://kqed.applytojob.com/apply/jobs,ok,6,"feed_filter_rejected=Business Operations Analyst:not_fresh ; Director, Payroll:not_fresh ; Front Doors Product Manager:not_fresh"
-News Corp,Company Career Site,https://careers.newscorp.com/jobs/,zero_or_not_enumerable,0,
+News Corp,Company Career Site,https://careers.newscorp.com/jobs/,ok,14,
 Advance Local Media,Company Career Site,https://www.advancelocal.com/careers/,zero_or_not_enumerable,0,
 MediaNews Group,Workday,https://myworkdaycenter.wd5.myworkdayjobs.com/MNG,ok,20,feed_filter_rejected=Account Executive:not_fresh ; Digital Sales Manager:not_fresh
 BMG,Company Career Site,https://www.bmg.com/careers,zero_or_not_enumerable,0,
@@ -156,7 +156,7 @@ Publicis Groupe,Company Career Site,https://www.publicisgroupe.com/en/the-groupe
 WPP,Greenhouse,https://job-boards.greenhouse.io/wpp,ok,214,enumerated_jobs=214; feed_filter_rejected=Analyst - Accounts Payable - ANZ (Contract):not_fresh ; Analyst - Agency Reporting:not_fresh ; Analyst - Billing - US:not_fresh ; Analyst - Billing - US:not_fresh ; Analyst - Direct Tax:not_fresh ; Analyst – Indirect Tax:not_fresh ; Analyst - MDM:not_fresh ; Analyst - Payroll:not_fresh ; Analyst - RTR (ANZ):not_fresh ; Analyst - RTR (HK - Temp):not_fresh ; Analyst - T&E:not_fresh ; Analyst - Treasury:not_fresh
 Omnicom Group,Greenhouse,https://job-boards.greenhouse.io/omccorp,ok,4,enumerated_jobs=14; feed_filter_rejected=HR Shared Service Specialist Tier 1:not_fresh ; Learning & Development Coordinator:not_fresh ; Supervisor Tax:not_fresh
 Dentsu,Company Career Site,https://www.dentsu.com/careers,zero_or_not_enumerable,0,
-Havas,Jobvite,https://jobs.jobvite.com/havas/jobs,zero_or_not_enumerable,0,
+Havas,Jobvite,https://jobs.jobvite.com/thehavasgroup/search,ok,13,
 Hakuhodo DY,Company Career Site,https://www.hakuhodody-holdings.co.jp/english/,zero_or_not_enumerable,0,
 Stagwell,iCIMS,https://careers-stagwellglobal.icims.com/jobs/intro,ok,10,"enumerated_detail_urls=54; feed_filter_rejected=Enterprise Account Executive:not_fresh ; Controller:not_fresh ; Sr Analyst, Maconomy:not_fresh ; Global Investment Director:not_fresh"
 S4 Capital,Company Career Site,https://www.s4capital.com/careers,zero_or_not_enumerable,0,

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-18T17:47:01Z",
+  "generated_at": "2026-11-18T18:28:12Z",
   "thresholds": {
     "green": "0-2",
     "yellow": "3-4",
@@ -9,14 +9,14 @@
   },
   "summary": {
     "sources": 166,
-    "green": 87,
+    "green": 90,
     "yellow": 7,
     "orange": 11,
-    "red": 61,
-    "crawl_errors": 2,
-    "zero_or_not_enumerable": 34,
-    "new_jobs_this_crawl": 25,
-    "active_jobs": 2168
+    "red": 58,
+    "crawl_errors": 1,
+    "zero_or_not_enumerable": 32,
+    "new_jobs_this_crawl": 62,
+    "active_jobs": 2230
   },
   "sources": [
     {
@@ -580,25 +580,6 @@
       ]
     },
     {
-      "company": "Havas",
-      "ats": "Jobvite",
-      "source_url": "https://jobs.jobvite.com/havas/jobs",
-      "status": "red",
-      "attention_reason": "No job history",
-      "days_since_new_job": null,
-      "last_new_job_at": null,
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-18T17:16:03Z",
-      "crawl_result": "zero_or_not_enumerable",
-      "jobs_collected_this_crawl": 0,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 0,
-      "latest_jobs": [],
-      "error": "",
-      "note": "",
-      "active_job_ids": []
-    },
-    {
       "company": "Hearst",
       "ats": "Oracle Recruiting Cloud",
       "source_url": "https://eevd.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_6/jobs",
@@ -800,44 +781,6 @@
       "active_jobs": 0,
       "latest_jobs": [],
       "error": "",
-      "note": "",
-      "active_job_ids": []
-    },
-    {
-      "company": "News Corp",
-      "ats": "Company Career Site",
-      "source_url": "https://careers.newscorp.com/jobs/",
-      "status": "red",
-      "attention_reason": "No job history",
-      "days_since_new_job": null,
-      "last_new_job_at": null,
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-18T17:16:03Z",
-      "crawl_result": "zero_or_not_enumerable",
-      "jobs_collected_this_crawl": 0,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 0,
-      "latest_jobs": [],
-      "error": "",
-      "note": "",
-      "active_job_ids": []
-    },
-    {
-      "company": "Nexstar",
-      "ats": "Workday",
-      "source_url": "https://nexstar.wd5.myworkdayjobs.com/nexstar",
-      "status": "red",
-      "attention_reason": "Crawl error",
-      "days_since_new_job": 4,
-      "last_new_job_at": "2026-11-14",
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-15T17:30:36Z",
-      "crawl_result": "error",
-      "jobs_collected_this_crawl": 0,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 0,
-      "latest_jobs": [],
-      "error": "RuntimeError('HTTP 429 for https://nexstar.wd5.myworkdayjobs.com/wday/cxs/nexstar/nexstar/jobs')",
       "note": "",
       "active_job_ids": []
     },
@@ -4041,6 +3984,65 @@
       ]
     },
     {
+      "company": "Havas",
+      "ats": "Jobvite",
+      "source_url": "https://jobs.jobvite.com/thehavasgroup/search",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-11-18",
+      "last_crawl_at": "2026-11-18T18:28:12Z",
+      "last_successful_crawl_at": "2026-11-18T18:28:12Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 13,
+      "new_jobs_this_crawl": 13,
+      "active_jobs": 13,
+      "latest_jobs": [
+        {
+          "title": "",
+          "date": "2026-11-18",
+          "url": "https://jobs.jobvite.com/thehavasgroup/job/os529fws"
+        },
+        {
+          "title": "",
+          "date": "2026-11-18",
+          "url": "https://jobs.jobvite.com/thehavasgroup/job/o8f9afwq"
+        },
+        {
+          "title": "",
+          "date": "2026-11-18",
+          "url": "https://jobs.jobvite.com/thehavasgroup/job/o9n49fwt"
+        },
+        {
+          "title": "",
+          "date": "2026-11-18",
+          "url": "https://jobs.jobvite.com/thehavasgroup/job/oWGf9fwK"
+        },
+        {
+          "title": "",
+          "date": "2026-11-18",
+          "url": "https://jobs.jobvite.com/thehavasgroup/job/oULn9fwV"
+        }
+      ],
+      "error": "",
+      "note": "",
+      "active_job_ids": [
+        "0c40765aa65db5de",
+        "1cb7bab1132ab934",
+        "2d461864fa0ef0e4",
+        "378ca6769ed54e07",
+        "3a6b21e76fa4c642",
+        "4061d29638653e29",
+        "5f01eaf13c0615f8",
+        "7190b03b80550e24",
+        "74c268f90c82c526",
+        "9c6ddc87933e90d0",
+        "d7607aca6d7306b8",
+        "ddaddb87f46fce9a",
+        "ebc9b8492c4a4c0f"
+      ]
+    },
+    {
       "company": "Hubbard Broadcasting",
       "ats": "ADP",
       "source_url": "https://myjobs.adp.com/hubbardbroadcasting/cx/job-listing",
@@ -4204,7 +4206,7 @@
       "last_successful_crawl_at": "2026-11-18T17:47:01Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 8,
-      "new_jobs_this_crawl": 7,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 7,
       "latest_jobs": [
         {
@@ -4567,7 +4569,7 @@
       "last_successful_crawl_at": "2026-11-18T17:47:01Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 20,
-      "new_jobs_this_crawl": 18,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 18,
       "latest_jobs": [
         {
@@ -5069,6 +5071,66 @@
       ]
     },
     {
+      "company": "News Corp",
+      "ats": "Company Career Site",
+      "source_url": "https://careers.newscorp.com/jobs/",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-11-18",
+      "last_crawl_at": "2026-11-18T18:28:12Z",
+      "last_successful_crawl_at": "2026-11-18T18:28:12Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 14,
+      "new_jobs_this_crawl": 14,
+      "active_jobs": 14,
+      "latest_jobs": [
+        {
+          "title": "Price Reporter - US Refined Products Markets - Dow Jones",
+          "date": "2026-11-18",
+          "url": "https://careers.newscorp.com/virtual-usa/price-reporter-us-refined-products-markets/F4762155F16248F38EF10F28691B7CE2/job/"
+        },
+        {
+          "title": "Sun Originals Sales Executive and Administrator - News UK",
+          "date": "2026-11-18",
+          "url": "https://careers.newscorp.com/london-gbr/sun-originals-sales-executive-and-administrator/FE62026312D548929C236C49C4E79B8A/job/"
+        },
+        {
+          "title": "Sr. Director, Product Management - RealPro Platform - Realtor.com",
+          "date": "2026-11-18",
+          "url": "https://careers.newscorp.com/austin-tx/sr-director-product-management-realpro-platform/7EF0841BE45B430D93518303852E242C/job/"
+        },
+        {
+          "title": "Senior Software Engineer, Enterprise Systems - Realtor.com",
+          "date": "2026-11-18",
+          "url": "https://careers.newscorp.com/austin-tx/senior-software-engineer-enterprise-systems/E75AFC766BE54772924E666C75601AE5/job/"
+        },
+        {
+          "title": "Project Manager, Special Projects - Dow Jones",
+          "date": "2026-11-18",
+          "url": "https://careers.newscorp.com/princeton-nj/project-manager-special-projects/7A23228DC90F41F7A9476EC662E78541/job/"
+        }
+      ],
+      "error": "",
+      "note": "",
+      "active_job_ids": [
+        "09b13dac2f97bc82",
+        "0a81475d83206037",
+        "1e264a6995231bde",
+        "2cd76d0446d8a111",
+        "2d4f3acaf9d4855f",
+        "479ddb1769460068",
+        "57a9861129907010",
+        "6b0080fe26463517",
+        "8155765ebd2b9154",
+        "9c21a1f0d2258bcd",
+        "bb23881a91393a1c",
+        "c246d0a17f61e742",
+        "d6889dc7e9f949d7",
+        "f5db0c8111cfbc17"
+      ]
+    },
+    {
       "company": "Newsmax",
       "ats": "UKG Pro",
       "source_url": "https://recruiting.ultipro.com/NEW1027/JobBoard/3d5ae180-49c4-20f7-d7b4-adfe940978a7/?q=&o=postedDateDesc",
@@ -5098,6 +5160,87 @@
         "7d194888951b17a5",
         "90968d5f58a5a655",
         "d99a7d2c74fd9631"
+      ]
+    },
+    {
+      "company": "Nexstar",
+      "ats": "Workday",
+      "source_url": "https://nexstar.wd5.myworkdayjobs.com/nexstar",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-11-18",
+      "last_crawl_at": "2026-11-18T18:28:12Z",
+      "last_successful_crawl_at": "2026-11-18T18:28:12Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 35,
+      "new_jobs_this_crawl": 35,
+      "active_jobs": 35,
+      "latest_jobs": [
+        {
+          "title": "Unpaid Intern",
+          "date": "2026-11-18",
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/CT-New-Haven/Unpaid-Intern_REQ-43716"
+        },
+        {
+          "title": "PT JIB and Handheld Camera Operator",
+          "date": "2026-11-18",
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/CA-Los-Angeles5800-Sunset-Blvd-Tribune-KTLA/PT-JIB-and-Handheld-Camera-Operator_REQ-43708"
+        },
+        {
+          "title": "Digital Content Producer",
+          "date": "2026-11-18",
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/AR-Fayetteville/Digital-Content-Producer_REQ-43701-1"
+        },
+        {
+          "title": "Full Time News and Content Producer",
+          "date": "2026-11-18",
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/AR-Fayetteville/Full-Time-News-and-Content-Producer_REQ-43713"
+        },
+        {
+          "title": "Sales Account Executive",
+          "date": "2026-11-18",
+          "url": "https://nexstar.wd5.myworkdayjobs.com/nexstar/job/NC-Charlotte/Sales-Account-Executive_REQ-41563"
+        }
+      ],
+      "error": "",
+      "note": "",
+      "active_job_ids": [
+        "117b6cde53f715e4",
+        "1d7acd3d741c5c10",
+        "257d04557c5c9781",
+        "26af4b092b14f775",
+        "28dfc8cc4cd2d823",
+        "43ccbd3ede760443",
+        "458af5105fcb2116",
+        "4826c6d9821cfbf8",
+        "5318437601ce56d4",
+        "609b63aabcca4823",
+        "64f152f285aeb93e",
+        "65b4d34d81f6a33d",
+        "7575c2fb6160d92e",
+        "7841d75cd41e7b40",
+        "7c2069049862fa23",
+        "7e0538b1c9620b6c",
+        "804b023dc3dfd3ee",
+        "856b12495a40e867",
+        "8fa82edfd5bd4c00",
+        "94eeff3cf2b67844",
+        "96db733f4e92d61e",
+        "a9249a41b7e94bd3",
+        "af9c40727c3c328b",
+        "bfc381ea788d53e8",
+        "c79f538ad6e6d4d7",
+        "d120afa3b09e1b9b",
+        "dbacb06ed346dd36",
+        "df02cd0fe2cd4b8e",
+        "e0a50c281b790535",
+        "eb7a23921c190dc2",
+        "ed509dcfd3eaaefc",
+        "ee1cf6f76c70ee85",
+        "fa2ae9fa044df534",
+        "fab515eeca93689c",
+        "fe121496fe991572"
       ]
     },
     {
