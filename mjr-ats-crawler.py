@@ -16941,15 +16941,20 @@ def main():
 
     careeronestop_test = "careeronestop" in MJR_TEST_COMPANIES
     voiceover_test = "voiceover" in MJR_TEST_COMPANIES
-    voiceover_targeted = any(
-        _company_test_key(name) in MJR_TARGET_COMPANY_KEYS
+    voiceover_company_keys = {
+        _company_test_key(name)
         for name in ("crowdgen/appen", "tsmg", "filmless")
-    )
-    # Include verified Voiceover sources in normal full crawls and when one of
-    # their parent companies is explicitly targeted.
+    }
+    voiceover_targeted = bool(voiceover_company_keys & MJR_TARGET_COMPANY_KEYS)
+    voiceover_tested_company = bool(voiceover_company_keys & MJR_TEST_COMPANIES)
+    # Voiceover employers use a dedicated, strict US/Canada title and date
+    # filter. Route tests, targeted runs, and scheduled runs through that path
+    # only; the generic ATS collectors admit unrelated transcription and data
+    # collection work from these boards.
     voiceover_enabled = (
         voiceover_test
         or voiceover_targeted
+        or voiceover_tested_company
         or (not MJR_TEST_COMPANIES and not MJR_TARGET_COMPANIES)
     )
     careeronestop_enabled = (
@@ -16968,6 +16973,12 @@ def main():
         ]
         print("TARGETED PRODUCTION companies:", ", ".join(sorted(MJR_TARGET_COMPANIES)))
         print(f"TARGETED PRODUCTION source rows: {len(sources)}")
+
+    if voiceover_enabled:
+        sources = [
+            s for s in sources
+            if _company_test_key(s.get("Company", "")) not in voiceover_company_keys
+        ]
 
     jobs = []
     audit = []
