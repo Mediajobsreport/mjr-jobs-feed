@@ -1365,15 +1365,225 @@ def _discover_workday_endpoint(src_url):
 
 
 def _workday_hosts(host):
-    """Candidate Workday public hosts for site migrations."""
-    out = [host]
-    # PBS has moved between wd5 and wd115 while keeping PBSCareers. Trying the
-    # sibling host is safe because the tenant/site is still validated by cxs.
-    if ".wd115.myworkdayjobs.com" in host:
-        out.append(host.replace(".wd115.myworkdayjobs.com", ".wd5.myworkdayjobs.com"))
-    elif ".wd5.myworkdayjobs.com" in host:
-        out.append(host.replace(".wd5.myworkdayjobs.com", ".wd115.myworkdayjobs.com"))
-    return list(dict.fromkeys(out))
+    """Use the canonical public host discovered from the career URL.
+
+    Workday tenants are not interchangeable across wd5/wd115 aliases. Trying
+    the sibling host can return a misleading 422 and obscure the real
+    rate-limit or migration state of the configured source.
+    """
+    return [host]
+
+
+def workday_rendered(src, max_pages=20):
+    """Fallback for Workday boards whose public CXS endpoint rejects API calls.
+
+    The public Workday UI can still render listings when its JSON endpoint
+    rate-limits non-browser requests. Read the same visible job cards and detail
+    drawer without relying on undocumented CXS responses.
+    """
+    if sync_playwright is None:
+        raise RuntimeError("Playwright unavailable for rendered Workday board")
+
+    company = clean(src.get("Company", ""))
+    listing_url = clean(src.get("URL", ""))
+    out = []
+    seen = set()
+    browser = None
+
+    def read_text(scope, selector):
+        try:
+            node = scope.locator(selector).first
+            if node.count():
+                return clean(node.inner_text(timeout=3000))
+        except Exception:
+            pass
+        return ""
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--disable-dev-shm-usage", "--no-sandbox"],
+        )
+        context = browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+            ),
+            viewport={"width": 1440, "height": 1000},
+        )
+        page = context.new_page()
+        page.set_default_timeout(12000)
+        page.goto(listing_url, wait_until="domcontentloaded", timeout=45000)
+        cards = page.locator("a[data-automation-id='jobTitle']")
+        if not cards.count():
+            cards = page.locator("a[href*='/job/']")
+        cards.first.wait_for(state="visible", timeout=30000)
+
+        page_number = 0
+        while page_number < max_pages:
+            cards = page.locator("a[data-automation-id='jobTitle']")
+            if not cards.count():
+                cards = page.locator("a[href*='/job/']")
+            entries = cards.evaluate_all(
+                """anchors => anchors.map((a, index) => {
+                    let node = a, context = "", location = "";
+                    for (let i = 0; node && i < 10; i++, node = node.parentElement) {
+                        const posted = node.querySelector("[data-automation-id='postedOn']");
+                        const loc = node.querySelector("[data-automation-id='locations']");
+                        const txt = (node.innerText || "").trim();
+                        if (posted || /posted\\s+(?:today|yesterday|\\d+\\+?\\s+days?\\s+ago)/i.test(txt)) {
+                            context = txt;
+                            location = loc ? (loc.innerText || "").trim() : "";
+                            break;
+                        }
+                    }
+                    return {index, href: a.href, title: (a.innerText || "").trim(), context, location};
+                })"""
+            )
+            if not entries:
+                break
+
+            parsed_entries = []
+            for entry in entries:
+                detail_url = clean(entry.get("href") or "")
+                if not detail_url or detail_url in seen:
+                    continue
+                seen.add(detail_url)
+                context_text = clean(entry.get("context") or "")
+                date_match = re.search(
+                    r"posted\\s+(today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                    context_text,
+                    re.I,
+                )
+                posted = pdate(date_match.group(1)) if date_match else None
+                if not posted or posted < CUTOFF:
+                    continue
+                parsed_entries.append((entry, posted, clean(entry.get("location") or "")))
+
+            # Workday boards are posted-date ordered. Stop once a whole card
+            # page is outside the active import window.
+            if not parsed_entries and all(
+                not re.search(
+                    r"posted\\s+(?:today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                    clean(item.get("context") or ""),
+                    re.I,
+                )
+                or (pdate(re.search(
+                    r"posted\\s+(today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                    clean(item.get("context") or ""),
+                    re.I,
+                ).group(1)) or date.min) < CUTOFF
+                for item in entries
+            ):
+                break
+
+            for entry, posted, listed_location in parsed_entries:
+                try:
+                    cards = page.locator("a[data-automation-id='jobTitle']")
+                    if not cards.count():
+                        cards = page.locator("a[href*='/job/']")
+                    cards.nth(int(entry.get("index", 0))).click()
+                    detail = page.locator("[data-automation-id='jobDetails']")
+                    detail.wait_for(state="visible", timeout=15000)
+
+                    title = read_text(detail, "[data-automation-id='jobPostingHeader']")
+                    description_node = detail.locator("[data-automation-id='jobPostingDescription']").first
+                    description_html = (
+                        description_node.inner_html(timeout=5000)
+                        if description_node.count() else ""
+                    )
+                    description_text = clean(
+                        BeautifulSoup(description_html, "html.parser").get_text(" ", strip=True)
+                    )
+                    location = read_text(detail, "[data-automation-id='locations']") or listed_location
+                    posted_text = read_text(detail, "[data-automation-id='postedOn']")
+                    detail_date_match = re.search(
+                        r"posted\\s+(today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                        posted_text,
+                        re.I,
+                    )
+                    detail_date = pdate(detail_date_match.group(1)) if detail_date_match else posted
+                    detail_url = clean(page.url or entry.get("href") or "")
+                    req_id = read_text(detail, "[data-automation-id='requisitionId']")
+                    id_match = re.search(r"([A-Z]{1,8}[-_]?\\d{3,})", req_id, re.I)
+                    identifier = id_match.group(1) if id_match else hashlib.sha1(
+                        clean(entry.get("href") or "").encode()
+                    ).hexdigest()[:16]
+                    remote = read_text(detail, "[data-automation-id='remoteType']")
+                    location_text = clean(location)
+                    loc_match = re.search(
+                        r"\\b([A-Z][A-Za-z .'-]+,\\s*[A-Z]{2})\\b",
+                        location_text,
+                    )
+                    city = "Remote" if re.search(r"remote", remote + " " + location_text, re.I) else (
+                        clean(loc_match.group(1)) if loc_match else ""
+                    )
+                    description = format_description(description_html or description_text)
+                    if (
+                        title
+                        and detail_date
+                        and detail_date >= CUTOFF
+                        and len(description_text) >= 200
+                    ):
+                        foreign = re.search(
+                            r"\\b(london|barcelona|berlin|tokyo|paris|madrid|amsterdam|"
+                            r"dublin|singapore|sydney|melbourne|munich|frankfurt|rome|"
+                            r"milan|lisbon|vienna|zurich|geneva|brussels|hong kong|"
+                            r"united kingdom|england|germany|spain|france|italy|japan|"
+                            r"australia|netherlands|ireland|switzerland)\\b",
+                            location_text.lower(),
+                        )
+                        country = infer_country(location_text + " " + description_text, company, description)
+                        if not foreign and country in {"US", "CA"}:
+                            role_type = jobtype(title, description_text)
+                            out.append(Job(
+                                identifier,
+                                title,
+                                company,
+                                description,
+                                detail_date,
+                                role_type,
+                                "Internships" if role_type == "Internship"
+                                else category(title, description, src.get("Industry", ""), company),
+                                clean(entry.get("href") or detail_url),
+                                listing_url,
+                                listing_url,
+                                "",
+                                normalize_work_arrangement(description, location_text, title),
+                                city,
+                                "",
+                                country,
+                            ))
+                except Exception as exc:
+                    print(
+                        f"Rendered Workday detail skipped for {company}: "
+                        f"{type(exc).__name__}: {exc}"
+                    )
+                finally:
+                    try:
+                        close = page.locator("[data-automation-id='jobDetailsCloseButton']")
+                        if close.count() and close.is_visible():
+                            close.click(timeout=5000)
+                            page.locator("a[data-automation-id='jobTitle'], a[href*='/job/']").first.wait_for(
+                                state="visible", timeout=10000
+                            )
+                    except Exception:
+                        pass
+
+            page_number += 1
+            next_button = page.locator("button[aria-label='next']").first
+            try:
+                if not next_button.count() or not next_button.is_enabled():
+                    break
+                next_button.click()
+                page.wait_for_timeout(350)
+            except Exception:
+                break
+
+        browser.close()
+
+    print(f"Rendered Workday {company}: pages={page_number} listed={len(seen)} eligible={len(out)}")
+    return out
 
 
 def pbs_workday_rendered(src):
@@ -1581,13 +1791,25 @@ def workday(src):
             break
 
     if not chosen:
-        # A valid Workday landing page that no longer exposes a working cxs
-        # endpoint should not take down the entire feed.
+        # A valid Workday landing page can still expose current listings through
+        # its rendered UI when the public CXS endpoint rate-limits or rejects
+        # the request payload.
         if company in {"tribune", "pbs"}:
             return generic(src)
-        if last_error:
-            raise last_error
-        raise RuntimeError("Workday tenant/site not inferable")
+        try:
+            rendered = workday_rendered(src)
+            if rendered:
+                return rendered
+            if last_error:
+                print(f"Workday API failed for {company}; rendered board returned no eligible jobs: {last_error}")
+            return rendered
+        except Exception as rendered_error:
+            if last_error:
+                raise RuntimeError(
+                    f"Workday API failed ({type(last_error).__name__}: {last_error}); "
+                    f"rendered fallback failed ({type(rendered_error).__name__}: {rendered_error})"
+                ) from rendered_error
+            raise
 
     host, tenant, ep, first_payload = chosen
     out = []
