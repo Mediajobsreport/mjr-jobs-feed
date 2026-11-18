@@ -13106,6 +13106,66 @@ def workable(src):
     return out
 
 
+def newscorp_rendered(src):
+    """Render News Corp's client-side job search and parse recent official details."""
+    if sync_playwright is None:
+        raise RuntimeError("Playwright unavailable for News Corp careers board")
+    links = set()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=["--disable-dev-shm-usage", "--no-sandbox"],
+        )
+        page = browser.new_page(
+            user_agent=("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                        "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"),
+            viewport={"width": 1440, "height": 1000},
+        )
+        page.set_default_timeout(12000)
+        page.goto(src["URL"], wait_until="domcontentloaded", timeout=45000)
+        page.wait_for_selector("a[href*='/job/']", timeout=20000)
+        cards = page.locator("a[href*='/job/']")
+        # The board sorts by most recent. Read a bounded 150 latest listings so
+        # detail requests stay below the shared-domain safety cap.
+        for _ in range(20):
+            current = cards.evaluate_all("(els) => els.map(e => e.href)")
+            for href in current:
+                if href and urlparse(href).netloc.lower().endswith("newscorp.com"):
+                    links.add(href.split("#", 1)[0])
+            if len(links) >= 150:
+                break
+            more = page.get_by_role("button", name=re.compile(r"load more jobs", re.I))
+            if not more.count() or not more.first.is_visible():
+                break
+            before = len(links)
+            more.first.click()
+            page.wait_for_timeout(350)
+            cards = page.locator("a[href*='/job/']")
+            newer = cards.evaluate_all("(els) => els.map(e => e.href)")
+            links.update(
+                href.split("#", 1)[0] for href in newer
+                if href and urlparse(href).netloc.lower().endswith("newscorp.com")
+            )
+            if len(links) <= before:
+                break
+        browser.close()
+
+    out, seen = [], set()
+    for url in sorted(links)[:150]:
+        try:
+            response = req("GET", url)
+            job = _job_from_detail(src, clean(getattr(response, "url", "") or url), response.text)
+            if job and job_is_fresh(job):
+                key = job.url.rstrip("/").lower()
+                if key not in seen:
+                    seen.add(key)
+                    out.append(job)
+        except Exception:
+            continue
+    print(f"News Corp rendered: listed={len(links)} current={len(out)}")
+    return out
+
+
 def jobvite_rendered(src):
     """Render Jobvite's client-side public board, then parse official job details."""
     if sync_playwright is None:
@@ -16655,6 +16715,8 @@ def main():
                 if company_key == "lotus"
                 else tbn_careers_jobs(s)
                 if company_key == "tbn"
+                else newscorp_rendered(s)
+                if company_key == "news corp"
                 else ogilvy_jobs(s)
                 if company_key == "ogilvy"
                 else generic(s)
