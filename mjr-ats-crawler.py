@@ -13109,8 +13109,9 @@ def generic(src):
 
     generic_patterns = [
         r"/jobs/", r"/job/", r"jobdetail", r"/details/",
-        r"opportunitydetail", r"job-details", r"requisitions",
-        r"career/JobIntroduction\.action", r"/apply/", r"/p/",
+        r"opportunitydetail", r"job-details", r"requisitions/",
+        r"/offre/", r"/careers/\d+", r"career/JobIntroduction\.action",
+        r"/apply/", r"/p/",
     ]
 
     for a in soup.find_all("a", href=True):
@@ -13133,6 +13134,12 @@ def generic(src):
     for url in list(links)[:1000]:
         try:
             rr = req("GET", url)
+            detail_url = clean(getattr(rr, "url", "") or url)
+            parsed_job = _job_from_detail(src, detail_url, rr.text)
+            if parsed_job:
+                if job_is_fresh(parsed_job):
+                    out.append(parsed_job)
+                continue
             ss = BeautifulSoup(rr.text, "html.parser")
             txt = clean(ss.get_text(" "))
 
