@@ -11321,9 +11321,14 @@ def hubbard_adp_cx_rendered(src):
             search = page.get_by_role("button", name=re.compile(r"^Search$", re.I))
             if search.count():
                 search.first.click()
-            page.get_by_text(
-                re.compile(r"Search results loaded|jobs found", re.I)
-            ).wait_for(timeout=30000)
+            try:
+                page.get_by_text(
+                    re.compile(r"Search results loaded|jobs found", re.I)
+                ).wait_for(timeout=12000)
+            except Exception:
+                # Some ADP tenants render cards without the status announcement.
+                # Continue to inspect headings/buttons and report zero if no cards load.
+                print("Advance Local ADP CX: search status marker missing; checking rendered cards")
             page.wait_for_timeout(800)
 
             test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
