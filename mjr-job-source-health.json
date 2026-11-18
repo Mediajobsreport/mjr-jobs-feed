@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-18T17:30:10Z",
+  "generated_at": "2026-11-18T17:47:01Z",
   "thresholds": {
     "green": "0-2",
     "yellow": "3-4",
@@ -9,14 +9,14 @@
   },
   "summary": {
     "sources": 166,
-    "green": 85,
+    "green": 87,
     "yellow": 7,
     "orange": 11,
-    "red": 63,
+    "red": 61,
     "crawl_errors": 2,
-    "zero_or_not_enumerable": 36,
-    "new_jobs_this_crawl": 8,
-    "active_jobs": 2143
+    "zero_or_not_enumerable": 34,
+    "new_jobs_this_crawl": 25,
+    "active_jobs": 2168
   },
   "sources": [
     {
@@ -720,25 +720,6 @@
       "active_job_ids": []
     },
     {
-      "company": "Kobalt Music",
-      "ats": "Workable",
-      "source_url": "https://apply.workable.com/kobalt-music/",
-      "status": "red",
-      "attention_reason": "No job history",
-      "days_since_new_job": null,
-      "last_new_job_at": null,
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-18T17:16:03Z",
-      "crawl_result": "zero_or_not_enumerable",
-      "jobs_collected_this_crawl": 0,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 0,
-      "latest_jobs": [],
-      "error": "",
-      "note": "",
-      "active_job_ids": []
-    },
-    {
       "company": "Los Angeles Times",
       "ats": "Dayforce",
       "source_url": "https://us262.dayforcehcm.com/CandidatePortal/en-US/nantmedia",
@@ -769,25 +750,6 @@
       "company": "mc Group",
       "ats": "Company Career Site",
       "source_url": "https://mcgroup.com/careers",
-      "status": "red",
-      "attention_reason": "No job history",
-      "days_since_new_job": null,
-      "last_new_job_at": null,
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-18T17:16:03Z",
-      "crawl_result": "zero_or_not_enumerable",
-      "jobs_collected_this_crawl": 0,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 0,
-      "latest_jobs": [],
-      "error": "",
-      "note": "",
-      "active_job_ids": []
-    },
-    {
-      "company": "MediaNews Group",
-      "ats": "Company Career Site",
-      "source_url": "https://www.medianewsgroup.com/",
       "status": "red",
       "attention_reason": "No job history",
       "days_since_new_job": null,
@@ -4231,6 +4193,59 @@
       ]
     },
     {
+      "company": "Kobalt Music",
+      "ats": "Workable",
+      "source_url": "https://apply.workable.com/kobalt-music/?lng=en",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-11-18",
+      "last_crawl_at": "2026-11-18T17:47:01Z",
+      "last_successful_crawl_at": "2026-11-18T17:47:01Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 8,
+      "new_jobs_this_crawl": 7,
+      "active_jobs": 7,
+      "latest_jobs": [
+        {
+          "title": "IT Support Engineer",
+          "date": "2026-11-12",
+          "url": "https://apply.workable.com/j/C2A44867BA"
+        },
+        {
+          "title": "Director, Sync Licensing Administration",
+          "date": "2026-11-11",
+          "url": "https://apply.workable.com/j/CBF7BEADCF"
+        },
+        {
+          "title": "Director, Income Tracking & Business Intelligence",
+          "date": "2026-11-09",
+          "url": "https://apply.workable.com/j/D13BF50385"
+        },
+        {
+          "title": "Associate, Customer Success",
+          "date": "2026-11-07",
+          "url": "https://apply.workable.com/j/7967AE68C0"
+        },
+        {
+          "title": "Assistant, Sync Licensing Administration",
+          "date": "2026-11-06",
+          "url": "https://apply.workable.com/j/A5021A2CD7"
+        }
+      ],
+      "error": "",
+      "note": "feed_filter_rejected=Associate, Commercial Development & Strategy:not_fresh",
+      "active_job_ids": [
+        "29d3fcec50ccf712",
+        "2a47907d5fa7d17c",
+        "2ff2ad37e7ef0b22",
+        "8cb7a7ee2bc71d22",
+        "bb878d67e7e10a21",
+        "e1483b8c6677ffec",
+        "ea58d91e380e0cf1"
+      ]
+    },
+    {
       "company": "Lee Enterprises",
       "ats": "Dayforce",
       "source_url": "https://jobs.dayforcehcm.com/en-US/leeenterprises/CANDIDATEPORTAL",
@@ -4426,7 +4441,7 @@
       "last_successful_crawl_at": "2026-11-18T17:30:10Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 13,
-      "new_jobs_this_crawl": 8,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 8,
       "latest_jobs": [
         {
@@ -4538,6 +4553,70 @@
         "8ff611e26dd7ef08",
         "b1db54510d26305d",
         "fdcf69e14feb0d00"
+      ]
+    },
+    {
+      "company": "MediaNews Group",
+      "ats": "Workday",
+      "source_url": "https://myworkdaycenter.wd5.myworkdayjobs.com/MNG",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-11-18",
+      "last_crawl_at": "2026-11-18T17:47:01Z",
+      "last_successful_crawl_at": "2026-11-18T17:47:01Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 20,
+      "new_jobs_this_crawl": 18,
+      "active_jobs": 18,
+      "latest_jobs": [
+        {
+          "title": "Advertising Operations Specialist",
+          "date": "2026-11-18",
+          "url": "https://myworkdaycenter.wd5.myworkdayjobs.com/en-US/MNG/job/San-Diego-California/Advertising-Operations-Specialist_R2909"
+        },
+        {
+          "title": "Senior Reporter",
+          "date": "2026-11-18",
+          "url": "https://myworkdaycenter.wd5.myworkdayjobs.com/en-US/MNG/job/Exton-Pennsylvania/Content-Producer_R2933"
+        },
+        {
+          "title": "Reporter",
+          "date": "2026-11-17",
+          "url": "https://myworkdaycenter.wd5.myworkdayjobs.com/en-US/MNG/job/Santa-Cruz-California/Reporter_R2874"
+        },
+        {
+          "title": "Staff Accountant",
+          "date": "2026-11-17",
+          "url": "https://myworkdaycenter.wd5.myworkdayjobs.com/en-US/MNG/job/Denver-Colorado/Staff-Accountant_R2900"
+        },
+        {
+          "title": "Account Manager",
+          "date": "2026-11-16",
+          "url": "https://myworkdaycenter.wd5.myworkdayjobs.com/en-US/MNG/job/Anaheim-California/Account-Manager_R2868"
+        }
+      ],
+      "error": "",
+      "note": "feed_filter_rejected=Account Executive:not_fresh ; Digital Sales Manager:not_fresh",
+      "active_job_ids": [
+        "0d10183eeb1760d9",
+        "0ef332ccbd406cf8",
+        "1aba12ff4c17de31",
+        "26d563b2f13f626d",
+        "303e1a1df94ad322",
+        "4dff9b4f4119d62f",
+        "5c758b82a7554265",
+        "6c15b734a9f6d6f0",
+        "6dde92466121d03c",
+        "6fa3671245f8a340",
+        "70c42199a2329a99",
+        "7289815e998dd324",
+        "7a17e7d5bc274073",
+        "b3b20804c601ba71",
+        "c315299841487340",
+        "c69d8283ffa2da73",
+        "d079945409b9263a",
+        "f43f0b5d07392360"
       ]
     },
     {
