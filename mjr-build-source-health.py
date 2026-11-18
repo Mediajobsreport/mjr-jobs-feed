@@ -214,6 +214,24 @@ def main() -> None:
             }
         )
 
+    # A targeted crawl updates only selected employers. Preserve the other
+    # dashboard rows and their last-crawl timestamps, while zeroing their
+    # per-run new-job counts so the summary describes this targeted run.
+    targeted = os.getenv("MJR_TARGETED_CRAWL", "false").lower() in {"1", "true", "yes"}
+    if targeted:
+        targeted_names = {text(item.get("company")) for item in sources}
+        merged_sources = dict(previous_sources)
+        for item in sources:
+            merged_sources[text(item.get("company"))] = item
+        sources = []
+        for company, item in merged_sources.items():
+            if company not in targeted_names:
+                item = dict(item)
+                item["new_jobs_this_crawl"] = 0
+            sources.append(item)
+        total_new = sum(safe_int(item.get("new_jobs_this_crawl")) for item in sources)
+        total_active = sum(safe_int(item.get("active_jobs")) for item in sources)
+
     priority = {"red": 0, "orange": 1, "yellow": 2, "green": 3}
     sources.sort(key=lambda item: (priority.get(item["status"], 9), item["company"].lower()))
     counts = Counter(item["status"] for item in sources)
