@@ -135,7 +135,7 @@ Straight Arrow News,Greenhouse,https://job-boards.greenhouse.io/straightarrownew
 Recording Academy,Workday,https://grammy.wd5.myworkdayjobs.com/the_recording_academy_career_site,ok,1,
 KQED,ApplyToJob / JazzHR,https://kqed.applytojob.com/apply/jobs,ok,6,"feed_filter_rejected=Business Operations Analyst:not_fresh ; Director, Payroll:not_fresh ; Front Doors Product Manager:not_fresh"
 News Corp,Company Career Site,https://careers.newscorp.com/jobs/,ok,14,
-Advance Local Media,Company Career Site,https://www.advancelocal.com/careers/,zero_or_not_enumerable,0,
+Advance Local Media,ADP CX Rendered,https://myjobs.adp.com/advancelocalcareersite/cx?c=2171807&d=AdvanceLocalExternalCareerSite&sor=adprm,ok,10,
 MediaNews Group,Workday,https://myworkdaycenter.wd5.myworkdayjobs.com/MNG,ok,20,feed_filter_rejected=Account Executive:not_fresh ; Digital Sales Manager:not_fresh
 BMG,Company Career Site,https://www.bmg.com/careers,zero_or_not_enumerable,0,
 Believe,Company Career Site,https://careers.believe.com/en/jobs/,zero_or_not_enumerable,0,
