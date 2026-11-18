@@ -12140,6 +12140,15 @@ MJR_TEST_COMPANIES = {
     for x in os.getenv("MJR_TEST_COMPANIES", "").split(",")
     if clean(x)
 }
+MJR_TARGET_COMPANIES = {
+    clean(x).lower()
+    for x in os.getenv("MJR_TARGET_COMPANIES", "").split(",")
+    if clean(x)
+}
+MJR_TARGET_COMPANY_KEYS = {
+    _company_test_key(x)
+    for x in MJR_TARGET_COMPANIES
+}
 MJR_REQUEST_DELAY_MIN = float(os.getenv("MJR_REQUEST_DELAY_MIN", "0.20"))
 MJR_REQUEST_DELAY_MAX = float(os.getenv("MJR_REQUEST_DELAY_MAX", "0.65"))
 MJR_DOMAIN_REQUEST_CAP = int(os.getenv("MJR_DOMAIN_REQUEST_CAP", "175"))
@@ -13132,10 +13141,34 @@ def stateful(jobs):
         if k in now:
             continue
 
+        # A targeted production crawl only reconciles the selected employers.
+        # Keep unrelated state entries untouched so a partial run cannot count
+        # them as missing or remove their current jobs from the published feed.
+        stored_job = r.get("job", {})
+        if (
+            MJR_TARGET_COMPANY_KEYS
+            and _company_test_key(stored_job.get("company", "")) not in MJR_TARGET_COMPANY_KEYS
+        ):
+            try:
+                x = dict(stored_job)
+                pd = date.fromisoformat(x["date"])
+                if (TODAY - pd).days >= retention_days(x.get("jobtype")):
+                    del st[k]
+                    continue
+                x["date"] = pd
+                x["employer_deadline"] = (
+                    date.fromisoformat(x["employer_deadline"])
+                    if x.get("employer_deadline")
+                    else None
+                )
+                ret.append(Job(**x))
+            except Exception:
+                del st[k]
+            continue
+
         # Purge previously retained conglomerate jobs as soon as a new scope
         # filter identifies them. Do not let the normal one-run miss grace
         # period reintroduce rejected Disney/ESPN or Meruelo positions.
-        stored_job = r.get("job", {})
         if company_scope_rejection_reason(stored_job):
             del st[k]
             continue
@@ -16243,16 +16276,29 @@ def main():
             row["URL"] = "https://careers.cmg.com/go/All-Jobs/9298500/"
             row["Active"] = "True"
 
-    # Also accept the legacy test name if it is ever entered manually.
+    # Also accept legacy names when they are entered manually.
     if "cox radio" in MJR_TEST_COMPANIES:
         MJR_TEST_COMPANIES.discard("cox radio")
         MJR_TEST_COMPANIES.add("cox media group")
+    if "cox radio" in MJR_TARGET_COMPANIES:
+        MJR_TARGET_COMPANIES.discard("cox radio")
+        MJR_TARGET_COMPANIES.add("cox media group")
+        MJR_TARGET_COMPANY_KEYS.discard(_company_test_key("cox radio"))
+        MJR_TARGET_COMPANY_KEYS.add(_company_test_key("cox media group"))
 
     careeronestop_test = "careeronestop" in MJR_TEST_COMPANIES
     voiceover_test = "voiceover" in MJR_TEST_COMPANIES
-    # Include verified Voiceover sources in every normal full crawl. Keep them
-    # out of unrelated targeted company tests so those reports remain isolated.
-    voiceover_enabled = voiceover_test or not MJR_TEST_COMPANIES
+    voiceover_targeted = any(
+        _company_test_key(name) in MJR_TARGET_COMPANY_KEYS
+        for name in ("crowdgen/appen", "tsmg", "filmless")
+    )
+    # Include verified Voiceover sources in normal full crawls and when one of
+    # their parent companies is explicitly targeted.
+    voiceover_enabled = (
+        voiceover_test
+        or voiceover_targeted
+        or (not MJR_TEST_COMPANIES and not MJR_TARGET_COMPANIES)
+    )
     careeronestop_enabled = (
         os.getenv("CAREERONESTOP_ENABLED", "false").lower() in {"1", "true", "yes"}
         or careeronestop_test
@@ -16262,6 +16308,13 @@ def main():
         sources = [s for s in sources if _v28_source_enabled(s)]
         print("TEST MODE companies:", ", ".join(sorted(MJR_TEST_COMPANIES)))
         print(f"TEST MODE source rows: {len(sources)}")
+    elif MJR_TARGET_COMPANY_KEYS:
+        sources = [
+            s for s in sources
+            if _company_test_key(s.get("Company", "")) in MJR_TARGET_COMPANY_KEYS
+        ]
+        print("TARGETED PRODUCTION companies:", ", ".join(sorted(MJR_TARGET_COMPANIES)))
+        print(f"TARGETED PRODUCTION source rows: {len(sources)}")
 
     jobs = []
     audit = []
