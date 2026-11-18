@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-17T23:40:21.122Z",
+  "generated": "2026-11-18T07:36:27.387Z",
   "version": "2.4",
   "newestDate": "2026-11-17",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1092
+      "count": 1110
     },
     "CPSC": {
       "ok": true,
@@ -125,6 +125,22 @@
       "score": 118
     },
     {
+      "id": "FDA-2026-11-17-herb-to-body-yellow-dock-root-c-s-larbi-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Herb to Body Yellow Dock Root C/S Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "Herb to Body",
+      "company": "Larbi Inc.",
+      "product": "Yellow Dock Root C/S",
+      "date": "2026-11-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/larbi-inc-recalls-yellow-dock-root-because-possible-health-risk",
+      "score": 115
+    },
+    {
       "id": "NHTSA-26V673000",
       "source": "NHTSA",
       "category": "consumer",
@@ -140,22 +156,6 @@
       "campaign": "26V673000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V673-0712.pdf",
       "score": 132
-    },
-    {
-      "id": "FDA-2026-10-30-365-whole-foods-market-standardized-full-spectrum-blend-ashwagandha-ca",
-      "source": "FDA",
-      "category": "health",
-      "title": "365 Whole Foods Market Standardized + Full Spectrum Blend Ashwagandha Capsules Recalled",
-      "reason": "Potential to be contaminated with Salmonella",
-      "brand": "365 Whole Foods Market",
-      "company": "Vitality Works Inc.",
-      "product": "Standardized + Full Spectrum Blend Ashwagandha Capsules",
-      "date": "2026-10-30",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/vitality-works-inc-recalls-365-whole-foods-market-ashwagandha-capsules-sold-nationwide-due-potential",
-      "score": 108
     },
     {
       "id": "CPSC-11063-boshengya-recalls-rugs-due-to-risk-of-serious-injury-or-death-from-fir",
@@ -175,6 +175,22 @@
       "score": 113
     },
     {
+      "id": "FDA-2026-10-30-365-whole-foods-market-standardized-full-spectrum-blend-ashwagandha-ca",
+      "source": "FDA",
+      "category": "health",
+      "title": "365 Whole Foods Market Standardized + Full Spectrum Blend Ashwagandha Capsules Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "365 Whole Foods Market",
+      "company": "Vitality Works Inc.",
+      "product": "Standardized + Full Spectrum Blend Ashwagandha Capsules",
+      "date": "2026-10-30",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/vitality-works-inc-recalls-365-whole-foods-market-ashwagandha-capsules-sold-nationwide-due-potential",
+      "score": 108
+    },
+    {
       "id": "CPSC-11062-qiomala-pressure-washers-recalled-due-to-serious-risk-of-injury-or-dea",
       "source": "CPSC",
       "category": "consumer",
@@ -190,22 +206,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/QIOMALA-Pressure-Washers-Recalled-Due-to-Serious-Risk-of-Injury-or-Death-from-Shock-and-Electrocution-Hazards",
       "score": 113
-    },
-    {
-      "id": "FDA-2026-11-17-naia-chocolate-banana-bar-sorbetto-naia-inc",
-      "source": "FDA",
-      "category": "food",
-      "title": "Naia Chocolate Banana Bar Sorbetto Recalled",
-      "reason": "Undeclared Allergen – milk, eggs, tree nut (pistachio)",
-      "brand": "Naia",
-      "company": "Naia, Inc.",
-      "product": "Chocolate Banana Bar Sorbetto",
-      "date": "2026-11-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naia-inc-recalls-chocolate-banana-bar-sorbetto-because-undeclared-milk-eggs-and-nuts",
-      "score": 98
     },
     {
       "id": "NHTSA-26V727000",
@@ -242,6 +242,22 @@
       "score": 113
     },
     {
+      "id": "FDA-2026-11-17-naia-chocolate-banana-bar-sorbetto-naia-inc",
+      "source": "FDA",
+      "category": "food",
+      "title": "Naia Chocolate Banana Bar Sorbetto Recalled",
+      "reason": "Undeclared Allergen – milk, eggs, tree nut (pistachio)",
+      "brand": "Naia",
+      "company": "Naia, Inc.",
+      "product": "Chocolate Banana Bar Sorbetto",
+      "date": "2026-11-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naia-inc-recalls-chocolate-banana-bar-sorbetto-because-undeclared-milk-eggs-and-nuts",
+      "score": 98
+    },
+    {
       "id": "USDA-2026-11-14-fsis-issues-public-health-alert-for-ready-to-eat-meat-products-contain",
       "source": "USDA",
       "category": "food",
@@ -258,22 +274,6 @@
       "score": 76
     },
     {
-      "id": "FDA-2026-11-10-family-farmstead-raw-mild-cheddar-raw-sharp-cheddar-family-farmstead-d",
-      "source": "FDA",
-      "category": "food",
-      "title": "Family Farmstead Raw Mild Cheddar; Raw Sharp Cheddar Recalled",
-      "reason": "Potential to be contaminated with Listeria monocytogenes.",
-      "brand": "Family Farmstead",
-      "company": "Family Farmstead Dairy",
-      "product": "Raw Mild Cheddar; Raw Sharp Cheddar",
-      "date": "2026-11-10",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
-      "score": 87
-    },
-    {
       "id": "NHTSA-26V717000",
       "source": "NHTSA",
       "category": "consumer",
@@ -287,7 +287,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V717000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V717-3733.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V717000",
       "score": 113
     },
     {
@@ -355,7 +355,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V664000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V664-0680.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V664000",
       "score": 105
     },
     {
@@ -628,6 +628,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/SHEIN-Distribution-Corporation-Recalls-Baby-Rattle-and-Teether-Toy-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Choking-Violate-Mandatory-Small-Parts-Ban",
+      "score": 87
+    },
+    {
+      "id": "FDA-2026-11-10-family-farmstead-raw-mild-cheddar-raw-sharp-cheddar-family-farmstead-d",
+      "source": "FDA",
+      "category": "food",
+      "title": "Family Farmstead Raw Mild Cheddar; Raw Sharp Cheddar Recalled",
+      "reason": "Potential to be contaminated with Listeria monocytogenes.",
+      "brand": "Family Farmstead",
+      "company": "Family Farmstead Dairy",
+      "product": "Raw Mild Cheddar; Raw Sharp Cheddar",
+      "date": "2026-11-10",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/family-farmstead-dairy-announces-recall-raw-mild-cheddar-cheese-due-potential-e-coli-o26h11-and",
       "score": 87
     },
     {
@@ -1267,7 +1283,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V696000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V696-1278.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V696000",
       "score": 55
     },
     {
@@ -2021,23 +2037,6 @@
       "majorBrand": false,
       "campaign": "26V722000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V722-7257.pdf",
-      "score": 20
-    },
-    {
-      "id": "NHTSA-26V716000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Triumph Vehicles Recalled",
-      "reason": "Triumph Motorcycles America, Ltd. (Triumph) is recalling certain 2022-2024 Tiger Sport, 2025-2027 Tiger Sport 660, 2025-2027 Tiger Sport 800, and 2026-2027 Tiger Sport 800 Touring motorcycles equipped with original…",
-      "brand": "Triumph",
-      "company": "Triumph Motorcycles America, Ltd.",
-      "product": "Tiger Sport 800 Touring, Tiger Sport, Tiger Sport 660, Tiger Sport 800",
-      "date": "2026-10-28",
-      "units": 3974,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V716000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V716-6380.pdf",
       "score": 20
     }
   ]
