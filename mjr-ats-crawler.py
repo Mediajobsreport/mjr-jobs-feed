@@ -13430,8 +13430,9 @@ def jobvite_rendered(src):
                 heading = page.locator("h1").first
                 heading.wait_for(state="visible", timeout=15000)
                 title = clean(heading.inner_text(timeout=5000))
-                body = clean(page.locator("body").inner_text(timeout=8000))
-                lines = [clean(line) for line in body.splitlines() if clean(line)]
+                body_raw = page.locator("body").inner_text(timeout=8000)
+                body = clean(body_raw)
+                lines = [clean(line) for line in body_raw.splitlines() if clean(line)]
 
                 location = ""
                 try:
@@ -13569,7 +13570,8 @@ def ogilvy_jobs(src):
                 heading = page.locator("main h1").first
                 heading.wait_for(state="visible", timeout=20000)
                 title = clean(heading.inner_text(timeout=5000)).title()
-                body = clean(page.locator("body").inner_text(timeout=8000))
+                body_raw = page.locator("body").inner_text(timeout=8000)
+                body = clean(body_raw)
                 posted_match = re.search(
                     r"Job Posted Date\s*:\s*(\d{1,2}/\d{1,2}/\d{4})", body, re.I
                 )
@@ -13588,7 +13590,10 @@ def ogilvy_jobs(src):
                 if len(role_text) < 200:
                     continue
 
-                before_date = body[:posted_match.start()].splitlines()
+                before_date = [
+                    clean(line) for line in body_raw[:posted_match.start()].splitlines()
+                    if clean(line)
+                ]
                 location = ""
                 for line in reversed(before_date):
                     line = clean(line)
