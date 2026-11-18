@@ -13566,7 +13566,7 @@ def ogilvy_jobs(src):
         out, seen_ids = [], set()
         for url, card_label in links[:detail_limit]:
             try:
-                page.goto(url, wait_until="domcontentloaded", timeout=45000)
+                page.goto(url, wait_until="commit", timeout=45000)
                 heading = page.locator("main h1").first
                 heading.wait_for(state="visible", timeout=20000)
                 title = clean(heading.inner_text(timeout=5000)).title()
