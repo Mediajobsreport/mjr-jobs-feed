@@ -17192,7 +17192,7 @@ def main():
             # inherit the Radio fallback for these titles.
             if company_key == "salem media group":
                 for _j in got:
-                    if re.search(r"\\baccount executive\\b", clean(_j.title), re.I):
+                    if re.search(r"\baccount executive\b", clean(_j.title), re.I):
                         _j.category = "Sales & Marketing"
 
             # Apply the narrow source/employer scope filters before state
