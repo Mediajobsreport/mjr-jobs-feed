@@ -13367,11 +13367,11 @@ def jobvite_rendered(src):
 
 
 def ogilvy_jobs(src):
-    """Render Ogilvy's JavaScript careers widget, then parse official job details."""
+    """Render Ogilvy's careers widget and detail pages to capture current openings."""
     if sync_playwright is None:
         raise RuntimeError("Playwright unavailable for Ogilvy careers widget")
-    browser = None
-    links = set()
+
+    links = []
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
@@ -13382,17 +13382,17 @@ def ogilvy_jobs(src):
                         "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"),
             viewport={"width": 1440, "height": 1000},
         )
-        page.set_default_timeout(12000)
+        page.set_default_timeout(15000)
         page.goto(src["URL"], wait_until="domcontentloaded", timeout=45000)
         cards = page.locator("a[id='jobLink']")
         if not cards.count():
-            # The job widget fetches and paints its opportunities when the
-            # Region filter is opened, even if the selection remains "All".
             page.locator("button").filter(has_text="All").first.click()
             page.wait_for_selector("a[id='jobLink']", timeout=20000)
             cards = page.locator("a[id='jobLink']")
         for _ in range(4):
-            more = page.get_by_role("button", name=re.compile(r"view more|load more|show more", re.I))
+            more = page.get_by_role(
+                "button", name=re.compile(r"view more|load more|show more", re.I)
+            )
             try:
                 if not more.count() or not more.first.is_visible():
                     break
@@ -13404,24 +13404,98 @@ def ogilvy_jobs(src):
                     break
             except Exception:
                 break
-        for href in cards.evaluate_all("(els) => els.map(e => e.href)"):
-            if href and re.search(r"/careers/\d+/?$", href):
-                links.add(href)
+
+        seen_urls = set()
+        for card in cards.all():
+            try:
+                url = card.get_attribute("href") or ""
+                label = clean(card.inner_text(timeout=2000))
+                url = urljoin(src["URL"], url)
+                if url and re.search(r"/careers/\d+/?$", url) and url not in seen_urls:
+                    seen_urls.add(url)
+                    links.append((url, label))
+            except Exception:
+                continue
+
+        test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
+        detail_limit = 3 if test_mode else 100
+        out, seen_ids = [], set()
+        for url, card_label in links[:detail_limit]:
+            try:
+                page.goto(url, wait_until="domcontentloaded", timeout=45000)
+                heading = page.locator("main h1").first
+                heading.wait_for(state="visible", timeout=20000)
+                title = clean(heading.inner_text(timeout=5000)).title()
+                body = clean(page.locator("body").inner_text(timeout=8000))
+                posted_match = re.search(
+                    r"Job Posted Date\s*:\s*(\d{1,2}/\d{1,2}/\d{4})", body, re.I
+                )
+                if not title or not posted_match:
+                    continue
+                posted = pdate(posted_match.group(1))
+                if not posted or posted < CUTOFF:
+                    continue
+
+                role_match = re.search(
+                    r"About the Role\s*(.*?)(?:How We[’']ll Support You|Equal Opportunity Employer|$)",
+                    body,
+                    re.I | re.S,
+                )
+                role_text = clean(role_match.group(1)) if role_match else ""
+                if len(role_text) < 200:
+                    continue
+
+                before_date = body[:posted_match.start()].splitlines()
+                location = ""
+                for line in reversed(before_date):
+                    line = clean(line)
+                    if re.search(
+                        r"(?:Remote|,\s*(?:United States|Canada)|"
+                        r",\s*(?:New York|California|Illinois|Texas|Florida|"
+                        r"Massachusetts|Georgia|Colorado|Washington|Oregon|"
+                        r"Ontario|Quebec|British Columbia|Alberta|Manitoba))",
+                        line,
+                        re.I,
+                    ):
+                        location = line
+                        break
+                country = infer_country(location or card_label, src["Company"], body)
+                if country not in {"US", "CA"}:
+                    continue
+
+                job_id = url.rstrip("/").rsplit("/", 1)[-1]
+                if job_id in seen_ids:
+                    continue
+                seen_ids.add(job_id)
+                city = ""
+                state = ""
+                location_match = re.search(
+                    r"([A-Za-z .'-]+),\s*([A-Za-z .'-]+)$", location
+                )
+                if location_match:
+                    city = clean(location_match.group(1))
+                    state = clean(location_match.group(2))
+                description = format_description(
+                    "<p>" + html.escape(role_text) + "</p>"
+                )
+                out.append(
+                    Job(
+                        job_id, title, src["Company"], description, posted,
+                        jobtype(title, role_text),
+                        category(title, role_text, src["Industry"], src["Company"]),
+                        url, src["URL"], url, "",
+                        normalize_work_arrangement(role_text, location, title),
+                        city, state, country,
+                    )
+                )
+            except Exception as exc:
+                print(
+                    f"Ogilvy detail skipped ({url.rsplit('/', 1)[-1]}): "
+                    f"{type(exc).__name__}"
+                )
         browser.close()
 
-    out, seen = [], set()
-    for url in sorted(links):
-        try:
-            response = req("GET", url)
-            job = _job_from_detail(src, clean(getattr(response, "url", "") or url), response.text)
-            if job and job_is_fresh(job):
-                key = job.url.rstrip("/").lower()
-                if key not in seen:
-                    seen.add(key)
-                    out.append(job)
-        except Exception:
-            continue
-    print(f"Ogilvy rendered careers: listed={len(links)} current={len(out)}")
+    print(f"Ogilvy rendered careers: listed={len(links)} current North American={len(out)}")
     return out
 
 
