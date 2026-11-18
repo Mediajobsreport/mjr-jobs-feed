@@ -17186,6 +17186,15 @@ def main():
             if not got and not public_board_enumerated and company_key in RADIO_RECOVERY_COMPANIES:
                 got = radio_recovery(s)
 
+            # Salem's podcast account-executive roles are commercial sales
+            # positions even though the source company is radio-first. Enforce
+            # this after each collector so no source-specific parsing path can
+            # inherit the Radio fallback for these titles.
+            if company_key == "salem media group":
+                for _j in got:
+                    if re.search(r"\\baccount executive\\b", clean(_j.title), re.I):
+                        _j.category = "Sales & Marketing"
+
             # Apply the narrow source/employer scope filters before state
             # reconciliation so rejected postings never enter retained state.
             scope_rejected = []
