@@ -155,7 +155,7 @@ Ogilvy,Greenhouse,https://boards.greenhouse.io/ogilvy,ok,74,"enumerated_jobs=126
 Publicis Groupe,Company Career Site,https://www.publicisgroupe.com/en/the-groupe/careers/job-opportunities,zero_or_not_enumerable,0,
 WPP,Greenhouse,https://job-boards.greenhouse.io/wpp,ok,214,enumerated_jobs=214; feed_filter_rejected=Analyst - Accounts Payable - ANZ (Contract):not_fresh ; Analyst - Agency Reporting:not_fresh ; Analyst - Billing - US:not_fresh ; Analyst - Billing - US:not_fresh ; Analyst - Direct Tax:not_fresh ; Analyst – Indirect Tax:not_fresh ; Analyst - MDM:not_fresh ; Analyst - Payroll:not_fresh ; Analyst - RTR (ANZ):not_fresh ; Analyst - RTR (HK - Temp):not_fresh ; Analyst - T&E:not_fresh ; Analyst - Treasury:not_fresh
 Omnicom Group,Greenhouse,https://job-boards.greenhouse.io/omccorp,ok,4,enumerated_jobs=14; feed_filter_rejected=HR Shared Service Specialist Tier 1:not_fresh ; Learning & Development Coordinator:not_fresh ; Supervisor Tax:not_fresh
-Dentsu,Company Career Site,https://www.dentsu.com/careers,zero_or_not_enumerable,0,
+Dentsu,Workday,https://dentsuaegis.wd3.myworkdayjobs.com/DAN_GLOBAL,ok,26,
 Havas,Jobvite,https://jobs.jobvite.com/thehavasgroup/search,ok,13,
 Hakuhodo DY,Company Career Site,https://www.hakuhodody-holdings.co.jp/english/,zero_or_not_enumerable,0,
 Stagwell,iCIMS,https://careers-stagwellglobal.icims.com/jobs/intro,ok,10,"enumerated_detail_urls=54; feed_filter_rejected=Enterprise Account Executive:not_fresh ; Controller:not_fresh ; Sr Analyst, Maconomy:not_fresh ; Global Investment Director:not_fresh"

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-18T19:38:54Z",
+  "generated_at": "2026-11-18T19:51:51Z",
   "thresholds": {
     "green": "0-2",
     "yellow": "3-4",
@@ -9,14 +9,14 @@
   },
   "summary": {
     "sources": 166,
-    "green": 94,
+    "green": 95,
     "yellow": 7,
     "orange": 11,
-    "red": 54,
+    "red": 53,
     "crawl_errors": 1,
-    "zero_or_not_enumerable": 29,
-    "new_jobs_this_crawl": 121,
-    "active_jobs": 2352
+    "zero_or_not_enumerable": 28,
+    "new_jobs_this_crawl": 26,
+    "active_jobs": 2378
   },
   "sources": [
     {
@@ -340,25 +340,6 @@
       "latest_jobs": [],
       "error": "",
       "note": "genuine_voiceover_titles=0; rows_checked=16; speech testing and validation excluded",
-      "active_job_ids": []
-    },
-    {
-      "company": "Dentsu",
-      "ats": "Company Career Site",
-      "source_url": "https://www.dentsu.com/careers",
-      "status": "red",
-      "attention_reason": "No job history",
-      "days_since_new_job": null,
-      "last_new_job_at": null,
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-18T17:16:03Z",
-      "crawl_result": "zero_or_not_enumerable",
-      "jobs_collected_this_crawl": 0,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 0,
-      "latest_jobs": [],
-      "error": "",
-      "note": "",
       "active_job_ids": []
     },
     {
@@ -3128,6 +3109,78 @@
       ]
     },
     {
+      "company": "Dentsu",
+      "ats": "Workday",
+      "source_url": "https://dentsuaegis.wd3.myworkdayjobs.com/DAN_GLOBAL",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-11-18",
+      "last_crawl_at": "2026-11-18T19:51:51Z",
+      "last_successful_crawl_at": "2026-11-18T19:51:51Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 26,
+      "new_jobs_this_crawl": 26,
+      "active_jobs": 26,
+      "latest_jobs": [
+        {
+          "title": "Director, Digital and Programmatic - Pharma",
+          "date": "2026-11-18",
+          "url": "https://dentsuaegis.wd3.myworkdayjobs.com/DAN_GLOBAL/job/New-York/Director--Digital-and-Programmatic---Pharma_R1133286"
+        },
+        {
+          "title": "Growth Architect",
+          "date": "2026-11-18",
+          "url": "https://dentsuaegis.wd3.myworkdayjobs.com/DAN_GLOBAL/job/USA-Remote-New-Jersey/Growth-Architect_R1137457"
+        },
+        {
+          "title": "Social Media Director",
+          "date": "2026-11-18",
+          "url": "https://dentsuaegis.wd3.myworkdayjobs.com/DAN_GLOBAL/job/Prague/Social-Media-Director_R1136595"
+        },
+        {
+          "title": "Senior Planner",
+          "date": "2026-11-18",
+          "url": "https://dentsuaegis.wd3.myworkdayjobs.com/DAN_GLOBAL/job/Toronto/Senior-Planner_R1137640"
+        },
+        {
+          "title": "VP, Client Operations",
+          "date": "2026-11-18",
+          "url": "https://dentsuaegis.wd3.myworkdayjobs.com/DAN_GLOBAL/job/New-York/VP--Client-Operations_R1137516"
+        }
+      ],
+      "error": "",
+      "note": "",
+      "active_job_ids": [
+        "02f79fc57ce6ae6b",
+        "04242119b77e956b",
+        "18d609450c9cf440",
+        "1cb2ee2383f41046",
+        "1d946e5b5669012e",
+        "2198070b06c27944",
+        "2ac187ec37525979",
+        "313613cc78010e80",
+        "37db4eaa6a7cd924",
+        "42f591a34d4ddc4d",
+        "4dcfb303149ae99c",
+        "5a508e1db7c1ee5f",
+        "627815e9a4ebe937",
+        "90cbeaadd84f3005",
+        "94c65dd4a89e2689",
+        "b415453674626501",
+        "b5b625b736d8d938",
+        "c508fa9b1b2b2509",
+        "c551c2c663fea915",
+        "ca9e3ac8a92e3ccf",
+        "d1c4316db7f1d3da",
+        "dd6c184be5a402e3",
+        "e1b9de54ddc96164",
+        "e2c3d666b7bd1636",
+        "e318b59d067c18d9",
+        "eb3b6d5eadb2a148"
+      ]
+    },
+    {
       "company": "DistroKid",
       "ats": "Greenhouse",
       "source_url": "https://job-boards.greenhouse.io/distrokid",
@@ -3454,7 +3507,7 @@
       "last_successful_crawl_at": "2026-11-18T19:38:54Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 142,
-      "new_jobs_this_crawl": 83,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 83,
       "latest_jobs": [
         {
@@ -5069,7 +5122,7 @@
       "last_successful_crawl_at": "2026-11-18T19:38:54Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 1,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 1,
       "latest_jobs": [
         {
@@ -5512,7 +5565,7 @@
       "last_successful_crawl_at": "2026-11-18T19:38:54Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 74,
-      "new_jobs_this_crawl": 37,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 37,
       "latest_jobs": [
         {
