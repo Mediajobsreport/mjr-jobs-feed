@@ -106,6 +106,7 @@ def main() -> None:
         raise SystemExit(f"State file must contain a JSON object: {STATE_FILE}")
 
     jobs_by_company: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    jobs_by_source: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for fallback, record in raw_state.items():
         if not isinstance(record, dict):
             continue
@@ -119,6 +120,9 @@ def main() -> None:
         normalized["_fingerprint"] = job_fingerprint(job, str(fallback))
         normalized["_last_seen"] = text(record.get("last_seen"))
         jobs_by_company[company].append(normalized)
+        source_url = text(job.get("source")).lower().rstrip("/")
+        if source_url:
+            jobs_by_source[source_url].append(normalized)
 
     with AUDIT_FILE.open("r", encoding="utf-8-sig", newline="") as handle:
         audit_rows = list(csv.DictReader(handle))
@@ -144,7 +148,11 @@ def main() -> None:
         previous_item = previous_sources.get(company, {})
         has_previous_run = bool(previous_item)
         previous_ids = set(previous_item.get("active_job_ids", []))
-        company_jobs = jobs_by_company.get(company, [])
+        source_url = text(row.get("url"))
+        company_jobs = (
+            jobs_by_source.get(source_url.lower().rstrip("/"), [])
+            or jobs_by_company.get(company, [])
+        )
         active_ids = sorted({job["_fingerprint"] for job in company_jobs})
         newly_seen = [job for job in company_jobs if job["_fingerprint"] not in previous_ids]
 
