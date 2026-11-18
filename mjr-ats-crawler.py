@@ -12627,9 +12627,17 @@ def advance_local_adp_cx_rendered(src):
             search = page.get_by_role("button", name=re.compile(r"^Search$", re.I))
             if search.count():
                 search.first.click()
-            page.get_by_text(
-                re.compile(r"Search results loaded|jobs found", re.I)
-            ).wait_for(timeout=30000)
+            try:
+                page.get_by_text(
+                    re.compile(r"Search results loaded|jobs found", re.I)
+                ).wait_for(timeout=30000)
+            except Exception as marker_exc:
+                # ADP tenant boards may render their job cards without the
+                # aggregate status string; keep inspecting the visible cards.
+                print(
+                    "Advance Local ADP CX: search status marker missing; "
+                    f"continuing with rendered cards ({type(marker_exc).__name__})"
+                )
             page.wait_for_timeout(800)
 
             test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
