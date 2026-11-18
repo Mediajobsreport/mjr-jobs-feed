@@ -1384,6 +1384,9 @@ def workday_rendered(src, max_pages=20):
     if sync_playwright is None:
         raise RuntimeError("Playwright unavailable for rendered Workday board")
 
+    if os.getenv("MJR_TEST_MODE", "false").lower() == "true":
+        max_pages = min(max_pages, 2)
+
     company = clean(src.get("Company", ""))
     listing_url = clean(src.get("URL", ""))
     out = []
