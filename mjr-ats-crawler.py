@@ -12145,10 +12145,6 @@ MJR_TARGET_COMPANIES = {
     for x in os.getenv("MJR_TARGET_COMPANIES", "").split(",")
     if clean(x)
 }
-MJR_TARGET_COMPANY_KEYS = {
-    _company_test_key(x)
-    for x in MJR_TARGET_COMPANIES
-}
 MJR_REQUEST_DELAY_MIN = float(os.getenv("MJR_REQUEST_DELAY_MIN", "0.20"))
 MJR_REQUEST_DELAY_MAX = float(os.getenv("MJR_REQUEST_DELAY_MAX", "0.65"))
 MJR_DOMAIN_REQUEST_CAP = int(os.getenv("MJR_DOMAIN_REQUEST_CAP", "175"))
@@ -12196,6 +12192,11 @@ def _company_test_key(value):
     if key.startswith("townsquare ") or key.startswith("townsquare,"):
         return "townsquare"
     return aliases.get(key, key)
+
+MJR_TARGET_COMPANY_KEYS = {
+    _company_test_key(x)
+    for x in MJR_TARGET_COMPANIES
+}
 
 def _v28_source_enabled(src):
     if not MJR_TEST_COMPANIES:
