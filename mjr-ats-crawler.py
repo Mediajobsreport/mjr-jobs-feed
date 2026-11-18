@@ -12599,6 +12599,149 @@ def npg_adp_cx_rendered(src):
     print(f"NPG ADP CX rendered board: {len(out)} detail postings collected")
     return out
 
+
+def advance_local_adp_cx_rendered(src):
+    """Collect Advance Local jobs from ADP's rendered CX board and detail panels."""
+    if sync_playwright is None:
+        raise RuntimeError("Playwright unavailable for Advance Local ADP CX board")
+
+    out, seen = [], set()
+    start = src["URL"]
+    try:
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1365, "height": 900})
+            page.goto(start, wait_until="domcontentloaded", timeout=45000)
+            page.wait_for_timeout(3000)
+            search = page.get_by_role("button", name=re.compile(r"^Search$", re.I))
+            if search.count():
+                search.first.click()
+            page.get_by_text(
+                re.compile(r"Search results loaded|jobs found", re.I)
+            ).wait_for(timeout=30000)
+            page.wait_for_timeout(800)
+
+            test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
+            # A test validates a small sample; production walks the bounded
+            # first four pages so the public ADP board remains lightweight.
+            page_limit = 1 if test_mode else 4
+            card_limit = 2 if test_mode else 30
+            for page_number in range(1, page_limit + 1):
+                headings = page.get_by_role("heading")
+                cards, occurrences = [], {}
+                for idx in range(headings.count()):
+                    try:
+                        title = clean(headings.nth(idx).inner_text(timeout=1000))
+                        matches = page.get_by_role("button", name=title, exact=True)
+                        if title and matches.count():
+                            occurrence = occurrences.get(title, 0)
+                            cards.append((title, occurrence))
+                            occurrences[title] = occurrence + 1
+                    except Exception:
+                        continue
+
+                print(f"Advance Local ADP CX page {page_number}: {len(cards)} result cards")
+                for title, occurrence in cards[:card_limit]:
+                    try:
+                        page.get_by_role("button", name=title, exact=True).nth(
+                            occurrence
+                        ).click(timeout=10000, force=True)
+                        panel = page.locator(".details-main-section")
+                        panel.wait_for(state="visible", timeout=15000)
+                        page.wait_for_function(
+                            """(expected) => {
+                                const panel = document.querySelector('.details-main-section');
+                                return panel?.innerText?.trim().startsWith(expected);
+                            }""",
+                            arg=title,
+                            timeout=10000,
+                        )
+                        detail_raw = panel.inner_text(timeout=10000)
+                        detail_text = clean(detail_raw)
+                        if len(detail_text) < 200:
+                            continue
+
+                        detail_url = page.url
+                        req_id = (parse_qs(urlparse(detail_url).query).get("reqId") or [""])[0]
+                        if not req_id:
+                            raise ValueError("ADP detail panel did not expose reqId in its URL")
+                        if req_id in seen:
+                            continue
+
+                        lines = [clean(line) for line in detail_raw.splitlines() if clean(line)]
+                        code_match = next(
+                            (re.search(r"#?([A-Z0-9]+-[0-9]{3,})", line, re.I)
+                             for line in lines[:6]
+                             if re.search(r"#?([A-Z0-9]+-[0-9]{3,})", line, re.I)),
+                            None,
+                        )
+                        job_code = code_match.group(1).upper() if code_match else req_id
+                        actual_title = re.sub(
+                            r"\s+#?[A-Z0-9]+-[0-9]{3,}\s*$", "", lines[0]
+                        ) if lines else title
+                        if not actual_title:
+                            actual_title = title
+                        location = next(
+                            (line for line in lines[1:12]
+                             if re.search(r"(?:Remote|,\s*(?:United States|Canada)|\b[A-Z]{2}\b)", line, re.I)),
+                            "",
+                        )
+                        description = format_description(detail_raw)
+                        if len(strip_html(description)) < 200:
+                            continue
+                        city, state, country = _split_adp_location(location)
+                        if not country:
+                            country = infer_country(location, src["Company"], detail_raw)
+                        saved = load_state().get(
+                            detail_url.rstrip("/").lower(), {}
+                        ).get("job", {})
+                        posted = pdate(saved.get("date")) or TODAY
+                        seen.add(req_id)
+                        out.append(
+                            Job(
+                                job_code, actual_title, src["Company"], description,
+                                posted, jobtype(actual_title, description),
+                                category(actual_title, description, src["Industry"], src["Company"]),
+                                detail_url, start, detail_url, "",
+                                normalize_work_arrangement(description, location, actual_title),
+                                city, state, country,
+                            )
+                        )
+                    except Exception as exc:
+                        print(
+                            f"Advance Local ADP detail skipped ({title[:70]}): "
+                            f"{type(exc).__name__}"
+                        )
+                    finally:
+                        try:
+                            back = page.get_by_role("button", name="Back", exact=True)
+                            if back.count():
+                                back.first.click(timeout=5000)
+                                page.wait_for_timeout(500)
+                        except Exception:
+                            pass
+
+                if page_number >= page_limit:
+                    break
+                next_page = page.get_by_role(
+                    "button", name=f"Page {page_number + 1}", exact=True
+                )
+                if not next_page.count() or not next_page.is_enabled():
+                    break
+                next_page.click(timeout=10000)
+                page.wait_for_timeout(1000)
+            browser.close()
+    except Exception as exc:
+        print(
+            f"Advance Local ADP CX rendered board unavailable: "
+            f"{type(exc).__name__}: {clean(str(exc))[:160]}"
+        )
+        return out
+
+    print(f"Advance Local ADP CX rendered: {len(out)} detail postings collected")
+    return out
+
+
 def leighton_media_jobs(src):
     """Collect live roles from Leighton's official open-positions page."""
     url = src["URL"]
@@ -16669,7 +16812,7 @@ def main():
                 if _ats_family(s) == "jobvite"
                 else workable(s)
                 if _ats_family(s) == "workable"
-                else generic(s)
+                else advance_local_adp_cx_rendered(s)
                 if company_key == "advance local media"
                 else adp(s)
                 if "adp" in a
