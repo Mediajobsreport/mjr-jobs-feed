@@ -13678,7 +13678,8 @@ def generic(src):
 
     out = []
 
-    for url in list(links)[:1000]:
+    generic_limit = 20 if os.getenv("MJR_TEST_MODE", "false").lower() == "true" else 1000
+    for url in list(links)[:generic_limit]:
         try:
             rr = req("GET", url)
             detail_url = clean(getattr(rr, "url", "") or url)
