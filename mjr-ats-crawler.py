@@ -1451,7 +1451,7 @@ def workday_rendered(src, max_pages=20):
                 seen.add(detail_url)
                 context_text = clean(entry.get("context") or "")
                 date_match = re.search(
-                    r"posted\\s+(today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                    r"posted\s+(today|yesterday|\d+\+?\s+days?\s+ago)",
                     context_text,
                     re.I,
                 )
@@ -1464,12 +1464,12 @@ def workday_rendered(src, max_pages=20):
             # page is outside the active import window.
             if not parsed_entries and all(
                 not re.search(
-                    r"posted\\s+(?:today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                    r"posted\s+(?:today|yesterday|\d+\+?\s+days?\s+ago)",
                     clean(item.get("context") or ""),
                     re.I,
                 )
                 or (pdate(re.search(
-                    r"posted\\s+(today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                    r"posted\s+(today|yesterday|\d+\+?\s+days?\s+ago)",
                     clean(item.get("context") or ""),
                     re.I,
                 ).group(1)) or date.min) < CUTOFF
@@ -1498,21 +1498,21 @@ def workday_rendered(src, max_pages=20):
                     location = read_text(detail, "[data-automation-id='locations']") or listed_location
                     posted_text = read_text(detail, "[data-automation-id='postedOn']")
                     detail_date_match = re.search(
-                        r"posted\\s+(today|yesterday|\\d+\\+?\\s+days?\\s+ago)",
+                        r"posted\s+(today|yesterday|\d+\+?\s+days?\s+ago)",
                         posted_text,
                         re.I,
                     )
                     detail_date = pdate(detail_date_match.group(1)) if detail_date_match else posted
                     detail_url = clean(page.url or entry.get("href") or "")
                     req_id = read_text(detail, "[data-automation-id='requisitionId']")
-                    id_match = re.search(r"([A-Z]{1,8}[-_]?\\d{3,})", req_id, re.I)
+                    id_match = re.search(r"([A-Z]{1,8}[-_]?\d{3,})", req_id, re.I)
                     identifier = id_match.group(1) if id_match else hashlib.sha1(
                         clean(entry.get("href") or "").encode()
                     ).hexdigest()[:16]
                     remote = read_text(detail, "[data-automation-id='remoteType']")
                     location_text = clean(location)
                     loc_match = re.search(
-                        r"\\b([A-Z][A-Za-z .'-]+,\\s*[A-Z]{2})\\b",
+                        r"\b([A-Z][A-Za-z .'-]+,\s*[A-Z]{2})\b",
                         location_text,
                     )
                     city = "Remote" if re.search(r"remote", remote + " " + location_text, re.I) else (
@@ -1526,11 +1526,11 @@ def workday_rendered(src, max_pages=20):
                         and len(description_text) >= 200
                     ):
                         foreign = re.search(
-                            r"\\b(london|barcelona|berlin|tokyo|paris|madrid|amsterdam|"
+                            r"\b(london|barcelona|berlin|tokyo|paris|madrid|amsterdam|"
                             r"dublin|singapore|sydney|melbourne|munich|frankfurt|rome|"
                             r"milan|lisbon|vienna|zurich|geneva|brussels|hong kong|"
                             r"united kingdom|england|germany|spain|france|italy|japan|"
-                            r"australia|netherlands|ireland|switzerland)\\b",
+                            r"australia|netherlands|ireland|switzerland)\b",
                             location_text.lower(),
                         )
                         country = infer_country(location_text + " " + description_text, company, description)
