@@ -1464,6 +1464,9 @@ def workday_rendered(src, max_pages=20):
                     continue
                 parsed_entries.append((entry, posted, clean(entry.get("location") or "")))
 
+            if os.getenv("MJR_TEST_MODE", "false").lower() == "true":
+                parsed_entries = parsed_entries[:3]
+
             # Workday boards are posted-date ordered. Stop once a whole card
             # page is outside the active import window.
             if not parsed_entries and all(
