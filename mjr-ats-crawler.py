@@ -13256,10 +13256,11 @@ def workable(src):
 
 
 def newscorp_rendered(src):
-    """Render News Corp's client-side job search and parse recent official details."""
+    """Render News Corp's current job board and parse its active detail pages."""
     if sync_playwright is None:
         raise RuntimeError("Playwright unavailable for News Corp careers board")
-    links = set()
+
+    links = []
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
@@ -13274,15 +13275,21 @@ def newscorp_rendered(src):
         page.goto(src["URL"], wait_until="domcontentloaded", timeout=45000)
         page.wait_for_selector("a[href*='/job/']", timeout=20000)
         cards = page.locator("a[href*='/job/']")
-        # The board sorts by most recent. Read a bounded set of latest listings.
-        # Tests inspect only the first 20; production inspects up to 150.
         test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
         board_limit = 20 if test_mode else 150
         for _ in range(20):
-            current = cards.evaluate_all("(els) => els.map(e => e.href)")
-            for href in current:
-                if href and urlparse(href).netloc.lower().endswith("newscorp.com"):
-                    links.add(href.split("#", 1)[0])
+            for card in cards.all():
+                try:
+                    href = card.get_attribute("href") or ""
+                    label = clean(card.inner_text(timeout=1500))
+                    href = urljoin(src["URL"], href)
+                    if (
+                        urlparse(href).netloc.lower().endswith("newscorp.com")
+                        and not any(href == existing[0] for existing in links)
+                    ):
+                        links.append((href.split("#", 1)[0], label))
+                except Exception:
+                    continue
             if len(links) >= board_limit:
                 break
             more = page.get_by_role("button", name=re.compile(r"load more jobs", re.I))
@@ -13292,37 +13299,90 @@ def newscorp_rendered(src):
             more.first.click()
             page.wait_for_timeout(350)
             cards = page.locator("a[href*='/job/']")
-            newer = cards.evaluate_all("(els) => els.map(e => e.href)")
-            links.update(
-                href.split("#", 1)[0] for href in newer
-                if href and urlparse(href).netloc.lower().endswith("newscorp.com")
-            )
             if len(links) <= before:
                 break
+
+        detail_limit = 3 if test_mode else 150
+        out, seen_ids = [], set()
+        for url, label in links[:detail_limit]:
+            try:
+                page.goto(url, wait_until="domcontentloaded", timeout=45000)
+                title_node = page.locator("main h2").first
+                if not title_node.count():
+                    title_node = page.locator("main h1").first
+                title_node.wait_for(state="visible", timeout=15000)
+                title = clean(title_node.inner_text(timeout=5000))
+                body = clean(page.locator("main").inner_text(timeout=8000))
+                job_desc = page.locator(".job-html")
+                description_text = clean(job_desc.inner_text(timeout=5000)) if job_desc.count() else body
+                if len(description_text) < 200:
+                    continue
+
+                location_match = re.search(r"→\s*(.+)$", label)
+                location = clean(location_match.group(1)) if location_match else ""
+                if not location:
+                    lines = [clean(line) for line in body.splitlines() if clean(line)]
+                    location = next(
+                        (line for line in lines if re.search(
+                            r"(?:Virtual,\s*USA|,\s*(?:TX|CA|NY|NJ|AZ|IL|MA|FL|WA|GA|CO|PA|NC|UT|USA|CAN|Canada))$",
+                            line,
+                            re.I,
+                        )),
+                        "",
+                    )
+                city, state, country = _split_adp_location(location)
+                if not country:
+                    country = infer_country(location or label, src["Company"], body)
+                if country not in {"US", "CA"}:
+                    continue
+
+                date_match = re.search(
+                    r"(?:posted|date posted|posted date)\s*:?\s*"
+                    r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2})",
+                    body,
+                    re.I,
+                )
+                saved = load_state().get(url.rstrip("/").lower(), {}).get("job", {})
+                posted = pdate(date_match.group(1)) if date_match else (
+                    pdate(saved.get("date")) or TODAY
+                )
+                if not posted or posted < CUTOFF:
+                    continue
+
+                job_id = url.rstrip("/").split("/")[-2] or url.rstrip("/").split("/")[-1]
+                if job_id in seen_ids:
+                    continue
+                seen_ids.add(job_id)
+                description = format_description(
+                    "<p>" + html.escape(description_text) + "</p>"
+                )
+                out.append(
+                    Job(
+                        job_id, title, src["Company"], description, posted,
+                        jobtype(title, description_text),
+                        category(title, description_text, src["Industry"], src["Company"]),
+                        url, src["URL"], url, "",
+                        normalize_work_arrangement(description_text, location, title),
+                        city, state, country,
+                    )
+                )
+            except Exception as exc:
+                print(
+                    f"News Corp detail skipped ({url.rsplit('/', 1)[-1]}): "
+                    f"{type(exc).__name__}"
+                )
         browser.close()
 
-    out, seen = [], set()
-    detail_limit = 5 if os.getenv("MJR_TEST_MODE", "false").lower() == "true" else 150
-    for url in sorted(links)[:detail_limit]:
-        try:
-            response = req("GET", url)
-            job = _job_from_detail(src, clean(getattr(response, "url", "") or url), response.text)
-            if job and job_is_fresh(job):
-                key = job.url.rstrip("/").lower()
-                if key not in seen:
-                    seen.add(key)
-                    out.append(job)
-        except Exception:
-            continue
-    print(f"News Corp rendered: listed={len(links)} current={len(out)}")
+    print(f"News Corp rendered: listed={len(links)} current North American={len(out)}")
     return out
 
 
 def jobvite_rendered(src):
-    """Render Jobvite's client-side public board, then parse official job details."""
+    """Render Jobvite listings and detail pages; current board entries lack dates."""
     if sync_playwright is None:
         raise RuntimeError("Playwright unavailable for Jobvite careers board")
-    links = set()
+
+    links = []
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=True,
@@ -13338,31 +13398,114 @@ def jobvite_rendered(src):
         page.wait_for_timeout(900)
         cards = page.locator("a[href*='/job/']")
         if not cards.count():
-            view_all = page.get_by_role("link", name=re.compile(r"view all|open positions", re.I))
+            view_all = page.get_by_role(
+                "link", name=re.compile(r"view all|open positions", re.I)
+            )
             if view_all.count():
-                page.goto(view_all.first.get_attribute("href"), wait_until="domcontentloaded", timeout=45000)
+                page.goto(
+                    view_all.first.get_attribute("href"),
+                    wait_until="domcontentloaded",
+                    timeout=45000,
+                )
                 page.wait_for_timeout(900)
                 cards = page.locator("a[href*='/job/']")
-        for href in cards.evaluate_all("(els) => els.map(e => e.href)"):
-            if href and "jobs.jobvite.com" in urlparse(href).netloc.lower():
-                links.add(href.split("#", 1)[0])
+        seen_urls = set()
+        for card in cards.all():
+            try:
+                url = card.get_attribute("href") or ""
+                label = clean(card.inner_text(timeout=2000))
+                url = urljoin(src["URL"], url)
+                if "jobs.jobvite.com" in urlparse(url).netloc.lower() and url not in seen_urls:
+                    seen_urls.add(url.split("#", 1)[0])
+                    links.append((url.split("#", 1)[0], label))
+            except Exception:
+                continue
+
+        test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
+        detail_limit = 3 if test_mode else 300
+        out, seen_ids = [], set()
+        for url, label in links[:detail_limit]:
+            try:
+                page.goto(url, wait_until="domcontentloaded", timeout=45000)
+                heading = page.locator("h1").first
+                heading.wait_for(state="visible", timeout=15000)
+                title = clean(heading.inner_text(timeout=5000))
+                body = clean(page.locator("body").inner_text(timeout=8000))
+                lines = [clean(line) for line in body.splitlines() if clean(line)]
+
+                location = ""
+                try:
+                    title_index = lines.index(title)
+                except ValueError:
+                    title_index = 0
+                for line in lines[title_index + 1:title_index + 6]:
+                    if "•" in line:
+                        location = clean(line.split("•")[-1])
+                        break
+                    if re.search(r",\s*(?:[A-Za-z]{2}|[A-Za-z ]{3,})$", line):
+                        location = line
+                        break
+
+                try:
+                    desc_index = next(
+                        idx for idx, line in enumerate(lines)
+                        if line.casefold() == "description"
+                    )
+                except StopIteration:
+                    continue
+                end_index = next(
+                    (idx for idx in range(desc_index + 1, len(lines))
+                     if lines[idx].casefold() in {
+                         "apply later", "back to current openings", "← back to current openings"
+                     }),
+                    len(lines),
+                )
+                description_text = clean(" ".join(lines[desc_index + 1:end_index]))
+                if len(description_text) < 200:
+                    continue
+
+                date_match = re.search(
+                    r"(?:posted|date posted|posted date)\s*:?\s*"
+                    r"([A-Za-z]+\s+\d{1,2},\s+20\d{2}|\d{1,2}/\d{1,2}/20\d{2})",
+                    body,
+                    re.I,
+                )
+                saved = load_state().get(url.rstrip("/").lower(), {}).get("job", {})
+                posted = pdate(date_match.group(1)) if date_match else (
+                    pdate(saved.get("date")) or TODAY
+                )
+                if not posted or posted < CUTOFF:
+                    continue
+
+                city, state, country = _split_adp_location(location)
+                if not country:
+                    country = infer_country(location or label, src["Company"], body)
+                if country not in {"US", "CA"}:
+                    continue
+
+                job_id = url.rstrip("/").rsplit("/", 1)[-1]
+                if job_id in seen_ids:
+                    continue
+                seen_ids.add(job_id)
+                description = format_description("<p>" + html.escape(description_text) + "</p>")
+                out.append(
+                    Job(
+                        job_id, title, src["Company"], description, posted,
+                        jobtype(title, description_text),
+                        category(title, description_text, src["Industry"], src["Company"]),
+                        url, src["URL"], url, "",
+                        normalize_work_arrangement(description_text, location, title),
+                        city, state, country,
+                    )
+                )
+            except Exception as exc:
+                print(
+                    f"Jobvite detail skipped ({url.rsplit('/', 1)[-1]}): "
+                    f"{type(exc).__name__}"
+                )
         browser.close()
 
-    out, seen = [], set()
-    test_mode = os.getenv("MJR_TEST_MODE", "false").lower() == "true"
-    detail_limit = 5 if test_mode else 300
-    for url in sorted(links)[:detail_limit]:
-        try:
-            response = req("GET", url)
-            job = _job_from_detail(src, clean(getattr(response, "url", "") or url), response.text)
-            if job and job_is_fresh(job):
-                key = job.url.rstrip("/").lower()
-                if key not in seen:
-                    seen.add(key)
-                    out.append(job)
-        except Exception:
-            continue
-    print(f"Jobvite rendered {src['Company']}: listed={len(links)} current={len(out)}")
+    print(f"Jobvite rendered {src['Company']}: listed={len(links)} current North American={len(out)}")
     return out
 
 
