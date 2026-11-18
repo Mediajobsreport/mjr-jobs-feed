@@ -161,7 +161,7 @@ Hakuhodo DY,Company Career Site,https://www.hakuhodody-holdings.co.jp/english/,z
 Stagwell,iCIMS,https://careers-stagwellglobal.icims.com/jobs/intro,ok,10,"enumerated_detail_urls=54; feed_filter_rejected=Enterprise Account Executive:not_fresh ; Controller:not_fresh ; Sr Analyst, Maconomy:not_fresh ; Global Investment Director:not_fresh"
 S4 Capital,Company Career Site,https://www.s4capital.com/careers,zero_or_not_enumerable,0,
 Accenture Song,Company Career Site,https://www.accenture.com/us-en/careers/jobsearch,zero_or_not_enumerable,0,
-M+C Saatchi Group,Company Career Site,https://mcsaatchi.com/careers,zero_or_not_enumerable,0,
+M+C Saatchi Group,Company Career Site,https://careers.mcsaatchi.com/jobs,ok,13,"feed_filter_rejected=Senior Social Media Manager:not_fresh ; Account Manager - Singapore:not_fresh ; Account Manager:in, Sport & Entertainment (w/m/d) – Berlin:not_fresh ; Senior Account Manager:in, Sport & Entertainment (w/m/d) – Berlin:not_fresh ; Associate Director, Social & Culture lead:not_fresh"
 TSMG,Lever,https://jobs.lever.co/tsmg,zero_or_no_fresh_voiceover_jobs,0,voiceover_matches=0; stale_matches=0; rows_checked=100
 Filmless,SmartRecruiters,https://jobs.smartrecruiters.com/Filmless,zero_or_no_fresh_voiceover_jobs,0,voiceover_matches=0; stale_matches=1; rows_checked=4
 CrowdGen/Appen,Lever,https://jobs.lever.co/appen,no_qualifying_voiceover_titles,0,genuine_voiceover_titles=0; rows_checked=16; speech testing and validation excluded

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-18T17:16:03Z",
+  "generated_at": "2026-11-18T17:30:10Z",
   "thresholds": {
     "green": "0-2",
     "yellow": "3-4",
@@ -9,14 +9,14 @@
   },
   "summary": {
     "sources": 166,
-    "green": 84,
+    "green": 85,
     "yellow": 7,
     "orange": 11,
-    "red": 64,
+    "red": 63,
     "crawl_errors": 2,
-    "zero_or_not_enumerable": 37,
-    "new_jobs_this_crawl": 236,
-    "active_jobs": 2135
+    "zero_or_not_enumerable": 36,
+    "new_jobs_this_crawl": 8,
+    "active_jobs": 2143
   },
   "sources": [
     {
@@ -764,25 +764,6 @@
       "active_job_ids": [
         "1f090de7b566eb2b"
       ]
-    },
-    {
-      "company": "M+C Saatchi Group",
-      "ats": "Company Career Site",
-      "source_url": "https://mcsaatchi.com/careers",
-      "status": "red",
-      "attention_reason": "No job history",
-      "days_since_new_job": null,
-      "last_new_job_at": null,
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-18T17:16:03Z",
-      "crawl_result": "zero_or_not_enumerable",
-      "jobs_collected_this_crawl": 0,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 0,
-      "latest_jobs": [],
-      "error": "",
-      "note": "",
-      "active_job_ids": []
     },
     {
       "company": "mc Group",
@@ -2575,7 +2556,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 9,
-      "new_jobs_this_crawl": 5,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 5,
       "latest_jobs": [
         {
@@ -2821,7 +2802,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 19,
-      "new_jobs_this_crawl": 19,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 19,
       "latest_jobs": [
         {
@@ -3329,7 +3310,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 2,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 1,
       "latest_jobs": [
         {
@@ -3356,7 +3337,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 11,
-      "new_jobs_this_crawl": 11,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 11,
       "latest_jobs": [
         {
@@ -3413,7 +3394,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 25,
-      "new_jobs_this_crawl": 24,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 24,
       "latest_jobs": [
         {
@@ -3644,7 +3625,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 31,
-      "new_jobs_this_crawl": 31,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 31,
       "latest_jobs": [
         {
@@ -4178,7 +4159,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 37,
-      "new_jobs_this_crawl": 37,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 37,
       "latest_jobs": [
         {
@@ -4431,6 +4412,60 @@
         "f6370ebd04b88380",
         "f7b25f6bbfccf2e0",
         "fd0671029591cd73"
+      ]
+    },
+    {
+      "company": "M+C Saatchi Group",
+      "ats": "Company Career Site",
+      "source_url": "https://careers.mcsaatchi.com/jobs",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-11-18",
+      "last_crawl_at": "2026-11-18T17:30:10Z",
+      "last_successful_crawl_at": "2026-11-18T17:30:10Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 13,
+      "new_jobs_this_crawl": 8,
+      "active_jobs": 8,
+      "latest_jobs": [
+        {
+          "title": "Finance Assistant (w/m/d) – BERLIN",
+          "date": "2026-11-12",
+          "url": "https://careers.mcsaatchi.com/jobs/8718768-finance-assistant-w-m-d-berlin"
+        },
+        {
+          "title": "Praktikant:in Account Management, Sport & Entertainment (w/m/d) – BERLIN",
+          "date": "2026-11-12",
+          "url": "https://careers.mcsaatchi.com/jobs/8718729-praktikant-in-account-management-sport-entertainment-w-m-d-berlin"
+        },
+        {
+          "title": "Praktikant:in Account Management, Sport & Entertainment (w/m/d) – BERLIN",
+          "date": "2026-11-12",
+          "url": "https://careers.mcsaatchi.com/jobs/8718702-praktikant-in-account-management-sport-entertainment-w-m-d-berlin"
+        },
+        {
+          "title": "PraktikantIn im PR-Bereich (m/w/d) - BERLIN",
+          "date": "2026-11-12",
+          "url": "https://careers.mcsaatchi.com/jobs/8718676-praktikantin-im-pr-bereich-m-w-d-berlin"
+        },
+        {
+          "title": "PraktikantIn im PR-Bereich (m/w/d) - BERLIN",
+          "date": "2026-11-12",
+          "url": "https://careers.mcsaatchi.com/jobs/8718584-praktikantin-im-pr-bereich-m-w-d-berlin"
+        }
+      ],
+      "error": "",
+      "note": "feed_filter_rejected=Senior Social Media Manager:not_fresh ; Account Manager - Singapore:not_fresh ; Account Manager:in, Sport & Entertainment (w/m/d) – Berlin:not_fresh ; Senior Account Manager:in, Sport & Entertainment (w/m/d) – Berlin:not_fresh ; Associate Director, Social & Culture lead:not_fresh",
+      "active_job_ids": [
+        "2bd6e8ec6e2b0037",
+        "3f4913c12d4bec9f",
+        "57dfebfb6245cc14",
+        "a6c0bc8fdbb35272",
+        "ad4ef5ac74cfce1a",
+        "be58b50c27f67964",
+        "e843f6e7fbd3ffbb",
+        "f44cbb1b35c26f5b"
       ]
     },
     {
@@ -4900,7 +4935,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 9,
-      "new_jobs_this_crawl": 3,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 3,
       "latest_jobs": [
         {
@@ -5458,7 +5493,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 13,
-      "new_jobs_this_crawl": 7,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 7,
       "latest_jobs": [
         {
@@ -5511,7 +5546,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 20,
-      "new_jobs_this_crawl": 13,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 13,
       "latest_jobs": [
         {
@@ -6160,7 +6195,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 6,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 3,
       "latest_jobs": [
         {
@@ -6611,7 +6646,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 18,
-      "new_jobs_this_crawl": 15,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 15,
       "latest_jobs": [
         {
@@ -6672,7 +6707,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
-      "new_jobs_this_crawl": 1,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 1,
       "latest_jobs": [
         {
@@ -6841,7 +6876,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 31,
-      "new_jobs_this_crawl": 25,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 31,
       "latest_jobs": [
         {
@@ -6983,7 +7018,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 29,
-      "new_jobs_this_crawl": 14,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 14,
       "latest_jobs": [
         {
@@ -7097,7 +7132,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 20,
-      "new_jobs_this_crawl": 20,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 20,
       "latest_jobs": [
         {
@@ -7163,7 +7198,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 13,
-      "new_jobs_this_crawl": 6,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 6,
       "latest_jobs": [
         {
@@ -7319,7 +7354,7 @@
       "last_successful_crawl_at": "2026-11-18T17:16:03Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 3,
-      "new_jobs_this_crawl": 3,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 3,
       "latest_jobs": [
         {
