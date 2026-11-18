@@ -1456,7 +1456,8 @@ def workday_rendered(src, max_pages=20):
                     re.I,
                 )
                 posted = pdate(date_match.group(1)) if date_match else None
-                if not posted or posted < CUTOFF:
+                active_cutoff = feed_cutoff(jobtype(entry.get("title", "")))
+                if not posted or posted < active_cutoff:
                     continue
                 parsed_entries.append((entry, posted, clean(entry.get("location") or "")))
 
@@ -1472,7 +1473,9 @@ def workday_rendered(src, max_pages=20):
                     r"posted\s+(today|yesterday|\d+\+?\s+days?\s+ago)",
                     clean(item.get("context") or ""),
                     re.I,
-                ).group(1)) or date.min) < CUTOFF
+                ).group(1)) or date.min) < feed_cutoff(
+                    jobtype(item.get("title", ""))
+                )
                 for item in entries
             ):
                 break
