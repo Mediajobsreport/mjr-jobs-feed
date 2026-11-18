@@ -144,7 +144,7 @@ Beggars Group,Company Career Site,https://beggars.com/job-postings/,zero_or_not_
 HYBE,Company Career Site,https://careers.hybecorp.com/ko/career,zero_or_not_enumerable,0,
 Edelman,Workday,https://djeholdings.wd5.myworkdayjobs.com/en-US/edelman-careers-E200,ok,25,"feed_filter_rejected=Senior Account Manager, Reputation:not_fresh"
 Burson,Greenhouse,https://job-boards.greenhouse.io/bursonglobalcareers,ok,59,"enumerated_jobs=194; feed_filter_rejected=3D Designer - Burson:not_fresh ; Account Director, Earned Media - Health & Wellness:not_fresh ; Account Director (PR) - Enterprise Technology:not_fresh ; Consultant - Corporate PR & Public Affairs:not_fresh ; Director Intelligence & Insights:not_fresh ; Freelance Senior Account Executive - Social Media:not_fresh ; Influence Strategist:not_fresh ; PR Account Executive - Technology:not_fresh ; PR Account Manager, B2B & Consumer Technology - Burson:not_fresh ; PR Executive- Technology:not_fresh ; PR Manager - Contract:not_fresh ; Senior Consultant, Consumer & Brand:not_fresh"
-Weber Shandwick,Company Career Site,https://webershandwick.com/careers/jobs,zero_or_not_enumerable,0,
+Weber Shandwick,Jobvite,https://jobs.jobvite.com/weber-shandwick/jobs,ok,1,
 FleishmanHillard,Company Career Site,https://fleishmanhillard.com/join-us/,zero_or_not_enumerable,0,
 Real Chemistry,Greenhouse,https://job-boards.greenhouse.io/realchemistry,ok,81,enumerated_jobs=84; non_media_scope_rejected=3
 Ketchum,Greenhouse,https://job-boards.greenhouse.io/ketchumuscareers,enumerated_no_fresh_jobs,0,enumerated_jobs=0

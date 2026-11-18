@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-18T18:28:12Z",
+  "generated_at": "2026-11-18T18:51:37Z",
   "thresholds": {
     "green": "0-2",
     "yellow": "3-4",
@@ -9,14 +9,14 @@
   },
   "summary": {
     "sources": 166,
-    "green": 90,
+    "green": 91,
     "yellow": 7,
     "orange": 11,
-    "red": 58,
+    "red": 57,
     "crawl_errors": 1,
-    "zero_or_not_enumerable": 32,
-    "new_jobs_this_crawl": 62,
-    "active_jobs": 2230
+    "zero_or_not_enumerable": 31,
+    "new_jobs_this_crawl": 1,
+    "active_jobs": 2231
   },
   "sources": [
     {
@@ -483,8 +483,8 @@
       "attention_reason": "No job history",
       "days_since_new_job": null,
       "last_new_job_at": null,
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-18T17:16:03Z",
+      "last_crawl_at": "2026-11-18T18:51:37Z",
+      "last_successful_crawl_at": "2026-11-18T18:51:37Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 142,
       "new_jobs_this_crawl": 0,
@@ -1215,25 +1215,6 @@
         "e1354bfd63b70c03",
         "e9076107c4a35b52"
       ]
-    },
-    {
-      "company": "Weber Shandwick",
-      "ats": "Company Career Site",
-      "source_url": "https://webershandwick.com/careers/jobs",
-      "status": "red",
-      "attention_reason": "No job history",
-      "days_since_new_job": null,
-      "last_new_job_at": null,
-      "last_crawl_at": "2026-11-18T17:16:03Z",
-      "last_successful_crawl_at": "2026-11-18T17:16:03Z",
-      "crawl_result": "zero_or_not_enumerable",
-      "jobs_collected_this_crawl": 0,
-      "new_jobs_this_crawl": 0,
-      "active_jobs": 0,
-      "latest_jobs": [],
-      "error": "",
-      "note": "",
-      "active_job_ids": []
     },
     {
       "company": "Weigel",
@@ -3995,7 +3976,7 @@
       "last_successful_crawl_at": "2026-11-18T18:28:12Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 13,
-      "new_jobs_this_crawl": 13,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 13,
       "latest_jobs": [
         {
@@ -5082,7 +5063,7 @@
       "last_successful_crawl_at": "2026-11-18T18:28:12Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 14,
-      "new_jobs_this_crawl": 14,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 14,
       "latest_jobs": [
         {
@@ -5174,7 +5155,7 @@
       "last_successful_crawl_at": "2026-11-18T18:28:12Z",
       "crawl_result": "ok",
       "jobs_collected_this_crawl": 35,
-      "new_jobs_this_crawl": 35,
+      "new_jobs_this_crawl": 0,
       "active_jobs": 35,
       "latest_jobs": [
         {
@@ -7458,6 +7439,33 @@
         "69b1764e10003fc9",
         "83cfa2fa88bbc6a6",
         "cd7b6490c3c97556"
+      ]
+    },
+    {
+      "company": "Weber Shandwick",
+      "ats": "Jobvite",
+      "source_url": "https://jobs.jobvite.com/weber-shandwick/jobs",
+      "status": "green",
+      "attention_reason": "Healthy",
+      "days_since_new_job": 0,
+      "last_new_job_at": "2026-11-18",
+      "last_crawl_at": "2026-11-18T18:51:37Z",
+      "last_successful_crawl_at": "2026-11-18T18:51:37Z",
+      "crawl_result": "ok",
+      "jobs_collected_this_crawl": 1,
+      "new_jobs_this_crawl": 1,
+      "active_jobs": 1,
+      "latest_jobs": [
+        {
+          "title": "Weber Shandwick Careers",
+          "date": "2026-11-18",
+          "url": "https://jobs.jobvite.com/weber-shandwick/job/oksjvfwk"
+        }
+      ],
+      "error": "",
+      "note": "",
+      "active_job_ids": [
+        "a44ee26f0c22af46"
       ]
     },
     {
