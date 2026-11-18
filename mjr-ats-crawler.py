@@ -3535,6 +3535,8 @@ ATS_JOB_HINTS = {
         r"/jobs/\d+",
         r"/job/",
     ],
+    "workable": [r"/j/[A-Za-z0-9]+/?$"],
+    "jobvite": [r"/job/[A-Za-z0-9_-]+/?$", r"/jobs/\d+/?$"],
     "betterteam": [
         # Betterteam tenant boards use root-level slugs for individual jobs,
         # e.g. /bilingual-sales-consultant-26, not /job/... paths.
@@ -3579,6 +3581,10 @@ def _ats_family(src):
         return "isolved"
     if "betterteam" in joined:
         return "betterteam"
+    if "workable" in joined:
+        return "workable"
+    if "jobvite" in joined:
+        return "jobvite"
     return ""
 
 
@@ -3588,7 +3594,7 @@ KNOWN_ATS_HOST_TOKENS = (
     "taleo.net", "breezy.hr", "applytojob.com", "jazz.co",
     "paycomonline.net", "rippling-ats.com", "jobscore.com",
     "recruitingbypaycor.com", "isolvedhire.com", "betterteam.com",
-    "myworkdayjobs.com", "greenhouse.io",
+    "myworkdayjobs.com", "greenhouse.io", "jobvite.com",
 )
 
 
@@ -16494,6 +16500,10 @@ def main():
                 if company_key == "hubbard broadcasting"
                 else npg_adp_cx_rendered(s)
                 if company_key == "npg"
+                else workable(s)
+                if _ats_family(s) == "workable"
+                else generic(s)
+                if company_key == "advance local media"
                 else workable(s)
                 if _ats_family(s) == "workable"
                 else adp(s)
