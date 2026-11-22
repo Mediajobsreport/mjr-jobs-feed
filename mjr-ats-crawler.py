@@ -7426,6 +7426,9 @@ def company_scope_rejection_reason(job_or_dict):
     ):
         return "Generic talent-community posting, not a specific vacancy"
 
+    if re.search(r"\b(?:real estate|estate) portfolio manager\b", title):
+        return "Corporate real-estate portfolio management role outside media scope"
+
     if disney_source:
         # MJR carries U.S. and Canadian jobs only. Disney's keyword search can
         # silently mix in international openings even when the source is the
@@ -12450,6 +12453,37 @@ def stingray_jobs(src):
             main = detail.find("main") or detail.find("article") or detail
             description = format_description(str(main))
             plain = clean(main.get_text(" "))
+            if re.fullmatch(r"(?:stingray\s+)?(?:jobs?|careers?|open positions?)", title, re.I):
+                # Stingray detail pages can expose only a generic page heading.
+                # Recover the position from the posting's own opening sentence.
+                title = ""
+                for meta in detail.find_all("meta"):
+                    meta_title = clean(meta.get("content", ""))
+                    if meta.get("property") == "og:title" or meta.get("name") == "twitter:title":
+                        if meta_title and not re.fullmatch(
+                            r"(?:stingray\s+)?(?:jobs?|careers?|open positions?)",
+                            meta_title,
+                            re.I,
+                        ):
+                            title = re.split(r"\s+[|–—-]\s+", meta_title)[0]
+                            break
+                if not title:
+                    title_match = re.search(
+                        r"(?:we(?:'|’)re looking for|we are looking for|"
+                        r"we(?:'|’)re seeking|we are seeking|looking for|seeking)"
+                        r"\s+(?:an?\s+|the\s+)?([A-Z][^.!?]{2,100})",
+                        plain,
+                        re.I,
+                    )
+                    if title_match:
+                        title = re.split(
+                            r"\s+(?:to join|to be part|who will|and will|at Stingray)\b",
+                            clean(title_match.group(1)),
+                            maxsplit=1,
+                            flags=re.I,
+                        )[0].strip(" ,:-")
+                if not title:
+                    continue
             if len(strip_html(description)) < 200:
                 continue
             location_match = re.search(
@@ -14074,6 +14108,14 @@ def finalize_jobs(jobs):
     arrangement_corrections = []
     for j in jobs:
         j.description = format_description(j.description)
+        # Some ATS page titles append the employer and a generic "Career Page"
+        # label. Keep the actual role name in the feed and in JBoard.
+        j.title = re.sub(
+            r"\s*(?:[-|]\s*[^-|]+)?\s*[-|]\s*Career Page\s*$",
+            "",
+            clean(j.title),
+            flags=re.I,
+        )
         _normalize_disney_metadata(j)
         if clean(j.company).lower() == "lotus":
             j.description = _clean_lotus_description(j.title, j.description)
