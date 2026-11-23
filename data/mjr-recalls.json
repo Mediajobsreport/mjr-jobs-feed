@@ -1,16 +1,16 @@
 {
-  "generated": "2026-11-22T16:20:29.109Z",
+  "generated": "2026-11-23T00:56:39.368Z",
   "version": "2.4",
   "newestDate": "2026-11-20",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1118
+      "count": 1101
     },
     "CPSC": {
       "ok": true,
-      "count": 10098
+      "count": 9809
     },
     "USDA": {
       "ok": true,
@@ -172,7 +172,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/aldi-recalls-priano-protein-carbonara-tortelloni-and-priano-protein-herb-cheese-tortelloni-because",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 105
     },
     {
@@ -1667,7 +1667,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
       "score": 48
     },
     {
