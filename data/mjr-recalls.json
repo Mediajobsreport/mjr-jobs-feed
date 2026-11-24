@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-23T14:46:41.444Z",
+  "generated": "2026-11-24T02:57:03.808Z",
   "version": "2.4",
-  "newestDate": "2026-11-22",
+  "newestDate": "2026-11-23",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1101
+      "count": 1103
     },
     "CPSC": {
       "ok": true,
@@ -632,6 +632,38 @@
       "score": 90
     },
     {
+      "id": "FDA-2026-11-23-no-brand-dried-herring-fish-prime-food-processing-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "No Brand Dried Herring Fish Recalled",
+      "reason": "Potential contamination with Clostridium Botulinum",
+      "brand": "No Brand",
+      "company": "Prime Food Processing LLC",
+      "product": "Dried Herring Fish",
+      "date": "2026-11-23",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-herring-fish",
+      "score": 88
+    },
+    {
+      "id": "FDA-2026-11-23-no-brand-dried-croaker-fish-prime-food-processing-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "No Brand Dried Croaker Fish Recalled",
+      "reason": "Potential contamination with Clostridium Botulinum",
+      "brand": "No Brand",
+      "company": "Prime Food Processing LLC",
+      "product": "Dried Croaker Fish",
+      "date": "2026-11-23",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-croaker-fish",
+      "score": 88
+    },
+    {
       "id": "FDA-2026-11-17-herb-to-body-yellow-dock-root-c-s-larbi-inc",
       "source": "FDA",
       "category": "food",
@@ -1045,7 +1077,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/naia-inc-recalls-chocolate-banana-bar-sorbetto-because-undeclared-milk-eggs-and-nuts",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 70
     },
     {
@@ -2001,40 +2033,6 @@
       "campaign": "26V702000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V702-6752.pdf",
       "score": 30
-    },
-    {
-      "id": "NHTSA-26V734000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Lamar Trailers Gooseneck Trailer Vehicles Recalled",
-      "reason": "Lamar Trailers, Inc (Lamar Trailers) is recalling certain 2021-2027 gooseneck trailers. The spare tire may be improperly secured, allowing the spare tire to detach. 8,407 vehicles or units may be affected.",
-      "brand": "Lamar Trailers",
-      "company": "Lamar Trailers, Inc.",
-      "product": "Gooseneck Trailer",
-      "date": "2026-11-05",
-      "units": 8407,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V734000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V734-4007.pdf",
-      "score": 28
-    },
-    {
-      "id": "CPSC-11039-fashion-brand-apparel-recalls-qzh-duao-pajama-sets-due-to-risk-of-seri",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Fashion Brand Apparel Recalls QZH.DUAO Pajama Sets Due to Risk of Serious Injury or Death from Burn…",
-      "reason": "The recalled children’s pajama sets violate the mandatory safety standards for children’s sleepwear, posing a risk of serious burn injuries.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from February 2026 through July 2026 for about $23., Xingtai Yunchuang Commerce and Trade Ltd., dba Fashion Brand Apparel Co., of China",
-      "product": "QZH.DUAO Children’s Pajama Sets",
-      "date": "2026-10-29",
-      "units": 300,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2027/Fashion-Brand-Apparel-Recalls-QZH-DUAO-Pajama-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Burn-Hazard-Violate-Mandatory-Standards-for-Childrens-Sleepwear",
-      "score": 28
     }
   ]
 }
