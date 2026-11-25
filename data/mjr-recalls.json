@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-24T15:08:11.852Z",
+  "generated": "2026-11-25T00:49:49.509Z",
   "version": "2.4",
-  "newestDate": "2026-11-23",
+  "newestDate": "2026-11-24",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1120
+      "count": 1123
     },
     "CPSC": {
       "ok": true,
@@ -139,7 +139,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V721000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V721-7592.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V721000",
       "score": 152
     },
     {
@@ -259,19 +259,19 @@
       "score": 132
     },
     {
-      "id": "FDA-2026-11-23-no-brand-dried-croaker-fish-prime-food-processing-llc",
+      "id": "FDA-2026-11-24-gsms-ibuprofen-800-mg-tablets-golden-state-medical-supply-inc",
       "source": "FDA",
-      "category": "food",
-      "title": "No Brand Dried Croaker Fish Recalled",
-      "reason": "Potential contamination with Clostridium Botulinum",
-      "brand": "No Brand",
-      "company": "Prime Food Processing LLC",
-      "product": "Dried Croaker Fish",
-      "date": "2026-11-23",
+      "category": "health",
+      "title": "GSMS Ibuprofen 800 mg Tablets Recalled",
+      "reason": "Potential contamination with aluminum particulate.",
+      "brand": "GSMS",
+      "company": "Golden State Medical Supply, Inc.",
+      "product": "Ibuprofen 800 mg Tablets",
+      "date": "2026-11-24",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-croaker-fish",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/golden-state-medical-supply-inc-issues-voluntary-nationwide-recall-ibuprofen-800mg-tablets-due",
       "score": 88
     },
     {
@@ -509,7 +509,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V728000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V728-4779.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V728000",
       "score": 95
     },
     {
@@ -632,6 +632,38 @@
       "score": 90
     },
     {
+      "id": "FDA-2026-11-24-par-pharmaceutical-and-endo-usa-injectable-drug-products-par-health",
+      "source": "FDA",
+      "category": "health",
+      "title": "Par Pharmaceutical and Endo USA Injectable Drug Products Recalled",
+      "reason": "Due to the presence of particulate matter, identified as cellulose, polystyrene, stopper material, and aluminum.",
+      "brand": "Par Pharmaceutical and Endo USA",
+      "company": "Par Health",
+      "product": "Injectable Drug Products",
+      "date": "2026-11-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-certain-lots-six-injectable-drug-products-due-presence",
+      "score": 88
+    },
+    {
+      "id": "FDA-2026-11-23-no-brand-dried-croaker-fish-prime-food-processing-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "No Brand Dried Croaker Fish Recalled",
+      "reason": "Potential contamination with Clostridium Botulinum",
+      "brand": "No Brand",
+      "company": "Prime Food Processing LLC",
+      "product": "Dried Croaker Fish",
+      "date": "2026-11-23",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-croaker-fish",
+      "score": 88
+    },
+    {
       "id": "FDA-2026-11-23-no-brand-dried-herring-fish-prime-food-processing-llc",
       "source": "FDA",
       "category": "food",
@@ -710,7 +742,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V718000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V718-4302.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V718000",
       "score": 85
     },
     {
@@ -929,7 +961,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V724000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V724-4684.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V724000",
       "score": 75
     },
     {
@@ -984,6 +1016,22 @@
       "score": 73
     },
     {
+      "id": "FDA-2026-11-24-green-lumber-natural-fuel-for-men-green-lumber-holdings-llc",
+      "source": "FDA",
+      "category": "health",
+      "title": "Green Lumber Natural Fuel For Men Recalled",
+      "reason": "Undeclared Taladalfil",
+      "brand": "Green Lumber",
+      "company": "Green Lumber Holdings, LLC",
+      "product": "Natural Fuel For Men",
+      "date": "2026-11-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/green-lumber-holdings-llc-issues-recall-and-consumer-safety-alert",
+      "score": 70
+    },
+    {
       "id": "FDA-2026-11-18-santa-cruz-paleo-santa-cruz-paleo-pineapple-caffeine-and-island-punch-",
       "source": "FDA",
       "category": "health",
@@ -996,7 +1044,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/rocky-mountain-nutrition-issues-allergy-alert-undeclared-milk-certain-pre-workout-powders",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 70
     },
     {
@@ -1161,7 +1209,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V731000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V731000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V731-8682.pdf",
       "score": 63
     },
     {
@@ -1397,7 +1445,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V692000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V692000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V692-7473.pdf",
       "score": 55
     },
     {
@@ -1597,7 +1645,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
+      "url": "http://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
       "score": 48
     },
     {
@@ -1815,7 +1863,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V744000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V744000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V744-0157.pdf",
       "score": 38
     },
     {
@@ -1966,7 +2014,7 @@
       "pet": false,
       "majorBrand": false,
       "campaign": "26V711000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V711-5948.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V711000",
       "score": 30
     },
     {
@@ -1985,57 +2033,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Lithonia-Lighting-Recalls-RSX-Luminaires-with-Adjustable-Tilt-Arm-Mountings-Due-to-Risk-of-Serious-Injury-from-Impact-Hazard",
       "score": 30
-    },
-    {
-      "id": "NHTSA-26V702000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Thomas Built Buses Vehicles Recalled",
-      "reason": "Daimler Trucks North America, LLC (DTNA) is recalling certain 2023-2027 Thomas Built SAF-T-LINER C2 Jouley, 2025-2027 Thomas Built SAF-T-LINER C2, 2026-2027 Thomas Built SAF-T-LINER HDX2, and Thomas Built SAF-T-LINER…",
-      "brand": "Thomas Built Buses",
-      "company": "Daimler Trucks North America, LLC",
-      "product": "Saf-T-Liner C2, Saf-T-Liner C2 Jouley, Saf-T-Liner EFX2, Saf-T-Liner HDX2",
-      "date": "2026-10-22",
-      "units": 13593,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V702000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V702-6752.pdf",
-      "score": 30
-    },
-    {
-      "id": "NHTSA-26V734000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Lamar Trailers Gooseneck Trailer Vehicles Recalled",
-      "reason": "Lamar Trailers, Inc (Lamar Trailers) is recalling certain 2021-2027 gooseneck trailers. The spare tire may be improperly secured, allowing the spare tire to detach. 8,407 vehicles or units may be affected.",
-      "brand": "Lamar Trailers",
-      "company": "Lamar Trailers, Inc.",
-      "product": "Gooseneck Trailer",
-      "date": "2026-11-05",
-      "units": 8407,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V734000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V734000",
-      "score": 28
-    },
-    {
-      "id": "CPSC-11039-fashion-brand-apparel-recalls-qzh-duao-pajama-sets-due-to-risk-of-seri",
-      "source": "CPSC",
-      "category": "consumer",
-      "title": "Fashion Brand Apparel Recalls QZH.DUAO Pajama Sets Due to Risk of Serious Injury or Death from Burn…",
-      "reason": "The recalled children’s pajama sets violate the mandatory safety standards for children’s sleepwear, posing a risk of serious burn injuries.",
-      "brand": "",
-      "company": "",
-      "retailers": "Sold Online At: Amazon.com from February 2026 through July 2026 for about $23., Xingtai Yunchuang Commerce and Trade Ltd., dba Fashion Brand Apparel Co., of China",
-      "product": "QZH.DUAO Children’s Pajama Sets",
-      "date": "2026-10-29",
-      "units": 300,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://cpsc.gov/Recalls/2027/Fashion-Brand-Apparel-Recalls-QZH-DUAO-Pajama-Sets-Due-to-Risk-of-Serious-Injury-or-Death-from-Burn-Hazard-Violate-Mandatory-Standards-for-Childrens-Sleepwear",
-      "score": 28
     }
   ]
 }
