@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-25T14:31:40.926Z",
+  "generated": "2026-11-26T00:36:02.501Z",
   "version": "2.4",
   "newestDate": "2026-11-24",
   "stale": false,
@@ -817,22 +817,6 @@
       "score": 83
     },
     {
-      "id": "FDA-2026-11-23-no-brand-dried-croaker-fish-prime-food-processing-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "No Brand Dried Croaker Fish Recalled",
-      "reason": "Potential contamination with Clostridium Botulinum",
-      "brand": "No Brand",
-      "company": "Prime Food Processing LLC",
-      "product": "Dried Croaker Fish",
-      "date": "2026-11-23",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-croaker-fish",
-      "score": 82
-    },
-    {
       "id": "FDA-2026-11-23-no-brand-dried-herring-fish-prime-food-processing-llc",
       "source": "FDA",
       "category": "food",
@@ -846,6 +830,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-herring-fish",
+      "score": 82
+    },
+    {
+      "id": "FDA-2026-11-23-no-brand-dried-croaker-fish-prime-food-processing-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "No Brand Dried Croaker Fish Recalled",
+      "reason": "Potential contamination with Clostridium Botulinum",
+      "brand": "No Brand",
+      "company": "Prime Food Processing LLC",
+      "product": "Dried Croaker Fish",
+      "date": "2026-11-23",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-croaker-fish",
       "score": 82
     },
     {
