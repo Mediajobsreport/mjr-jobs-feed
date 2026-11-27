@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-26T13:58:02.679Z",
+  "generated": "2026-11-27T00:39:29.460Z",
   "version": "2.4",
   "newestDate": "2026-11-24",
   "stale": false,
@@ -71,7 +71,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V733000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V733000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V733-8273.pdf",
       "score": 152
     },
     {
@@ -526,7 +526,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V757000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V757000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V757-5441.pdf",
       "score": 97
     },
     {
@@ -594,7 +594,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V726000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V726000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V726-1756.pdf",
       "score": 95
     },
     {
@@ -997,7 +997,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E080000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E080000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E080-3668.pdf",
       "score": 73
     },
     {
@@ -1131,7 +1131,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26E076000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26E076000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26E076-8231.pdf",
       "score": 67
     },
     {
@@ -1498,7 +1498,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V692000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V692000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V692-7473.pdf",
       "score": 55
     },
     {
@@ -1515,7 +1515,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V685000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V685000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V685-7183.pdf",
       "score": 55
     },
     {
@@ -1965,7 +1965,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
       "score": 36
     },
     {
@@ -1981,7 +1981,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-beef-and-pork-products-due-misbranding-and",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-due-misbranding-and",
       "score": 36
     },
     {
