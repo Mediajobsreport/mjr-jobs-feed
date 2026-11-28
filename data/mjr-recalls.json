@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-28T00:08:24.522Z",
+  "generated": "2026-11-28T07:56:46.684Z",
   "version": "2.4",
   "newestDate": "2026-11-27",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1107
+      "count": 1110
     },
     "CPSC": {
       "ok": true,
@@ -73,6 +73,22 @@
       "campaign": "26V721000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V721-7592.pdf",
       "score": 152
+    },
+    {
+      "id": "FDA-2026-11-27-oc-raw-freeze-dried-chicken-hearts-ocpp-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "OC Raw Freeze Dried Chicken Hearts Recalled",
+      "reason": "Potential to be contaminated with Salmonella",
+      "brand": "OC Raw",
+      "company": "OCPP, LLC",
+      "product": "Freeze Dried Chicken Hearts",
+      "date": "2026-11-27",
+      "units": 0,
+      "pet": true,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ocpp-llc-voluntarily-removes-oc-raw-freeze-dried-chicken-hearts-market-because-potential-health-risk",
+      "score": 133
     },
     {
       "id": "NHTSA-26V748000",
@@ -176,22 +192,6 @@
       "score": 100
     },
     {
-      "id": "FDA-2026-11-17-priano-protein-carbonara-tortelloni-and-protein-herb-cheese-tortelloni",
-      "source": "FDA",
-      "category": "food",
-      "title": "Priano Protein Carbonara Tortelloni and Protein Herb & Cheese Tortelloni Recalled",
-      "reason": "Potential to be contaminated with Clostridium botulinum",
-      "brand": "Priano",
-      "company": "ALDI",
-      "product": "Protein Carbonara Tortelloni and Protein Herb & Cheese Tortelloni",
-      "date": "2026-11-17",
-      "units": 0,
-      "pet": false,
-      "majorBrand": true,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
-      "score": 85
-    },
-    {
       "id": "CPSC-11051-little-giant-recalls-ladders-with-rapid-locks-due-to-risk-of-serious-i",
       "source": "CPSC",
       "category": "consumer",
@@ -226,6 +226,22 @@
       "score": 132
     },
     {
+      "id": "FDA-2026-11-17-priano-protein-carbonara-tortelloni-and-protein-herb-cheese-tortelloni",
+      "source": "FDA",
+      "category": "food",
+      "title": "Priano Protein Carbonara Tortelloni and Protein Herb & Cheese Tortelloni Recalled",
+      "reason": "Potential to be contaminated with Clostridium botulinum",
+      "brand": "Priano",
+      "company": "ALDI",
+      "product": "Protein Carbonara Tortelloni and Protein Herb & Cheese Tortelloni",
+      "date": "2026-11-17",
+      "units": 0,
+      "pet": false,
+      "majorBrand": true,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
+      "score": 85
+    },
+    {
       "id": "CPSC-11038-dreo-recalls-dr-hsh015-space-heaters-due-to-fire-and-burn-hazards",
       "source": "CPSC",
       "category": "consumer",
@@ -241,22 +257,6 @@
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/DREO-Recalls-DR-HSH015-Space-Heaters-Due-to-Fire-and-Burn-Hazards",
       "score": 97
-    },
-    {
-      "id": "FDA-2026-11-24-gsms-ibuprofen-800-mg-tablets-golden-state-medical-supply-inc",
-      "source": "FDA",
-      "category": "health",
-      "title": "GSMS Ibuprofen 800 mg Tablets Recalled",
-      "reason": "Potential contamination with aluminum particulate.",
-      "brand": "GSMS",
-      "company": "Golden State Medical Supply, Inc.",
-      "product": "Ibuprofen 800 mg Tablets",
-      "date": "2026-11-24",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/golden-state-medical-supply-inc-issues-voluntary-nationwide-recall-ibuprofen-800mg-tablets-due",
-      "score": 76
     },
     {
       "id": "FDA-2026-11-24-par-pharmaceutical-and-endo-usa-injectable-drug-products-par-health",
@@ -645,7 +645,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V757000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V757-5441.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V757000",
       "score": 85
     },
     {
@@ -696,7 +696,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V701000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V701-2086.pdf",
+      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V701000",
       "score": 85
     },
     {
@@ -783,6 +783,22 @@
       "majorBrand": false,
       "url": "https://www.cpsc.gov/Recalls/2027/Bose-Recalls-Lithium-Ion-Battery-Packs-for-S1-Pro-and-S1-Pro-Bluetooth-Speaker-Systems-Due-to-Risk-of-Injury-from-Fire-and-Overheating-Hazards-0",
       "score": 82
+    },
+    {
+      "id": "FDA-2026-11-24-gsms-ibuprofen-800-mg-tablets-golden-state-medical-supply-inc",
+      "source": "FDA",
+      "category": "health",
+      "title": "GSMS Ibuprofen 800 mg Tablets Recalled",
+      "reason": "Potential contamination with aluminum particulate.",
+      "brand": "GSMS",
+      "company": "Golden State Medical Supply, Inc.",
+      "product": "Ibuprofen 800 mg Tablets",
+      "date": "2026-11-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/golden-state-medical-supply-inc-issues-voluntary-nationwide-recall-ibuprofen-800mg-tablets-due",
+      "score": 76
     },
     {
       "id": "FDA-2026-11-19-lunch-box-sandwiches-lunch-box-chicken-sausage-biscuit-lunch-box-sausa",
@@ -951,6 +967,38 @@
       "score": 70
     },
     {
+      "id": "FDA-2026-11-27-abdallah-candies-plain-chocolate-fudge-abdallah-candies",
+      "source": "FDA",
+      "category": "food",
+      "title": "Abdallah Candies Plain Chocolate Fudge Recalled",
+      "reason": "Undeclared walnut allergen",
+      "brand": "Abdallah Candies",
+      "company": "Abdallah Candies",
+      "product": "Plain Chocolate Fudge",
+      "date": "2026-11-27",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/abdallah-candies-issues-voluntary-recall-plain-chocolate-fudge-due-undeclared-allergen",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-11-27-advanced-nutritional-supplements-llc-pre-formance-black-extreme-prewor",
+      "source": "FDA",
+      "category": "health",
+      "title": "Advanced Nutritional Supplements LLC PRE-FORMANCE BLACK Extreme Preworkout Recalled",
+      "reason": "Undeclared DMAA (1,4-dimethylamylamine)",
+      "brand": "Advanced Nutritional Supplements LLC",
+      "company": "Advanced Nutritional Supplements LLC",
+      "product": "PRE-FORMANCE BLACK Extreme Preworkout",
+      "date": "2026-11-27",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/advanced-nutritional-supplements-llc-issues-nationwide-recall-pre-formance-black-due-undeclared-dmaa",
+      "score": 70
+    },
+    {
       "id": "FDA-2026-11-20-sanniu-sanniu-evergreen-biscuits-and-sanniu-salt-and-pepper-soda-biscu",
       "source": "FDA",
       "category": "food",
@@ -1000,22 +1048,6 @@
       "score": 70
     },
     {
-      "id": "FDA-2026-11-23-no-brand-dried-croaker-fish-prime-food-processing-llc",
-      "source": "FDA",
-      "category": "food",
-      "title": "No Brand Dried Croaker Fish Recalled",
-      "reason": "Potential contamination with Clostridium Botulinum",
-      "brand": "No Brand",
-      "company": "Prime Food Processing LLC",
-      "product": "Dried Croaker Fish",
-      "date": "2026-11-23",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-croaker-fish",
-      "score": 68
-    },
-    {
       "id": "FDA-2026-11-23-no-brand-dried-herring-fish-prime-food-processing-llc",
       "source": "FDA",
       "category": "food",
@@ -1029,6 +1061,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-herring-fish",
+      "score": 68
+    },
+    {
+      "id": "FDA-2026-11-23-no-brand-dried-croaker-fish-prime-food-processing-llc",
+      "source": "FDA",
+      "category": "food",
+      "title": "No Brand Dried Croaker Fish Recalled",
+      "reason": "Potential contamination with Clostridium Botulinum",
+      "brand": "No Brand",
+      "company": "Prime Food Processing LLC",
+      "product": "Dried Croaker Fish",
+      "date": "2026-11-23",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/prime-food-processing-llc-issues-safety-warning-regarding-uneviscerated-dried-croaker-fish",
       "score": 68
     },
     {
@@ -1162,7 +1210,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/breckenridge-pharmaceutical-inc-issues-voluntary-nationwide-consumer-level-recall-one-lot",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 60
     },
     {
@@ -1629,7 +1677,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/brett-anthony-foods-recalls-frozen-fully-cooked-cheeseburger-products-due",
+      "url": "https://www.fsis.usda.gov/index%2Ephp/recalls-alerts/brett-anthony-foods-recalls-frozen-fully-cooked-cheeseburger-products-due",
       "score": 50
     },
     {
@@ -1914,7 +1962,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "http://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
       "score": 36
     },
     {
@@ -1947,7 +1995,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-beef-and-pork-products-due-misbranding-and",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-due-misbranding-and",
       "score": 36
     },
     {
@@ -1981,57 +2029,6 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://cpsc.gov/Recalls/2027/Kidsview-Recalls-Infant-Bouncers-Due-to-Risk-of-Collapse-and-Impact-Injury-to-Infants",
-      "score": 30
-    },
-    {
-      "id": "NHTSA-26V759000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Mack Vehicles Recalled",
-      "reason": "Mack Trucks, Inc. (Mack) is recalling certain 2027 Anthem AN (4), Pioneer PR (4), and Pinnacle (PI/PN) vehicles. Due to a manufacturing error, the front steering knuckles may crack and break, which can result in a loss…",
-      "brand": "Mack",
-      "company": "Mack Trucks, Inc.",
-      "product": "Pioneer Pr (4), Pinnacle (pi/Pn), Anthem An (4)",
-      "date": "2026-11-19",
-      "units": 141,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V759000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V759-8943.pdf",
-      "score": 30
-    },
-    {
-      "id": "NHTSA-26V752000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Altec Vehicles Recalled",
-      "reason": "Altec Industries, Inc. (Altec) is recalling certain 2025-2026 AM Series Aerial Device, and AN Series Aerial Device vehicles. The activation handle for the platform stow valve at the lower controls may have been…",
-      "brand": "Altec",
-      "company": "Altec Industries, Inc.",
-      "product": "Am Series Aerial Device, An Series Aerial Device",
-      "date": "2026-11-13",
-      "units": 1100,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V752000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V752-9494.pdf",
-      "score": 30
-    },
-    {
-      "id": "NHTSA-26V730000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Harley-Davidson Vehicles Recalled",
-      "reason": "Harley-Davidson Motor Company (Harley-Davidson) is recalling certain 2026 FLHXLSE, FLTRXSTSE, FLHXSTSE, FLHXSE, FLHXL, FLTRXP, FLTRX, FLTRXL, and FLHX motorcycles. The engine control module (ECM) may communicate the…",
-      "brand": "Harley-Davidson",
-      "company": "Harley-Davidson Motor Company",
-      "product": "Fltrxstse, Flhxlse, Fltrxp, Fltrxl, Fltrx, Flhxstse, Flhxse, Flhxl",
-      "date": "2026-11-03",
-      "units": 21643,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V730000",
-      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V730-3248.pdf",
       "score": 30
     }
   ]
