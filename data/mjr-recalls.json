@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-27T13:57:15.254Z",
+  "generated": "2026-11-28T00:08:24.522Z",
   "version": "2.4",
-  "newestDate": "2026-11-24",
+  "newestDate": "2026-11-27",
   "stale": false,
   "sources": {
     "FDA": {
       "ok": true,
-      "count": 1123
+      "count": 1107
     },
     "CPSC": {
       "ok": true,
@@ -243,22 +243,6 @@
       "score": 97
     },
     {
-      "id": "FDA-2026-11-24-par-pharmaceutical-and-endo-usa-injectable-drug-products-par-health",
-      "source": "FDA",
-      "category": "health",
-      "title": "Par Pharmaceutical and Endo USA Injectable Drug Products Recalled",
-      "reason": "Due to the presence of particulate matter, identified as cellulose, polystyrene, stopper material, and aluminum.",
-      "brand": "Par Pharmaceutical and Endo USA",
-      "company": "Par Health",
-      "product": "Injectable Drug Products",
-      "date": "2026-11-24",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-certain-lots-six-injectable-drug-products-due-presence",
-      "score": 76
-    },
-    {
       "id": "FDA-2026-11-24-gsms-ibuprofen-800-mg-tablets-golden-state-medical-supply-inc",
       "source": "FDA",
       "category": "health",
@@ -272,6 +256,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/golden-state-medical-supply-inc-issues-voluntary-nationwide-recall-ibuprofen-800mg-tablets-due",
+      "score": 76
+    },
+    {
+      "id": "FDA-2026-11-24-par-pharmaceutical-and-endo-usa-injectable-drug-products-par-health",
+      "source": "FDA",
+      "category": "health",
+      "title": "Par Pharmaceutical and Endo USA Injectable Drug Products Recalled",
+      "reason": "Due to the presence of particulate matter, identified as cellulose, polystyrene, stopper material, and aluminum.",
+      "brand": "Par Pharmaceutical and Endo USA",
+      "company": "Par Health",
+      "product": "Injectable Drug Products",
+      "date": "2026-11-24",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/par-health-issues-voluntary-nationwide-recall-certain-lots-six-injectable-drug-products-due-presence",
       "score": 76
     },
     {
@@ -645,7 +645,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V757000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V757000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V757-5441.pdf",
       "score": 85
     },
     {
@@ -696,7 +696,7 @@
       "pet": false,
       "majorBrand": true,
       "campaign": "26V701000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V701000",
+      "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V701-2086.pdf",
       "score": 85
     },
     {
@@ -797,7 +797,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/grand-strand-sandwich-company-recalls-lunch-box-bacon-egg-and-cheese-biscuit-lunch-box-jumbo-sausage",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts",
       "score": 75
     },
     {
@@ -935,19 +935,19 @@
       "score": 71
     },
     {
-      "id": "FDA-2026-11-20-crystalyx-crystalyx-he-20-ridley-block-operations",
+      "id": "FDA-2026-11-27-laub-s-feeding-cubing-grade-a-mini-hay-cubes-laub-s-feeding-cubing",
       "source": "FDA",
       "category": "consumer",
-      "title": "Crystalyx Crystalyx HE-20% Recalled",
-      "reason": "Levels of non-protein nitrogen (NPN) from urea that are high enough to cause adverse health effects in cattle, including death.",
-      "brand": "Crystalyx",
-      "company": "Ridley Block Operations",
-      "product": "Crystalyx HE-20%",
-      "date": "2026-11-20",
+      "title": "Laub’s Feeding & Cubing Grade A Mini Hay Cubes Recalled",
+      "reason": "Potential to be contaminated with Clostridium Botulinum",
+      "brand": "Laub’s Feeding & Cubing",
+      "company": "Laub’s Feeding & Cubing",
+      "product": "Grade A Mini Hay Cubes",
+      "date": "2026-11-27",
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ridley-block-operations-recalls-batch-crystalyxrhe-20-beef-cattle-and-bison-due-excess-levels-non",
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/laubs-feeding-cubing-inc-voluntary-recalls-grade-mini-hay-cubes-because-potential-clostridium",
       "score": 70
     },
     {
@@ -964,6 +964,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/shanghai-san-niu-food-co-ltd-recalling-sanniu-evergeen-biscuits-due-undeclared-milk-and-sanniu-salt",
+      "score": 70
+    },
+    {
+      "id": "FDA-2026-11-20-crystalyx-crystalyx-he-20-ridley-block-operations",
+      "source": "FDA",
+      "category": "consumer",
+      "title": "Crystalyx Crystalyx HE-20% Recalled",
+      "reason": "Levels of non-protein nitrogen (NPN) from urea that are high enough to cause adverse health effects in cattle, including death.",
+      "brand": "Crystalyx",
+      "company": "Ridley Block Operations",
+      "product": "Crystalyx HE-20%",
+      "date": "2026-11-20",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/ridley-block-operations-recalls-batch-crystalyxrhe-20-beef-cattle-and-bison-due-excess-levels-non",
       "score": 70
     },
     {
@@ -1134,22 +1150,6 @@
       "score": 63
     },
     {
-      "id": "FDA-2026-11-20-greenwich-rx-compounded-sterile-products-greenwich",
-      "source": "FDA",
-      "category": "health",
-      "title": "Greenwich Rx Compounded sterile products Recalled",
-      "reason": "Potential lack of sterility assurance",
-      "brand": "Greenwich Rx",
-      "company": "Greenwich",
-      "product": "Compounded sterile products",
-      "date": "2026-11-20",
-      "units": 0,
-      "pet": false,
-      "majorBrand": false,
-      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/greenwich-rx-issues-voluntary-nationwide-recall-compounded-glutathione-due-elevated-endotoxin-levels",
-      "score": 60
-    },
-    {
       "id": "FDA-2026-11-20-breckenridge-propranolol-hydrochloride-extended-release-capsules-usp-6",
       "source": "FDA",
       "category": "health",
@@ -1163,6 +1163,22 @@
       "pet": false,
       "majorBrand": false,
       "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/breckenridge-pharmaceutical-inc-issues-voluntary-nationwide-consumer-level-recall-one-lot",
+      "score": 60
+    },
+    {
+      "id": "FDA-2026-11-20-greenwich-rx-compounded-sterile-products-greenwich",
+      "source": "FDA",
+      "category": "health",
+      "title": "Greenwich Rx Compounded sterile products Recalled",
+      "reason": "Potential lack of sterility assurance",
+      "brand": "Greenwich Rx",
+      "company": "Greenwich",
+      "product": "Compounded sterile products",
+      "date": "2026-11-20",
+      "units": 0,
+      "pet": false,
+      "majorBrand": false,
+      "url": "https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts/greenwich-rx-issues-voluntary-nationwide-recall-compounded-glutathione-due-elevated-endotoxin-levels",
       "score": 60
     },
     {
@@ -1898,7 +1914,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
+      "url": "http://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-containing-biscuits",
       "score": 36
     },
     {
@@ -1931,7 +1947,7 @@
       "units": 0,
       "pet": false,
       "majorBrand": false,
-      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-meat-and-poultry-products-due-misbranding-and",
+      "url": "https://www.fsis.usda.gov/recalls-alerts/fsis-issues-public-health-alert-beef-and-pork-products-due-misbranding-and",
       "score": 36
     },
     {
@@ -2016,23 +2032,6 @@
       "majorBrand": false,
       "campaign": "26V730000",
       "url": "https://static.nhtsa.gov/odi/rcl/2026/RCLRPT-26V730-3248.pdf",
-      "score": 30
-    },
-    {
-      "id": "NHTSA-26V711000",
-      "source": "NHTSA",
-      "category": "consumer",
-      "title": "Icon EV Vehicles Recalled",
-      "reason": "ICON EV, LLC (ICON EV) is recalling certain 2026 ICON I20X, I20UX, I40FX, I40X, I60LX, 2025-2026 EPIC E20FX, EPIC E60FX, and 2024-2026 EPIC E40FX low-speed vehicles (LSV). The LSV may have been built without an…",
-      "brand": "Icon EV",
-      "company": "Icon EV, LLC",
-      "product": "Epic E60FX, Epic E40FX, Epic E20FX, Icon I20X, Icon I40FX, Icon I60LX, Icon I20UX, Icon I40X",
-      "date": "2026-10-27",
-      "units": 24191,
-      "pet": false,
-      "majorBrand": false,
-      "campaign": "26V711000",
-      "url": "https://www.nhtsa.gov/recalls?nhtsaId=26V711000",
       "score": 30
     }
   ]
